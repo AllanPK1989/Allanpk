@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sand Mixing — BEFORE (Manual Process)</title>
+<style id="ui-css"></style>
+</head>
+<body>
+<div class="loader" id="loader">Loading scene…</div>
+<div id="ui"></div>
+
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/addons/" } }
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import * as P from './lib/plant.js';
+import * as S from './lib/story.js';
+
+document.getElementById('ui-css').textContent = S.UI_CSS;
+
+// ── Timeline ─────────────────────────────────────────────────────────────
+const STEPS = [
+  { t0:  0, t1:  5, title: 'Manufacturing Order released',      note: 'Paper/terminal MO picked up by the operator' },
+  { t0:  5, t1: 14, title: 'Operator walks up to the warehouse', note: 'Ground floor → stairs → 2nd floor' },
+  { t0: 14, t1: 20, title: 'Collects sand bag from racking',     note: 'Manual pick from pallet racking' },
+  { t0: 20, t1: 31, title: 'Carries bag down to mixing area',    note: 'Manual carry down the stairs — the long trip' },
+  { t0: 31, t1: 38, title: 'Manually loads bag into mixer',      note: 'Climbs the platform and tips the bag into the charge port' },
+  { t0: 38, t1: 45, title: 'Mixing process runs',                note: 'Operator waits at the machine' },
+  { t0: 45, t1: 52, title: 'Discharges bottom hopper into bins', note: 'Sand drawn off manually, bin by bin' },
+  { t0: 52, t1: 58, title: 'Transfers bins into storage barrel', note: 'Double handling — bin to barrel' },
+  { t0: 58, t1: 66, title: 'Trolleys barrel to filling machine', note: 'Manual trolley move across the floor' },
+  { t0: 66, t1: 74, title: 'Manually loads sand into machine',   note: 'Repeated lifting to the top hopper' },
+];
+const TL = new S.Timeline(STEPS);
+
+// ── Renderer / scene ─────────────────────────────────────────────────────
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0f1319);
+scene.fog = new THREE.Fog(0x0f1319, 34, 66);
+
+const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.5, 120);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+
+P.addLighting(scene, renderer);
+scene.add(camera);   // so the caption sprite (a camera child) renders
+const overlay = S.makeOverlay(camera, THREE);
+overlay.setAccent('#e08a4a');
+
+// ── Static plant ─────────────────────────────────────────────────────────
+scene.add(P.buildShell());
+scene.add(P.buildStairs());
+scene.add(P.buildRacking());
+const mixer  = P.buildMixer();   scene.add(mixer);
+const filler = P.buildFiller();  scene.add(filler);
+const term   = P.buildTerminal(); term.position.set(1.5, 0, 6.2); scene.add(term);
+
+// station labels
+const labels = [
+  ['WAREHOUSE · 2nd FLOOR', -10, P.MEZZ_Y + 2.2, -4],
+  ['SAND MIXING MACHINE',    P.MIXER_POS.x, 3.5, 0],
+  ['SAND FILLING MACHINE',   P.FILLER_POS.x, 2.8, 0],
+  ['MO TERMINAL',            1.5, 2.3, 6.2],
+];
+const labelSprites = [];
+for (const [txt, x, y, z] of labels) {
+  const l = P.makeLabel(txt, { size: 0.26 });
+  l.position.set(x, y, z);
+  scene.add(l); labelSprites.push(l);
+}
+
+// ── Movable props ────────────────────────────────────────────────────────
+const op = P.makeOperator(); scene.add(op);
+
+const bag = P.makeSandBag(); bag.visible = false; scene.add(bag);
+const bin = P.makeBin();     bin.visible = false; scene.add(bin);
+const barrel = P.makeBarrel(); barrel.visible = false; scene.add(barrel);
+const trolley = P.makeTrolley(); trolley.visible = false; scene.add(trolley);
+
+const streamBag  = P.makeSandStream(0.085); scene.add(streamBag);
+const streamMix  = P.makeSandStream(0.1);   scene.add(streamMix);
+const streamBin  = P.makeSandStream(0.09);  scene.add(streamBin);
+const streamFill = P.makeSandStream(0.09);  scene.add(streamFill);
+
+// ── Routes ───────────────────────────────────────────────────────────────
+const STAIR_X = P.MEZZ_X + 0.55;      // -3.95
+const STAIR_BOT = [STAIR_X, 0, 6.6];
+const STAIR_TOP = [STAIR_X, 4.2, 2.18];
+const RACK_STAND = [-8.3, 4.2, -2.4];
+const MIX_STAND  = [P.MIXER_POS.x + 2.5, 0, 1.6];
+const MIX_PLAT   = [P.MIXER_POS.x + 1.55, 0.55, 0.35];
+const FILL_STAND = [P.FILLER_POS.x - 1.5, 0, 1.1];
+
+const UP_PATH = [
+  [1.5, 0, 5.2], [-1.5, 0, 6.4], STAIR_BOT, STAIR_TOP, [-5.4, 4.2, 2.0], RACK_STAND,
+];
+const DOWN_PATH = [
+  RACK_STAND, [-5.4, 4.2, 2.0], STAIR_TOP, STAIR_BOT, [-2.0, 0, 5.6], MIX_STAND,
+];
+const TROLLEY_PATH = [
+  [P.MIXER_POS.x + 2.0, 0, 2.4], [2.0, 0, 2.6], [5.5, 0, 2.4], [P.FILLER_POS.x - 1.4, 0, 1.9],
+];
+
+// ── Camera ───────────────────────────────────────────────────────────────
+const rig = new S.CameraRig(camera, [
+  { t:  0, pos: [ 7.5,  4.2, 15.0], target: [ 1.5, 1.4,  4.0] },
+  { t:  5, pos: [ 4.5,  3.6, 13.0], target: [ 0.0, 1.4,  4.0] },
+  { t: 11, pos: [ 1.0,  5.6, 12.5], target: [-4.0, 3.0,  3.5] },
+  { t: 15, pos: [-4.0,  6.0,  2.2], target: [-9.0, 5.0, -3.2] },
+  { t: 20, pos: [-4.4,  5.9,  2.8], target: [-8.6, 4.9, -2.8] },
+  { t: 26, pos: [ 0.5,  5.4, 12.0], target: [-4.2, 2.6,  3.4] },
+  { t: 31, pos: [ 4.2,  3.0,  8.0], target: [ 0.0, 1.9,  0.6] },
+  { t: 36, pos: [ 3.4,  3.2,  6.6], target: [-0.5, 2.2,  0.3] },
+  { t: 42, pos: [ 4.6,  2.8,  8.4], target: [-0.4, 1.7,  0.2] },
+  { t: 48, pos: [ 3.0,  1.9,  6.2], target: [-0.6, 0.7,  0.4] },
+  { t: 55, pos: [ 3.6,  2.0,  6.0], target: [ 0.4, 0.7,  0.8] },
+  { t: 61, pos: [ 6.0,  3.2,  9.0], target: [ 3.6, 0.9,  1.6] },
+  { t: 66, pos: [10.2,  2.8,  6.4], target: [ 7.6, 1.4,  0.8] },
+  { t: 74, pos: [11.0,  2.6,  6.0], target: [ 8.2, 1.3,  0.6] },
+]);
+
+// ── Per-frame state, purely a function of t ──────────────────────────────
+const MIX = P.MIXER_POS, FILL = P.FILLER_POS;
+const portW = new THREE.Vector3(MIX.x + 0.45, 2.54, MIX.z);   // charge port mouth
+const _v = new THREE.Vector3();
+
+let _lastStep = -1;
+function update(t) {
+  rig.setTime(t);
+  const si = TL.indexAt(t);
+  if (si !== _lastStep) {
+    _lastStep = si;
+    overlay.set('SAND MIXING — BEFORE (manual process)', `${si + 1}. ${STEPS[si].title}`, STEPS[si].note);
+  }
+  P.updateLabels(labelSprites, camera);
+
+  // reset per-frame visibility
+  streamBag.visible = streamMix.visible = streamBin.visible = streamFill.visible = false;
+
+  // ---- terminal + machine lamps ----
+  term.userData.screen.material.emissiveIntensity = 0.35 + 0.5 * S.pulse(t, 0, 5, 0.6);
+  mixer.userData.lamp.material = (t >= 38 && t < 45) ? P.MAT.green : P.MAT.red;
+  filler.userData.lamp.material = (t >= 66) ? P.MAT.green : P.MAT.red;
+
+  // ---- mixer agitator ----
+  mixer.userData.shaft.rotation.y = (t >= 38 && t < 45) ? (t - 38) * 9 : 0;
+  mixer.userData.portLid.position.y = 2.57 + 0.32 * S.pulse(t, 30.5, 37, 0.5);
+
+  // ---- operator ----
+  let walkDist = 0, speed = 0;
+  if (t < 5) {
+    op.position.set(1.5, 0, 5.2); op.rotation.y = Math.PI;
+  } else if (t < 14) {
+    walkDist = S.followPath(op, UP_PATH, S.seg(t, 5, 13.4), { turnRate: 0.25 });
+    speed = t < 13.4 ? 1 : 0;
+  } else if (t < 20) {
+    op.position.fromArray(RACK_STAND);
+  } else if (t < 31) {
+    walkDist = S.followPath(op, DOWN_PATH, S.seg(t, 20.4, 29.5), { turnRate: 0.25 });
+    speed = t < 29.5 ? 1 : 0;
+  } else if (t < 38) {
+    // step up onto the access platform, then work at the port
+    const u = S.segS(t, 31, 32.6);
+    op.position.set(
+      MIX_STAND[0] + (MIX_PLAT[0] - MIX_STAND[0]) * u,
+      MIX_PLAT[1] * u,
+      MIX_STAND[2] + (MIX_PLAT[2] - MIX_STAND[2]) * u);
+    op.rotation.y = -Math.PI / 2 + 0.35;
+  } else if (t < 58) {
+    // works at the mixer discharge, then at the barrel
+    const u = S.segS(t, 44.5, 46);
+    op.position.set(
+      MIX_PLAT[0] + (MIX.x + 1.5 - MIX_PLAT[0]) * u,
+      MIX_PLAT[1] * (1 - u),
+      MIX_PLAT[2] + (1.5 - MIX_PLAT[2]) * u);
+    op.rotation.y = -Math.PI / 2;
+  } else if (t < 66) {
+    walkDist = S.followPath(op, TROLLEY_PATH.map(([x, y, z]) => [x - 1.5, y, z + 0.4]),
+                            S.seg(t, 58.5, 64.5), { turnRate: 0.3 });
+    speed = t < 64.5 ? 1 : 0;
+  } else {
+    op.position.fromArray(FILL_STAND); op.rotation.y = Math.PI / 2;
+  }
+
+  // pose
+  P.poseWalk(op, walkDist * 2.4, speed);
+  if (t >= 20 && t < 31)      P.poseCarry(op, 1);                       // carrying the bag
+  else if (t >= 31 && t < 37) P.poseLift(op, S.pulse(t, 32.6, 37, 0.9)); // tipping into port
+  else if (t >= 45 && t < 52) P.poseCarry(op, 0.65);                    // handling bins
+  else if (t >= 52 && t < 58) P.poseCarry(op, 0.8);                     // decanting
+  else if (t >= 66)           P.poseLift(op, S.pulse(t, 67, 73.4, 1.1)); // loading the filler
+
+  // ---- sand bag ----
+  bag.visible = t >= 14 && t < 37.5;
+  if (bag.visible) {
+    if (t < 20) {
+      // lifted off the rack shelf into the operator's hands
+      const u = S.segS(t, 14.5, 19);
+      _v.set(-9.6, P.MEZZ_Y + 1.15, -3.2);
+      bag.position.lerpVectors(_v, new THREE.Vector3(
+        op.position.x + 0.55, op.position.y + 1.06, op.position.z), u);
+      bag.rotation.set(0, 0, 0);
+    } else if (t < 31) {
+      // carried in front of the chest
+      bag.position.set(
+        op.position.x + Math.sin(op.rotation.y) * 0.5,
+        op.position.y + 1.04,
+        op.position.z + Math.cos(op.rotation.y) * 0.5);
+      bag.rotation.set(0, op.rotation.y, 0);
+    } else {
+      // raised to the port and tipped
+      const lift = S.segS(t, 31.8, 34.2);
+      const tip  = S.segS(t, 34.2, 36.6);
+      _v.set(op.position.x + 0.5, op.position.y + 1.04, op.position.z);
+      bag.position.lerpVectors(_v, portW.clone().add(new THREE.Vector3(0.42, 0.34, 0)), lift);
+      bag.rotation.set(0, 0, -tip * 1.5);
+    }
+  }
+  // sand pouring from the bag into the port
+  if (t >= 34.8 && t < 37.2) {
+    streamBag.visible = true;
+    P.setStream(streamBag, portW.x, portW.z, portW.y + 0.3, portW.y - 0.15);
+  }
+
+  // ---- bin: filled at the mixer discharge, then decanted into the barrel ----
+  bin.visible = t >= 45 && t < 58;
+  const spoutW = new THREE.Vector3(MIX.x, mixer.userData.spoutY, MIX.z);
+  if (bin.visible) {
+    if (t < 52) {
+      bin.position.set(MIX.x, 0.02, MIX.z + 0.02);
+      bin.rotation.z = 0;
+      bin.userData.fill.scale.y = Math.max(0.001, S.segS(t, 45.6, 51.4));
+      if (t >= 45.6 && t < 51.4) {
+        streamMix.visible = true;
+        P.setStream(streamMix, spoutW.x, spoutW.z, spoutW.y, 0.42);
+      }
+    } else {
+      // carried across and tipped into the barrel
+      const u = S.segS(t, 52, 54);
+      const tip = S.segS(t, 54.4, 56.4);
+      _v.set(MIX.x, 0.02, MIX.z + 0.02);
+      bin.position.lerpVectors(_v, new THREE.Vector3(1.5, 1.35, 1.5), u);
+      bin.rotation.z = -tip * 2.0;
+      bin.userData.fill.scale.y = Math.max(0.001, 1 - tip);
+      if (t >= 54.9 && t < 56.6) {
+        streamBin.visible = true;
+        P.setStream(streamBin, 1.5, 1.2, 1.25, 1.06);
+      }
+    }
+  }
+
+  // ---- barrel + trolley ----
+  barrel.visible = t >= 52;
+  trolley.visible = t >= 58 && t < 66.5;
+  if (barrel.visible) {
+    if (t < 58) {
+      barrel.position.set(1.5, 0, 1.2);
+    } else if (t < 66) {
+      S.followPath(trolley, TROLLEY_PATH, S.seg(t, 58.5, 64.5), { turnRate: 0.3 });
+      barrel.position.set(trolley.position.x, 0.38, trolley.position.z);
+    } else {
+      barrel.position.set(FILL.x - 1.5, 0, 1.9);
+    }
+    barrel.userData.fill.scale.y = Math.max(0.001,
+      S.segS(t, 54.9, 56.6) * (t < 68 ? 1 : 1 - S.segS(t, 68, 73)));
+  }
+
+  // ---- final manual load into the filling machine ----
+  if (t >= 66) {
+    const rimY = FILL.y + filler.userData.hopperRimY;
+    if (t >= 68.2 && t < 73.2) {
+      streamFill.visible = true;
+      P.setStream(streamFill, FILL.x, FILL.z, rimY + 0.1, rimY - 0.35);
+    }
+    filler.userData.hopFill.scale.y = Math.max(0.001, S.segS(t, 68.2, 73.4));
+    // outfeed packs advance once the machine is fed
+    const adv = S.seg(t, 69, 74) * 0.66;
+    filler.userData.packs.position.x = adv;
+  }
+}
+
+// ── Playback ─────────────────────────────────────────────────────────────
+let t = 0, playing = true, last = performance.now();
+
+const ui = S.buildUI(document.getElementById('ui'), {
+  title: 'Sand Mixing — BEFORE',
+  subtitle: 'Current manual process · every transfer is carried by an operator',
+  timeline: TL,
+  accent: '#e08a4a',
+  onSeek: (v) => { t = Math.max(0, Math.min(TL.duration - 0.001, v)); playing = false; draw(); },
+  onToggle: () => { playing = !playing; last = performance.now(); },
+  onStep: (d) => {
+    const i = Math.max(0, Math.min(STEPS.length - 1, TL.indexAt(t) + d));
+    t = STEPS[i].t0 + 0.01; playing = false; draw();
+  },
+});
+
+function draw() { update(t); renderer.render(scene, camera); ui.sync(t, playing); }
+
+function loop(now) {
+  requestAnimationFrame(loop);
+  const dt = Math.min((now - last) / 1000, 0.05);
+  last = now;
+  if (playing) { t += dt; if (t >= TL.duration) { t = 0; } }
+  draw();
+}
+
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+addEventListener('keydown', (e) => {
+  if (e.code === 'Space') { e.preventDefault(); playing = !playing; last = performance.now(); }
+});
+
+// Offline capture hooks: deterministic seek + single render, no clock involved.
+window.__scene = {
+  duration: TL.duration,
+  steps: STEPS,
+  setTime: (v) => { t = v; playing = false; update(v); },
+  render: () => renderer.render(scene, camera),
+  hideUI: () => { document.getElementById('ui').style.display = 'none'; },
+  filmMode: (on) => {
+    document.getElementById('ui').style.display = on ? 'none' : '';
+    overlay.setVisible(!!on);
+    _lastStep = -1;
+  },
+  showUI: () => { document.getElementById('ui').style.display = ''; },
+};
+
+draw();
+requestAnimationFrame(() => requestAnimationFrame(() => {
+  document.getElementById('loader').classList.add('hidden');
+  window.__ready = true;
+}));
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

@@ -1,0 +1,2 @@
+# rendered videos are committed once complete; ignore partial encodes
+*.part

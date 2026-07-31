@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sand Mixing — AFTER (AMR + Cobot)</title>
+<style id="ui-css"></style>
+</head>
+<body>
+<div class="loader" id="loader">Loading scene…</div>
+<div id="ui"></div>
+
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/addons/" } }
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import * as P from './lib/plant.js';
+import * as S from './lib/story.js';
+
+document.getElementById('ui-css').textContent = S.UI_CSS;
+
+// ── Timeline ─────────────────────────────────────────────────────────────
+const STEPS = [
+  { t0:  0, t1:  5, title: 'MES releases MO to the warehouse',   note: 'No operator trip — the order arrives at the pick face' },
+  { t0:  5, t1: 12, title: 'Bag loaded onto the AMR',            note: 'Warehouse operator loads at waist height, once' },
+  { t0: 12, t1: 21, title: 'AMR takes the goods lift down',      note: 'Autonomous 2nd floor → ground floor transfer' },
+  { t0: 21, t1: 28, title: 'AMR delivers to the mixing area',    note: 'Drives the aisle and waits at the station' },
+  { t0: 28, t1: 33, title: 'Operator opens the bag',             note: 'The only manual touch in the whole loop' },
+  { t0: 33, t1: 41, title: 'Vacuum transfer into the vessel',    note: 'No lifting, no tipping, no dust exposure' },
+  { t0: 41, t1: 48, title: 'Mixing process runs',                note: 'Operator is free for other work' },
+  { t0: 48, t1: 57, title: 'Inclined conveyor to storage hopper', note: 'Interlocked on high/low level — stops at high level' },
+  { t0: 57, t1: 65, title: 'Barrel filled on the cobot AMR',     note: 'Filled in place — no bins, no double handling' },
+  { t0: 65, t1: 71, title: 'AMR drives to the filling machine',  note: 'No trolley, no manual push' },
+  { t0: 71, t1: 79, title: 'Cobot discharges into the hopper',   note: 'Repetitive lift removed from the operator' },
+];
+const TL = new S.Timeline(STEPS);
+
+// ── Renderer / scene ─────────────────────────────────────────────────────
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0f1319);
+scene.fog = new THREE.Fog(0x0f1319, 34, 66);
+
+const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.5, 120);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+
+P.addLighting(scene, renderer);
+scene.add(camera);   // so the caption sprite (a camera child) renders
+const overlay = S.makeOverlay(camera, THREE);
+overlay.setAccent('#3fbf88');
+
+// ── Static plant ─────────────────────────────────────────────────────────
+scene.add(P.buildShell());
+scene.add(P.buildRacking());
+const lift    = P.buildLift();           scene.add(lift);
+const mixer   = P.buildMixer();          scene.add(mixer);
+const filler  = P.buildFiller();         scene.add(filler);
+const hopper  = P.buildStorageHopper();  scene.add(hopper);
+const conv    = P.buildInclinedConveyor(); scene.add(conv);
+const vac     = P.buildVacuumSystem();   scene.add(vac);
+const term    = P.buildTerminal();       term.position.set(-8.6, P.MEZZ_Y, -1.2); scene.add(term);
+
+const labels = [
+  ['WAREHOUSE · 2nd FLOOR',  -10, P.MEZZ_Y + 2.2, -4],
+  ['GOODS LIFT',             P.LIFT_POS.x, 6.2, -7],
+  ['SAND MIXING MACHINE',    P.MIXER_POS.x, 3.5, 0],
+  ['SAND STORAGE HOPPER',    P.HOPPER_POS.x, 4.5, 0],
+  ['SAND FILLING MACHINE',   P.FILLER_POS.x, 2.8, 0],
+];
+const labelSprites = [];
+for (const [txt, x, y, z] of labels) {
+  const l = P.makeLabel(txt, { size: 0.26 });
+  l.position.set(x, y, z);
+  scene.add(l); labelSprites.push(l);
+}
+
+// ── Movable props ────────────────────────────────────────────────────────
+const whOp = P.makeOperator(); scene.add(whOp);          // warehouse operator
+const gfOp = P.makeOperator(); scene.add(gfOp);          // ground-floor operator
+
+const amr1 = P.makeAMR();                    scene.add(amr1);   // bag transport
+const amr2 = P.makeAMR({ withCobot: true }); scene.add(amr2);   // barrel + cobot
+const cobot = amr2.userData.cobot;
+
+const bag    = P.makeSandBag(); bag.visible = false; scene.add(bag);
+const barrel = P.makeBarrel();  scene.add(barrel);
+
+const streamVac  = P.makeSandStream(0.09); scene.add(streamVac);
+const streamHop  = P.makeSandStream(0.11); scene.add(streamHop);
+const streamFill = P.makeSandStream(0.09); scene.add(streamFill);
+
+// ── Routes ───────────────────────────────────────────────────────────────
+const L = P.LIFT_POS, MIX = P.MIXER_POS, HOP = P.HOPPER_POS, FILL = P.FILLER_POS;
+
+const AMR1_MEZZ = [[-9.2, P.MEZZ_Y, -3.0], [-7.6, P.MEZZ_Y, -5.2], [L.x, P.MEZZ_Y, L.z]];
+const AMR1_GND  = [[L.x, 0, L.z], [L.x, 0, -3.4], [-3.6, 0, 1.2], [MIX.x + 2.3, 0, 1.6]];
+const AMR2_TO_FILL = [[HOP.x, 0, 0], [5.6, 0, 1.3], [FILL.x - 0.95, 0, 0.38]];
+
+// ── Camera ───────────────────────────────────────────────────────────────
+const rig = new S.CameraRig(camera, [
+  { t:  0, pos: [-3.4,  6.2,  2.6], target: [-8.8, 5.1, -2.2] },
+  { t:  6, pos: [-4.0,  5.9,  1.4], target: [-9.0, 4.9, -3.0] },
+  { t: 12, pos: [-2.2,  5.4, -2.4], target: [-6.0, 4.2, -6.6] },
+  { t: 17, pos: [-2.6,  3.0, -3.4], target: [-5.9, 2.4, -6.8] },
+  { t: 21, pos: [-0.6,  2.8, -0.6], target: [-5.2, 1.0, -4.4] },
+  { t: 26, pos: [ 5.4,  3.4,  8.6], target: [-0.4, 1.2,  0.9] },
+  { t: 31, pos: [ 4.6,  2.9,  7.4], target: [-0.2, 1.1,  1.1] },
+  { t: 37, pos: [ 5.0,  3.4,  8.0], target: [-0.5, 1.9,  0.5] },
+  { t: 44, pos: [ 4.8,  3.2,  7.6], target: [-0.4, 1.8,  0.2] },
+  { t: 52, pos: [ 4.6,  3.6,  8.6], target: [ 1.4, 2.4,  0.2] },
+  { t: 58, pos: [ 6.4,  2.4,  5.4], target: [ 3.4, 1.2,  0.2] },
+  { t: 66, pos: [ 8.2,  3.0,  7.4], target: [ 5.6, 1.1,  0.8] },
+  { t: 72, pos: [10.6,  2.4,  5.6], target: [ 7.8, 1.4,  0.7] },
+  { t: 79, pos: [11.2,  2.3,  5.2], target: [ 8.3, 1.3,  0.6] },
+]);
+
+// ── Frame state ──────────────────────────────────────────────────────────
+const _v = new THREE.Vector3();
+const bagOnDeck = new THREE.Vector3();
+const HOP_SPOUT = HOP.y + hopper.userData.spoutY;      // 1.83
+const FILL_RIM  = FILL.y + filler.userData.hopperRimY; // 1.95
+const DECK_Y = 0.57;
+
+function setLamp(mesh, m) { mesh.material = m; }
+
+let _lastStep = -1;
+function update(t) {
+  rig.setTime(t);
+  const si = TL.indexAt(t);
+  if (si !== _lastStep) {
+    _lastStep = si;
+    overlay.set('SAND MIXING — AFTER (AMR + cobot)', `${si + 1}. ${STEPS[si].title}`, STEPS[si].note);
+  }
+  P.updateLabels(labelSprites, camera);
+  streamVac.visible = streamHop.visible = streamFill.visible = false;
+
+  // ---- MES terminal ----
+  term.userData.screen.material.emissiveIntensity = 0.35 + 0.55 * S.pulse(t, 0, 5.5, 0.7);
+
+  // ---- machine states ----
+  setLamp(mixer.userData.lamp,  (t >= 41 && t < 48) ? P.MAT.green : P.MAT.red);
+  setLamp(filler.userData.lamp, (t >= 71) ? P.MAT.green : P.MAT.red);
+  setLamp(vac.userData.lamp,    (t >= 33 && t < 41) ? P.MAT.green : P.MAT.red);
+  mixer.userData.shaft.rotation.y = (t >= 41 && t < 48) ? (t - 41) * 9 : 0;
+  mixer.userData.portLid.position.y = 2.57;   // stays shut — charging is by vacuum
+
+  // ---- warehouse operator: loads the bag, then stays put ----
+  whOp.position.set(-9.4, P.MEZZ_Y, -2.6);
+  whOp.rotation.y = -0.6;
+  P.poseWalk(whOp, 0, 0);
+  if (t >= 5 && t < 11) P.poseCarry(whOp, S.pulse(t, 5.4, 10.6, 1.0));
+
+  // ---- ground operator: only touches the bag to open it ----
+  gfOp.position.set(MIX.x + 2.4, 0, 2.9);
+  gfOp.rotation.y = -2.7;
+  P.poseWalk(gfOp, 0, 0);
+  if (t >= 28 && t < 33) P.poseCarry(gfOp, S.pulse(t, 28.3, 32.6, 0.8));
+
+  // ---- goods lift ----
+  const carY = S.track(t, [[12, P.MEZZ_Y], [14, P.MEZZ_Y], [19, 0], [21, 0]], S.smoother);
+  lift.userData.car.position.y = carY;
+  setLamp(lift.userData.lamp, (t >= 13 && t < 20) ? P.MAT.amber : P.MAT.green);
+
+  // ---- AMR 1: warehouse -> lift -> mixing area ----
+  let a1dist = 0;
+  if (t < 5) {
+    amr1.position.set(-9.2, P.MEZZ_Y, -3.0); amr1.rotation.y = -0.9;
+  } else if (t < 12) {
+    amr1.position.set(-9.2, P.MEZZ_Y, -3.0); amr1.rotation.y = -0.9;
+  } else if (t < 14) {
+    a1dist = S.followPath(amr1, AMR1_MEZZ, S.segS(t, 12, 13.8), { turnRate: 0.3 });
+  } else if (t < 19.4) {
+    amr1.position.set(L.x, carY, L.z);            // riding the car down
+  } else if (t < 28) {
+    a1dist = S.followPath(amr1, AMR1_GND, S.segS(t, 19.6, 26.4), { turnRate: 0.3 });
+  } else {
+    amr1.position.set(MIX.x + 2.3, 0, 1.6); amr1.rotation.y = Math.PI * 0.5;
+  }
+  setLamp(amr1.userData.beacon,
+    (t >= 12 && t < 26.4) ? P.MAT.amber : P.MAT.green);
+
+  // ---- sand bag: shelf -> AMR deck -> opened -> vacuumed away ----
+  bagOnDeck.set(
+    amr1.position.x - Math.sin(amr1.rotation.y) * 0.05,
+    amr1.position.y + DECK_Y + 0.16,
+    amr1.position.z - Math.cos(amr1.rotation.y) * 0.05);
+
+  bag.visible = t < 40.5;
+  if (t < 5) {
+    bag.position.set(-9.9, P.MEZZ_Y + 1.15, -3.3); bag.rotation.set(0, 0, 0);
+  } else if (t < 11) {
+    const u = S.segS(t, 5.6, 10.4);
+    _v.set(-9.9, P.MEZZ_Y + 1.15, -3.3);
+    bag.position.lerpVectors(_v, bagOnDeck, u);
+    bag.rotation.set(0, amr1.rotation.y * u, 0);
+  } else {
+    bag.position.copy(bagOnDeck);
+    bag.rotation.set(0, amr1.rotation.y, 0);
+    // deflates as the vacuum empties it
+    const e = S.segS(t, 34, 40);
+    bag.scale.set(1 - e * 0.55, 1 - e * 0.8, 1 - e * 0.35);
+  }
+  if (t < 34) bag.scale.set(1, 1, 1);
+
+  // ---- vacuum wand dips into the opened bag, then sand flows to the vessel ----
+  const wandDown = S.pulse(t, 30.5, 41, 1.2);
+  vac.userData.wand.position.set(
+    bagOnDeck.x, 0.95 + (1 - wandDown) * 0.9, bagOnDeck.z + 0.2);
+  if (t >= 33.6 && t < 40.6) {
+    streamVac.visible = true;
+    P.setStream(streamVac, MIX.x - 0.75, MIX.z, 5.0, 2.5);
+  }
+
+  // ---- inclined conveyor: mixer hopper -> storage hopper, level interlocked ----
+  const convRun = t >= 48 && t < 56.4;
+  const lumps = conv.userData.lumps;
+  lumps.visible = convRun;
+  if (convRun) {
+    const from = conv.userData.from, to = conv.userData.to;
+    const phase = (t - 48) * 0.42;
+    lumps.children.forEach((l, i) => {
+      const u = ((i / lumps.children.length) + phase) % 1;
+      l.position.copy(from).lerp(to, u);
+      l.position.y += 0.14;
+    });
+  }
+  // hopper fills; at high level the interlock stops the conveyor
+  const hopFill = S.segS(t, 48.4, 56.2);
+  hopper.userData.fill.scale.y = Math.max(0.001, hopFill);
+  hopper.userData.fill.position.y = 2.72 + 0.55 * hopFill;
+  setLamp(hopper.userData.loLamp, hopFill > 0.25 ? P.MAT.green : P.MAT.red);
+  setLamp(hopper.userData.hiLamp, hopFill > 0.93 ? P.MAT.green : P.MAT.red);
+
+  // ---- AMR 2 with cobot: waits under the hopper, fills, drives to the filler ----
+  if (t < 65) {
+    amr2.position.set(HOP.x, 0, 0.05); amr2.rotation.y = Math.PI;
+  } else if (t < 71) {
+    S.followPath(amr2, AMR2_TO_FILL, S.segS(t, 65, 70), { turnRate: 0.3 });
+  } else {
+    amr2.position.set(FILL.x - 0.95, 0, 0.38); amr2.rotation.y = Math.PI * 0.5;
+  }
+  setLamp(amr2.userData.beacon, (t >= 65 && t < 70) ? P.MAT.amber : P.MAT.green);
+
+  // ---- barrel: on the AMR deck, filled, then lifted by the cobot ----
+  const deckSpot = new THREE.Vector3(
+    amr2.position.x + Math.sin(amr2.rotation.y + Math.PI / 2) * 0.42,
+    DECK_Y,
+    amr2.position.z + Math.cos(amr2.rotation.y + Math.PI / 2) * 0.42);
+
+  // The barrel is parented to the gripper for the lift, so it physically
+  // follows the arm instead of flying along an independent path that the
+  // cobot cannot actually reach.
+  const gripG = cobot.userData.grip;
+  if (t < 71.4) {
+    if (barrel.parent !== scene) scene.add(barrel);
+    barrel.position.copy(deckSpot);
+    barrel.rotation.set(0, 0, 0);
+  } else {
+    if (barrel.parent !== gripG) gripG.add(barrel);
+    barrel.position.set(0, -0.10, 0.34);   // hangs from the jaws
+    barrel.rotation.set(-Math.PI / 2, 0, 0);
+  }
+
+  // fill level: rises while under the hopper, empties as it is tipped
+  barrel.userData.fill.scale.y = Math.max(0.001,
+    S.segS(t, 57.4, 64.2) * (1 - S.segS(t, 75.6, 77.6)));
+
+  if (t >= 57.4 && t < 64.4) {
+    streamHop.visible = true;
+    P.setStream(streamHop, HOP.x, 0.05, HOP_SPOUT, DECK_Y + 1.0);
+  }
+
+  // ---- cobot: solved from the target it must hold the barrel over ----
+  const cobTarget = new THREE.Vector3();
+  if (t < 71) {
+    cobTarget.set(deckSpot.x, DECK_Y + 0.95, deckSpot.z);       // parked over its own deck
+    P.solveCobot(cobot, cobTarget, { open: 1 });
+  } else {
+    const u = S.segS(t, 71.4, 75.4);
+    const overDeck = new THREE.Vector3(deckSpot.x, DECK_Y + 0.95, deckSpot.z);
+    const overRim  = new THREE.Vector3(FILL.x, FILL_RIM + 0.78, FILL.z + 0.06);
+    cobTarget.lerpVectors(overDeck, overRim, u);
+    cobTarget.y += Math.sin(u * Math.PI) * 0.16;                 // slight arc
+    const tipW = S.segS(t, 75.6, 77.8) * 2.0;                    // wrist rolls to pour
+    P.solveCobot(cobot, cobTarget, { open: 0, wristExtra: tipW });
+  }
+
+  // ---- filling machine receives the sand ----
+  if (t >= 75.8 && t < 78.2) {
+    streamFill.visible = true;
+    P.setStream(streamFill, FILL.x, FILL.z, FILL_RIM + 0.1, FILL_RIM - 0.35);
+  }
+  filler.userData.hopFill.scale.y = Math.max(0.001, S.segS(t, 75.8, 78.4));
+  filler.userData.packs.position.x = S.seg(t, 76, 79) * 0.66;
+}
+
+// ── Playback ─────────────────────────────────────────────────────────────
+let t = 0, playing = true, last = performance.now();
+
+const ui = S.buildUI(document.getElementById('ui'), {
+  title: 'Sand Mixing — AFTER',
+  subtitle: 'With AMR + cobot · material moves itself, the operator supervises',
+  timeline: TL,
+  accent: '#3fbf88',
+  onSeek: (v) => { t = Math.max(0, Math.min(TL.duration - 0.001, v)); playing = false; draw(); },
+  onToggle: () => { playing = !playing; last = performance.now(); },
+  onStep: (d) => {
+    const i = Math.max(0, Math.min(STEPS.length - 1, TL.indexAt(t) + d));
+    t = STEPS[i].t0 + 0.01; playing = false; draw();
+  },
+});
+
+function draw() { update(t); renderer.render(scene, camera); ui.sync(t, playing); }
+
+function loop(now) {
+  requestAnimationFrame(loop);
+  const dt = Math.min((now - last) / 1000, 0.05);
+  last = now;
+  if (playing) { t += dt; if (t >= TL.duration) { t = 0; } }
+  draw();
+}
+
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+addEventListener('keydown', (e) => {
+  if (e.code === 'Space') { e.preventDefault(); playing = !playing; last = performance.now(); }
+});
+
+window.__dbg = () => {
+  const g = new THREE.Vector3(), b = new THREE.Vector3();
+  cobot.userData.grip.getWorldPosition(g);
+  barrel.getWorldPosition(b);
+  return { grip: g.toArray().map(n=>+n.toFixed(2)),
+           barrel: b.toArray().map(n=>+n.toFixed(2)),
+           rim: [FILL.x, +FILL_RIM.toFixed(2), FILL.z] };
+};
+window.__scene = {
+  duration: TL.duration,
+  steps: STEPS,
+  setTime: (v) => { t = v; playing = false; update(v); },
+  render: () => renderer.render(scene, camera),
+  hideUI: () => { document.getElementById('ui').style.display = 'none'; },
+  filmMode: (on) => {
+    document.getElementById('ui').style.display = on ? 'none' : '';
+    overlay.setVisible(!!on);
+    _lastStep = -1;
+  },
+  showUI: () => { document.getElementById('ui').style.display = ''; },
+};
+
+draw();
+requestAnimationFrame(() => requestAnimationFrame(() => {
+  document.getElementById('loader').classList.add('hidden');
+  window.__ready = true;
+}));
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
