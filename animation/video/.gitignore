@@ -1,2 +1,5 @@
-# rendered videos are committed once complete; ignore partial encodes
+# Rendered videos are produced by animation/../render pipeline and delivered as
+# files. They are ignored while encoding so an in-progress (indexless, corrupt)
+# MP4 can never be committed. Re-add the finished files deliberately.
+*.mp4
 *.part
