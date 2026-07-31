@@ -23,16 +23,16 @@ document.getElementById('ui-css').textContent = S.UI_CSS;
 
 // ── Timeline ─────────────────────────────────────────────────────────────
 const STEPS = [
-  { t0:  0, t1:  5, title: 'Manufacturing Order released',      note: 'Paper/terminal MO picked up by the operator' },
-  { t0:  5, t1: 14, title: 'Operator walks up to the warehouse', note: 'Ground floor → stairs → 2nd floor' },
-  { t0: 14, t1: 20, title: 'Collects sand bag from racking',     note: 'Manual pick from pallet racking' },
-  { t0: 20, t1: 31, title: 'Carries bag down to mixing area',    note: 'Manual carry down the stairs — the long trip' },
-  { t0: 31, t1: 38, title: 'Manually loads bag into mixer',      note: 'Climbs the platform and tips the bag into the charge port' },
-  { t0: 38, t1: 45, title: 'Mixing process runs',                note: 'Operator waits at the machine' },
-  { t0: 45, t1: 52, title: 'Discharges bottom hopper into bins', note: 'Sand drawn off manually, bin by bin' },
-  { t0: 52, t1: 58, title: 'Transfers bins into storage barrel', note: 'Double handling — bin to barrel' },
-  { t0: 58, t1: 66, title: 'Trolleys barrel to filling machine', note: 'Manual trolley move across the floor' },
-  { t0: 66, t1: 74, title: 'Manually loads sand into machine',   note: 'Repeated lifting to the top hopper' },
+  { t0:  0, t1:  6, title: 'Manufacturing Order released',         note: 'Operator picks up the MO at the terminal' },
+  { t0:  6, t1: 16, title: 'Takes the passenger lift up',          note: 'Ground floor → 2nd floor warehouse' },
+  { t0: 16, t1: 24, title: 'Loads sand bag onto a trolley',        note: 'Manual lift from the racking onto the bag trolley' },
+  { t0: 24, t1: 38, title: 'Wheels the bag trolley back down',     note: 'Pushed by hand into the lift, down, and across the floor' },
+  { t0: 38, t1: 46, title: 'Manually loads the bag into the mixer', note: 'Lifted off the trolley and tipped into the charge port' },
+  { t0: 46, t1: 53, title: 'Mixing process runs',                  note: 'Operator waits at the machine' },
+  { t0: 53, t1: 63, title: 'Bottom hopper → bin → drum, by hand',   note: 'Double handling: filled bin tipped into the storage drum' },
+  { t0: 63, t1: 72, title: 'Wheels the drum trolley to the filler', note: 'Drum trolley pushed by hand across the floor' },
+  { t0: 72, t1: 80, title: 'Fills the bin from the drum, by hand',  note: 'Scooped out of the drum a bin at a time' },
+  { t0: 80, t1: 88, title: 'Manually loads the filling machine',    note: 'Repeated lifting of the bin to the top hopper' },
 ];
 const TL = new S.Timeline(STEPS);
 
@@ -60,18 +60,19 @@ overlay.setAccent('#e08a4a');
 
 // ── Static plant ─────────────────────────────────────────────────────────
 scene.add(P.buildShell());
-scene.add(P.buildStairs());
+scene.add(P.buildStairs());                        // present, but not the route
+const lift   = P.buildLift();     scene.add(lift); // used here as the passenger lift
 scene.add(P.buildRacking());
-const mixer  = P.buildMixer();   scene.add(mixer);
-const filler = P.buildFiller();  scene.add(filler);
+const mixer  = P.buildMixer();    scene.add(mixer);
+const filler = P.buildFiller();   scene.add(filler);
 const term   = P.buildTerminal(); term.position.set(1.5, 0, 6.2); scene.add(term);
 
-// station labels
 const labels = [
   ['WAREHOUSE · 2nd FLOOR', -10, P.MEZZ_Y + 2.2, -4],
-  ['SAND MIXING MACHINE',    P.MIXER_POS.x, 3.5, 0],
-  ['SAND FILLING MACHINE',   P.FILLER_POS.x, 2.8, 0],
-  ['MO TERMINAL',            1.5, 2.3, 6.2],
+  ['PASSENGER LIFT',        P.LIFT_POS.x, 6.2, -7],
+  ['SAND MIXING MACHINE',   P.MIXER_POS.x, 3.5, 0],
+  ['SAND FILLING MACHINE',  P.FILLER_POS.x, 2.8, 0],
+  ['MO TERMINAL',           1.5, 2.3, 6.2],
 ];
 const labelSprites = [];
 for (const [txt, x, y, z] of labels) {
@@ -83,210 +84,239 @@ for (const [txt, x, y, z] of labels) {
 // ── Movable props ────────────────────────────────────────────────────────
 const op = P.makeOperator(); scene.add(op);
 
-const bag = P.makeSandBag(); bag.visible = false; scene.add(bag);
-const bin = P.makeBin();     bin.visible = false; scene.add(bin);
-const barrel = P.makeBarrel(); barrel.visible = false; scene.add(barrel);
-const trolley = P.makeTrolley(); trolley.visible = false; scene.add(trolley);
+const bagTrolley  = P.makeTrolley();     scene.add(bagTrolley);
+const drumTrolley = P.makeDrumTrolley(); scene.add(drumTrolley);
+
+const bag  = P.makeSandBag(); bag.visible = false; scene.add(bag);
+const bin  = P.makeBin();     bin.visible = false; scene.add(bin);
+const drum = P.makeBarrel();  scene.add(drum);
 
 const streamBag  = P.makeSandStream(0.085); scene.add(streamBag);
-const streamMix  = P.makeSandStream(0.1);   scene.add(streamMix);
+const streamMix  = P.makeSandStream(0.10);  scene.add(streamMix);
 const streamBin  = P.makeSandStream(0.09);  scene.add(streamBin);
+const streamDrum = P.makeSandStream(0.085); scene.add(streamDrum);
 const streamFill = P.makeSandStream(0.09);  scene.add(streamFill);
 
 // ── Routes ───────────────────────────────────────────────────────────────
-const STAIR_X = P.MEZZ_X + 0.55;      // -3.95
-const STAIR_BOT = [STAIR_X, 0, 6.6];
-const STAIR_TOP = [STAIR_X, 4.2, 2.18];
-const RACK_STAND = [-8.3, 4.2, -2.4];
-const MIX_STAND  = [P.MIXER_POS.x + 2.5, 0, 1.6];
-const MIX_PLAT   = [P.MIXER_POS.x + 1.55, 0.55, 0.35];
-const FILL_STAND = [P.FILLER_POS.x - 1.5, 0, 1.1];
+const L = P.LIFT_POS, MIX = P.MIXER_POS, FILL = P.FILLER_POS;
+const LIFT_IN    = [L.x, 0, L.z];
+const RACK_STAND = [-8.6, P.MEZZ_Y, -3.1];
+const MIX_STAND  = [MIX.x + 2.6, 0, 1.8];
+const MIX_PLAT   = [MIX.x + 1.55, 0.55, 0.35];
+const DRUM_PARK  = [MIX.x + 2.4, 0, 2.8];
+const FILL_STAND = [FILL.x - 1.8, 0, 1.5];
 
-const UP_PATH = [
-  [1.5, 0, 5.2], [-1.5, 0, 6.4], STAIR_BOT, STAIR_TOP, [-5.4, 4.2, 2.0], RACK_STAND,
-];
-const DOWN_PATH = [
-  RACK_STAND, [-5.4, 4.2, 2.0], STAIR_TOP, STAIR_BOT, [-2.0, 0, 5.6], MIX_STAND,
-];
-const TROLLEY_PATH = [
-  [P.MIXER_POS.x + 2.0, 0, 2.4], [2.0, 0, 2.6], [5.5, 0, 2.4], [P.FILLER_POS.x - 1.4, 0, 1.9],
-];
+const TO_LIFT        = [[1.5, 0, 5.2], [-1.6, 0, 4.0], [-4.6, 0, -1.2],
+                        [L.x, 0, L.z + 2.4], LIFT_IN];
+const TO_RACK        = [[L.x, P.MEZZ_Y, L.z], [L.x, P.MEZZ_Y, L.z + 1.8], RACK_STAND];
+const TO_LIFT_LOADED = [RACK_STAND, [L.x, P.MEZZ_Y, L.z + 1.8], [L.x, P.MEZZ_Y, L.z]];
+const TO_MIXER       = [LIFT_IN, [L.x, 0, L.z + 2.2], [-3.4, 0, 0.6], MIX_STAND];
+const TO_FILLER      = [DRUM_PARK, [3.2, 0, 3.0], [6.2, 0, 2.3], FILL_STAND];
 
 // ── Camera ───────────────────────────────────────────────────────────────
 const rig = new S.CameraRig(camera, [
-  { t:  0, pos: [ 7.5,  4.2, 15.0], target: [ 1.5, 1.4,  4.0] },
-  { t:  5, pos: [ 4.5,  3.6, 13.0], target: [ 0.0, 1.4,  4.0] },
-  { t: 11, pos: [ 1.0,  5.6, 12.5], target: [-4.0, 3.0,  3.5] },
-  { t: 15, pos: [-4.0,  6.0,  2.2], target: [-9.0, 5.0, -3.2] },
-  { t: 20, pos: [-4.4,  5.9,  2.8], target: [-8.6, 4.9, -2.8] },
-  { t: 26, pos: [ 0.5,  5.4, 12.0], target: [-4.2, 2.6,  3.4] },
-  { t: 31, pos: [ 4.2,  3.0,  8.0], target: [ 0.0, 1.9,  0.6] },
-  { t: 36, pos: [ 3.4,  3.2,  6.6], target: [-0.5, 2.2,  0.3] },
-  { t: 42, pos: [ 4.6,  2.8,  8.4], target: [-0.4, 1.7,  0.2] },
-  { t: 48, pos: [ 3.0,  1.9,  6.2], target: [-0.6, 0.7,  0.4] },
-  { t: 55, pos: [ 3.6,  2.0,  6.0], target: [ 0.4, 0.7,  0.8] },
-  { t: 61, pos: [ 6.0,  3.2,  9.0], target: [ 3.6, 0.9,  1.6] },
-  { t: 66, pos: [10.2,  2.8,  6.4], target: [ 7.6, 1.4,  0.8] },
-  { t: 74, pos: [11.0,  2.6,  6.0], target: [ 8.2, 1.3,  0.6] },
+  { t:  0, pos: [ 7.2,  4.0, 14.5], target: [ 1.5, 1.4,  4.2] },
+  { t:  6, pos: [ 4.0,  3.4, 12.0], target: [-0.6, 1.4,  3.4] },
+  { t: 10, pos: [-1.2,  2.4, -0.8], target: [-5.4, 1.2, -5.6] },
+  { t: 14, pos: [-2.7,  5.05, -0.2], target: [-5.9, 4.75, -6.4] },
+  { t: 18, pos: [-4.2,  6.0,  1.6], target: [-8.8, 5.0, -3.2] },
+  { t: 24, pos: [-4.6,  5.9,  2.2], target: [-8.4, 4.9, -3.0] },
+  { t: 29, pos: [-1.7,  4.1, -1.3], target: [-5.7, 2.7, -6.2] },
+  { t: 34, pos: [ 3.4,  3.2,  6.2], target: [-2.0, 1.2,  0.6] },
+  { t: 38, pos: [ 5.4,  3.2,  8.6], target: [-0.2, 1.6,  1.0] },
+  { t: 43, pos: [ 4.0,  3.2,  6.8], target: [-0.5, 2.1,  0.4] },
+  { t: 49, pos: [ 5.0,  2.9,  8.2], target: [-0.4, 1.7,  0.3] },
+  { t: 56, pos: [ 3.6,  2.1,  6.2], target: [-0.2, 0.8,  1.0] },
+  { t: 63, pos: [ 4.8,  2.7,  7.6], target: [ 1.4, 1.0,  2.0] },
+  { t: 68, pos: [ 7.6,  3.0,  8.4], target: [ 4.8, 1.0,  2.2] },
+  { t: 72, pos: [10.0,  2.6,  6.8], target: [ 7.2, 1.1,  1.4] },
+  { t: 80, pos: [10.4,  2.5,  6.2], target: [ 7.8, 1.3,  0.9] },
+  { t: 88, pos: [11.0,  2.4,  5.8], target: [ 8.3, 1.3,  0.7] },
 ]);
 
-// ── Per-frame state, purely a function of t ──────────────────────────────
-const MIX = P.MIXER_POS, FILL = P.FILLER_POS;
-const portW = new THREE.Vector3(MIX.x + 0.45, 2.54, MIX.z);   // charge port mouth
+// ── Frame state ──────────────────────────────────────────────────────────
+const portW = new THREE.Vector3(MIX.x + 0.45, 2.54, MIX.z);
 const _v = new THREE.Vector3();
+const fwd = (o, d) => new THREE.Vector3(
+  o.position.x + Math.sin(o.rotation.y) * d, o.position.y,
+  o.position.z + Math.cos(o.rotation.y) * d);
 
 let _lastStep = -1;
 function update(t) {
   rig.setTime(t);
+  P.updateLabels(labelSprites, camera);
   const si = TL.indexAt(t);
   if (si !== _lastStep) {
     _lastStep = si;
-    overlay.set('SAND MIXING — BEFORE (manual process)', `${si + 1}. ${STEPS[si].title}`, STEPS[si].note);
+    overlay.set('SAND MIXING — BEFORE (manual process)',
+                `${si + 1}. ${STEPS[si].title}`, STEPS[si].note);
   }
-  P.updateLabels(labelSprites, camera);
+  streamBag.visible = streamMix.visible = streamBin.visible =
+    streamDrum.visible = streamFill.visible = false;
 
-  // reset per-frame visibility
-  streamBag.visible = streamMix.visible = streamBin.visible = streamFill.visible = false;
+  term.userData.screen.material.emissiveIntensity = 0.35 + 0.5 * S.pulse(t, 0, 6, 0.7);
+  mixer.userData.lamp.material  = (t >= 46 && t < 53) ? P.MAT.green : P.MAT.red;
+  filler.userData.lamp.material = (t >= 80) ? P.MAT.green : P.MAT.red;
+  mixer.userData.shaft.rotation.y = (t >= 46 && t < 53) ? (t - 46) * 9 : 0;
+  mixer.userData.portLid.position.y = 2.57 + 0.32 * S.pulse(t, 37, 45.5, 0.6);
 
-  // ---- terminal + machine lamps ----
-  term.userData.screen.material.emissiveIntensity = 0.35 + 0.5 * S.pulse(t, 0, 5, 0.6);
-  mixer.userData.lamp.material = (t >= 38 && t < 45) ? P.MAT.green : P.MAT.red;
-  filler.userData.lamp.material = (t >= 66) ? P.MAT.green : P.MAT.red;
-
-  // ---- mixer agitator ----
-  mixer.userData.shaft.rotation.y = (t >= 38 && t < 45) ? (t - 38) * 9 : 0;
-  mixer.userData.portLid.position.y = 2.57 + 0.32 * S.pulse(t, 30.5, 37, 0.5);
+  // ---- passenger lift car ----
+  const carY = S.track(t, [[9.6, 0], [10.6, 0], [14, P.MEZZ_Y], [26.6, P.MEZZ_Y],
+                           [30, 0], [31, 0]], S.smoother);
+  lift.userData.car.position.y = carY;
+  lift.userData.lamp.material = ((t >= 10.6 && t < 14) || (t >= 26.6 && t < 30))
+    ? P.MAT.amber : P.MAT.green;
 
   // ---- operator ----
-  let walkDist = 0, speed = 0;
-  if (t < 5) {
+  let dist = 0, speed = 0, mode = 'idle';
+  if (t < 6) {
     op.position.set(1.5, 0, 5.2); op.rotation.y = Math.PI;
-  } else if (t < 14) {
-    walkDist = S.followPath(op, UP_PATH, S.seg(t, 5, 13.4), { turnRate: 0.25 });
-    speed = t < 13.4 ? 1 : 0;
-  } else if (t < 20) {
-    op.position.fromArray(RACK_STAND);
-  } else if (t < 31) {
-    walkDist = S.followPath(op, DOWN_PATH, S.seg(t, 20.4, 29.5), { turnRate: 0.25 });
-    speed = t < 29.5 ? 1 : 0;
-  } else if (t < 38) {
-    // step up onto the access platform, then work at the port
-    const u = S.segS(t, 31, 32.6);
-    op.position.set(
-      MIX_STAND[0] + (MIX_PLAT[0] - MIX_STAND[0]) * u,
-      MIX_PLAT[1] * u,
-      MIX_STAND[2] + (MIX_PLAT[2] - MIX_STAND[2]) * u);
+  } else if (t < 10.4) {
+    dist = S.followPath(op, TO_LIFT, S.seg(t, 6, 9.9), { turnRate: 0.25 }); speed = 1;
+  } else if (t < 14.4) {                        // riding up
+    op.position.set(L.x, carY, L.z); op.rotation.y = 0;
+  } else if (t < 24) {                          // out of the lift, over to the racking
+    dist = S.followPath(op, TO_RACK, S.seg(t, 14.4, 18.6), { turnRate: 0.3 });
+    speed = t < 18.6 ? 1 : 0;
+  } else if (t < 26.7) {                        // pushing the loaded trolley to the lift
+    dist = S.followPath(op, TO_LIFT_LOADED, S.seg(t, 24, 26.5), { turnRate: 0.3 });
+    speed = 1; mode = 'push';
+  } else if (t < 30.5) {                        // riding down with the trolley
+    op.position.set(L.x, carY, L.z); op.rotation.y = 0; mode = 'push';
+  } else if (t < 38) {                          // pushing across the floor
+    dist = S.followPath(op, TO_MIXER, S.seg(t, 30.5, 36.6), { turnRate: 0.3 });
+    speed = t < 36.6 ? 1 : 0; mode = 'push';
+  } else if (t < 46) {                          // onto the platform, tip the bag in
+    const u = S.segS(t, 38, 39.6);
+    op.position.set(MIX_STAND[0] + (MIX_PLAT[0] - MIX_STAND[0]) * u,
+                    MIX_PLAT[1] * u,
+                    MIX_STAND[2] + (MIX_PLAT[2] - MIX_STAND[2]) * u);
     op.rotation.y = -Math.PI / 2 + 0.35;
-  } else if (t < 58) {
-    // works at the mixer discharge, then at the barrel
-    const u = S.segS(t, 44.5, 46);
-    op.position.set(
-      MIX_PLAT[0] + (MIX.x + 1.5 - MIX_PLAT[0]) * u,
-      MIX_PLAT[1] * (1 - u),
-      MIX_PLAT[2] + (1.5 - MIX_PLAT[2]) * u);
+  } else if (t < 63) {                          // down to the discharge, bin work
+    const u = S.segS(t, 52.4, 54);
+    op.position.set(MIX_PLAT[0] + (MIX.x + 1.5 - MIX_PLAT[0]) * u,
+                    MIX_PLAT[1] * (1 - u),
+                    MIX_PLAT[2] + (1.8 - MIX_PLAT[2]) * u);
     op.rotation.y = -Math.PI / 2;
-  } else if (t < 66) {
-    walkDist = S.followPath(op, TROLLEY_PATH.map(([x, y, z]) => [x - 1.5, y, z + 0.4]),
-                            S.seg(t, 58.5, 64.5), { turnRate: 0.3 });
-    speed = t < 64.5 ? 1 : 0;
+  } else if (t < 72) {                          // pushing the drum trolley
+    dist = S.followPath(op, TO_FILLER, S.seg(t, 63.4, 70.4), { turnRate: 0.3 });
+    speed = t < 70.4 ? 1 : 0; mode = 'push';
   } else {
     op.position.fromArray(FILL_STAND); op.rotation.y = Math.PI / 2;
   }
 
-  // pose
-  P.poseWalk(op, walkDist * 2.4, speed);
-  if (t >= 20 && t < 31)      P.poseCarry(op, 1);                       // carrying the bag
-  else if (t >= 31 && t < 37) P.poseLift(op, S.pulse(t, 32.6, 37, 0.9)); // tipping into port
-  else if (t >= 45 && t < 52) P.poseCarry(op, 0.65);                    // handling bins
-  else if (t >= 52 && t < 58) P.poseCarry(op, 0.8);                     // decanting
-  else if (t >= 66)           P.poseLift(op, S.pulse(t, 67, 73.4, 1.1)); // loading the filler
+  P.poseWalk(op, dist * 2.4, speed);
+  if (mode === 'push')          P.posePush(op, 1);
+  else if (t >= 16 && t < 24)   P.poseCarry(op, S.pulse(t, 16.4, 23.4, 1.0));
+  else if (t >= 38 && t < 45.6) P.poseLift(op, S.pulse(t, 39.6, 45.2, 0.9));
+  else if (t >= 53 && t < 63)   P.poseCarry(op, 0.8);
+  else if (t >= 72 && t < 80)   P.poseCarry(op, 0.85);
+  else if (t >= 80)             P.poseLift(op, S.pulse(t, 81, 87.4, 1.1));
 
-  // ---- sand bag ----
-  bag.visible = t >= 14 && t < 37.5;
+  // ---- bag trolley ----
+  if (t < 24) {
+    bagTrolley.position.set(-7.0, P.MEZZ_Y, -3.7); bagTrolley.rotation.y = 0.5;
+  } else if (t < 26.7) {
+    bagTrolley.position.copy(fwd(op, 1.15)); bagTrolley.rotation.y = op.rotation.y + Math.PI / 2;
+  } else if (t < 30.5) {
+    bagTrolley.position.set(L.x + 0.75, carY, L.z); bagTrolley.rotation.y = Math.PI / 2;
+  } else if (t < 38) {
+    bagTrolley.position.copy(fwd(op, 1.15)); bagTrolley.rotation.y = op.rotation.y + Math.PI / 2;
+  } else {
+    bagTrolley.position.set(MIX_STAND[0] + 0.9, 0, MIX_STAND[2] + 0.3);
+    bagTrolley.rotation.y = Math.PI / 2;
+  }
+
+  // ---- sand bag: racking -> trolley -> charge port ----
+  bag.visible = t >= 16 && t < 45.8;
   if (bag.visible) {
-    if (t < 20) {
-      // lifted off the rack shelf into the operator's hands
-      const u = S.segS(t, 14.5, 19);
-      _v.set(-9.6, P.MEZZ_Y + 1.15, -3.2);
+    if (t < 24) {
+      const u = S.segS(t, 16.6, 22.6);
+      _v.set(-9.6, P.MEZZ_Y + 1.15, -3.3);
       bag.position.lerpVectors(_v, new THREE.Vector3(
-        op.position.x + 0.55, op.position.y + 1.06, op.position.z), u);
-      bag.rotation.set(0, 0, 0);
-    } else if (t < 31) {
-      // carried in front of the chest
-      bag.position.set(
-        op.position.x + Math.sin(op.rotation.y) * 0.5,
-        op.position.y + 1.04,
-        op.position.z + Math.cos(op.rotation.y) * 0.5);
-      bag.rotation.set(0, op.rotation.y, 0);
+        bagTrolley.position.x, bagTrolley.position.y + 0.55, bagTrolley.position.z), u);
+      bag.rotation.set(0, 0.5 * u, 0);
+    } else if (t < 39.4) {
+      bag.position.set(bagTrolley.position.x, bagTrolley.position.y + 0.55, bagTrolley.position.z);
+      bag.rotation.set(0, bagTrolley.rotation.y, 0);
     } else {
-      // raised to the port and tipped
-      const lift = S.segS(t, 31.8, 34.2);
-      const tip  = S.segS(t, 34.2, 36.6);
+      const lf  = S.segS(t, 39.4, 42.4);
+      const tip = S.segS(t, 42.4, 44.9);
       _v.set(op.position.x + 0.5, op.position.y + 1.04, op.position.z);
-      bag.position.lerpVectors(_v, portW.clone().add(new THREE.Vector3(0.42, 0.34, 0)), lift);
+      bag.position.lerpVectors(_v, portW.clone().add(new THREE.Vector3(0.42, 0.34, 0)), lf);
       bag.rotation.set(0, 0, -tip * 1.5);
     }
   }
-  // sand pouring from the bag into the port
-  if (t >= 34.8 && t < 37.2) {
+  if (t >= 43.3 && t < 45.5) {
     streamBag.visible = true;
     P.setStream(streamBag, portW.x, portW.z, portW.y + 0.3, portW.y - 0.15);
   }
 
-  // ---- bin: filled at the mixer discharge, then decanted into the barrel ----
-  bin.visible = t >= 45 && t < 58;
+  // ---- drum rides its own trolley, pushed by hand ----
+  if (t < 63.4) {
+    drumTrolley.position.fromArray(DRUM_PARK); drumTrolley.rotation.y = Math.PI / 2;
+  } else if (t < 72) {
+    drumTrolley.position.copy(fwd(op, 1.25)); drumTrolley.rotation.y = op.rotation.y + Math.PI / 2;
+  } else {
+    drumTrolley.position.set(FILL_STAND[0] + 1.25, 0, FILL_STAND[2] - 0.25);
+    drumTrolley.rotation.y = Math.PI / 2;
+  }
+  drum.position.set(drumTrolley.position.x, drumTrolley.position.y + 0.35, drumTrolley.position.z);
+  drum.rotation.y = drumTrolley.rotation.y;
+  drum.userData.fill.scale.y = Math.max(0.001,
+    S.segS(t, 59.0, 61.8) * (1 - S.segS(t, 73.6, 78.6)));
+
+  // ---- bin: hopper -> bin -> drum, then drum -> bin -> filler ----
   const spoutW = new THREE.Vector3(MIX.x, mixer.userData.spoutY, MIX.z);
-  if (bin.visible) {
-    if (t < 52) {
-      bin.position.set(MIX.x, 0.02, MIX.z + 0.02);
-      bin.rotation.z = 0;
-      bin.userData.fill.scale.y = Math.max(0.001, S.segS(t, 45.6, 51.4));
-      if (t >= 45.6 && t < 51.4) {
+  bin.visible = (t >= 53 && t < 63) || (t >= 72);
+  if (t >= 53 && t < 63) {
+    if (t < 58) {
+      bin.position.set(MIX.x, 0.02, MIX.z + 0.02); bin.rotation.z = 0;
+      bin.userData.fill.scale.y = Math.max(0.001, S.segS(t, 53.6, 57.6));
+      if (t >= 53.6 && t < 57.6) {
         streamMix.visible = true;
         P.setStream(streamMix, spoutW.x, spoutW.z, spoutW.y, 0.42);
       }
     } else {
-      // carried across and tipped into the barrel
-      const u = S.segS(t, 52, 54);
-      const tip = S.segS(t, 54.4, 56.4);
+      const u   = S.segS(t, 58, 59.8);
+      const tip = S.segS(t, 60.0, 61.9);
       _v.set(MIX.x, 0.02, MIX.z + 0.02);
-      bin.position.lerpVectors(_v, new THREE.Vector3(1.5, 1.35, 1.5), u);
+      bin.position.lerpVectors(_v, new THREE.Vector3(
+        drum.position.x - 0.06, 1.58, drum.position.z + 0.36), u);
       bin.rotation.z = -tip * 2.0;
       bin.userData.fill.scale.y = Math.max(0.001, 1 - tip);
-      if (t >= 54.9 && t < 56.6) {
+      if (t >= 60.4 && t < 62.0) {
         streamBin.visible = true;
-        P.setStream(streamBin, 1.5, 1.2, 1.25, 1.06);
+        P.setStream(streamBin, drum.position.x, drum.position.z, 1.45, 1.14);
       }
     }
-  }
-
-  // ---- barrel + trolley ----
-  barrel.visible = t >= 52;
-  trolley.visible = t >= 58 && t < 66.5;
-  if (barrel.visible) {
-    if (t < 58) {
-      barrel.position.set(1.5, 0, 1.2);
-    } else if (t < 66) {
-      S.followPath(trolley, TROLLEY_PATH, S.seg(t, 58.5, 64.5), { turnRate: 0.3 });
-      barrel.position.set(trolley.position.x, 0.38, trolley.position.z);
-    } else {
-      barrel.position.set(FILL.x - 1.5, 0, 1.9);
-    }
-    barrel.userData.fill.scale.y = Math.max(0.001,
-      S.segS(t, 54.9, 56.6) * (t < 68 ? 1 : 1 - S.segS(t, 68, 73)));
-  }
-
-  // ---- final manual load into the filling machine ----
-  if (t >= 66) {
+  } else if (t >= 72) {
     const rimY = FILL.y + filler.userData.hopperRimY;
-    if (t >= 68.2 && t < 73.2) {
-      streamFill.visible = true;
-      P.setStream(streamFill, FILL.x, FILL.z, rimY + 0.1, rimY - 0.35);
+    if (t < 80) {
+      // scooping sand out of the drum into the bin, by hand
+      const u = S.segS(t, 73.6, 78.4);
+      bin.position.set(drum.position.x - 0.12, 1.46 - Math.sin(u * Math.PI * 2) * 0.2,
+                       drum.position.z + 0.42);
+      bin.rotation.z = 0;
+      bin.userData.fill.scale.y = Math.max(0.001, S.segS(t, 74.2, 78.6));
+      if (t >= 74.2 && t < 78.4) {
+        streamDrum.visible = true;
+        P.setStream(streamDrum, drum.position.x - 0.12, drum.position.z + 0.42, 1.52, 1.32);
+      }
+    } else {
+      const u   = S.segS(t, 80.6, 83.6);
+      const tip = S.segS(t, 83.8, 86.4);
+      _v.set(drum.position.x - 0.12, 1.46, drum.position.z + 0.42);
+      bin.position.lerpVectors(_v, new THREE.Vector3(FILL.x - 0.08, rimY + 0.46, FILL.z + 0.3), u);
+      bin.rotation.z = tip * 2.1;
+      bin.userData.fill.scale.y = Math.max(0.001, 1 - tip);
+      if (t >= 84.2 && t < 86.6) {
+        streamFill.visible = true;
+        P.setStream(streamFill, FILL.x, FILL.z, rimY + 0.12, rimY - 0.35);
+      }
+      filler.userData.hopFill.scale.y = Math.max(0.001, S.segS(t, 84.2, 87.2));
+      filler.userData.packs.position.x = S.seg(t, 84.6, 88) * 0.66;
     }
-    filler.userData.hopFill.scale.y = Math.max(0.001, S.segS(t, 68.2, 73.4));
-    // outfeed packs advance once the machine is fed
-    const adv = S.seg(t, 69, 74) * 0.66;
-    filler.userData.packs.position.x = adv;
   }
 }
 
@@ -295,7 +325,7 @@ let t = 0, playing = true, last = performance.now();
 
 const ui = S.buildUI(document.getElementById('ui'), {
   title: 'Sand Mixing — BEFORE',
-  subtitle: 'Current manual process · every transfer is carried by an operator',
+  subtitle: 'Current manual process · trolleys pushed by hand, lift, repeated bin handling',
   timeline: TL,
   accent: '#e08a4a',
   onSeek: (v) => { t = Math.max(0, Math.min(TL.duration - 0.001, v)); playing = false; draw(); },
@@ -321,12 +351,10 @@ addEventListener('resize', () => {
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
 });
-
 addEventListener('keydown', (e) => {
   if (e.code === 'Space') { e.preventDefault(); playing = !playing; last = performance.now(); }
 });
 
-// Offline capture hooks: deterministic seek + single render, no clock involved.
 window.__scene = {
   duration: TL.duration,
   steps: STEPS,

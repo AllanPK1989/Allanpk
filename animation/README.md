@@ -2,7 +2,7 @@
 
 Two 3D animations of the sand mixing process, walking the full flow in-to-out:
 
-- **`before.html`** — the current manual process (10 steps, 74 s)
+- **`before.html`** — the current manual process (10 steps, 88 s)
 - **`after.html`** — the same process with an **AMR** and a **cobot** (11 steps, 79 s)
 
 Rendered videos are in [`video/`](./video).
@@ -23,20 +23,20 @@ timeline · `◀ ▶` step between stations · <kbd>space</kbd> play/pause.
 
 ## The two scenarios
 
-### BEFORE — every transfer is carried by an operator
+### BEFORE — every move is manual, and handled twice
 
 | # | Step |
 |---|------|
 | 1 | Manufacturing Order released |
-| 2 | Operator walks ground floor → stairs → 2nd floor warehouse |
-| 3 | Collects sand bag from pallet racking |
-| 4 | Carries the bag back down to the mixing area |
-| 5 | Climbs the access platform and tips the bag into the charge port |
+| 2 | Operator takes the **passenger lift** up to the 2nd-floor warehouse |
+| 3 | Loads a sand bag from the racking onto a **bag trolley** |
+| 4 | **Pushes the bag trolley by hand** into the lift, down, and across the floor |
+| 5 | Lifts the bag off the trolley and tips it into the mixer charge port |
 | 6 | Mixing process runs — operator waits |
-| 7 | Discharges the bottom hopper into bins |
-| 8 | Transfers bins into a storage barrel (double handling) |
-| 9 | Trolleys the barrel to the filling machine |
-| 10 | Manually lifts sand into the machine's top hopper |
+| 7 | Bottom hopper → bin → drum, **by hand** (first double handling) |
+| 8 | **Pushes the drum trolley by hand** to the filling machine |
+| 9 | Fills the bin from the drum **by hand** (second double handling) |
+| 10 | Lifts the bin to the filling machine's top hopper |
 
 ### AFTER — material moves itself, the operator supervises
 
@@ -54,9 +54,9 @@ timeline · `◀ ▶` step between stations · <kbd>space</kbd> play/pause.
 | 10 | AMR drives to the filling machine |
 | 11 | Cobot lifts the barrel and discharges into the top hopper |
 
-The manual carry, the stair trips, the bin-to-barrel double handling and the
-trolley move all disappear; the repetitive lift at the filling machine is taken
-over by the cobot.
+Both trolley pushes, both by-hand bin transfers and the lift trip all disappear;
+the repetitive lift at the filling machine is taken over by the cobot. The only
+manual touch left in the AFTER loop is opening the bag.
 
 ## Layout
 
@@ -65,8 +65,8 @@ comparison is like-for-like — same building, same machines, same distances:
 
 ```
 mezzanine warehouse   x -15 … -4.5, floor at 4.2 m
-goods lift shaft      x -6,   z -7      (AFTER: AMR route down)
-stair flight          x -4.5, z 2 … 7   (BEFORE: operator route)
+lift shaft            x -6,   z -7      (BEFORE: passenger / AFTER: goods)
+stair flight          x -4.5, z 2 … 7   (scenery — not the route)
 sand mixing machine   x -1,   z 0
 sand storage hopper   x  3.5, z 0       (AFTER only)
 sand filling machine  x  8.5, z 0

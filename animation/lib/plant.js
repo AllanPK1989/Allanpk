@@ -819,3 +819,28 @@ export function solveCobot(cobot, targetWorld, { open = 0, wristExtra = 0 } = {}
   poseCobot(cobot, { yaw, shoulder, elbow, wrist: -(shoulder + elbow) + wristExtra, open });
   return { yaw, shoulder, elbow, reached: Math.hypot(r, h) <= dMax };
 }
+
+/** Both arms out and down, hands on a trolley handle. */
+export function posePush(op, t = 1) {
+  const { arms } = op.userData;
+  arms[0].rotation.x = -1.02 * t;
+  arms[1].rotation.x = -1.02 * t;
+}
+
+/** Heavier trolley for moving a drum. */
+export function makeDrumTrolley() {
+  const g = new THREE.Group();
+  const deck = box(1.15, 0.1, 0.95, MAT.steelDark);
+  deck.position.y = 0.3; shade(deck); g.add(deck);
+  const lip = box(1.15, 0.07, 0.06, MAT.yellow);
+  lip.position.set(0, 0.38, -0.44); shade(lip); g.add(lip);
+  const handle = box(0.07, 1.0, 0.07, MAT.painted);
+  handle.position.set(-0.52, 0.8, 0); shade(handle); g.add(handle);
+  const bar = box(0.07, 0.07, 0.78, MAT.painted);
+  bar.position.set(-0.52, 1.28, 0); shade(bar); g.add(bar);
+  for (const [x, z] of [[-0.42, -0.4], [-0.42, 0.4], [0.44, -0.4], [0.44, 0.4]]) {
+    const w = cyl(0.14, 0.14, 0.08, MAT.rubber, 14);
+    w.rotation.z = Math.PI / 2; w.position.set(x, 0.14, z); shade(w); g.add(w);
+  }
+  return g;
+}
