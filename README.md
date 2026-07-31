@@ -49,6 +49,11 @@ Installed under `.claude/`, so any Claude Code session opened in this repo picks
 | `modern-web-design` | 2024–25 design trends, micro-interactions, accessibility, performance |
 | `web3d-integration-patterns` | Meta-skill: combining the above into coherent multi-library architectures |
 
+### Authoring
+| Skill | Covers |
+|---|---|
+| `skill-creator-upstream` | Scaffolding new skills — `init_skill.py` template generator, structure validator, packager |
+
 Each skill ships `references/` (API guides, optimization checklists), `assets/` (runnable Vite starter
 projects), and `scripts/` (Python code generators).
 
@@ -67,9 +72,22 @@ Sourced from [freshtechbro/claudedesignskills](https://github.com/freshtechbro/c
 (MIT, upstream license retained at `.claude/skills/UPSTREAM-LICENSE`). Vendored rather than
 referenced so the content is pinned and reviewable in-tree.
 
-Not installed: upstream also ships a `skill-creator` skill, which is an older, less capable copy of
-the one built into Claude Code (no evals or benchmarking). Installing it would shadow the better
-version, so it was deliberately skipped.
+Upstream's `skill-creator` is installed as **`skill-creator-upstream`**. It is a smaller, older
+variant of the `skill-creator` built into Claude Code (5 files / 209 lines vs 18 files / 485 lines;
+the built-in adds eval, benchmarking, and description-optimization tooling that upstream lacks).
+Because the two share a name, installing it verbatim would have collided with the built-in, so it
+carries a suffixed directory and matching frontmatter `name:` — both are now usable side by side.
+
+It is worth having for one thing the built-in does not provide: `scripts/init_skill.py`, which
+scaffolds a new skill directory (SKILL.md + `scripts/`, `references/`, `assets/` examples) from a
+template. Use the built-in `skill-creator` for evaluating and optimizing skills.
+
+To install it under the bare name instead, accepting that it shadows the built-in:
+
+```bash
+git mv .claude/skills/skill-creator-upstream .claude/skills/skill-creator
+sed -i 's/^name: skill-creator-upstream$/name: skill-creator/' .claude/skills/skill-creator/SKILL.md
+```
 
 ## Verification
 
