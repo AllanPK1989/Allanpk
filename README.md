@@ -1,7 +1,7 @@
 # 3D Animation Design Skills
 
-Vendored Claude Code skill bundle for 3D graphics, motion, and animation design on the web.
-**22 skills, 23 subagents, 41 slash commands, ~17,700 lines of guidance.**
+Claude Code skill bundle for 3D graphics, motion, image generation, and animation design on the web.
+**23 skills, 24 subagents, 43 slash commands, ~18,300 lines of guidance.**
 
 ## What's here
 
@@ -49,6 +49,11 @@ Installed under `.claude/`, so any Claude Code session opened in this repo picks
 | `modern-web-design` | 2024–25 design trends, micro-interactions, accessibility, performance |
 | `web3d-integration-patterns` | Meta-skill: combining the above into coherent multi-library architectures |
 
+### Image generation
+| Skill | Covers |
+|---|---|
+| `nano-banana` | Gemini image models (Nano Banana / Pro) — text→image, image editing, multi-image composition, text-in-image, sketch→photoreal |
+
 ### Authoring
 | Skill | Covers |
 |---|---|
@@ -66,9 +71,33 @@ python3 .claude/skills/threejs-webgl/scripts/setup_scene.py \
   --renderer webgpu --lighting physical --shadows --antialias --output scene.js
 ```
 
+### `nano-banana` (locally authored)
+
+The one skill here that is not vendored. Wraps Google's Gemini image models through the
+`generateContent` API — generation, image-to-image editing, multi-reference composition,
+text rendering, and technical-drawing→photoreal conversion.
+
+```bash
+export GEMINI_API_KEY="..."   # https://aistudio.google.com/apikey
+
+.claude/skills/nano-banana/scripts/nano_banana.py models          # what this key can reach
+.claude/skills/nano-banana/scripts/nano_banana.py generate \
+  "A weathered brass sextant on a navigator's chart, morning window light, 85mm" \
+  -o out/sextant.png -a 3:2
+
+.claude/skills/nano-banana/scripts/sketch_to_photo.py drawing.png -o out/machine.png \
+  --subject "7-station automated dispensing machine" --preset factory
+```
+
+Both scripts are standard library only — no `pip install`. Slash commands:
+`/nano-banana-generate`, `/nano-banana-sketch_to_photo`. Subagent:
+`nano-banana-image-director`. Model IDs move as previews reach GA, so the `models`
+subcommand queries the live list rather than trusting the table in the skill.
+
 ## Provenance
 
-Sourced from [freshtechbro/claudedesignskills](https://github.com/freshtechbro/claudedesignskills)
+The 22 design/animation skills are sourced from
+[freshtechbro/claudedesignskills](https://github.com/freshtechbro/claudedesignskills)
 (MIT, upstream license retained at `.claude/skills/UPSTREAM-LICENSE`). Vendored rather than
 referenced so the content is pinned and reviewable in-tree.
 
@@ -97,7 +126,7 @@ prompt-injection patterns. Two flagged code sites were read and cleared as benig
 and an `npm install` in the barba-js scaffolder, gated behind `--no-install` and only reachable on
 explicit invocation.
 
-Frontmatter validated across all 22 skills. All 43 bundled generators were executed:
+Frontmatter validated across all 22 vendored skills. All 43 bundled generators were executed:
 
 - **39** run standalone.
 - **4** require a host application by design — `blender-web-pipeline` (3 scripts, need Blender's
