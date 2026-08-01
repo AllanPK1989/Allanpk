@@ -526,65 +526,153 @@ export function buildMixer() {
 
 // ── Sand filling machine ─────────────────────────────────────────────────
 export function buildFiller() {
+  // Four-station fuse sand-filling machine, from the reference diagram:
+  // quartz sand hopper -> feed manifold -> four filling cylinders -> nozzles
+  // into fuse bodies held in fixtures, over a sand spill tray, on a control
+  // cabinet with castors and levelling feet, HMI on a side bracket.
+  //
+  // This replaced a generic hopper-and-conveyor machine. The product is fuse
+  // bodies, not sacks, so the outfeed packs are gone.
   const g = new THREE.Group();
   g.position.copy(FILLER_POS);
 
-  const base = box(2.2, 1.0, 1.5, MAT.painted);
-  base.position.y = 0.5; shade(base); g.add(base);
-  const frame = box(1.5, 0.34, 1.2, MAT.steelDark);
-  frame.position.y = 1.17; shade(frame); g.add(frame);
+  const W = 1.5, D = 0.78;
+  const CAB_TOP = 0.80, DECK = 0.95, RAIL = 1.62;
+  const HOP_BOT = 1.70, HOP_TOP = 1.95;
+  g.userData.hopperRimY = HOP_TOP;
 
-  // top hopper — manual lift target in BEFORE, cobot discharge target in AFTER.
-  // Rim at 1.95 m: liftable by hand (chest height) and inside a deck-mounted
-  // cobot's reach, which is what makes both scenarios physically plausible.
-  const hop = new THREE.Mesh(new THREE.CylinderGeometry(0.68, 0.28, 0.62, 22, 1, true), MAT.steel);
+  // ---- castors and levelling feet ----
+  for (const s of [-1, 1]) {
+    const cas = cyl(0.075, 0.075, 0.05, MAT.rubber, 12);
+    cas.rotation.z = Math.PI / 2;
+    cas.position.set(s * (W / 2 - 0.1), 0.075, D / 2 - 0.1); shade(cas); g.add(cas);
+    const yoke = box(0.07, 0.09, 0.09, MAT.steelDark);
+    yoke.position.set(s * (W / 2 - 0.1), 0.15, D / 2 - 0.1); shade(yoke); g.add(yoke);
+
+    const stem = cyl(0.03, 0.03, 0.16, MAT.steelDark, 8);
+    stem.position.set(s * (W / 2 - 0.42), 0.1, D / 2 - 0.1); shade(stem); g.add(stem);
+    const pad = cyl(0.075, 0.075, 0.025, MAT.steelDark, 10);
+    pad.position.set(s * (W / 2 - 0.42), 0.02, D / 2 - 0.1); shade(pad); g.add(pad);
+  }
+
+  // ---- control cabinet ----
+  const cab = box(W, CAB_TOP - 0.18, D, MAT.paintedLt);
+  cab.position.y = (CAB_TOP + 0.18) / 2; shade(cab); g.add(cab);
+  for (const s of [-1, 1]) {                       // twin doors with handles
+    const door = box(W / 2 - 0.06, CAB_TOP - 0.3, 0.02, MAT.steelMatte);
+    door.position.set(s * W / 4, (CAB_TOP + 0.18) / 2, D / 2 + 0.012);
+    shade(door); g.add(door);
+    const handle = box(0.02, 0.16, 0.025, MAT.steelDark);
+    handle.position.set(s * 0.05, (CAB_TOP + 0.18) / 2, D / 2 + 0.03);
+    shade(handle); g.add(handle);
+  }
+
+  // ---- open working frame above the cabinet ----
+  for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+    const post = box(0.075, RAIL - CAB_TOP, 0.075, MAT.steelDark);
+    post.position.set(x * (W / 2 - 0.05), (RAIL + CAB_TOP) / 2, z * (D / 2 - 0.05));
+    shade(post); g.add(post);
+  }
+  const topRail = box(W, 0.07, D, MAT.steelDark);
+  topRail.position.y = RAIL; shade(topRail); g.add(topRail);
+
+  // ---- sand spill tray ----
+  const tray = box(W - 0.16, 0.05, D - 0.18, MAT.steelMatte);
+  tray.position.y = 0.87; shade(tray); g.add(tray);
+  const spill = box(W - 0.22, 0.02, D - 0.24, MAT.sand);
+  spill.position.y = 0.905; g.add(spill);
+
+  // ---- station deck ----
+  const deck = box(W - 0.12, 0.05, D - 0.2, MAT.steelDark);
+  deck.position.y = DECK; shade(deck); g.add(deck);
+
+  // ---- four filling stations ----
+  const fuses = [];
+  const xs = [-0.5, -0.17, 0.17, 0.5];
+  for (const x of xs) {
+    // holding fixture
+    const shim = box(0.2, 0.03, 0.2, MAT.steelMatte);
+    shim.position.set(x, DECK + 0.04, 0); shade(shim); g.add(shim);
+    const fix = box(0.19, 0.15, 0.19, MAT.rubber);
+    fix.position.set(x, DECK + 0.13, 0); shade(fix); g.add(fix);
+
+    // fuse body + its sand fill
+    const body = cyl(0.055, 0.055, 0.3, MAT.bag, 14);
+    body.position.set(x, DECK + 0.35, 0); shade(body); g.add(body);
+    const fill = cyl(0.048, 0.048, 0.28, MAT.sand, 12);
+    fill.position.set(x, DECK + 0.34, 0); fill.scale.y = 0.001; g.add(fill);
+    fuses.push(fill);
+
+    const cap = cyl(0.07, 0.07, 0.035, MAT.steelMatte, 14);
+    cap.position.set(x, DECK + 0.52, 0); shade(cap); g.add(cap);
+
+    // filling nozzle
+    const noz = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.07, 0.03, 0.11, 12), MAT.steelMatte);
+    noz.position.set(x, DECK + 0.60, 0); shade(noz); g.add(noz);
+    const stem = cyl(0.02, 0.02, 0.12, MAT.steelMatte, 8);
+    stem.position.set(x, DECK + 0.71, 0); shade(stem); g.add(stem);
+
+    // filling cylinder + guide rod
+    const cylBody = box(0.11, 0.24, 0.11, MAT.steelDark);
+    cylBody.position.set(x, DECK + 0.9, 0); shade(cylBody); g.add(cylBody);
+    const rod = box(0.025, 0.3, 0.025, MAT.steelMatte);
+    rod.position.set(x + 0.08, DECK + 0.86, 0); shade(rod); g.add(rod);
+
+    // feed hose curving down from the manifold
+    const hose = new THREE.Mesh(new THREE.TubeGeometry(
+      new THREE.CatmullRomCurve3([
+        new THREE.Vector3(x - 0.14, HOP_BOT - 0.06, 0),
+        new THREE.Vector3(x - 0.16, DECK + 1.12, 0.02),
+        new THREE.Vector3(x - 0.02, DECK + 1.04, 0),
+      ]), 14, 0.022, 8, false), MAT.rubber);
+    shade(hose); g.add(hose);
+  }
+  g.userData.fuses = fuses;
+
+  // ---- feed manifold ----
+  const man = box(W - 0.24, 0.09, 0.26, MAT.steelMatte);
+  man.position.y = HOP_BOT - 0.05; shade(man); g.add(man);
+
+  // ---- quartz sand hopper (wide at the top, tapering into the manifold) ----
+  const hop = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.78, 0.22, HOP_TOP - HOP_BOT, 4, 1, true), MAT.steelMatte);
   hop.material.side = THREE.DoubleSide;
-  hop.position.y = 1.62; shade(hop); g.add(hop);
-  const rim = cyl(0.7, 0.7, 0.06, MAT.painted, 22);
-  rim.position.y = 1.94; shade(rim); g.add(rim);
-  g.userData.hopperRimY = 1.95;
+  hop.rotation.y = Math.PI / 4;
+  hop.scale.set(1.36, 1, 0.58);
+  hop.position.y = (HOP_TOP + HOP_BOT) / 2; shade(hop); g.add(hop);
+  const hopLip = box(W + 0.02, 0.045, 0.68, MAT.steelDark);
+  hopLip.position.y = HOP_TOP; shade(hopLip); g.add(hopLip);
 
-  const hopFill = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.28, 0.56, 18), MAT.sand);
-  hopFill.position.y = 1.6; hopFill.scale.y = 0.001; g.add(hopFill);
+  // sand level inside the hopper
+  const hopFill = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.72, 0.21, HOP_TOP - HOP_BOT - 0.05, 4), MAT.sand);
+  hopFill.rotation.y = Math.PI / 4;
+  hopFill.scale.set(1.36, 0.001, 0.58);
+  hopFill.position.y = HOP_BOT + 0.02; g.add(hopFill);
   g.userData.hopFill = hopFill;
 
-  // outfeed conveyor with filled packs
-  const belt = box(3.0, 0.09, 0.6, MAT.rubber);
-  belt.position.set(2.4, 0.72, 0); shade(belt); g.add(belt);
-  for (const x of [1.4, 2.4, 3.4]) {
-    for (const z of [0.24, -0.24]) {
-      const l = box(0.08, 0.68, 0.08, MAT.steelDark);
-      l.position.set(x, 0.34, z); shade(l); g.add(l);
-    }
-  }
-  const packs = new THREE.Group();
-  for (let i = 0; i < 4; i++) {
-    const p = box(0.36, 0.26, 0.4, MAT.bag);
-    p.position.set(1.35 + i * 0.66, 0.9, 0); shade(p); packs.add(p);
-  }
-  g.add(packs);
-  g.userData.packs = packs;
+  // ---- HMI touchscreen on a side bracket ----
+  const brk = box(0.16, 0.05, 0.05, MAT.steelDark);
+  brk.position.set(-(W / 2 + 0.08), 1.32, 0.1); shade(brk); g.add(brk);
+  const hmiBody = box(0.05, 0.3, 0.38, MAT.rubber);
+  hmiBody.position.set(-(W / 2 + 0.18), 1.32, 0.1); shade(hmiBody); g.add(hmiBody);
+  const hmiScr = box(0.02, 0.22, 0.3, MAT.screen);
+  hmiScr.position.set(-(W / 2 + 0.21), 1.32, 0.1); g.add(hmiScr);
+  g.userData.hmi = hmiScr;
 
-  const panel = box(0.38, 0.46, 0.09, MAT.painted);
-  panel.position.set(-1.25, 1.1, 0.6); shade(panel); g.add(panel);
-  const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 10), MAT.red);
-  lamp.position.set(-1.25, 1.32, 0.66); g.add(lamp);
+  const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.05, 10, 10), MAT.red);
+  lamp.position.set(W / 2 - 0.12, 1.45, D / 2 - 0.05); g.add(lamp);
   g.userData.lamp = lamp;
 
-  // fabrication detail
-  const rimFl = cyl(0.72, 0.72, 0.04, MAT.steelDark, 22);
-  rimFl.position.y = 1.3; shade(rimFl); g.add(rimFl);
-  g.add(boltRing(0.69, 1.3, 12, 0.03));
-  const feet = [[-0.9, 0.6], [0.9, 0.6], [-0.9, -0.6], [0.9, -0.6]];
-  for (const [x, z] of feet) {
-    const f = box(0.22, 0.06, 0.22, MAT.steelDark);
-    f.position.set(x, 0.03, z); shade(f); g.add(f);
-  }
-  // guarding posts
-  for (const [x, z] of [[-1.15, 0.85], [1.15, 0.85]]) {
-    const post = cyl(0.045, 0.045, 1.1, MAT.yellow, 10);
-    post.position.set(x, 0.55, z); shade(post); g.add(post);
-  }
+  // step for the manual load in BEFORE — the hopper lip is at 2.12m
+  const step = box(0.7, 0.22, 0.45, MAT.steelDark);
+  step.position.set(-(W / 2 + 0.42), 0.11, 0.5); shade(step); g.add(step);
+  g.userData.stepY = 0.22;
+
+  // kept so existing scene code that referenced the old outfeed still runs
+  g.userData.packs = new THREE.Group();
+  g.add(g.userData.packs);
 
   return g;
 }

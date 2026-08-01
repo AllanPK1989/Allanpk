@@ -132,9 +132,9 @@ const rig = new S.CameraRig(camera, [
   { t: 56, pos: [ 2.3,  1.6,  3.9], target: [-0.3, 0.72, 0.8] },
   { t: 63, pos: [ 4.8,  2.7,  7.6], target: [ 1.4, 1.0,  2.0] },
   { t: 68, pos: [ 7.6,  3.0,  8.4], target: [ 4.8, 1.0,  2.2] },
-  { t: 72, pos: [10.0,  2.6,  6.8], target: [ 7.2, 1.1,  1.4] },
-  { t: 80, pos: [10.4,  2.5,  6.2], target: [ 7.8, 1.3,  0.9] },
-  { t: 88, pos: [11.0,  2.4,  5.8], target: [ 8.3, 1.3,  0.7] },
+  { t: 72, pos: [ 9.6,  2.2,  4.6], target: [ 7.7, 1.15, 0.9] },
+  { t: 80, pos: [ 9.9,  2.3,  4.2], target: [ 8.2, 1.45, 0.5] },
+  { t: 88, pos: [10.2,  2.2,  3.9], target: [ 8.4, 1.35, 0.4] },
 ]);
 
 // ── Frame state ──────────────────────────────────────────────────────────
@@ -212,7 +212,9 @@ function update(t) {
     dist = S.followPath(op, TO_FILLER, S.seg(t, 63.4, 70.4), { turnRate: 0.3 });
     speed = t < 70.4 ? 1 : 0; mode = 'push';
   } else {
-    op.position.fromArray(FILL_STAND); op.rotation.y = Math.PI / 2;
+    const su = S.segS(t, 79.6, 80.8);
+    op.position.set(FILL_STAND[0] + 0.25 * su, 0.22 * su, FILL_STAND[2] - 0.4 * su);
+    op.rotation.y = Math.PI / 2;
   }
 
   P.poseWalk(op, dist * 2.4, speed);
@@ -325,7 +327,9 @@ function update(t) {
         P.setStream(streamFill, FILL.x, FILL.z, rimY + 0.12, rimY - 0.35);
       }
       filler.userData.hopFill.scale.y = Math.max(0.001, S.segS(t, 84.2, 87.2));
-      filler.userData.packs.position.x = S.seg(t, 84.6, 88) * 0.66;
+        filler.userData.fuses.forEach((f, i) => {
+        f.scale.y = Math.max(0.001, S.segS(t, 84.8 + i * 0.5, 87.4 + i * 0.5));
+      });
     }
   }
 }

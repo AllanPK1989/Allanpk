@@ -123,8 +123,8 @@ const rig = new S.CameraRig(camera, [
   { t: 52, pos: [ 4.6,  3.6,  8.6], target: [ 1.4, 2.4,  0.2] },
   { t: 58, pos: [ 6.4,  2.4,  5.4], target: [ 3.4, 1.2,  0.2] },
   { t: 66, pos: [ 8.2,  3.0,  7.4], target: [ 5.6, 1.1,  0.8] },
-  { t: 72, pos: [10.6,  2.4,  5.6], target: [ 7.8, 1.4,  0.7] },
-  { t: 79, pos: [11.2,  2.3,  5.2], target: [ 8.3, 1.3,  0.6] },
+  { t: 72, pos: [ 9.9,  2.3,  4.2], target: [ 8.1, 1.4,  0.5] },
+  { t: 79, pos: [10.3,  2.2,  3.9], target: [ 8.4, 1.35, 0.4] },
 ]);
 
 // ── Frame state ──────────────────────────────────────────────────────────
@@ -296,7 +296,7 @@ function update(t) {
   } else {
     const u = S.segS(t, 71.4, 75.4);
     const overDeck = new THREE.Vector3(deckSpot.x, DECK_Y + 0.95, deckSpot.z);
-    const overRim  = new THREE.Vector3(FILL.x, FILL_RIM + 0.78, FILL.z + 0.06);
+    const overRim  = new THREE.Vector3(FILL.x - 0.1, FILL_RIM + 0.28, FILL.z + 0.28);
     cobTarget.lerpVectors(overDeck, overRim, u);
     cobTarget.y += Math.sin(u * Math.PI) * 0.16;                 // slight arc
     const tipW = S.segS(t, 75.6, 77.8) * 2.0;                    // wrist rolls to pour
@@ -309,7 +309,9 @@ function update(t) {
     P.setStream(streamFill, FILL.x, FILL.z, FILL_RIM + 0.1, FILL_RIM - 0.35);
   }
   filler.userData.hopFill.scale.y = Math.max(0.001, S.segS(t, 75.8, 78.4));
-  filler.userData.packs.position.x = S.seg(t, 76, 79) * 0.66;
+  filler.userData.fuses.forEach((f, i) => {
+    f.scale.y = Math.max(0.001, S.segS(t, 76.2 + i * 0.4, 78.4 + i * 0.4));
+  });
 }
 
 // ── Playback ─────────────────────────────────────────────────────────────
