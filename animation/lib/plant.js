@@ -13,6 +13,7 @@
 
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { makeMaterials } from './textures.js';
 
 export const FLOOR_Y = 0;
 export const MEZZ_Y  = 4.2;
@@ -24,39 +25,44 @@ export const FILLER_POS  = new THREE.Vector3(8.5, 0, 0);
 export const RACK_POS     = new THREE.Vector3(-10, MEZZ_Y, -4);
 
 // ── Materials ────────────────────────────────────────────────────────────
-const mat = (c, r, m, extra = {}) =>
-  new THREE.MeshStandardMaterial({
-    color: c, roughness: r, metalness: m, envMapIntensity: 0.45, ...extra });
+// Flat colours were the single biggest reason the first pass read as a diagram.
+// These are real PBR materials with colour, roughness and normal maps — see
+// textures.js. Solid colours are kept only for lamps and screens, where a
+// texture would be wrong.
+const solid = (c, r, m, extra = {}) =>
+  new THREE.MeshStandardMaterial({ color: c, roughness: r, metalness: m, envMapIntensity: 0.5, ...extra });
+
+const TX = makeMaterials();
 
 export const MAT = {
-  concrete:  mat(0x55585d, 0.96, 0.02),
-  concreteD: mat(0x44474b, 0.96, 0.02),
-  wall:      mat(0x6a7079, 0.94, 0.02),
-  steel:     mat(0xb6bcc4, 0.38, 0.85),
-  steelMatte:mat(0xa9b0b8, 0.62, 0.62),
-  steelDark: mat(0x6d747d, 0.45, 0.8),
-  painted:   mat(0x2f6f9e, 0.55, 0.35),   // equipment blue
-  paintedLt: mat(0x4a90c4, 0.55, 0.3),
-  yellow:    mat(0xe0a52a, 0.6, 0.2),
-  safety:    mat(0xd8b02a, 0.85, 0.05),   // floor markings
-  rubber:    mat(0x23262b, 0.95, 0.05),
-  sand:      mat(0xc9a86c, 0.95, 0.0),
-  sandDark:  mat(0xa88954, 0.95, 0.0),
-  bag:       mat(0xdcd3c0, 0.9, 0.02),
-  barrel:    mat(0x2f6f9e, 0.5, 0.4),
-  barrelRim: mat(0x9aa3ad, 0.4, 0.8),
-  amr:       mat(0x2b3038, 0.5, 0.5),
-  amrTop:    mat(0x3a4149, 0.55, 0.45),
-  cobot:     mat(0xe8e9ea, 0.42, 0.35),
-  cobotJoint:mat(0x2b6ca8, 0.45, 0.5),
-  hiVis:     mat(0xd4d33a, 0.85, 0.02),
-  skin:      mat(0xc79b74, 0.85, 0.02),
-  trouser:   mat(0x34435c, 0.9, 0.02),
-  glass:     mat(0x8fb6cc, 0.15, 0.1, { transparent: true, opacity: 0.28 }),
-  green:     mat(0x35c06a, 0.5, 0.1, { emissive: 0x1d7a40, emissiveIntensity: 0.7 }),
-  red:       mat(0xd8453f, 0.5, 0.1, { emissive: 0x8a1f1b, emissiveIntensity: 0.7 }),
-  amber:     mat(0xe8a32a, 0.5, 0.1, { emissive: 0x9c6408, emissiveIntensity: 0.7 }),
-  screen:    mat(0x11202e, 0.4, 0.1, { emissive: 0x1d5c8a, emissiveIntensity: 0.55 }),
+  concrete:  TX.concrete,
+  concreteD: TX.concreteD,
+  wall:      TX.wall,
+  steel:     TX.steel,
+  steelMatte:TX.steelMatte,
+  steelDark: TX.steelDark,
+  painted:   TX.painted,
+  paintedLt: TX.paintedLt,
+  yellow:    TX.yellow,
+  safety:    solid(0xd8b02a, 0.82, 0.05),
+  rubber:    TX.rubber,
+  sand:      TX.sand,
+  sandDark:  solid(0xa88954, 0.95, 0.0),
+  bag:       TX.bag,
+  barrel:    TX.painted,
+  barrelRim: TX.steelDark,
+  amr:       TX.amrBody,
+  amrTop:    TX.steelDark,
+  cobot:     solid(0xe6e8ea, 0.38, 0.3),
+  cobotJoint:solid(0x2b6ca8, 0.42, 0.5),
+  hiVis:     solid(0xd6d53c, 0.82, 0.02),
+  skin:      solid(0xc79b74, 0.8, 0.02),
+  trouser:   solid(0x33425a, 0.9, 0.02),
+  glass:     solid(0x8fb6cc, 0.12, 0.1, { transparent: true, opacity: 0.22 }),
+  green:     solid(0x35c06a, 0.5, 0.1, { emissive: 0x1d7a40, emissiveIntensity: 1.1 }),
+  red:       solid(0xd8453f, 0.5, 0.1, { emissive: 0x8a1f1b, emissiveIntensity: 1.1 }),
+  amber:     solid(0xe8a32a, 0.5, 0.1, { emissive: 0x9c6408, emissiveIntensity: 1.1 }),
+  screen:    solid(0x11202e, 0.35, 0.1, { emissive: 0x1d6ea8, emissiveIntensity: 0.9 }),
 };
 
 const box = (w, h, d, m) => new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m);
@@ -158,6 +164,41 @@ export function buildShell() {
   for (let i = -3; i <= 3; i++) {
     const tr = box(30, 0.16, 0.16, MAT.steelDark);
     tr.position.set(0, 8.45, i * 3); shade(tr); g.add(tr);
+  }
+
+  // clerestory windows: a real bay has daylight, and the bright strips give
+  // the back wall depth instead of reading as a flat panel
+  for (let i = -3; i <= 3; i++) {
+    const win = box(3.0, 1.5, 0.08, MAT.glass);
+    win.position.set(i * 4.0, 7.0, -9.85); g.add(win);
+    const glow = new THREE.Mesh(new THREE.PlaneGeometry(3.0, 1.5),
+      new THREE.MeshBasicMaterial({ color: 0xbdd6f2, transparent: true, opacity: 0.5 }));
+    glow.position.set(i * 4.0, 7.0, -9.78); g.add(glow);
+    const mull = box(0.08, 1.5, 0.12, MAT.steelDark);
+    mull.position.set(i * 4.0, 7.0, -9.8); shade(mull); g.add(mull);
+  }
+
+  // cable tray + conduit along the back wall
+  const tray = box(28, 0.12, 0.4, MAT.steelDark);
+  tray.position.set(0, 5.6, -9.5); shade(tray); g.add(tray);
+  for (const y of [5.2, 5.0]) {
+    const pipe = cyl(0.07, 0.07, 28, MAT.steelDark, 10);
+    pipe.rotation.z = Math.PI / 2; pipe.position.set(0, y, -9.55);
+    shade(pipe); g.add(pipe);
+  }
+  for (let i = -6; i <= 6; i++) {
+    const brk = box(0.08, 0.5, 0.3, MAT.steelDark);
+    brk.position.set(i * 2.2, 5.35, -9.65); shade(brk); g.add(brk);
+  }
+
+  // column base plates and gussets
+  for (const z of [-8, -4, 0, 4, 8]) {
+    const bp = box(0.7, 0.06, 0.7, MAT.steelDark);
+    bp.position.set(MEZZ_X - 0.4, 0.03, z); shade(bp); g.add(bp);
+    for (const s of [-1, 1]) {
+      const gus = box(0.05, 0.5, 0.34, MAT.steelDark);
+      gus.position.set(MEZZ_X - 0.4 + s * 0.2, 0.3, z); shade(gus); g.add(gus);
+    }
   }
 
   // floor safety marking down the main aisle
@@ -316,6 +357,20 @@ export function makeTrolley() {
 }
 
 // ── Sand mixing machine ──────────────────────────────────────────────────
+/** Ring of bolt heads — cheap detail that makes a vessel read as fabricated. */
+function boltRing(radius, y, count, r = 0.035, m = MAT.steelDark) {
+  const g = new THREE.Group();
+  for (let i = 0; i < count; i++) {
+    const a = (i / count) * Math.PI * 2;
+    const b = cyl(r, r, 0.05, m, 6);
+    b.rotation.x = Math.PI / 2;
+    b.position.set(Math.cos(a) * radius, y, Math.sin(a) * radius);
+    b.rotation.z = a;
+    shade(b); g.add(b);
+  }
+  return g;
+}
+
 export function buildMixer() {
   const g = new THREE.Group();
   g.position.copy(MIXER_POS);
@@ -380,6 +435,19 @@ export function buildMixer() {
   shaft.position.y = 1.9; g.add(shaft);
   g.userData.shaft = shaft;
 
+  // fabrication detail
+  const fl1 = cyl(0.89, 0.89, 0.05, MAT.steelDark, 26); fl1.position.y = 1.25; shade(fl1); g.add(fl1);
+  const fl2 = cyl(0.89, 0.89, 0.05, MAT.steelDark, 26); fl2.position.y = 2.15; shade(fl2); g.add(fl2);
+  g.add(boltRing(0.86, 1.25, 16));
+  g.add(boltRing(0.86, 2.15, 16));
+  g.add(boltRing(0.36, 2.57, 8, 0.028));
+  // drive belt guard + inspection light
+  const guard = box(0.18, 0.5, 0.34, MAT.steelDark);
+  guard.position.set(-0.55, 2.05, 0); shade(guard); g.add(guard);
+  // discharge pipework
+  const elbow = cyl(0.11, 0.11, 0.5, MAT.steelDark, 12);
+  elbow.rotation.z = Math.PI / 2; elbow.position.set(0.3, 0.42, 0); shade(elbow); g.add(elbow);
+
   return g;
 }
 
@@ -429,6 +497,21 @@ export function buildFiller() {
   const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 10), MAT.red);
   lamp.position.set(-1.25, 1.32, 0.66); g.add(lamp);
   g.userData.lamp = lamp;
+
+  // fabrication detail
+  const rimFl = cyl(0.72, 0.72, 0.04, MAT.steelDark, 22);
+  rimFl.position.y = 1.3; shade(rimFl); g.add(rimFl);
+  g.add(boltRing(0.69, 1.3, 12, 0.03));
+  const feet = [[-0.9, 0.6], [0.9, 0.6], [-0.9, -0.6], [0.9, -0.6]];
+  for (const [x, z] of feet) {
+    const f = box(0.22, 0.06, 0.22, MAT.steelDark);
+    f.position.set(x, 0.03, z); shade(f); g.add(f);
+  }
+  // guarding posts
+  for (const [x, z] of [[-1.15, 0.85], [1.15, 0.85]]) {
+    const post = cyl(0.045, 0.045, 1.1, MAT.yellow, 10);
+    post.position.set(x, 0.55, z); shade(post); g.add(post);
+  }
 
   return g;
 }
@@ -551,38 +634,79 @@ export function makeOperator() {
   const g = new THREE.Group();
 
   const hips = new THREE.Group();
-  hips.position.y = 0.92; g.add(hips);
+  hips.position.y = 0.94; g.add(hips);
 
-  const torso = box(0.46, 0.62, 0.26, MAT.hiVis);
-  torso.position.y = 0.31; shade(torso); hips.add(torso);
-  const collar = box(0.48, 0.1, 0.28, MAT.painted);
-  collar.position.y = 0.6; shade(collar); hips.add(collar);
+  // torso tapers and has real depth — the flat slab read as a cardboard cutout
+  const pelvis = cyl(0.155, 0.15, 0.2, MAT.trouser, 12);
+  pelvis.position.y = 0.09; shade(pelvis); hips.add(pelvis);
 
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.115, 14, 12), MAT.skin);
-  head.position.y = 0.78; shade(head); hips.add(head);
-  const helmet = new THREE.Mesh(new THREE.SphereGeometry(0.135, 14, 10, 0, Math.PI * 2, 0, Math.PI / 2), MAT.yellow);
-  helmet.position.y = 0.8; shade(helmet); hips.add(helmet);
+  const chest = cyl(0.19, 0.155, 0.44, MAT.hiVis, 14);
+  chest.position.y = 0.4; shade(chest); hips.add(chest);
+
+  // hi-vis vest sits proud of the shirt, with reflective bands
+  const vest = cyl(0.198, 0.168, 0.34, MAT.hiVis, 14);
+  vest.position.y = 0.4; shade(vest); hips.add(vest);
+  for (const y of [0.34, 0.47]) {
+    const band = cyl(0.202, 0.185, 0.045, MAT.steel, 14);
+    band.position.y = y; shade(band); hips.add(band);
+  }
+
+  const shoulders = cyl(0.2, 0.2, 0.12, MAT.hiVis, 14);
+  shoulders.rotation.z = Math.PI / 2;
+  shoulders.scale.set(1, 1.85, 1);
+  shoulders.position.y = 0.6; shade(shoulders); hips.add(shoulders);
+
+  const neck = cyl(0.055, 0.06, 0.09, MAT.skin, 10);
+  neck.position.y = 0.68; shade(neck); hips.add(neck);
+
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.105, 16, 14), MAT.skin);
+  head.scale.set(0.92, 1.1, 1.0);
+  head.position.y = 0.79; shade(head); hips.add(head);
+
+  const helmet = new THREE.Mesh(
+    new THREE.SphereGeometry(0.125, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2), MAT.yellow);
+  helmet.scale.set(1, 0.92, 1.06);
+  helmet.position.y = 0.805; shade(helmet); hips.add(helmet);
+  const brim = cyl(0.135, 0.135, 0.018, MAT.yellow, 16);
+  brim.scale.set(1, 1, 1.25);
+  brim.position.set(0, 0.803, 0.03); shade(brim); hips.add(brim);
 
   const arms = [], legs = [];
   for (const s of [-1, 1]) {
     const shoulder = new THREE.Group();
-    shoulder.position.set(s * 0.3, 0.52, 0); hips.add(shoulder);
-    const arm = box(0.12, 0.56, 0.13, MAT.hiVis);
-    arm.position.y = -0.28; shade(arm); shoulder.add(arm);
-    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.075, 10, 8), MAT.skin);
-    hand.position.y = -0.56; shade(hand); shoulder.add(hand);
+    shoulder.position.set(s * 0.215, 0.575, 0); hips.add(shoulder);
+
+    const upper = cyl(0.058, 0.05, 0.3, MAT.hiVis, 10);
+    upper.position.y = -0.15; shade(upper); shoulder.add(upper);
+
+    const elbow = new THREE.Group();
+    elbow.position.y = -0.3; shoulder.add(elbow);
+    const fore = cyl(0.05, 0.043, 0.28, MAT.skin, 10);
+    fore.position.y = -0.14; shade(fore); elbow.add(fore);
+    const glove = new THREE.Mesh(new THREE.SphereGeometry(0.058, 10, 8), MAT.painted);
+    glove.scale.set(1, 1.25, 0.8);
+    glove.position.y = -0.3; shade(glove); elbow.add(glove);
+
     arms.push(shoulder);
+    shoulder.userData.elbow = elbow;
 
     const hip = new THREE.Group();
-    hip.position.set(s * 0.13, 0, 0); hips.add(hip);
-    const leg = box(0.155, 0.9, 0.17, MAT.trouser);
-    leg.position.y = -0.45; shade(leg); hip.add(leg);
-    const boot = box(0.17, 0.11, 0.26, MAT.rubber);
-    boot.position.set(0, -0.94, 0.04); shade(boot); hip.add(boot);
+    hip.position.set(s * 0.105, 0, 0); hips.add(hip);
+    const thigh = cyl(0.082, 0.068, 0.46, MAT.trouser, 10);
+    thigh.position.y = -0.23; shade(thigh); hip.add(thigh);
+
+    const knee = new THREE.Group();
+    knee.position.y = -0.46; hip.add(knee);
+    const shin = cyl(0.065, 0.055, 0.44, MAT.trouser, 10);
+    shin.position.y = -0.22; shade(shin); knee.add(shin);
+    const boot = box(0.105, 0.085, 0.24, MAT.rubber);
+    boot.position.set(0, -0.47, 0.045); shade(boot); knee.add(boot);
+
     legs.push(hip);
+    hip.userData.knee = knee;
   }
 
-  g.userData = { hips, arms, legs, head };
+  g.userData = { hips, arms, legs, head, helmet };
   return g;
 }
 
@@ -592,23 +716,33 @@ export function poseWalk(op, phase, speed = 1) {
   const a = Math.sin(phase) * 0.62 * speed;
   legs[0].rotation.x = a;
   legs[1].rotation.x = -a;
-  arms[0].rotation.x = -a * 0.8;
-  arms[1].rotation.x = a * 0.8;
-  hips.position.y = 0.92 + Math.abs(Math.sin(phase)) * 0.035 * speed;
+  // knees only bend backwards, and most on the recovery stroke
+  legs[0].userData.knee.rotation.x = -Math.max(0, -a * 1.5) - 0.06 * speed;
+  legs[1].userData.knee.rotation.x = -Math.max(0,  a * 1.5) - 0.06 * speed;
+  arms[0].rotation.x = -a * 0.75;
+  arms[1].rotation.x = a * 0.75;
+  arms[0].userData.elbow.rotation.x = -0.28 * speed;
+  arms[1].userData.elbow.rotation.x = -0.28 * speed;
+  hips.position.y = 0.94 + Math.abs(Math.sin(phase)) * 0.032 * speed;
+  hips.rotation.z = Math.sin(phase) * 0.03 * speed;
 }
 
 // Both arms forward, as if carrying a load.
 export function poseCarry(op, t = 1) {
   const { arms } = op.userData;
-  arms[0].rotation.x = -1.35 * t;
-  arms[1].rotation.x = -1.35 * t;
+  for (const a of arms) {
+    a.rotation.x = -1.15 * t;
+    a.userData.elbow.rotation.x = -0.85 * t;
+  }
 }
 
 // Both arms raised overhead, as if lifting to a high port.
 export function poseLift(op, t = 1) {
   const { arms } = op.userData;
-  arms[0].rotation.x = -2.5 * t;
-  arms[1].rotation.x = -2.5 * t;
+  for (const a of arms) {
+    a.rotation.x = -2.35 * t;
+    a.userData.elbow.rotation.x = -0.45 * t;
+  }
 }
 
 // ── AMR ──────────────────────────────────────────────────────────────────
@@ -748,33 +882,43 @@ export function addLighting(scene, renderer) {
   scene.environment = envRT.texture;
   pmrem.dispose();
 
-  const hemi = new THREE.HemisphereLight(0xb9cbe4, 0x2a2925, 0.34);
+  const hemi = new THREE.HemisphereLight(0xa8c2e0, 0x241f18, 0.30);
   scene.add(hemi);
 
-  const ambient = new THREE.AmbientLight(0xffffff, 0.10);
+  const ambient = new THREE.AmbientLight(0xffffff, 0.055);
   scene.add(ambient);
 
   // single shadow caster keeps software rendering affordable
-  const key = new THREE.DirectionalLight(0xfff2da, 3.1);
+  const key = new THREE.DirectionalLight(0xffeacc, 3.6);
   key.position.set(9, 15, 11);
   key.castShadow = true;
-  key.shadow.mapSize.set(1024, 1024);
+  key.shadow.mapSize.set(2048, 2048);
   key.shadow.camera.near = 4;
   key.shadow.camera.far = 48;
   key.shadow.camera.left = -20;
   key.shadow.camera.right = 20;
   key.shadow.camera.top = 16;
   key.shadow.camera.bottom = -12;
-  key.shadow.bias = -0.0016;
+  key.shadow.bias = -0.0009;
+  key.shadow.normalBias = 0.02;
+  key.shadow.radius = 2.2;
   scene.add(key);
 
-  const fill = new THREE.DirectionalLight(0x9fb8d8, 0.34);
+  const fill = new THREE.DirectionalLight(0x86a6cf, 0.42);
   fill.position.set(-12, 8, 6);
   scene.add(fill);
 
-  const back = new THREE.DirectionalLight(0x8fa8cc, 0.5);
+  const back = new THREE.DirectionalLight(0x7f9ec6, 0.62);
   back.position.set(-4, 6, -14);
   scene.add(back);
+
+  // practical high-bay lights over the aisle: adds falloff and pooling that a
+  // purely directional rig never produces
+  for (const x of [-8, -1, 6, 12]) {
+    const bay = new THREE.PointLight(0xffe6c0, 26, 15, 2);
+    bay.position.set(x, 7.6, 1);
+    scene.add(bay);
+  }
 
   return { key, fill, back, hemi, ambient, envRT };
 }
@@ -823,8 +967,10 @@ export function solveCobot(cobot, targetWorld, { open = 0, wristExtra = 0 } = {}
 /** Both arms out and down, hands on a trolley handle. */
 export function posePush(op, t = 1) {
   const { arms } = op.userData;
-  arms[0].rotation.x = -1.02 * t;
-  arms[1].rotation.x = -1.02 * t;
+  for (const a of arms) {
+    a.rotation.x = -1.0 * t;
+    a.userData.elbow.rotation.x = -0.2 * t;   // near-straight, leaning into the load
+  }
 }
 
 /** Heavier trolley for moving a drum. */
