@@ -3,3 +3,4 @@
 # MP4 can never be committed. Re-add the finished files deliberately.
 *.mp4
 *.part
+# rendered videos are committed once validated
