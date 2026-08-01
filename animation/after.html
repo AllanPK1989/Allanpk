@@ -155,8 +155,12 @@ function update(t) {
   setLamp(mixer.userData.lamp,  (t >= 41 && t < 48) ? P.MAT.green : P.MAT.red);
   setLamp(filler.userData.lamp, (t >= 71) ? P.MAT.green : P.MAT.red);
   setLamp(vac.userData.lamp,    (t >= 33 && t < 41) ? P.MAT.green : P.MAT.red);
-  mixer.userData.shaft.rotation.y = (t >= 41 && t < 48) ? (t - 41) * 9 : 0;
-  mixer.userData.portLid.position.y = 2.57;   // stays shut — charging is by vacuum
+  mixer.userData.rotor.rotation.y = (t >= 41 && t < 48) ? (t - 41) * 3.4 : 0;
+  mixer.userData.charge.scale.y = Math.max(0.001,
+    S.segS(t, 35, 40.5) * (1 - S.segS(t, 48.4, 53.0)));
+  const openA = S.pulse(t, 48.2, 53.4, 0.6);
+  mixer.userData.door.rotation.x = -openA * 1.1;
+  mixer.userData.lever.rotation.z = -openA * 0.85;
 
   // ---- warehouse operator: loads the bag, then stays put ----
   whOp.position.set(-9.4, P.MEZZ_Y, -2.6);
@@ -222,7 +226,7 @@ function update(t) {
     bagOnDeck.x, 0.95 + (1 - wandDown) * 0.9, bagOnDeck.z + 0.2);
   if (t >= 33.6 && t < 40.6) {
     streamVac.visible = true;
-    P.setStream(streamVac, MIX.x - 0.75, MIX.z, 5.0, 2.5);
+    P.setStream(streamVac, MIX.x - 0.28, MIX.z, 2.42, 1.5);
   }
 
   // ---- inclined conveyor: mixer hopper -> storage hopper, level interlocked ----

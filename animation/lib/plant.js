@@ -51,6 +51,7 @@ export const MAT = {
   bag:       TX.bag,
   barrel:    TX.painted,
   barrelRim: TX.steelDark,
+  machineGreen: TX.machineGreen,
   amr:       TX.amrBody,
   amrTop:    TX.steelDark,
   cobot:     solid(0xe6e8ea, 0.38, 0.3),
@@ -372,81 +373,153 @@ function boltRing(radius, y, count, r = 0.035, m = MAT.steelDark) {
 }
 
 export function buildMixer() {
+  // Open-pan muller, matching the reference photo: green pan with a black top
+  // rim, cross bridge with two threaded muller-wheel adjusters, ploughs inside,
+  // a side discharge door on a long lever, and a black steel stand.
+  //
+  // This replaced a closed vessel with a dome and a small charge port. That
+  // shape drove the whole charging sequence — climbing a platform to tip a bag
+  // into a hatch — which is not how this machine is loaded. Sand goes straight
+  // over the open rim.
   const g = new THREE.Group();
   g.position.copy(MIXER_POS);
 
-  for (const [x, z] of [[-0.7, -0.7], [0.7, -0.7], [-0.7, 0.7], [0.7, 0.7]]) {
-    const l = box(0.13, 0.55, 0.13, MAT.steelDark);
-    l.position.set(x, 0.28, z); shade(l); g.add(l);
+  const R = 0.62;              // pan radius
+  const PAN_BOT = 0.86;        // inside floor of the pan
+  const PAN_TOP = 1.42;        // top of the green body
+  const RIM_TOP = 1.52;        // top of the black rim band
+  g.userData.rimY = RIM_TOP;
+  g.userData.portY = RIM_TOP;
+  g.userData.portX = 0;
+
+  // ---- stand ----
+  const basePlate = box(1.15, 0.06, 1.15, MAT.steelDark);
+  basePlate.position.y = 0.03; shade(basePlate); g.add(basePlate);
+  for (const [x, z] of [[-0.42, -0.42], [0.42, -0.42], [-0.42, 0.42], [0.42, 0.42]]) {
+    const leg = box(0.075, 0.5, 0.075, MAT.steelDark);
+    leg.position.set(x, 0.28, z); shade(leg); g.add(leg);
+  }
+  for (const z of [-0.42, 0.42]) {
+    const brace = box(0.9, 0.05, 0.05, MAT.steelDark);
+    brace.position.set(0, 0.16, z); shade(brace); g.add(brace);
   }
 
-  // conical bottom hopper (discharge at 0.40)
-  const hopper = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.2, 0.7, 24, 1, true), MAT.steel);
-  hopper.material.side = THREE.DoubleSide;
-  hopper.position.y = 0.9; shade(hopper); g.add(hopper);
-  const valve = cyl(0.16, 0.16, 0.26, MAT.painted, 14);
-  valve.position.y = 0.47; shade(valve); g.add(valve);
-  g.userData.spoutY = 0.36;
+  // ---- lower cone: narrow at the bottom, opening up into the pan ----
+  const cone = new THREE.Mesh(
+    new THREE.CylinderGeometry(R, 0.34, 0.36, 26, 1, true), MAT.machineGreen);
+  cone.material.side = THREE.DoubleSide;
+  cone.position.y = 0.70; shade(cone); g.add(cone);
 
-  // vessel
-  const vessel = cyl(0.85, 0.85, 0.9, MAT.steelMatte, 26);
-  vessel.position.y = 1.7; shade(vessel); g.add(vessel);
-  const dome = new THREE.Mesh(new THREE.SphereGeometry(0.85, 26, 12, 0, Math.PI * 2, 0, Math.PI / 2), MAT.steelMatte);
-  dome.position.y = 2.15; shade(dome); g.add(dome);
+  // ---- pan body ----
+  const pan = cyl(R, R, PAN_TOP - PAN_BOT + 0.02, MAT.machineGreen, 30);
+  pan.position.y = (PAN_TOP + PAN_BOT) / 2; shade(pan); g.add(pan);
 
-  // charge port — the manual tipping point in BEFORE (rim at 2.62)
-  const port = cyl(0.32, 0.32, 0.26, MAT.painted, 16);
-  port.position.set(0.45, 2.42, 0); shade(port); g.add(port);
-  const portLid = cyl(0.38, 0.38, 0.05, MAT.steelDark, 16);
-  portLid.position.set(0.45, 2.57, 0); shade(portLid); g.add(portLid);
-  g.userData.portLid = portLid;
-  g.userData.portY = 2.54;
-  g.userData.portX = 0.45;
+  // black rim band around the open top
+  const rim = cyl(R + 0.025, R + 0.025, RIM_TOP - PAN_TOP, MAT.steelDark, 30);
+  rim.position.y = (RIM_TOP + PAN_TOP) / 2; shade(rim); g.add(rim);
 
-  // drive motor
-  const motor = cyl(0.24, 0.24, 0.38, MAT.painted, 14);
-  motor.position.set(-0.55, 2.6, 0); shade(motor); g.add(motor);
-  const gearbox = box(0.4, 0.28, 0.4, MAT.steelDark);
-  gearbox.position.set(-0.55, 2.32, 0); shade(gearbox); g.add(gearbox);
+  // pan floor (visible down the open top)
+  const floor = cyl(R - 0.02, R - 0.02, 0.05, MAT.steelDark, 26);
+  floor.position.y = PAN_BOT; shade(floor); g.add(floor);
 
-  // operator access platform + steps (BEFORE)
-  const plat = box(1.5, 0.09, 1.2, MAT.steelDark);
-  plat.position.set(1.55, 0.5, 0.35); shade(plat); g.add(plat);
-  for (const [i, y] of [[0, 0.17], [1, 0.33]]) {
-    const s = box(0.9, 0.06, 0.3, MAT.steelDark);
-    s.position.set(2.15, y, 1.15 - i * 0.3); shade(s); g.add(s);
+  // the charge (sand in the pan) — scaled by the scene
+  const charge = cyl(R - 0.05, R - 0.05, 0.3, MAT.sand, 24);
+  charge.position.y = PAN_BOT + 0.15; charge.scale.y = 0.001; g.add(charge);
+  g.userData.charge = charge;
+
+  // ---- lifting lugs ----
+  for (const s of [-1, 1]) {
+    const lug = new THREE.Mesh(new THREE.TorusGeometry(0.075, 0.018, 8, 16), MAT.steelDark);
+    lug.position.set(s * (R + 0.02), RIM_TOP - 0.02, 0);
+    lug.rotation.y = Math.PI / 2; shade(lug); g.add(lug);
   }
-  for (const [x, z] of [[2.2, 0.35], [1.0, 0.35]]) {
-    const r = box(0.05, 1.0, 0.05, MAT.yellow);
-    r.position.set(x, 1.0, z - 0.55); shade(r); g.add(r);
+
+  // ---- cross bridge with the two threaded adjusters ----
+  const bridge = new THREE.Group();
+  bridge.position.y = RIM_TOP + 0.06;
+  const beam = box(R * 2 + 0.14, 0.1, 0.24, MAT.machineGreen);
+  shade(beam); bridge.add(beam);
+  const beam2 = box(0.3, 0.09, 0.5, MAT.machineGreen);
+  beam2.position.set(0.1, 0, 0); shade(beam2); bridge.add(beam2);
+  for (const x of [-0.24, 0.26]) {
+    const postB = box(0.13, 0.12, 0.13, MAT.steelDark);
+    postB.position.set(x, 0.05, 0); shade(postB); bridge.add(postB);
+    // threaded rod, drawn as stacked collars
+    for (let i = 0; i < 9; i++) {
+      const th = cyl(0.028, 0.028, 0.022, MAT.steelDark, 8);
+      th.position.set(x, 0.13 + i * 0.032, 0); shade(th); bridge.add(th);
+    }
+    const cap = cyl(0.038, 0.038, 0.03, MAT.steelDark, 8);
+    cap.position.set(x, 0.44, 0); shade(cap); bridge.add(cap);
   }
-  g.userData.platformY = 0.55;
+  g.add(bridge);
+
+  // ---- rotating muller assembly inside the pan ----
+  const rotor = new THREE.Group();
+  rotor.position.y = PAN_BOT + 0.02;
+  const hub = cyl(0.09, 0.09, 0.42, MAT.steelDark, 12);
+  hub.position.y = 0.21; shade(hub); rotor.add(hub);
+  for (const s of [-1, 1]) {
+    // plough blade
+    const arm = box(R - 0.1, 0.05, 0.06, MAT.steelDark);
+    arm.position.set(s * (R - 0.1) / 2, 0.34, 0); shade(arm); rotor.add(arm);
+    const blade = box(0.07, 0.2, 0.2, MAT.steelDark);
+    blade.position.set(s * (R - 0.16), 0.14, 0);
+    blade.rotation.y = s * 0.5; shade(blade); rotor.add(blade);
+    // muller wheel
+    const wheel = cyl(0.17, 0.17, 0.1, MAT.steelDark, 16);
+    wheel.rotation.x = Math.PI / 2;
+    wheel.position.set(s * (R - 0.26), 0.17, s * 0.22); shade(wheel); rotor.add(wheel);
+  }
+  g.add(rotor);
+  g.userData.rotor = rotor;
+  g.userData.shaft = rotor;   // kept so existing scene code still drives it
+
+  // ---- discharge door and its lever ----
+  const door = new THREE.Group();
+  door.position.set(0, 0.62, R - 0.12);
+  const plate = box(0.34, 0.3, 0.06, MAT.machineGreen);
+  shade(plate); door.add(plate);
+  const hinge = box(0.38, 0.05, 0.05, MAT.steelDark);
+  hinge.position.y = 0.16; shade(hinge); door.add(hinge);
+  g.add(door);
+  g.userData.door = door;
+
+  const lever = new THREE.Group();
+  lever.position.set(0.12, 0.74, R - 0.02);
+  const arm2 = cyl(0.022, 0.022, 0.72, MAT.steelDark, 8);
+  arm2.rotation.z = Math.PI / 2;
+  arm2.position.set(0.34, 0, 0); shade(arm2); lever.add(arm2);
+  const grip = cyl(0.032, 0.032, 0.14, MAT.rubber, 8);
+  grip.rotation.z = Math.PI / 2;
+  grip.position.set(0.66, 0, 0); shade(grip); lever.add(grip);
+  const pivot = cyl(0.05, 0.05, 0.08, MAT.steelDark, 10);
+  pivot.rotation.x = Math.PI / 2; shade(pivot); lever.add(pivot);
+  g.add(lever);
+  g.userData.lever = lever;
+
+  // discharge spout under the cone
+  const spout = cyl(0.15, 0.15, 0.16, MAT.steelDark, 12);
+  spout.position.y = 0.46; shade(spout); g.add(spout);
+  g.userData.spoutY = 0.4;
+
+  // drive motor on the stand
+  const motor = cyl(0.15, 0.15, 0.3, MAT.steelDark, 14);
+  motor.rotation.z = Math.PI / 2;
+  motor.position.set(-0.62, 0.34, 0); shade(motor); g.add(motor);
 
   // control panel
-  const panel = box(0.42, 0.5, 0.1, MAT.painted);
-  panel.position.set(-1.25, 1.2, 0.6); shade(panel); g.add(panel);
-  const scr = box(0.28, 0.2, 0.03, MAT.screen);
-  scr.position.set(-1.25, 1.3, 0.66); g.add(scr);
-  const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 10), MAT.red);
-  lamp.position.set(-1.25, 1.02, 0.66); g.add(lamp);
+  const panel = box(0.34, 0.42, 0.09, MAT.painted);
+  panel.position.set(-1.05, 1.0, 0.45); shade(panel); g.add(panel);
+  const scr = box(0.22, 0.16, 0.03, MAT.screen);
+  scr.position.set(-1.05, 1.08, 0.5); g.add(scr);
+  const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.055, 10, 10), MAT.red);
+  lamp.position.set(-1.05, 0.86, 0.5); g.add(lamp);
   g.userData.lamp = lamp;
 
-  const shaft = cyl(0.06, 0.06, 0.85, MAT.steelDark, 10);
-  shaft.position.y = 1.9; g.add(shaft);
-  g.userData.shaft = shaft;
-
-  // fabrication detail
-  const fl1 = cyl(0.89, 0.89, 0.05, MAT.steelDark, 26); fl1.position.y = 1.25; shade(fl1); g.add(fl1);
-  const fl2 = cyl(0.89, 0.89, 0.05, MAT.steelDark, 26); fl2.position.y = 2.15; shade(fl2); g.add(fl2);
-  g.add(boltRing(0.86, 1.25, 16));
-  g.add(boltRing(0.86, 2.15, 16));
-  g.add(boltRing(0.36, 2.57, 8, 0.028));
-  // drive belt guard + inspection light
-  const guard = box(0.18, 0.5, 0.34, MAT.steelDark);
-  guard.position.set(-0.55, 2.05, 0); shade(guard); g.add(guard);
-  // discharge pipework
-  const elbow = cyl(0.11, 0.11, 0.5, MAT.steelDark, 12);
-  elbow.rotation.z = Math.PI / 2; elbow.position.set(0.3, 0.42, 0); shade(elbow); g.add(elbow);
+  // kept for compatibility with existing scene code
+  g.userData.portLid = bridge;
+  g.userData.platformY = 0;
 
   return g;
 }
@@ -602,29 +675,37 @@ export function buildInclinedConveyor() {
 export function buildVacuumSystem() {
   const g = new THREE.Group();
 
-  // receiver on top of the mixer
-  const rec = cyl(0.44, 0.44, 0.7, MAT.steel, 18);
-  rec.position.set(MIXER_POS.x - 0.75, 5.25, 0); shade(rec); g.add(rec);
-  const pump = box(0.5, 0.4, 0.44, MAT.painted);
-  pump.position.set(MIXER_POS.x - 0.75, 5.78, 0); shade(pump); g.add(pump);
+  // receiver + pump on a stand beside the muller, discharging over the open pan
+  const post = box(0.12, 2.3, 0.12, MAT.steelDark);
+  post.position.set(MIXER_POS.x - 1.15, 1.15, -0.5); shade(post); g.add(post);
 
-  // flexible suction hose from the intake wand up to the receiver
+  const rec = cyl(0.34, 0.34, 0.55, MAT.steel, 18);
+  rec.position.set(MIXER_POS.x - 0.55, 2.45, -0.2); shade(rec); g.add(rec);
+  const recCone = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.34, 0.12, 0.28, 18, 1, true), MAT.steel);
+  recCone.material.side = THREE.DoubleSide;
+  recCone.position.set(MIXER_POS.x - 0.55, 2.05, -0.2); shade(recCone); g.add(recCone);
+  const pump = box(0.4, 0.32, 0.36, MAT.painted);
+  pump.position.set(MIXER_POS.x - 0.55, 2.86, -0.2); shade(pump); g.add(pump);
+  const arm = box(0.7, 0.09, 0.09, MAT.steelDark);
+  arm.position.set(MIXER_POS.x - 0.85, 2.45, -0.35); shade(arm); g.add(arm);
+
+  // suction hose from the intake wand up to the receiver
   const curve = new THREE.CatmullRomCurve3([
     new THREE.Vector3(MIXER_POS.x + 1.9, 0.55, 1.5),
-    new THREE.Vector3(MIXER_POS.x + 1.3, 2.4, 1.4),
-    new THREE.Vector3(MIXER_POS.x - 0.2, 4.4, 0.9),
-    new THREE.Vector3(MIXER_POS.x - 0.75, 5.05, 0.15),
+    new THREE.Vector3(MIXER_POS.x + 1.4, 1.5, 1.2),
+    new THREE.Vector3(MIXER_POS.x + 0.3, 2.4, 0.5),
+    new THREE.Vector3(MIXER_POS.x - 0.5, 2.62, -0.1),
   ]);
-  const hose = new THREE.Mesh(new THREE.TubeGeometry(curve, 26, 0.115, 10, false), MAT.rubber);
+  const hose = new THREE.Mesh(new THREE.TubeGeometry(curve, 26, 0.1, 10, false), MAT.rubber);
   shade(hose); g.add(hose);
 
-  // intake wand that dips into the opened bag
-  const wand = cyl(0.09, 0.09, 0.6, MAT.steelDark, 12);
+  const wand = cyl(0.08, 0.08, 0.55, MAT.steelDark, 12);
   wand.position.set(MIXER_POS.x + 1.9, 0.3, 1.5); shade(wand); g.add(wand);
   g.userData.wand = wand;
 
-  const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.08, 10, 10), MAT.red);
-  lamp.position.set(MIXER_POS.x - 0.75, 6.05, 0.2); g.add(lamp);
+  const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 10), MAT.red);
+  lamp.position.set(MIXER_POS.x - 0.55, 3.06, 0.0); g.add(lamp);
   g.userData.lamp = lamp;
   return g;
 }

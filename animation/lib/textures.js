@@ -294,6 +294,7 @@ export function makeMaterials() {
   const blueLt   = paintedMaps('#4a90c4');
   const yellow   = paintedMaps('#d9a32a');
   const dark     = paintedMaps('#3a4048');
+  const green    = paintedMaps('#71c39a');   // machine green, from the reference photo
 
   return {
     concrete:  build(concrete, { repeat: 26,  roughness: 0.94, metalness: 0.02, normalScale: 0.8 }),
@@ -305,6 +306,7 @@ export function makeMaterials() {
     painted:   build(blue,     { repeat: 4,  roughness: 0.5,  metalness: 0.35, normalScale: 0.7 }),
     paintedLt: build(blueLt,   { repeat: 4,  roughness: 0.5,  metalness: 0.3,  normalScale: 0.7 }),
     yellow:    build(yellow,   { repeat: 4,  roughness: 0.58, metalness: 0.2,  normalScale: 0.7 }),
+    machineGreen: build(green, { repeat: 4,  roughness: 0.52, metalness: 0.28, normalScale: 0.7 }),
     amrBody:   build(dark,     { repeat: 4,  roughness: 0.42, metalness: 0.5,  normalScale: 0.7 }),
     rubber:    build(rubber,   { repeat: 2,  roughness: 0.95, metalness: 0.04, normalScale: 0.9 }),
     sand:      build(sand,     { repeat: 3,  roughness: 0.97, metalness: 0.0,  normalScale: 1.2 }),
