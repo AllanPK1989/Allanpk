@@ -18,6 +18,7 @@
 import * as THREE from 'three';
 import * as P from './lib/plant.js';
 import * as S from './lib/story.js';
+import { makePost } from './lib/post.js';
 
 document.getElementById('ui-css').textContent = S.UI_CSS;
 
@@ -54,6 +55,8 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
 document.body.appendChild(renderer.domElement);
 
 P.addLighting(scene, renderer);
+const post = makePost(renderer, scene, camera,
+  { width: innerWidth, height: innerHeight });
 scene.add(camera);   // so the caption sprite (a camera child) renders
 const overlay = S.makeOverlay(camera, THREE);
 overlay.setAccent('#e08a4a');
@@ -144,6 +147,7 @@ const fwd = (o, d) => new THREE.Vector3(
 let _lastStep = -1;
 function update(t) {
   rig.setTime(t);
+  post.focusOn(rig.target);
   P.updateLabels(labelSprites, camera);
   const si = TL.indexAt(t);
   if (si !== _lastStep) {
@@ -336,7 +340,7 @@ const ui = S.buildUI(document.getElementById('ui'), {
   },
 });
 
-function draw() { update(t); renderer.render(scene, camera); ui.sync(t, playing); }
+function draw() { update(t); post.composer.render(); ui.sync(t, playing); }
 
 function loop(now) {
   requestAnimationFrame(loop);
@@ -350,16 +354,18 @@ addEventListener('resize', () => {
   camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
+  post.setSize(innerWidth, innerHeight);
 });
 addEventListener('keydown', (e) => {
   if (e.code === 'Space') { e.preventDefault(); playing = !playing; last = performance.now(); }
 });
 
+window.__post = post;
 window.__scene = {
   duration: TL.duration,
   steps: STEPS,
   setTime: (v) => { t = v; playing = false; update(v); },
-  render: () => renderer.render(scene, camera),
+  render: () => post.composer.render(),
   hideUI: () => { document.getElementById('ui').style.display = 'none'; },
   filmMode: (on) => {
     document.getElementById('ui').style.display = on ? 'none' : '';
