@@ -1,7 +1,7 @@
 # 3D Animation Design Skills
 
 Claude Code skill bundle for 3D graphics, motion, image generation, and animation design on the web.
-**23 skills, 24 subagents, 43 slash commands, ~18,300 lines of guidance.**
+**25 skills, 26 subagents, 45 slash commands, ~19,500 lines of guidance.**
 
 ## What's here
 
@@ -53,6 +53,8 @@ Installed under `.claude/`, so any Claude Code session opened in this repo picks
 | Skill | Covers |
 |---|---|
 | `nano-banana` | Gemini image models (Nano Banana / Pro) — text→image, image editing, multi-image composition, text-in-image, sketch→photoreal |
+| `openai-images` | OpenAI Images API — GPT Image + DALL·E, transparent backgrounds, exact sizes, alpha-mask inpainting, compositing |
+| `midjourney` | Midjourney V8.x / niji prompt craft — parameters, style & character references, draft mode, permutations *(no API — prompts only)* |
 
 ### Authoring
 | Skill | Covers |
@@ -71,11 +73,26 @@ python3 .claude/skills/threejs-webgl/scripts/setup_scene.py \
   --renderer webgpu --lighting physical --shadows --antialias --output scene.js
 ```
 
-### `nano-banana` (locally authored)
+### Image-generation skills (locally authored)
 
-The one skill here that is not vendored. Wraps Google's Gemini image models through the
-`generateContent` API — generation, image-to-image editing, multi-reference composition,
-text rendering, and technical-drawing→photoreal conversion.
+The three image skills are not vendored — they were written for this repo. Each carries its
+own prompting guide and API reference under `references/`, and all scripts are standard
+library only.
+
+**Which one to reach for:**
+
+| Need | Skill |
+|---|---|
+| Conversational editing, best text rendering, cheapest per image | `nano-banana` |
+| Transparent background, exact pixel size, alpha-mask inpainting | `openai-images` |
+| Best-looking exploratory output, taste-driven | `midjourney` |
+| Anything programmatic / in a pipeline | `nano-banana` or `openai-images` |
+
+#### `nano-banana`
+
+Google's Gemini image models through the `generateContent` API — generation, image-to-image
+editing, multi-reference composition, text rendering, and technical-drawing→photoreal
+conversion.
 
 ```bash
 export GEMINI_API_KEY="..."   # https://aistudio.google.com/apikey
@@ -89,10 +106,45 @@ export GEMINI_API_KEY="..."   # https://aistudio.google.com/apikey
   --subject "7-station automated dispensing machine" --preset factory
 ```
 
-Both scripts are standard library only — no `pip install`. Slash commands:
-`/nano-banana-generate`, `/nano-banana-sketch_to_photo`. Subagent:
+Slash commands: `/nano-banana-generate`, `/nano-banana-sketch_to_photo`. Subagent:
 `nano-banana-image-director`. Model IDs move as previews reach GA, so the `models`
 subcommand queries the live list rather than trusting the table in the skill.
+
+#### `openai-images`
+
+OpenAI's Images API — GPT Image (`gpt-image-2`, `gpt-image-1.5`, `gpt-image-1-mini`) and
+DALL·E 2/3. Generation, alpha-mask inpainting, multi-image compositing, and variations.
+
+```bash
+export OPENAI_API_KEY="sk-..."   # https://platform.openai.com/api-keys
+
+S=.claude/skills/openai-images/scripts/openai_image.py
+$S generate "A flat vector maple leaf icon, centred, clean edges" \
+  --background transparent --output-format png -o out/leaf.png
+$S edit "a brass reading lamp on the desk" -i room.png --mask region.png -o out/lamp.png
+```
+
+Handles multipart uploads for the edits endpoint without `requests`, and warns when a
+DALL·E-only parameter is passed to a GPT Image model (or vice versa) instead of letting the
+API 400. Slash command: `/openai-images-generate`. Subagent: `openai-images-specialist`.
+
+#### `midjourney`
+
+Midjourney has **no public API**, and the third-party bridges automate the Discord bot
+against its ToS. So this skill produces paste-ready prompts rather than images:
+
+```bash
+S=.claude/skills/midjourney/scripts/mj_prompt.py
+$S build "a brass sextant on a navigator's chart" --ar 3:2 --style raw --s 150 --no text
+$S check "a cat --ar 3:2 --s 2000 --oref x.jpg --v 8.2"
+#   ERROR --s 2000 is out of range (0-1000, default 100)
+#   ERROR --oref is not supported on the V8 series. Add --v 7, or use --sref/--cref.
+$S permute "a {red,blue} car in {rain,fog} --ar 16:9"
+```
+
+The linter catches what actually costs GPU minutes: out-of-range values, `--oref` on V8,
+`--niji` mixed with `--v`, weights with no matching reference, misplaced image prompts.
+Slash command: `/midjourney-prompt`. Subagent: `midjourney-prompt-artist`.
 
 ## Provenance
 
