@@ -260,9 +260,31 @@ export function buildLift() {
   car.position.y = MEZZ_Y;
   g.add(car);
 
-  const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 12), MAT.green);
+  const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.09, 12, 12), MAT.green);
   lamp.position.set(1.08, 2.1, 0.95); g.add(lamp);
 
+  // Car ceiling light: a diffuser panel plus the point light that sells it.
+  // The shaft sits under the mezzanine slab, outside the key light, so without
+  // this the whole descent reads as a dark box.
+  const canopy = box(1.55, 0.06, 1.55, MAT.steelDark);
+  canopy.position.y = 2.02; shade(canopy); car.add(canopy);
+  const diffuser = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.04, 1.15),
+    new THREE.MeshBasicMaterial({ color: 0xfff2d8 }));
+  diffuser.position.y = 1.98; car.add(diffuser);
+  const carLight = new THREE.PointLight(0xfff0d0, 11, 6.5, 2);
+  carLight.position.set(0, 1.85, 0);
+  car.add(carLight);
+  for (const s of [-0.8, 0.8]) {
+    const stanchion = box(0.06, 1.9, 0.06, MAT.steelDark);
+    stanchion.position.set(s, 1.05, -0.82); shade(stanchion); car.add(stanchion);
+  }
+
+  // shaft head light so the landing is visible when the car is away
+  const shaftLight = new THREE.PointLight(0xd8e4f4, 6, 7, 2);
+  shaftLight.position.set(0, 4.9, 0);
+  g.add(shaftLight);
+
+  g.userData.carLight = carLight;
   g.userData.car = car;
   g.userData.lamp = lamp;
   return g;
