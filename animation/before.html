@@ -107,7 +107,7 @@ const RACK_STAND = [-8.6, P.MEZZ_Y, -3.1];
 const MIX_STAND  = [MIX.x + 1.9, 0, 1.35];
 const MIX_PLAT   = [MIX.x + 1.2, 0, 0.95];
 const DRUM_PARK  = [MIX.x + 2.0, 0, -1.5];
-const FILL_STAND = [FILL.x - 1.8, 0, 1.5];
+const FILL_STAND = [FILL.x - 1.28, 0, 1.05];
 
 const TO_LIFT        = [[1.5, 0, 5.2], [-1.6, 0, 4.0], [-4.6, 0, -1.2],
                         [L.x, 0, L.z + 2.4], LIFT_IN];
@@ -213,7 +213,7 @@ function update(t) {
     speed = t < 70.4 ? 1 : 0; mode = 'push';
   } else {
     const su = S.segS(t, 79.6, 80.8);
-    op.position.set(FILL_STAND[0] + 0.25 * su, 0.22 * su, FILL_STAND[2] - 0.4 * su);
+    op.position.set(FILL_STAND[0] + 0.18 * su, 0.22 * su, FILL_STAND[2] - 0.32 * su);
     op.rotation.y = Math.PI / 2;
   }
 
@@ -223,7 +223,7 @@ function update(t) {
   else if (t >= 38 && t < 45.6) P.poseCarry(op, S.pulse(t, 39.6, 45.2, 0.9));
   else if (t >= 53 && t < 63)   P.poseCarry(op, 0.8);
   else if (t >= 72 && t < 80)   P.poseCarry(op, 0.85);
-  else if (t >= 80)             P.poseLift(op, S.pulse(t, 81, 87.4, 1.1));
+  else if (t >= 80)             P.poseLift(op, S.segS(t, 80.4, 82.8));
 
   // ---- bag trolley ----
   if (t < 24) {
@@ -270,7 +270,7 @@ function update(t) {
   } else if (t < 72) {
     drumTrolley.position.copy(fwd(op, 0.98)); drumTrolley.rotation.y = op.rotation.y;
   } else {
-    drumTrolley.position.set(FILL_STAND[0] + 1.0, 0, FILL_STAND[2] - 0.15);
+    drumTrolley.position.set(FILL_STAND[0] - 0.75, 0, FILL_STAND[2] + 0.35);
     drumTrolley.rotation.y = 1.6;
   }
   drum.position.set(drumTrolley.position.x, drumTrolley.position.y + 0.34, drumTrolley.position.z + 0.08);
@@ -316,19 +316,35 @@ function update(t) {
         P.setStream(streamDrum, drum.position.x - 0.12, drum.position.z + 0.42, 1.52, 1.32);
       }
     } else {
-      const u   = S.segS(t, 80.6, 83.6);
-      const tip = S.segS(t, 83.8, 86.4);
-      _v.set(drum.position.x - 0.12, 1.46, drum.position.z + 0.42);
-      bin.position.lerpVectors(_v, new THREE.Vector3(FILL.x - 0.08, rimY + 0.46, FILL.z + 0.3), u);
-      bin.rotation.z = tip * 2.1;
-      bin.userData.fill.scale.y = Math.max(0.001, 1 - tip);
-      if (t >= 84.2 && t < 86.6) {
+      // A deliberate pour, not a throw. The bin stays in the operator's hands
+      // throughout: it rises as the arms lift, is carried in to the hopper lip,
+      // held steady there, and only then tilts slowly while the sand runs out.
+      // It previously lerped to the hopper along its own path and snapped over
+      // in 2.6s, which read as the drum being flung at the machine.
+      const raise = S.segS(t, 80.4, 82.6);    // lift to chest height
+      const carry = S.segS(t, 82.8, 84.6);    // step in to the lip
+      const tip   = S.segS(t, 85.2, 87.8);    // tilt and pour
+
+      const handY = 1.06 + raise * 0.66;
+      const start = new THREE.Vector3(drum.position.x - 0.12, 1.46, drum.position.z + 0.42);
+      const held  = new THREE.Vector3(op.position.x + 0.3, op.position.y + handY, op.position.z - 0.08);
+      const atLip = new THREE.Vector3(FILL.x - 0.66, rimY + 0.14, FILL.z + 0.30);
+
+      _v.lerpVectors(start, held, raise);
+      bin.position.lerpVectors(_v, atLip, carry);
+      // tip about the lip rather than spinning on the spot
+      bin.rotation.z = tip * 1.9;
+      bin.position.x += tip * 0.16;
+      bin.position.y -= tip * 0.04;
+
+      bin.userData.fill.scale.y = Math.max(0.001, 1 - S.segS(t, 85.6, 87.6));
+      if (t >= 85.8 && t < 88.0) {
         streamFill.visible = true;
-        P.setStream(streamFill, FILL.x, FILL.z, rimY + 0.12, rimY - 0.35);
+        P.setStream(streamFill, FILL.x - 0.5, FILL.z + 0.22, rimY + 0.06, rimY - 0.26);
       }
-      filler.userData.hopFill.scale.y = Math.max(0.001, S.segS(t, 84.2, 87.2));
-        filler.userData.fuses.forEach((f, i) => {
-        f.scale.y = Math.max(0.001, S.segS(t, 84.8 + i * 0.5, 87.4 + i * 0.5));
+      filler.userData.hopFill.scale.y = Math.max(0.001, S.segS(t, 85.9, 88.0));
+      filler.userData.fuses.forEach((f, i) => {
+        f.scale.y = Math.max(0.001, S.segS(t, 86.3 + i * 0.3, 87.9 + i * 0.3));
       });
     }
   }
@@ -350,7 +366,7 @@ const ui = S.buildUI(document.getElementById('ui'), {
   },
 });
 
-function draw() { update(t); post.composer.render(); ui.sync(t, playing); }
+function draw() { update(t); post.composer.render(); overlay.render(renderer); ui.sync(t, playing); }
 
 function loop(now) {
   requestAnimationFrame(loop);
@@ -375,7 +391,7 @@ window.__scene = {
   duration: TL.duration,
   steps: STEPS,
   setTime: (v) => { t = v; playing = false; update(v); },
-  render: () => post.composer.render(),
+  render: () => { post.composer.render(); overlay.render(renderer); },
   hideUI: () => { document.getElementById('ui').style.display = 'none'; },
   filmMode: (on) => {
     document.getElementById('ui').style.display = on ? 'none' : '';

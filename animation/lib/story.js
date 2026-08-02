@@ -248,10 +248,14 @@ export const UI_CSS = `
 `;
 
 // ── Burned-in caption overlay ────────────────────────────────────────────
-// This ffmpeg build has no drawtext filter, and toDataURL only captures the
-// WebGL canvas — so DOM captions never reach the video. Rendering the caption
-// as a sprite parented to the camera puts it inside the framebuffer instead,
-// where frame capture picks it up.
+// Drawn in its own scene with an orthographic camera, AFTER the post-processing
+// chain has run.
+//
+// It used to be a sprite parented to the perspective camera, inside the scene.
+// That worked until ambient occlusion was added: the sprite writes no depth, so
+// GTAO had no valid depth or normal where the caption sits and shaded it to
+// solid black — the caption band went unreadable in the rendered video while
+// still looking fine in an un-postprocessed preview.
 export function makeOverlay(camera, THREE) {
   const cv = document.createElement('canvas');
   cv.width = 1600; cv.height = 260;
@@ -259,48 +263,59 @@ export function makeOverlay(camera, THREE) {
 
   const tex = new THREE.CanvasTexture(cv);
   tex.colorSpace = THREE.SRGBColorSpace;
-  const spr = new THREE.Sprite(new THREE.SpriteMaterial({
-    map: tex, depthTest: false, depthWrite: false, transparent: true }));
 
-  // sized against the frustum at z = -1.6 for a 42° vertical FOV
-  const dist = 1.6;
-  const h = 2 * dist * Math.tan((42 * Math.PI / 180) / 2);
-  const w = h * (16 / 9);
-  spr.scale.set(w * 0.86, w * 0.86 * (cv.height / cv.width), 1);
-  spr.position.set(0, -h * 0.36, -dist);
-  spr.renderOrder = 10000;
-  spr.visible = false;
-  camera.add(spr);
+  const scene = new THREE.Scene();
+  // ortho camera in normalised screen space: x,y in [-0.5, 0.5]
+  const cam = new THREE.OrthographicCamera(-0.5, 0.5, 0.5, -0.5, 0, 10);
+  cam.position.z = 1;
+
+  const aspect = cv.height / cv.width;
+  const W = 0.86;                      // fraction of screen width
+  const mesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(W, W * aspect * (16 / 9)),
+    new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthTest: false }));
+  mesh.position.set(0, -0.335, 0);
+  mesh.visible = false;
+  scene.add(mesh);
+
+  let accent = '#4aa3e0';
 
   function draw(kicker, title, note) {
     ctx.clearRect(0, 0, cv.width, cv.height);
-    ctx.fillStyle = 'rgba(10,14,20,0.86)';
+    ctx.fillStyle = 'rgba(10,14,20,0.88)';
     ctx.beginPath(); ctx.roundRect(0, 0, cv.width, cv.height, 22); ctx.fill();
-    ctx.strokeStyle = 'rgba(255,255,255,0.14)'; ctx.lineWidth = 3; ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,0.16)'; ctx.lineWidth = 3; ctx.stroke();
 
-    ctx.fillStyle = spr.userData.accent || '#4aa3e0';
-    ctx.fillRect(0, 0, 12, cv.height);
+    ctx.fillStyle = accent;
+    ctx.fillRect(0, 0, 14, cv.height);
 
     ctx.textBaseline = 'middle';
-    ctx.fillStyle = spr.userData.accent || '#4aa3e0';
+    ctx.fillStyle = accent;
     ctx.font = '600 46px "Liberation Sans", sans-serif';
-    ctx.fillText(kicker, 46, 62);
+    ctx.fillText(kicker, 48, 60);
 
     ctx.fillStyle = '#f4f8fd';
-    ctx.font = '700 68px "Liberation Sans", sans-serif';
-    ctx.fillText(title, 46, 140);
+    ctx.font = '700 70px "Liberation Sans", sans-serif';
+    ctx.fillText(title, 48, 140);
 
-    ctx.fillStyle = '#9fb2c8';
+    ctx.fillStyle = '#a8b8cc';
     ctx.font = '400 44px "Liberation Sans", sans-serif';
-    ctx.fillText(note || '', 46, 210);
+    ctx.fillText(note || '', 48, 212);
 
     tex.needsUpdate = true;
   }
 
   return {
-    sprite: spr,
-    setAccent(c) { spr.userData.accent = c; },
+    setAccent(c) { accent = c; },
     set(kicker, title, note) { draw(kicker, title, note); },
-    setVisible(v) { spr.visible = v; },
+    setVisible(v) { mesh.visible = !!v; },
+    /** Call after the composer has rendered, so no pass touches the caption. */
+    render(renderer) {
+      if (!mesh.visible) return;
+      const prev = renderer.autoClear;
+      renderer.autoClear = false;
+      renderer.render(scene, cam);
+      renderer.autoClear = prev;
+    },
   };
 }

@@ -341,7 +341,7 @@ const ui = S.buildUI(document.getElementById('ui'), {
   },
 });
 
-function draw() { update(t); post.composer.render(); ui.sync(t, playing); }
+function draw() { update(t); post.composer.render(); overlay.render(renderer); ui.sync(t, playing); }
 
 function loop(now) {
   requestAnimationFrame(loop);
@@ -374,7 +374,7 @@ window.__scene = {
   duration: TL.duration,
   steps: STEPS,
   setTime: (v) => { t = v; playing = false; update(v); },
-  render: () => post.composer.render(),
+  render: () => { post.composer.render(); overlay.render(renderer); },
   hideUI: () => { document.getElementById('ui').style.display = 'none'; },
   filmMode: (on) => {
     document.getElementById('ui').style.display = on ? 'none' : '';
