@@ -227,16 +227,16 @@ function update(t) {
 
   // ---- bag trolley ----
   if (t < 24) {
-    bagTrolley.position.set(-7.0, P.MEZZ_Y, -3.7); bagTrolley.rotation.y = 0.5;
+    bagTrolley.position.set(-7.2, P.MEZZ_Y, -3.6); bagTrolley.rotation.y = 1.9;
   } else if (t < 26.7) {
-    bagTrolley.position.copy(fwd(op, 1.15)); bagTrolley.rotation.y = op.rotation.y + Math.PI / 2;
+    bagTrolley.position.copy(fwd(op, 1.02)); bagTrolley.rotation.y = op.rotation.y;
   } else if (t < 30.5) {
-    bagTrolley.position.set(L.x + 0.75, carY, L.z); bagTrolley.rotation.y = Math.PI / 2;
+    bagTrolley.position.set(L.x, carY, L.z + 0.45); bagTrolley.rotation.y = 0;
   } else if (t < 38) {
-    bagTrolley.position.copy(fwd(op, 1.15)); bagTrolley.rotation.y = op.rotation.y + Math.PI / 2;
+    bagTrolley.position.copy(fwd(op, 1.02)); bagTrolley.rotation.y = op.rotation.y;
   } else {
-    bagTrolley.position.set(MIX_STAND[0] + 0.9, 0, MIX_STAND[2] + 0.3);
-    bagTrolley.rotation.y = Math.PI / 2;
+    bagTrolley.position.set(MIX_STAND[0] + 0.5, 0, MIX_STAND[2] + 0.55);
+    bagTrolley.rotation.y = 2.2;
   }
 
   // ---- sand bag: racking -> trolley -> charge port ----
@@ -246,10 +246,10 @@ function update(t) {
       const u = S.segS(t, 16.6, 22.6);
       _v.set(-9.6, P.MEZZ_Y + 1.15, -3.3);
       bag.position.lerpVectors(_v, new THREE.Vector3(
-        bagTrolley.position.x, bagTrolley.position.y + 0.55, bagTrolley.position.z), u);
+        bagTrolley.position.x, bagTrolley.position.y + 0.55, bagTrolley.position.z + 0.12), u);
       bag.rotation.set(0, 0.5 * u, 0);
     } else if (t < 39.4) {
-      bag.position.set(bagTrolley.position.x, bagTrolley.position.y + 0.55, bagTrolley.position.z);
+      bag.position.set(bagTrolley.position.x, bagTrolley.position.y + 0.55, bagTrolley.position.z + 0.12);
       bag.rotation.set(0, bagTrolley.rotation.y, 0);
     } else {
       const lf  = S.segS(t, 39.4, 42.4);
@@ -266,14 +266,14 @@ function update(t) {
 
   // ---- drum rides its own trolley, pushed by hand ----
   if (t < 63.4) {
-    drumTrolley.position.fromArray(DRUM_PARK); drumTrolley.rotation.y = Math.PI / 2;
+    drumTrolley.position.fromArray(DRUM_PARK); drumTrolley.rotation.y = 1.6;
   } else if (t < 72) {
-    drumTrolley.position.copy(fwd(op, 1.25)); drumTrolley.rotation.y = op.rotation.y + Math.PI / 2;
+    drumTrolley.position.copy(fwd(op, 0.98)); drumTrolley.rotation.y = op.rotation.y;
   } else {
-    drumTrolley.position.set(FILL_STAND[0] + 1.25, 0, FILL_STAND[2] - 0.25);
-    drumTrolley.rotation.y = Math.PI / 2;
+    drumTrolley.position.set(FILL_STAND[0] + 1.0, 0, FILL_STAND[2] - 0.15);
+    drumTrolley.rotation.y = 1.6;
   }
-  drum.position.set(drumTrolley.position.x, drumTrolley.position.y + 0.35, drumTrolley.position.z);
+  drum.position.set(drumTrolley.position.x, drumTrolley.position.y + 0.34, drumTrolley.position.z + 0.08);
   drum.rotation.y = drumTrolley.rotation.y;
   drum.userData.fill.scale.y = Math.max(0.001,
     S.segS(t, 59.0, 61.8) * (1 - S.segS(t, 73.6, 78.6)));

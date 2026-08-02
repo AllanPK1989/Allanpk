@@ -221,9 +221,20 @@ function update(t) {
   if (t < 34) bag.scale.set(1, 1, 1);
 
   // ---- vacuum wand dips into the opened bag, then sand flows to the vessel ----
-  const wandDown = S.pulse(t, 30.5, 41, 1.2);
-  vac.userData.wand.position.set(
-    bagOnDeck.x, 0.95 + (1 - wandDown) * 0.9, bagOnDeck.z + 0.2);
+  // The wand must stay parked on the vacuum rig until the AMR has actually
+  // arrived at the mixing station. It was previously pinned to the AMR deck
+  // every frame, so it trailed the robot across the warehouse, through the
+  // lift and down the aisle as an unexplained floating object.
+  const WAND_HOME = new THREE.Vector3(MIX.x + 1.9, 1.55, 1.5);
+  if (t < 29) {
+    vac.userData.wand.position.copy(WAND_HOME);
+  } else {
+    const wandDown = S.pulse(t, 30.5, 41, 1.2);
+    vac.userData.wand.position.set(
+      THREE.MathUtils.lerp(WAND_HOME.x, bagOnDeck.x, wandDown),
+      THREE.MathUtils.lerp(WAND_HOME.y, 0.95, wandDown),
+      THREE.MathUtils.lerp(WAND_HOME.z, bagOnDeck.z + 0.2, wandDown));
+  }
   if (t >= 33.6 && t < 40.6) {
     streamVac.visible = true;
     P.setStream(streamVac, MIX.x - 0.28, MIX.z, 2.42, 1.5);

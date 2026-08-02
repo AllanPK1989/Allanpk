@@ -234,34 +234,34 @@ export function buildLift() {
   g.position.copy(LIFT_POS);
 
   // shaft frame
-  for (const [x, z] of [[-1.3, -1.3], [1.3, -1.3], [-1.3, 1.3], [1.3, 1.3]]) {
-    const c = box(0.16, 5.6, 0.16, MAT.steelDark);
-    c.position.set(x, 2.8, z); shade(c); g.add(c);
+  for (const [x, z] of [[-0.95, -0.95], [0.95, -0.95], [-0.95, 0.95], [0.95, 0.95]]) {
+    const c = box(0.12, 5.15, 0.12, MAT.steelDark);
+    c.position.set(x, 2.58, z); shade(c); g.add(c);
   }
-  const head = box(2.9, 0.18, 2.9, MAT.steelDark);
-  head.position.set(0, 5.6, 0); shade(head); g.add(head);
+  const head = box(2.1, 0.14, 2.1, MAT.steelDark);
+  head.position.set(0, 5.15, 0); shade(head); g.add(head);
 
   // rear + side mesh panels
-  const back = box(2.8, 5.5, 0.06, MAT.glass);
-  back.position.set(0, 2.75, -1.35); g.add(back);
-  const side = box(0.06, 5.5, 2.8, MAT.glass);
-  side.position.set(-1.35, 2.75, 0); g.add(side);
+  const back = box(2.0, 5.05, 0.05, MAT.glass);
+  back.position.set(0, 2.55, -0.99); g.add(back);
+  const side = box(0.05, 5.05, 2.0, MAT.glass);
+  side.position.set(-0.99, 2.55, 0); g.add(side);
 
   // the car itself — animated by the scene
   const car = new THREE.Group();
-  const deck = box(2.5, 0.14, 2.5, MAT.steel);
+  const deck = box(1.75, 0.12, 1.75, MAT.steel);
   deck.position.y = 0.07; shade(deck); car.add(deck);
-  for (const side2 of [-1.2, 1.2]) {
-    const w = box(0.08, 1.1, 2.5, MAT.steelDark);
-    w.position.set(side2, 0.62, 0); shade(w); car.add(w);
+  for (const side2 of [-0.85, 0.85]) {
+    const w = box(0.06, 1.15, 1.75, MAT.steelDark);
+    w.position.set(side2, 0.64, 0); shade(w); car.add(w);
   }
-  const rear = box(2.5, 1.1, 0.08, MAT.steelDark);
-  rear.position.set(0, 0.62, -1.2); shade(rear); car.add(rear);
+  const rear = box(1.75, 1.15, 0.06, MAT.steelDark);
+  rear.position.set(0, 0.64, -0.85); shade(rear); car.add(rear);
   car.position.y = MEZZ_Y;
   g.add(car);
 
   const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 12), MAT.green);
-  lamp.position.set(1.45, 2.4, 1.3); g.add(lamp);
+  lamp.position.set(1.08, 2.1, 0.95); g.add(lamp);
 
   g.userData.car = car;
   g.userData.lamp = lamp;
@@ -343,16 +343,26 @@ export function makeBin() {
 }
 
 export function makeTrolley() {
+  // Long axis along +Z, handle at the back (-Z), so setting rotation.y to the
+  // operator's own heading puts the handle in their hands.
   const g = new THREE.Group();
-  const deck = box(1.3, 0.09, 0.9, MAT.steel);
+  const deck = box(0.78, 0.07, 1.15, MAT.steelMatte);
   deck.position.y = 0.34; shade(deck); g.add(deck);
-  const handle = box(0.07, 0.95, 0.07, MAT.steelDark);
-  handle.position.set(-0.6, 0.82, 0); shade(handle); g.add(handle);
-  const bar = box(0.07, 0.07, 0.8, MAT.steelDark);
-  bar.position.set(-0.6, 1.28, 0); shade(bar); g.add(bar);
-  for (const [x, z] of [[-0.5, -0.38], [-0.5, 0.38], [0.5, -0.38], [0.5, 0.38]]) {
-    const w = cyl(0.15, 0.15, 0.07, MAT.rubber, 14);
-    w.rotation.z = Math.PI / 2; w.position.set(x, 0.15, z); shade(w); g.add(w);
+  const lip = box(0.78, 0.05, 0.05, MAT.yellow);
+  lip.position.set(0, 0.4, 0.57); shade(lip); g.add(lip);
+  for (const s of [-0.33, 0.33]) {
+    const up = cyl(0.022, 0.022, 0.62, MAT.steelDark, 8);
+    up.position.set(s, 0.68, -0.55); shade(up); g.add(up);
+  }
+  const bar = cyl(0.028, 0.028, 0.72, MAT.rubber, 8);
+  bar.rotation.z = Math.PI / 2;
+  bar.position.set(0, 0.99, -0.55); shade(bar); g.add(bar);
+  g.userData.handleY = 0.99;
+  for (const [x, z] of [[-0.31, -0.45], [0.31, -0.45], [-0.31, 0.45], [0.31, 0.45]]) {
+    const w = cyl(0.075, 0.075, 0.05, MAT.rubber, 12);
+    w.rotation.z = Math.PI / 2; w.position.set(x, 0.075, z); shade(w); g.add(w);
+    const fork = box(0.03, 0.14, 0.03, MAT.steelDark);
+    fork.position.set(x, 0.17, z); shade(fork); g.add(fork);
   }
   return g;
 }
@@ -1144,18 +1154,23 @@ export function posePush(op, t = 1) {
 
 /** Heavier trolley for moving a drum. */
 export function makeDrumTrolley() {
+  // Same convention: long axis +Z, handle at the back.
   const g = new THREE.Group();
-  const deck = box(1.15, 0.1, 0.95, MAT.steelDark);
+  const deck = box(0.85, 0.08, 1.0, MAT.steelDark);
   deck.position.y = 0.3; shade(deck); g.add(deck);
-  const lip = box(1.15, 0.07, 0.06, MAT.yellow);
-  lip.position.set(0, 0.38, -0.44); shade(lip); g.add(lip);
-  const handle = box(0.07, 1.0, 0.07, MAT.painted);
-  handle.position.set(-0.52, 0.8, 0); shade(handle); g.add(handle);
-  const bar = box(0.07, 0.07, 0.78, MAT.painted);
-  bar.position.set(-0.52, 1.28, 0); shade(bar); g.add(bar);
-  for (const [x, z] of [[-0.42, -0.4], [-0.42, 0.4], [0.44, -0.4], [0.44, 0.4]]) {
-    const w = cyl(0.14, 0.14, 0.08, MAT.rubber, 14);
-    w.rotation.z = Math.PI / 2; w.position.set(x, 0.14, z); shade(w); g.add(w);
+  const kerb = box(0.85, 0.06, 0.05, MAT.yellow);
+  kerb.position.set(0, 0.37, 0.49); shade(kerb); g.add(kerb);
+  for (const s of [-0.36, 0.36]) {
+    const up = cyl(0.024, 0.024, 0.66, MAT.painted, 8);
+    up.position.set(s, 0.65, -0.48); shade(up); g.add(up);
+  }
+  const bar = cyl(0.03, 0.03, 0.78, MAT.rubber, 8);
+  bar.rotation.z = Math.PI / 2;
+  bar.position.set(0, 0.99, -0.48); shade(bar); g.add(bar);
+  g.userData.handleY = 0.99;
+  for (const [x, z] of [[-0.34, -0.38], [0.34, -0.38], [-0.34, 0.38], [0.34, 0.38]]) {
+    const w = cyl(0.08, 0.08, 0.055, MAT.rubber, 12);
+    w.rotation.z = Math.PI / 2; w.position.set(x, 0.08, z); shade(w); g.add(w);
   }
   return g;
 }
