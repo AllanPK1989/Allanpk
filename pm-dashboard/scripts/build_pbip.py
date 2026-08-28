@@ -1322,6 +1322,15 @@ def build_report(base: str, inject: bool = False) -> None:
     print(f"  report: {len(built)} pages, {n_vis} visuals")
 
 
+def package(base: str) -> None:
+    """Rezip the project on every build, so the downloadable archive can never
+    drift from what is in powerbi/."""
+    out = os.path.join(ROOT, "PM_Dashboard_pbip")
+    archive = shutil.make_archive(out, "zip", root_dir=base)
+    size = os.path.getsize(archive) / 1024
+    print(f"  package: {os.path.basename(archive)} ({size:.0f} KB)")
+
+
 def copy_local_data(base: str) -> None:
     """Put a copy of the dummy CSVs next to the .pbip so the project is
     self-contained: one folder to point LocalDataFolder at."""
@@ -1383,7 +1392,12 @@ def main() -> None:
         copy_local_data(base)
 
     print("  validating JSON ...")
-    print("  all JSON valid\n" if validate(base) else "  FIX THE ERRORS ABOVE\n")
+    ok = validate(base)
+    print("  all JSON valid" if ok else "  FIX THE ERRORS ABOVE")
+
+    if not args.inject and ok:
+        package(base)
+    print()
 
 
 if __name__ == "__main__":

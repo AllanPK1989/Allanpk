@@ -1,6 +1,6 @@
 /// Every measure in the model lives here. The table itself holds no data.
 table _Measures
-	lineageTag: 28a69a7a-53f6-4ddb-939b-384a7a835d24
+	lineageTag: 1b3d3c28-7193-4921-a961-49e37e70be04
 
 	/// Latest calendar date in the model. Use it on every page footer.
 	measure 'Data As Of' = ```
@@ -8,7 +8,7 @@ table _Measures
 			```
 		formatString: yyyy-mm-dd
 		displayFolder: 00 Context
-		lineageTag: 824a4c25-facb-483d-908d-8df0b11149d0
+		lineageTag: a26a542f-9e83-4701-a641-7ec12ac6d70c
 
 	/// The most recent month for which Production has uploaded standard hours.
 	measure 'Latest Std Hours Month' = ```
@@ -18,7 +18,7 @@ table _Measures
 			    IF ( ISBLANK ( LastM ), "No upload yet", FORMAT ( LastM, "MMM yyyy" ) )
 			```
 		displayFolder: 00 Context
-		lineageTag: f6bced92-a4c4-4cec-9f0c-da607825ab71
+		lineageTag: 4a3dbb3d-3c7b-4ca8-b274-0ebf29bdc1db
 
 	/// Default hour threshold read from PM_Config, so the rule can be retuned without editing the model.
 	measure 'Cfg PM Interval Std Hrs' = ```
@@ -28,7 +28,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 00 Context
-		lineageTag: 33a82534-2e68-43a5-bf31-86fdd2104f1d
+		lineageTag: 35bc9337-cd34-4173-bd6a-968517983100
 
 	/// Counter percentage at which a cell starts showing as Due Soon.
 	measure 'Cfg Due Soon Pct' = ```
@@ -38,7 +38,7 @@ table _Measures
 			```
 		formatString: 0%
 		displayFolder: 00 Context
-		lineageTag: 0b050131-b8ad-4763-9ef3-968e68ccdc5e
+		lineageTag: 63c2084b-7e11-4fbb-a29f-a0e58f377693
 
 	/// Production standard hours earned, from the monthly upload.
 	measure 'Std Hours' = ```
@@ -46,7 +46,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 01 Standard Hours
-		lineageTag: b719e9c7-4063-4f29-8be1-ede7db80307e
+		lineageTag: efefc82a-b941-40c1-9d63-ccc83a9b8247
 
 	/// Standard hours in the previous month.
 	measure 'Std Hours PM' = ```
@@ -54,7 +54,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 01 Standard Hours
-		lineageTag: 2b796fbd-eb2d-4426-8ae6-cba5ba75511c
+		lineageTag: 4ef5147d-615a-4038-9d54-44305a124750
 
 	/// Month-on-month movement in standard hours.
 	measure 'Std Hours MoM %' = ```
@@ -62,7 +62,7 @@ table _Measures
 			```
 		formatString: 0.0%
 		displayFolder: 01 Standard Hours
-		lineageTag: 856c429a-93a4-4382-a444-b84de4cd3dd3
+		lineageTag: 94200365-30d1-4bcd-a833-37ee4db7324f
 
 	/// Rolling twelve-month standard hours.
 	measure 'Std Hours 12M' = ```
@@ -70,7 +70,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 01 Standard Hours
-		lineageTag: 38c2f2ec-b7c8-4a5b-9d7f-aedde07babac
+		lineageTag: 4519597c-b3a9-4f95-9ba9-ca1adb40248c
 
 	/// Last month for which the hour ledger holds actual (not forecast) data.
 	measure 'Latest Ledger Month' = ```
@@ -82,7 +82,7 @@ table _Measures
 			```
 		formatString: yyyy-mm-dd
 		displayFolder: 01 Standard Hours
-		lineageTag: 082c388b-4e45-4b81-9799-ee57c957d950
+		lineageTag: 8babcd5b-6018-4271-9d81-9373ea18874a
 
 	/// Where the cell's hour counter stands right now, after the latest upload.
 	measure 'Current Counter Std Hrs' = ```
@@ -97,7 +97,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 01 Standard Hours
-		lineageTag: 4d329068-1f9e-4ce1-b83b-a4df4348f861
+		lineageTag: 57908323-bfa6-4694-82db-762b266bff2a
 
 	/// The hour threshold for the cells in context. Sums correctly across a multi-cell selection.
 	measure 'PM Threshold Std Hrs' = ```
@@ -105,7 +105,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 01 Standard Hours
-		lineageTag: 73d7d3a2-700d-48ef-89b2-e508edc6f2c9
+		lineageTag: 8e8f79f8-6b20-4a76-8398-661fa0a9cc1f
 
 	/// Standard hours still to be earned before the next PM falls due.
 	measure 'Hours to Next PM' = ```
@@ -113,7 +113,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 01 Standard Hours
-		lineageTag: 48170f9b-88a6-4410-819b-2c7005ba1fcb
+		lineageTag: b50777d5-a469-4219-93a1-97bcb426da70
 
 	/// Counter as a percentage of the threshold. The headline gauge on the planning page.
 	measure '% to PM Threshold' = ```
@@ -121,7 +121,7 @@ table _Measures
 			```
 		formatString: 0.0%
 		displayFolder: 01 Standard Hours
-		lineageTag: 8654fdf2-27d7-4d2f-a8aa-aa2f0c1a4bfc
+		lineageTag: c1e6258a-2a4c-40b6-9833-ed4db584bd47
 
 	/// Conditional colour for the counter gauge: over threshold, due soon, or comfortable.
 	measure '% to PM Threshold Color' = ```
@@ -135,7 +135,7 @@ table _Measures
 			    )
 			```
 		displayFolder: 01 Standard Hours
-		lineageTag: 391e0864-0553-4e28-b55e-0b16abc8a228
+		lineageTag: 313be2f8-6bc2-49c4-a67b-96ef84f95cd1
 
 	/// Trailing three-month average standard hours. The run rate used for every projection.
 	measure 'Run Rate 3M Std Hrs' = ```
@@ -152,7 +152,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 01 Standard Hours
-		lineageTag: fe3f207e-4ccc-499e-8cac-dd9c7bd040ec
+		lineageTag: 837891e4-98de-4da1-b01d-2f6cc3eeb567
 
 	/// How many months at the current run rate before the hour threshold is reached.
 	measure 'Months to PM Projected' = ```
@@ -162,7 +162,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 01 Standard Hours
-		lineageTag: 1e719d52-128b-4bca-b8da-97e60bbff3ee
+		lineageTag: 8f18f6d6-9d73-4be4-9ca4-9dc3af2f0378
 
 	/// Most recent completed PM in the current context - cell, machine or technician.
 	measure 'Last PM Date' = ```
@@ -174,7 +174,7 @@ table _Measures
 			```
 		formatString: yyyy-mm-dd
 		displayFolder: 01 Standard Hours
-		lineageTag: 96228637-0546-43e8-a791-512dcaf5adc1
+		lineageTag: a829e8b4-7721-40ed-b6a3-39980ae918e5
 
 	/// Elapsed months since the last completed PM. Drives the calendar backstop.
 	measure 'Months Since Last PM' = ```
@@ -184,7 +184,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 01 Standard Hours
-		lineageTag: 63b59c75-560e-4119-a652-b26f6439cc00
+		lineageTag: 2cee51ea-5172-4da1-955c-cb9069f27c87
 
 	/// Months left before the calendar backstop forces a PM regardless of hours.
 	measure 'Backstop Months Remaining' = ```
@@ -195,7 +195,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 01 Standard Hours
-		lineageTag: af92e613-0f2b-4cda-b513-e71e069e7661
+		lineageTag: 34cd178a-2a71-4e46-8069-9f4e0cc0311e
 
 	/// The earlier of the hour projection and the calendar backstop. This is the date the plan works to.
 	measure 'Projected Next PM Date' = ```
@@ -215,7 +215,7 @@ table _Measures
 			```
 		formatString: yyyy-mm-dd
 		displayFolder: 01 Standard Hours
-		lineageTag: c40d4f29-fa49-4a07-a22a-8be317605aa0
+		lineageTag: 6a090c58-095e-44d7-9c10-7786312574ff
 
 	/// Why the next PM will fire - useful when a low-utilisation cell is riding the backstop.
 	measure 'Projected Trigger Reason' = ```
@@ -236,7 +236,7 @@ table _Measures
 			    )
 			```
 		displayFolder: 01 Standard Hours
-		lineageTag: 37291eaa-ef34-4f8b-b0ed-293e278d40d1
+		lineageTag: cf0313dc-305e-4c81-82c1-d674821060e5
 
 	/// Cells whose counter tripped inside the selected period.
 	measure 'Cells Due In Period' = ```
@@ -247,7 +247,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 01 Standard Hours
-		lineageTag: 55db14ad-2532-4abc-8a02-0798d2da7782
+		lineageTag: c65503c0-304d-4184-8183-000c92e6a230
 
 	/// Forward look: how many cells fall due in the next quarter. The manpower planning number.
 	measure 'Cells Due Next 3 Months' = ```
@@ -263,7 +263,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 01 Standard Hours
-		lineageTag: 4c894d3a-0067-4767-9ac6-eb22abb6d738
+		lineageTag: 4aa8c003-6fc6-4ee7-9fa8-09283ab20608
 
 	/// Total PM work orders in context.
 	measure 'PM Work Orders' = ```
@@ -271,7 +271,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 02 PM Execution
-		lineageTag: f029532b-923d-408a-b69e-79fcd448f36a
+		lineageTag: 840219b9-7a97-46d2-920b-c22cf0e7c417
 
 	/// Work orders finished.
 	measure 'PM Completed' = ```
@@ -279,7 +279,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 02 PM Execution
-		lineageTag: 5f7e9bb0-3118-43de-b1cf-9b9894ae8a0d
+		lineageTag: 2a023de6-fe4c-4f75-a3d6-98f4e0d4507a
 
 	/// Work orders raised but not yet started.
 	measure 'PM Scheduled' = ```
@@ -287,7 +287,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 02 PM Execution
-		lineageTag: 59f1a193-2d07-459f-85a3-1afd1d9a5b23
+		lineageTag: 1ebc7a09-afb7-44a5-a7bc-7ae051eb89db
 
 	/// Work orders a technician has started but not closed.
 	measure 'PM In Progress' = ```
@@ -295,7 +295,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 02 PM Execution
-		lineageTag: 8c957ca5-fba2-41cb-80d9-f5cfc2e7d3e8
+		lineageTag: 5b7356aa-0002-4bd6-b43d-4373a22728a4
 
 	/// Past due date and still not complete.
 	measure 'PM Overdue' = ```
@@ -303,7 +303,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 02 PM Execution
-		lineageTag: 90f5bda1-b86a-4ef1-b0e1-c48c06759c93
+		lineageTag: 6028b6c1-57b4-43ce-bf00-62ec9fcedf3c
 
 	/// Formally pushed to a later window with approval.
 	measure 'PM Deferred' = ```
@@ -311,7 +311,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 02 PM Execution
-		lineageTag: c936186a-c106-432e-970a-8c90ed59b1f4
+		lineageTag: 51c0a8b6-3fae-420f-96ec-981013013c46
 
 	/// Everything still to be done.
 	measure 'PM Open' = ```
@@ -322,7 +322,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 02 PM Execution
-		lineageTag: c40f0e23-f0c4-4844-9509-96ee459f1875
+		lineageTag: e0c7bc35-b665-4385-9519-9ee1c68a6cec
 
 	/// Share of raised work orders that are complete.
 	measure 'PM Completion %' = ```
@@ -330,7 +330,7 @@ table _Measures
 			```
 		formatString: 0.0%
 		displayFolder: 02 PM Execution
-		lineageTag: 5e5c0377-d500-401e-8521-f73e5eaba2e4
+		lineageTag: 59146e70-201b-40b1-8462-7f782f0a7ede
 
 	/// Work orders whose due date has already passed - the fair denominator for compliance.
 	measure 'PM Due To Date' = ```
@@ -338,7 +338,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 02 PM Execution
-		lineageTag: 13e5e673-7259-409b-90f0-80c5e01bb743
+		lineageTag: 25a8deb6-41c4-4ef1-91cd-cd4e923809d6
 
 	/// Completed on or before the due date.
 	measure 'PM On Time' = ```
@@ -346,7 +346,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 02 PM Execution
-		lineageTag: 77b9fab7-b08a-4820-80ef-f23400e80076
+		lineageTag: d645e276-85f4-4a95-8a53-b1169c5ab56e
 
 	/// The headline KPI: of everything that fell due, how much was done on time.
 	measure 'PM Compliance %' = ```
@@ -354,7 +354,7 @@ table _Measures
 			```
 		formatString: 0.0%
 		displayFolder: 02 PM Execution
-		lineageTag: 454fb781-95d6-4588-b483-ef114921fee0
+		lineageTag: 9838dc95-abea-4e91-ade2-c0b8c7730127
 
 	/// Green at or above 95%, amber to 85%, red below.
 	measure 'PM Compliance % Color' = ```
@@ -363,7 +363,7 @@ table _Measures
 			    SWITCH ( TRUE (), ISBLANK ( P ), "#7B93A3", P >= 0.95, "#2F9E7E", P >= 0.85, "#D08B2C", "#C4553B" )
 			```
 		displayFolder: 02 PM Execution
-		lineageTag: 18a03a98-fa14-4dbb-9178-3f3db892c150
+		lineageTag: 4a2b4540-013f-4b0b-98ba-02f61a98e17e
 
 	/// Average days between due date and actual completion. Negative is early.
 	measure 'PM Schedule Slip Days' = ```
@@ -374,7 +374,7 @@ table _Measures
 			```
 		formatString: #,0.0
 		displayFolder: 02 PM Execution
-		lineageTag: ba10c158-0982-4b2b-92a0-a0f3496510e3
+		lineageTag: f3eeb1e8-afde-4afe-b30f-c8b245b6aee2
 
 	/// How long overdue work has been sitting, on average.
 	measure 'Open WO Ageing Days' = ```
@@ -389,7 +389,7 @@ table _Measures
 			```
 		formatString: #,0.0
 		displayFolder: 02 PM Execution
-		lineageTag: 7f99302e-c280-456c-9bca-58b3df0aac51
+		lineageTag: 75a1dc6e-d199-4d97-8fe9-2067c7377218
 
 	/// Actual hands-on maintenance hours recorded against PM work orders.
 	measure 'PM Wrench Hours' = ```
@@ -397,7 +397,7 @@ table _Measures
 			```
 		formatString: #,0.0
 		displayFolder: 02 PM Execution
-		lineageTag: d27707ac-b1ad-44a3-a2c2-bc04a04a7f92
+		lineageTag: c1aff925-5568-4b12-b69a-62bdccd01a96
 
 	/// Planned hours from the machine master. The capacity planning figure.
 	measure 'PM Planned Hours' = ```
@@ -405,7 +405,7 @@ table _Measures
 			```
 		formatString: #,0.0
 		displayFolder: 02 PM Execution
-		lineageTag: 6f3ce59e-7fcf-4cde-b394-ed54cb88def5
+		lineageTag: 98782119-a77a-4d9f-93a8-510240afe084
 
 	/// Actual against standard time. Persistently over 130% means the standard is wrong or the job has grown.
 	measure 'PM Duration vs Std %' = ```
@@ -413,7 +413,7 @@ table _Measures
 			```
 		formatString: 0.0%
 		displayFolder: 02 PM Execution
-		lineageTag: 0ab71f7d-67f6-4729-ad50-194b7dcbcf2e
+		lineageTag: c0329b57-8c04-4627-8115-2dde1e3f6080
 
 	/// Average minutes per completed PM.
 	measure 'Avg PM Duration Min' = ```
@@ -421,7 +421,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 02 PM Execution
-		lineageTag: 6da5e6dc-7051-4775-b631-6a3cfee33660
+		lineageTag: 2a7f9e49-d6e9-4447-8290-b71d092b4776
 
 	/// Checklist lines recorded.
 	measure 'Checklist Tasks' = ```
@@ -429,7 +429,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 03 Checklist Quality
-		lineageTag: 15dfcd94-f525-41ec-8b04-937cc9a2b688
+		lineageTag: 8f3383b6-0544-483e-8895-1ccdcfa3797a
 
 	/// Lines that failed their acceptance standard.
 	measure 'Checklist Tasks Not OK' = ```
@@ -437,7 +437,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 03 Checklist Quality
-		lineageTag: f424398d-c1ec-4020-8cbc-5bef7b47a1fa
+		lineageTag: 55f9b735-5227-4539-9e7f-19592d3d6cff
 
 	/// Share of checklist lines failing. A rising rate is a real reliability signal, not noise.
 	measure 'Checklist Fail Rate %' = ```
@@ -445,7 +445,7 @@ table _Measures
 			```
 		formatString: 0.0%
 		displayFolder: 03 Checklist Quality
-		lineageTag: f88860eb-491b-4fd0-8e3e-9e34db869297
+		lineageTag: dde3b943-78f5-465b-8b44-027c257e57ed
 
 	/// Failed lines on safety-critical tasks. This number should be reviewed every week, without exception.
 	measure 'Safety Critical Fails' = ```
@@ -456,7 +456,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 03 Checklist Quality
-		lineageTag: 84cd296c-077d-488e-975d-f3d8bbd1fd33
+		lineageTag: 71aab5b1-bfc2-4272-81c7-5fa5267b9832
 
 	/// How much of the checklist actually got answered across the work orders in context.
 	measure 'Checklist Completion %' = ```
@@ -467,7 +467,7 @@ table _Measures
 			```
 		formatString: 0.0%
 		displayFolder: 03 Checklist Quality
-		lineageTag: 92356971-4de8-464f-8deb-af1792d91ed9
+		lineageTag: 39b9c92c-1088-4b2f-aa74-d0885c980c17
 
 	/// Completed work orders that have a machine QR scan against them.
 	measure 'QR Verified Completions' = ```
@@ -475,7 +475,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 03 Checklist Quality
-		lineageTag: 31b26c06-bf00-4e32-86eb-69b5260e298f
+		lineageTag: eaea604b-0a1a-4fef-9a53-14c30fe5d10a
 
 	/// Proof of attendance. Should sit at 100%; anything less needs a conversation.
 	measure 'QR Verification %' = ```
@@ -483,7 +483,7 @@ table _Measures
 			```
 		formatString: 0.0%
 		displayFolder: 03 Checklist Quality
-		lineageTag: 2a67c34e-48af-421a-93ff-ddaea17ba4ae
+		lineageTag: df710e36-a047-4107-bd42-08acf2d174ec
 
 	/// Work orders closed without anyone scanning the machine. Investigate every one.
 	measure 'Desk Closed WOs' = ```
@@ -491,7 +491,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 03 Checklist Quality
-		lineageTag: 2d5e41d1-266c-4fd2-bae6-cf10ba0618eb
+		lineageTag: 56db5c10-0c20-4a62-8350-d842711de115
 
 	/// Unplanned stoppages reported.
 	measure 'Breakdowns' = ```
@@ -499,7 +499,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 04 Reliability
-		lineageTag: 3bdbe554-05a7-4925-9cf5-307b80a22ff1
+		lineageTag: 6e6616c8-8c00-4b7a-b8e5-c3643fe6da2c
 
 	/// Still not restored or still waiting on a spare.
 	measure 'Open Breakdowns' = ```
@@ -507,7 +507,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 04 Reliability
-		lineageTag: bd27d68d-e402-4d97-83f0-d662e69639ab
+		lineageTag: 027e46c4-9437-4530-b274-55e14ff028ea
 
 	/// Total unplanned downtime.
 	measure 'Downtime Hours' = ```
@@ -515,7 +515,7 @@ table _Measures
 			```
 		formatString: #,0.0
 		displayFolder: 04 Reliability
-		lineageTag: 58fa20dc-5c64-44fb-a3a7-a9f5f844215c
+		lineageTag: 6b948c22-2b89-48a7-bdf0-b14074689526
 
 	/// Mean time to repair - average hours from stoppage to restoration.
 	measure 'MTTR Hours' = ```
@@ -526,7 +526,7 @@ table _Measures
 			```
 		formatString: #,0.0
 		displayFolder: 04 Reliability
-		lineageTag: ff8c7050-67b7-4fac-bb32-c10018e3a15d
+		lineageTag: 3131aa99-4667-4bb8-8794-fd3dad536b11
 
 	/// Average minutes from the call to a technician arriving.
 	measure 'Avg Response Min' = ```
@@ -534,7 +534,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 04 Reliability
-		lineageTag: 1d704df6-504d-4f2d-8390-c16efa586188
+		lineageTag: e4cd5fcb-e1ed-4334-9df6-ee7d5b12bd8e
 
 	/// Cell standard hours spread evenly across the machines in the cell, so MTBF works at machine level. It is an allocation, not a meter reading - say so on the page.
 	measure 'Operating Hours Allocated' = ```
@@ -555,7 +555,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 04 Reliability
-		lineageTag: 93dcb901-ec33-4666-9abf-d7cd728b557e
+		lineageTag: 5eb2ad81-f696-4a05-b2a0-9d17d2753f62
 
 	/// Mean operating hours between failures.
 	measure 'MTBF Hours' = ```
@@ -563,7 +563,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 04 Reliability
-		lineageTag: 9a2c938d-2f66-459c-9f5c-14e8c3ff8176
+		lineageTag: 64d01fdd-792c-4400-a67b-28def3ce9a8c
 
 	/// Operating hours less unplanned downtime, over operating hours.
 	measure 'Availability %' = ```
@@ -573,7 +573,7 @@ table _Measures
 			```
 		formatString: 0.0%
 		displayFolder: 04 Reliability
-		lineageTag: c8eec0f9-5039-4bce-9ec4-f4e156b0d54e
+		lineageTag: 39f0e969-495b-425e-9aea-f69b9ba09cfd
 
 	/// Green at or above 97%, amber to 93%, red below.
 	measure 'Availability % Color' = ```
@@ -582,7 +582,7 @@ table _Measures
 			    SWITCH ( TRUE (), ISBLANK ( A ), "#7B93A3", A >= 0.97, "#2F9E7E", A >= 0.93, "#D08B2C", "#C4553B" )
 			```
 		displayFolder: 04 Reliability
-		lineageTag: 6419487e-ebe1-4d66-ab38-de7e38bb1ca5
+		lineageTag: 02f42671-9b7e-47e2-a94e-2766393b5444
 
 	/// Machine and failure-mode pairs seen more than once. Each one is a root cause that was never closed out.
 	measure 'Repeat Failure Count' = ```
@@ -602,7 +602,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 04 Reliability
-		lineageTag: cc522a99-fac9-4126-b063-03eb868a0735
+		lineageTag: 6bd21eb9-04a3-422f-9f8b-893054bd4600
 
 	/// Failures within a fortnight of a PM. This is the sharpest available measure of PM quality - a high number means the PM is being signed off, not done.
 	measure 'Breakdowns Within 15d of PM' = ```
@@ -626,7 +626,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 04 Reliability
-		lineageTag: b00f2533-e60d-4059-8cd1-933f29fe0c62
+		lineageTag: 2881917e-0ffe-4899-8f09-e00b12159fc1
 
 	/// Share of failures that follow closely on a PM.
 	measure 'PM Induced Failure %' = ```
@@ -634,7 +634,7 @@ table _Measures
 			```
 		formatString: 0.0%
 		displayFolder: 04 Reliability
-		lineageTag: 4a9e375e-d6cc-42e9-a342-7a9f28d83f2e
+		lineageTag: 6a6cb10c-ca88-40ad-be94-63e495efbb8b
 
 	/// Requests raised.
 	measure 'Spare Requests' = ```
@@ -642,7 +642,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 05 Spare Parts
-		lineageTag: a831afc0-6ff5-4c3b-b419-b7649179dfb5
+		lineageTag: e9bce5af-78c1-4977-908e-ec102e39779a
 
 	/// Value of everything requested.
 	measure 'Spare Request Value' = ```
@@ -650,7 +650,7 @@ table _Measures
 			```
 		formatString: "₹"#,0;("₹"#,0);"₹"#,0
 		displayFolder: 05 Spare Parts
-		lineageTag: 43c6eb52-ac89-438e-9a38-1d4f3ceb136e
+		lineageTag: a28e96b1-c26b-48d5-991c-c4376b5f0000
 
 	/// Value actually issued from stores.
 	measure 'Spares Issued Value' = ```
@@ -658,7 +658,7 @@ table _Measures
 			```
 		formatString: "₹"#,0;("₹"#,0);"₹"#,0
 		displayFolder: 05 Spare Parts
-		lineageTag: bca7f06a-c491-42ca-8c4c-4e69bf30b8b5
+		lineageTag: d291b4e2-a649-4dc2-8edd-52aebb36b316
 
 	/// Requests waiting on somebody's decision.
 	measure 'Pending Approvals' = ```
@@ -666,7 +666,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 05 Spare Parts
-		lineageTag: cde93321-7d60-4e00-a3ad-d5e49a10a443
+		lineageTag: 167cbeb8-2eb0-4e92-b20e-162e563556bd
 
 	/// Average days from request to approval.
 	measure 'Avg Approval TAT Days' = ```
@@ -677,7 +677,7 @@ table _Measures
 			```
 		formatString: #,0.0
 		displayFolder: 05 Spare Parts
-		lineageTag: 7e03d7cc-de57-4813-96e2-ca3faacbfb85
+		lineageTag: 3f2e2a5c-cfef-4bd4-83a1-acb7e933057d
 
 	/// Share of requests raised as emergencies. A high figure means planning is losing to firefighting.
 	measure 'Emergency Request %' = ```
@@ -688,7 +688,7 @@ table _Measures
 			```
 		formatString: 0.0%
 		displayFolder: 05 Spare Parts
-		lineageTag: 2b12be66-f100-49c5-bec5-75b319503cfd
+		lineageTag: cdd558c2-7382-496f-bfa5-5e360a5bc2bf
 
 	/// Quantity actually fitted.
 	measure 'Spares Replaced Qty' = ```
@@ -696,7 +696,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 05 Spare Parts
-		lineageTag: b609c058-2b47-411b-a6b8-b7da59b810c6
+		lineageTag: 861311e5-5594-474a-acc6-733b79235c4a
 
 	/// Value of parts actually consumed - not the same as requested, and the gap is worth watching.
 	measure 'Spare Consumption Value' = ```
@@ -704,7 +704,7 @@ table _Measures
 			```
 		formatString: "₹"#,0;("₹"#,0);"₹"#,0
 		displayFolder: 05 Spare Parts
-		lineageTag: b341989b-11db-415c-a744-f7ecf05b2060
+		lineageTag: afce52fd-4faa-4904-a983-aaf06eecfaa2
 
 	/// Maintenance material cost per production standard hour. The unit-cost trend to hold flat.
 	measure 'Spend per Std Hour' = ```
@@ -712,7 +712,7 @@ table _Measures
 			```
 		formatString: "₹"#,0;("₹"#,0);"₹"#,0
 		displayFolder: 05 Spare Parts
-		lineageTag: 7dd475bc-51e7-4b85-bcb9-dcf6fa1093ba
+		lineageTag: 25d19d5f-8a62-4f73-9a37-c38c81ac6cbc
 
 	/// Catalogue lines under their reorder level as at the last stock upload.
 	measure 'Parts Below Min Stock' = ```
@@ -720,7 +720,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 05 Spare Parts
-		lineageTag: cccb0a40-c7ef-4aa3-86b4-071c1fdeb37e
+		lineageTag: 43e89165-29ef-4641-9a30-3885067399e3
 
 	/// Value sitting in the store.
 	measure 'Stock Value' = ```
@@ -728,7 +728,7 @@ table _Measures
 			```
 		formatString: "₹"#,0;("₹"#,0);"₹"#,0
 		displayFolder: 05 Spare Parts
-		lineageTag: 2609e11b-0f76-4518-860f-4d0dd7309671
+		lineageTag: a14d7408-9233-403f-a255-34074003f665
 
 	/// Abnormalities logged.
 	measure 'Abnormalities' = ```
@@ -736,7 +736,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 06 Abnormalities
-		lineageTag: d0468cee-6e93-4298-a417-b74a9add3640
+		lineageTag: f8781716-5a09-4c5b-bb7f-711e858bad44
 
 	/// Still open.
 	measure 'Open Abnormalities' = ```
@@ -744,7 +744,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 06 Abnormalities
-		lineageTag: 2f304e84-892a-4738-b424-15102a7da88e
+		lineageTag: 292968ed-3dab-4866-9abe-31905d9cca74
 
 	/// Open and rated High. This is the escalation list.
 	measure 'High Severity Open' = ```
@@ -756,7 +756,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 06 Abnormalities
-		lineageTag: 07fb7311-295a-4755-8206-128b12281e51
+		lineageTag: f0729d14-a22b-4f7c-ace5-6e6c2b784907
 
 	/// Share closed out.
 	measure 'Abnormality Closure %' = ```
@@ -767,7 +767,7 @@ table _Measures
 			```
 		formatString: 0.0%
 		displayFolder: 06 Abnormalities
-		lineageTag: c682d52a-ffa7-419c-a54c-a046db28d224
+		lineageTag: 5824a833-6478-4cda-a5b4-b42e5cd8aff6
 
 	/// Average days from report to closure.
 	measure 'Avg Abnormality Closure Days' = ```
@@ -778,7 +778,7 @@ table _Measures
 			```
 		formatString: #,0.0
 		displayFolder: 06 Abnormalities
-		lineageTag: 3d2b7e83-3573-4b85-bd92-98c8760c8b37
+		lineageTag: 49b78976-b66b-4f1c-a788-45cefa998984
 
 	/// Open beyond thirty days. These are the ones that turn into breakdowns.
 	measure 'Abnormalities Open Over 30d' = ```
@@ -792,7 +792,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 06 Abnormalities
-		lineageTag: f329e78b-1b99-454d-acd9-60b75ecf8b00
+		lineageTag: 75ecd64e-ed50-417f-a86c-6a0d75642ba8
 
 	/// Red if anything High is open, amber if anything has aged past thirty days.
 	measure 'Open Abnormality Color' = ```
@@ -802,7 +802,7 @@ table _Measures
 			    SWITCH ( TRUE (), H > 0, "#C4553B", A > 0, "#D08B2C", "#2F9E7E" )
 			```
 		displayFolder: 06 Abnormalities
-		lineageTag: 6d06e860-01ed-4dbd-957e-f3e78435f8df
+		lineageTag: 40bacbba-e354-4a16-8915-dd378e4dbc87
 
 	/// Headcount available for assignment.
 	measure 'Technicians Active' = ```
@@ -810,7 +810,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 07 Technician
-		lineageTag: 5acb85ff-90a2-4904-b9d4-e3783629e554
+		lineageTag: 59185c30-33b2-47cc-bbb7-aa762137aaca
 
 	/// Available wrench hours in the selected period, from daily capacity times working days.
 	measure 'Technician Capacity Hours' = ```
@@ -830,7 +830,7 @@ table _Measures
 			```
 		formatString: #,0.0
 		displayFolder: 07 Technician
-		lineageTag: 615107cf-13e4-43ec-8f7c-aa6e9087bb9b
+		lineageTag: 15900c92-705b-4bd8-8c0b-5128515d8f28
 
 	/// PM hours against available hours. Anything above about 70% leaves no room for breakdowns.
 	measure 'Technician Utilisation %' = ```
@@ -838,7 +838,7 @@ table _Measures
 			```
 		formatString: 0.0%
 		displayFolder: 07 Technician
-		lineageTag: b8fc0de6-eda1-4d29-8759-b1f1d0c67b30
+		lineageTag: c725a2ba-110b-40b1-8ee2-ca89ef5cd495
 
 	/// Average work order load per person - the load balancing view.
 	measure 'WOs per Technician' = ```
@@ -846,7 +846,7 @@ table _Measures
 			```
 		formatString: #,0.0
 		displayFolder: 07 Technician
-		lineageTag: f009faa8-b9ef-4616-810c-a5829c1ee3c2
+		lineageTag: 0c4330eb-c7d4-4581-84e5-2ef1bfcf86bd
 
 	/// Total QR scans.
 	measure 'QR Scans' = ```
@@ -854,7 +854,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 07 Technician
-		lineageTag: b45f437c-87cf-431a-b7e0-af3c2894881f
+		lineageTag: 57961850-402f-4951-baf1-0b820cd96a01
 
 	/// Scans at a machine.
 	measure 'Machine Scans' = ```
@@ -862,7 +862,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 07 Technician
-		lineageTag: e12b1d92-2b31-412f-a3cd-4553353ff229
+		lineageTag: 44d39332-f2e3-4c18-adc8-704eda2c0b6b
 
 	/// Distinct machines scanned - shop floor coverage.
 	measure 'Machines Touched' = ```
@@ -870,7 +870,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 07 Technician
-		lineageTag: ba6c2113-51ab-4770-a36a-298c2cc36ba0
+		lineageTag: 93d61afd-31bd-4ec0-9445-4d34e8956124
 
 	/// How many cell-month rows the upload should contain for the selected period.
 	measure 'Expected Std Hours Rows' = ```
@@ -895,7 +895,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 08 Data Quality
-		lineageTag: ae0985af-1cdb-4a6b-9620-1d4a89c11988
+		lineageTag: 7955f54a-92a5-4785-9644-2f91d41fcb20
 
 	/// Gaps in the monthly upload. Anything above zero means a cell is not accruing hours and will never be scheduled.
 	measure 'Missing Std Hours Rows' = ```
@@ -903,7 +903,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 08 Data Quality
-		lineageTag: 7d05a692-e831-479a-ac9c-874e9ff7dc17
+		lineageTag: a73d4f2b-b126-44eb-93d9-53a7cc175ce6
 
 	/// Completed work orders with no checklist evidence behind them.
 	measure 'WOs Without Checklist' = ```
@@ -917,7 +917,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 08 Data Quality
-		lineageTag: fac3550d-a0bb-4940-9ee4-49421a0ef208
+		lineageTag: 4a50e967-db53-487f-b616-22a0bb014403
 
 	/// One number for the health of the inputs. It should be zero.
 	measure 'Data Quality Issues' = ```
@@ -925,7 +925,7 @@ table _Measures
 			```
 		formatString: #,0
 		displayFolder: 08 Data Quality
-		lineageTag: a814c9dc-f90b-4248-9659-13dfc8cbd74e
+		lineageTag: a88beb77-473a-47c6-a50a-0f9ce0da1ddb
 
 	/// Green only at zero.
 	measure 'Data Quality Color' = ```
@@ -934,7 +934,7 @@ table _Measures
 			    SWITCH ( TRUE (), I = 0, "#2F9E7E", I <= 5, "#D08B2C", "#C4553B" )
 			```
 		displayFolder: 08 Data Quality
-		lineageTag: 61e1a3cb-aa32-460e-bc4f-18c56b3774d0
+		lineageTag: b7d402d6-97b5-4eaf-ba0a-7661ef7c299a
 
 	/// Dynamic subtitle for the planning page.
 	measure 'Title Planning' = ```
@@ -942,7 +942,7 @@ table _Measures
 			    & "  |  " & [Cells Due Next 3 Months] & " cell(s) fall due in the next 3 months"
 			```
 		displayFolder: 09 Titles
-		lineageTag: 55441eeb-2aca-484d-9027-7fe98e5a3a23
+		lineageTag: 892f4ad3-e923-46b5-b6c2-34af86d40294
 
 	/// Dynamic subtitle for the execution page.
 	measure 'Title Compliance' = ```
@@ -952,7 +952,7 @@ table _Measures
 			        & "  |  " & [PM Overdue] & " overdue, " & [PM Open] & " open"
 			```
 		displayFolder: 09 Titles
-		lineageTag: ca1283f7-9fdf-43a7-a5cb-7e9885ea9973
+		lineageTag: f1e503cb-25d5-4797-89fa-94761776eb95
 
 	/// Header for the Machine 360 page - the same line the QR scan shows on the phone.
 	measure 'Machine Header' = ```
@@ -968,13 +968,13 @@ table _Measures
 			    )
 			```
 		displayFolder: 09 Titles
-		lineageTag: 1f95b67c-bd08-4956-bd37-3df6131c91be
+		lineageTag: 919d06d1-53a3-447a-83d6-b5020f8fb6e6
 
 	column _Placeholder
 		dataType: int64
 		isHidden
 		formatString: 0
-		lineageTag: bb8fbbff-b949-4e36-ad3a-551cdfeab8a1
+		lineageTag: ee9b15b8-4d83-4050-9994-96a3c5159b18
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [_Placeholder]

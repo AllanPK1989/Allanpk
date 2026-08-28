@@ -1,10 +1,10 @@
 /// One row per machine per PM cycle. The core transactional table.
 table Fact_WorkOrders
-	lineageTag: 9d757a91-027b-45f2-a333-7bd817c86bea
+	lineageTag: 5e3b0bb1-8607-4010-8a7d-92b44a079282
 
 	column WOID
 		dataType: string
-		lineageTag: d19db104-e3ae-4a57-8ccf-1268e21d76a7
+		lineageTag: e387f14e-b3e2-4e3c-b733-dd24cc5b0d21
 		summarizeBy: none
 		sourceColumn: WOID
 
@@ -12,7 +12,7 @@ table Fact_WorkOrders
 
 	column CycleID
 		dataType: string
-		lineageTag: 38f8b76e-4bec-4504-9ab3-afa4eb70f3a6
+		lineageTag: e5e840d2-1864-479b-be6a-088ea3191345
 		summarizeBy: none
 		sourceColumn: CycleID
 
@@ -20,7 +20,7 @@ table Fact_WorkOrders
 
 	column CellID
 		dataType: string
-		lineageTag: 03cf0e80-23e0-4452-882c-07d7866d3884
+		lineageTag: 3fbe9aac-007c-49c3-985a-0fae3c1bd2ac
 		summarizeBy: none
 		sourceColumn: CellID
 
@@ -28,7 +28,7 @@ table Fact_WorkOrders
 
 	column CellName
 		dataType: string
-		lineageTag: 67274890-1af9-402c-b197-8f7f68a0f748
+		lineageTag: f31fcb6c-cfed-4143-bf7d-1c7c4c30b6c4
 		summarizeBy: none
 		sourceColumn: CellName
 
@@ -36,7 +36,7 @@ table Fact_WorkOrders
 
 	column Area
 		dataType: string
-		lineageTag: f012f92b-1272-470f-ba7b-2c9be3f7ce56
+		lineageTag: b94b61bb-bbf8-4cd6-9284-a94edbeb1aa7
 		summarizeBy: none
 		sourceColumn: Area
 
@@ -44,7 +44,7 @@ table Fact_WorkOrders
 
 	column MachineID
 		dataType: string
-		lineageTag: b4b23edf-bb8f-428a-abbb-4c7b8db6c38d
+		lineageTag: 863ae28c-d789-419a-ba73-1a95bb7ced5e
 		summarizeBy: none
 		sourceColumn: MachineID
 
@@ -52,7 +52,7 @@ table Fact_WorkOrders
 
 	column MachineName
 		dataType: string
-		lineageTag: a27607ca-c8f1-40b5-99fe-a0a4ddfc497a
+		lineageTag: c7c9d305-048c-4904-b95e-dfbeb5982b0e
 		summarizeBy: none
 		sourceColumn: MachineName
 
@@ -60,7 +60,7 @@ table Fact_WorkOrders
 
 	column MachineType
 		dataType: string
-		lineageTag: 017eebe5-3d6c-4a61-af7c-928bbf4c9e84
+		lineageTag: 0a47343f-809c-460c-8449-5b763aeec9cd
 		summarizeBy: none
 		sourceColumn: MachineType
 
@@ -68,7 +68,7 @@ table Fact_WorkOrders
 
 	column Criticality
 		dataType: string
-		lineageTag: 738621c8-01fa-4f2b-a04a-164a8335120e
+		lineageTag: 50567d8f-0864-4628-84a3-2e573b4a2884
 		summarizeBy: none
 		sourceColumn: Criticality
 
@@ -76,7 +76,7 @@ table Fact_WorkOrders
 
 	column PMType
 		dataType: string
-		lineageTag: 8d9d3360-96e6-4613-a6de-dfd8f0ad0b92
+		lineageTag: 0089f1d3-3adf-4c91-89da-36b3bb671162
 		summarizeBy: none
 		sourceColumn: PMType
 
@@ -84,7 +84,7 @@ table Fact_WorkOrders
 
 	column TriggerType
 		dataType: string
-		lineageTag: 3e419904-ea0e-4df7-811e-209a78a58e8a
+		lineageTag: 757c0adb-2133-4e92-8d11-c09c1b06a88c
 		summarizeBy: none
 		sourceColumn: TriggerType
 
@@ -93,7 +93,7 @@ table Fact_WorkOrders
 	column TriggerStdHrs
 		dataType: double
 		formatString: #,0.0
-		lineageTag: dcaaf30f-6cee-4029-9b86-34791d49ce0d
+		lineageTag: 983685d4-80de-4f54-9ccb-b66af6e3738c
 		summarizeBy: none
 		sourceColumn: TriggerStdHrs
 
@@ -101,7 +101,7 @@ table Fact_WorkOrders
 
 	column PlanMonth
 		dataType: string
-		lineageTag: 4a94bd14-8e79-4912-bd7c-e962d83ffdf4
+		lineageTag: e15fed6f-f569-4e12-a639-41e2fc9f62cc
 		summarizeBy: none
 		sourceColumn: PlanMonth
 
@@ -110,7 +110,7 @@ table Fact_WorkOrders
 	column PlannedDate
 		dataType: dateTime
 		formatString: yyyy-mm-dd
-		lineageTag: 27b946ac-dc5f-4133-b352-23a224c158dc
+		lineageTag: fb2a423c-5fda-4ce1-8525-6dff6b0ef558
 		summarizeBy: none
 		sourceColumn: PlannedDate
 
@@ -121,7 +121,7 @@ table Fact_WorkOrders
 	column DueDate
 		dataType: dateTime
 		formatString: yyyy-mm-dd
-		lineageTag: 17f03fe2-e40a-4fef-9b3a-c0dc27bc8c71
+		lineageTag: b5505a2b-ac8f-4dbf-94e3-11e8d386bda3
 		summarizeBy: none
 		sourceColumn: DueDate
 
@@ -131,7 +131,7 @@ table Fact_WorkOrders
 
 	column AssignedTechID
 		dataType: string
-		lineageTag: a2aedff6-ad89-458e-afc8-82d8be436bf5
+		lineageTag: a09e67ff-2874-48cf-b47d-f0d184239469
 		summarizeBy: none
 		sourceColumn: AssignedTechID
 
@@ -139,7 +139,7 @@ table Fact_WorkOrders
 
 	column AssignedTechName
 		dataType: string
-		lineageTag: e872a05a-7a96-4475-a6c0-39337be939c9
+		lineageTag: 8d814cfa-ca1b-436d-8097-b9799ea6f344
 		summarizeBy: none
 		sourceColumn: AssignedTechName
 
@@ -147,7 +147,7 @@ table Fact_WorkOrders
 
 	column Shift
 		dataType: string
-		lineageTag: a1e86390-21c9-489c-8d54-857b56e280be
+		lineageTag: 5a3b6837-6cf5-42a8-a042-fd98cb11ea51
 		summarizeBy: none
 		sourceColumn: Shift
 
@@ -155,7 +155,7 @@ table Fact_WorkOrders
 
 	column Status
 		dataType: string
-		lineageTag: 5b7085fa-a8e0-4761-ba95-891a71b8fa97
+		lineageTag: 79db6d42-6528-4ac3-b3bf-5a021b9a7cd0
 		summarizeBy: none
 		sourceColumn: Status
 
@@ -164,7 +164,7 @@ table Fact_WorkOrders
 	column ActualStartDate
 		dataType: dateTime
 		formatString: yyyy-mm-dd
-		lineageTag: 6b44a843-92c6-411b-b8ae-d6b95657007e
+		lineageTag: a2074c47-a7d0-421f-92ee-df5505826e0a
 		summarizeBy: none
 		sourceColumn: ActualStartDate
 
@@ -175,7 +175,7 @@ table Fact_WorkOrders
 	column ActualEndDate
 		dataType: dateTime
 		formatString: yyyy-mm-dd
-		lineageTag: 34e77cc5-52c4-49bb-90c3-2aea5a29e77f
+		lineageTag: d2f1293e-b90c-40f6-b0f6-6e7d240a0260
 		summarizeBy: none
 		sourceColumn: ActualEndDate
 
@@ -186,7 +186,7 @@ table Fact_WorkOrders
 	column DurationMin
 		dataType: int64
 		formatString: #,0
-		lineageTag: 1b6a1ffe-e1b4-417e-b875-f61dd06b7d76
+		lineageTag: 11db97c1-c474-472a-b638-3e68857f7fc1
 		summarizeBy: none
 		sourceColumn: DurationMin
 
@@ -195,7 +195,7 @@ table Fact_WorkOrders
 	column ChecklistTotalTasks
 		dataType: int64
 		formatString: #,0
-		lineageTag: 173058d2-54c4-4635-bed3-2e000f8917fe
+		lineageTag: 11eb9d77-f415-405f-9f98-d43eeb15505b
 		summarizeBy: none
 		sourceColumn: ChecklistTotalTasks
 
@@ -204,7 +204,7 @@ table Fact_WorkOrders
 	column ChecklistDoneTasks
 		dataType: int64
 		formatString: #,0
-		lineageTag: 757d4956-4264-4df0-a034-56a2955232e2
+		lineageTag: 25e7ef0e-0e2f-43cf-b3f7-dd376ee1c6f0
 		summarizeBy: none
 		sourceColumn: ChecklistDoneTasks
 
@@ -213,7 +213,7 @@ table Fact_WorkOrders
 	column ChecklistFailTasks
 		dataType: int64
 		formatString: #,0
-		lineageTag: 7c25dff3-bfb2-4c10-8dd4-f7a2ba169805
+		lineageTag: 37aea671-b388-43eb-8d26-9eca1d29f4b4
 		summarizeBy: none
 		sourceColumn: ChecklistFailTasks
 
@@ -222,7 +222,7 @@ table Fact_WorkOrders
 	column ChecklistCompletionPct
 		dataType: double
 		formatString: #,0.0
-		lineageTag: 106a0421-3e9a-4af4-a7b5-0d8c5166dcc6
+		lineageTag: 5ba27009-e218-4b0b-bebf-69840b6cd369
 		summarizeBy: none
 		sourceColumn: ChecklistCompletionPct
 
@@ -230,7 +230,7 @@ table Fact_WorkOrders
 
 	column MachineQRScanned
 		dataType: string
-		lineageTag: e56e0af9-c063-4e59-9753-41eef8b8c43f
+		lineageTag: d6a20930-561d-4cc7-9b8e-ba07e2617127
 		summarizeBy: none
 		sourceColumn: MachineQRScanned
 
@@ -238,7 +238,7 @@ table Fact_WorkOrders
 
 	column PMResult
 		dataType: string
-		lineageTag: 313e68fb-a536-4139-acba-6f4b390d5e94
+		lineageTag: 7d6ae821-1936-4925-9abc-b551d738eb97
 		summarizeBy: none
 		sourceColumn: PMResult
 
@@ -246,7 +246,7 @@ table Fact_WorkOrders
 
 	column OnTimeFlag
 		dataType: string
-		lineageTag: c6d0883c-fd9b-4194-856a-60b8f3ad2d5b
+		lineageTag: fe178611-a7e9-40b9-a89e-d639a12a671a
 		summarizeBy: none
 		sourceColumn: OnTimeFlag
 
@@ -255,7 +255,7 @@ table Fact_WorkOrders
 	column StdMinutes
 		dataType: int64
 		formatString: #,0
-		lineageTag: cf0c819f-8807-4efe-bc06-d79ec9dd51d3
+		lineageTag: 97385165-62bb-4534-8a1c-4727fc2f52a2
 		summarizeBy: none
 		sourceColumn: StdMinutes
 
@@ -263,7 +263,7 @@ table Fact_WorkOrders
 
 	column Remarks
 		dataType: string
-		lineageTag: 2164a208-20b2-4fce-ac85-f753b709bce2
+		lineageTag: fb8d00b3-829d-4bdb-b0b2-96a7e8fcc5e9
 		summarizeBy: none
 		sourceColumn: Remarks
 

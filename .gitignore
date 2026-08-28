@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Power BI Desktop working files (never commit these — they are not the project)
+*.pbix
+*.pbip.tmp
+**/.pbi/localSettings.json
+**/.pbi/cache.abf

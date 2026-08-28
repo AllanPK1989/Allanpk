@@ -1,6 +1,6 @@
 /// Local reads the dummy CSVs. SharePoint reads the real lists and workbooks. This is the only switch you change at go-live.
 expression SourceMode = "Local" meta [IsParameterQuery=true, List={"Local", "SharePoint"}, DefaultValue="Local", Type="Text", IsParameterQueryRequired=true]
-	lineageTag: c08063ac-b498-4818-8b83-eb0675f679ad
+	lineageTag: 78d1774d-7853-4807-9277-117983b54f31
 	queryGroup: 0 Parameters
 
 	annotation PBI_ResultType = Text
@@ -8,7 +8,7 @@ expression SourceMode = "Local" meta [IsParameterQuery=true, List={"Local", "Sha
 
 /// Folder holding the CSVs. Only used when SourceMode = Local. Unzip the project to C:\PM_Dashboard and this default is already correct.
 expression LocalDataFolder = "C:\PM_Dashboard\data" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
-	lineageTag: 23256864-502b-403d-a7c2-b3223ad09dcf
+	lineageTag: b6d44bdc-97b1-4e98-8df1-d3a22ca841cd
 	queryGroup: 0 Parameters
 
 	annotation PBI_ResultType = Text
@@ -16,7 +16,7 @@ expression LocalDataFolder = "C:\PM_Dashboard\data" meta [IsParameterQuery=true,
 
 /// Root URL of the SharePoint site. Only used when SourceMode = SharePoint.
 expression SharePointSiteUrl = "https://contoso.sharepoint.com/sites/PMSystem" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
-	lineageTag: 9ad57a4e-4892-40c1-bbcd-1914173e001b
+	lineageTag: cbc2f84d-a992-44d6-a902-cb7cc4c2fd13
 	queryGroup: 0 Parameters
 
 	annotation PBI_ResultType = Text
@@ -34,7 +34,7 @@ expression fnLocalCsv = ```
 		in
 		    NullBlanks
 		```
-	lineageTag: 43648934-ba41-4411-8aa9-3d561c188c76
+	lineageTag: b49b5489-d184-415e-9d27-25eae1728176
 	queryGroup: 1 Functions
 
 	annotation PBI_ResultType = Function
@@ -66,7 +66,7 @@ expression fnSpList = ```
 		in
 		    Items
 		```
-	lineageTag: 2ae7872b-446c-44ca-a3ee-7c30779894c3
+	lineageTag: 2bf4b7da-be58-4b3a-bc0a-43055aed251e
 	queryGroup: 1 Functions
 
 	annotation PBI_ResultType = Function
@@ -86,7 +86,7 @@ expression fnSpExcel = ```
 		in
 		    Data
 		```
-	lineageTag: ced6e650-b23a-4cf8-80e4-3be10a69b655
+	lineageTag: 57323cc1-7b99-4f01-9b6d-a953ee46897c
 	queryGroup: 1 Functions
 
 	annotation PBI_ResultType = Function
@@ -115,7 +115,7 @@ expression fnStdHoursFolder = ```
 		in
 		    NoBlank
 		```
-	lineageTag: cb6741be-dd60-4465-a1ee-3b92739c1085
+	lineageTag: 111cd257-6a45-4f52-9424-1757e06a2ad6
 	queryGroup: 1 Functions
 
 	annotation PBI_ResultType = Function
@@ -148,7 +148,7 @@ expression fnSource = ```
 		in
 		    Result
 		```
-	lineageTag: 16b9d33d-4f92-4f0e-9a0c-3b3ab5ef5eaa
+	lineageTag: 4bdc3ea5-ce54-4bf5-87de-cdcb1078bee6
 	queryGroup: 1 Functions
 
 	annotation PBI_ResultType = Function

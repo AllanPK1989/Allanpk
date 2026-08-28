@@ -55,6 +55,9 @@ python3 scripts/generate_qr_codes.py            # QR codes + print sheets
 python3 scripts/build_measure_docs.py           # measure documentation
 python3 scripts/build_pbip.py                   # the Power BI project
 python3 scripts/validate_pbip.py                # 692 consistency checks
+
+# build_pbip.py also rezips the project to PM_Dashboard_pbip.zip on every run,
+# so the downloadable archive can never drift from powerbi/.
 ```
 
 Then unzip or copy `powerbi/` to **`C:\PM_Dashboard`** and open

@@ -1,10 +1,10 @@
 /// One row per checklist task per work order - the audit evidence.
 table Fact_ChecklistResults
-	lineageTag: 0fd904a9-4e8a-44e6-b3fd-6ae3bd8dce1e
+	lineageTag: 6a26a00c-3f99-4022-9e21-9d46c08928de
 
 	column ResultID
 		dataType: string
-		lineageTag: aeb5835c-6c7f-44bc-9fb2-04edb3f19186
+		lineageTag: 0fc7c92c-d1cc-42ca-9ba7-9e5d264835d0
 		summarizeBy: none
 		sourceColumn: ResultID
 
@@ -12,7 +12,7 @@ table Fact_ChecklistResults
 
 	column WOID
 		dataType: string
-		lineageTag: 8377f026-5fbc-4deb-8864-fb4663812094
+		lineageTag: b51bcfa7-af2e-4f9b-9214-f6dec77a1669
 		summarizeBy: none
 		sourceColumn: WOID
 
@@ -20,7 +20,7 @@ table Fact_ChecklistResults
 
 	column MachineID
 		dataType: string
-		lineageTag: 973cdd40-2002-41b5-8295-c8a80b5afb95
+		lineageTag: 147e87fc-d1b8-4a16-bdca-86509246aaa0
 		summarizeBy: none
 		sourceColumn: MachineID
 
@@ -28,7 +28,7 @@ table Fact_ChecklistResults
 
 	column MachineName
 		dataType: string
-		lineageTag: 897f697d-d9dc-4af9-815c-1c49fa557db5
+		lineageTag: 2970d8fa-5b94-4623-bc36-3cf7fece6527
 		summarizeBy: none
 		sourceColumn: MachineName
 
@@ -36,7 +36,7 @@ table Fact_ChecklistResults
 
 	column ChecklistID
 		dataType: string
-		lineageTag: c349ae5a-0252-4cf8-8256-e1e9552f9de3
+		lineageTag: 6cf594a5-8c54-4971-b614-f62ae2ea1792
 		summarizeBy: none
 		sourceColumn: ChecklistID
 
@@ -45,7 +45,7 @@ table Fact_ChecklistResults
 	column TaskNo
 		dataType: int64
 		formatString: #,0
-		lineageTag: 58defe34-45f0-4380-957c-bbc439f53a12
+		lineageTag: 1c046abd-07f4-43b2-8ea9-e53b1e0d29cd
 		summarizeBy: none
 		sourceColumn: TaskNo
 
@@ -53,7 +53,7 @@ table Fact_ChecklistResults
 
 	column TaskDescription
 		dataType: string
-		lineageTag: db177eb1-6bc4-473d-b2d4-b231b20f7290
+		lineageTag: dcc6bb28-ccc7-46d0-9e07-e9e823875e5f
 		summarizeBy: none
 		sourceColumn: TaskDescription
 
@@ -61,7 +61,7 @@ table Fact_ChecklistResults
 
 	column TaskType
 		dataType: string
-		lineageTag: e2375d08-b705-4503-9f78-5490fb53a3bf
+		lineageTag: 5132de8f-7d75-4fa2-ab5f-77a4645410a3
 		summarizeBy: none
 		sourceColumn: TaskType
 
@@ -69,7 +69,7 @@ table Fact_ChecklistResults
 
 	column AcceptanceStandard
 		dataType: string
-		lineageTag: 8636328b-b3a7-4ee4-9210-404e42cbb0ba
+		lineageTag: f9054d4c-7fbc-4c95-9e20-a084dcbe3bf1
 		summarizeBy: none
 		sourceColumn: AcceptanceStandard
 
@@ -77,7 +77,7 @@ table Fact_ChecklistResults
 
 	column Mandatory
 		dataType: string
-		lineageTag: b3874979-c6cd-4614-b523-e01559643117
+		lineageTag: 26b75213-798b-49c3-878b-6890c3893eca
 		summarizeBy: none
 		sourceColumn: Mandatory
 
@@ -85,7 +85,7 @@ table Fact_ChecklistResults
 
 	column SafetyCritical
 		dataType: string
-		lineageTag: 21e12c8e-4807-4c7a-a048-074ab62561d2
+		lineageTag: 0f0ff745-656c-453c-adac-bf60becffda1
 		summarizeBy: none
 		sourceColumn: SafetyCritical
 
@@ -93,7 +93,7 @@ table Fact_ChecklistResults
 
 	column Result
 		dataType: string
-		lineageTag: b2d8210f-f02b-490b-8b48-065c34d855b0
+		lineageTag: 66f1de1d-366c-49d0-ba71-01ba5ef2aeb6
 		summarizeBy: none
 		sourceColumn: Result
 
@@ -102,7 +102,7 @@ table Fact_ChecklistResults
 	column MeasuredValue
 		dataType: double
 		formatString: #,0.0
-		lineageTag: aa0bf679-d220-4fe1-8aab-c8ae7c0d422c
+		lineageTag: 4f6154ed-e2ef-4939-87ec-8b2e728e9e82
 		summarizeBy: none
 		sourceColumn: MeasuredValue
 
@@ -110,7 +110,7 @@ table Fact_ChecklistResults
 
 	column Observation
 		dataType: string
-		lineageTag: 12756499-f44a-406e-86c2-a823816b635b
+		lineageTag: 4654fb81-7191-4acf-833c-a295d1de6e19
 		summarizeBy: none
 		sourceColumn: Observation
 
@@ -118,7 +118,7 @@ table Fact_ChecklistResults
 
 	column TechID
 		dataType: string
-		lineageTag: 799d0c61-c4dd-495e-9771-52f904098dc1
+		lineageTag: 0244141b-a35e-44cf-87cd-4a27f63154c0
 		summarizeBy: none
 		sourceColumn: TechID
 
@@ -127,7 +127,7 @@ table Fact_ChecklistResults
 	column RecordedDate
 		dataType: dateTime
 		formatString: yyyy-mm-dd
-		lineageTag: c35a1f33-1781-496e-9d62-b525217200b3
+		lineageTag: a5ac4dd0-7455-436c-86a0-da3aadbf6549
 		summarizeBy: none
 		sourceColumn: RecordedDate
 
@@ -137,7 +137,7 @@ table Fact_ChecklistResults
 
 	column AbnormalityRaised
 		dataType: string
-		lineageTag: 76f20e52-57d5-4963-8f17-d8af0ea2e74e
+		lineageTag: f9a3d208-71d8-4411-bbb7-ff49bad84a21
 		summarizeBy: none
 		sourceColumn: AbnormalityRaised
 
@@ -145,7 +145,7 @@ table Fact_ChecklistResults
 
 	column TaskKey
 		dataType: string
-		lineageTag: c1da1204-09ea-44ef-acd1-65d255e0b2e5
+		lineageTag: 6ff5511b-987b-448c-8604-32524cc73fad
 		summarizeBy: none
 		sourceColumn: TaskKey
 
