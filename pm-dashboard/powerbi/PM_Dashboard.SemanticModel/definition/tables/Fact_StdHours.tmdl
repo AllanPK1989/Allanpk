@@ -1,0 +1,113 @@
+/// Monthly production standard hours per cell - the input that drives scheduling.
+table Fact_StdHours
+	lineageTag: 65e1f15b-5e3d-4c32-a04b-9de46b9072f8
+
+	column MonthKey
+		dataType: string
+		lineageTag: 7b78b94c-4825-4654-b2ab-cb5e90438e48
+		summarizeBy: none
+		sourceColumn: MonthKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		dataType: int64
+		formatString: #,0
+		lineageTag: e402da2b-719a-4bf1-84a3-fafc485b778c
+		summarizeBy: none
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthNo
+		dataType: int64
+		formatString: #,0
+		lineageTag: c8458217-bd27-4bab-9234-f3db438c2ffb
+		summarizeBy: none
+		sourceColumn: MonthNo
+
+		annotation SummarizationSetBy = Automatic
+
+	column CellID
+		dataType: string
+		lineageTag: 141685db-ae91-48e0-a130-7561988db37f
+		summarizeBy: none
+		sourceColumn: CellID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CellName
+		dataType: string
+		lineageTag: cc82ca05-8d0d-4479-9862-7674bc4ed320
+		summarizeBy: none
+		sourceColumn: CellName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Area
+		dataType: string
+		lineageTag: 8187dd0c-bcb9-448b-b2f6-266a9ec716e3
+		summarizeBy: none
+		sourceColumn: Area
+
+		annotation SummarizationSetBy = Automatic
+
+	column StdHours
+		dataType: double
+		formatString: #,0.0
+		lineageTag: f2cbec13-7268-4526-bf64-03380aa38670
+		summarizeBy: none
+		sourceColumn: StdHours
+
+		annotation SummarizationSetBy = Automatic
+
+	column UploadedBy
+		dataType: string
+		lineageTag: 830fbee5-13de-4fef-9da7-67bb9adbbfba
+		summarizeBy: none
+		sourceColumn: UploadedBy
+
+		annotation SummarizationSetBy = Automatic
+
+	column UploadDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 0f11aa3a-6480-4bfc-9f0c-104c2ad92eb1
+		summarizeBy: none
+		sourceColumn: UploadDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column SourceFile
+		dataType: string
+		lineageTag: ed77a672-cae9-4c70-a69b-3daa9ea65c38
+		summarizeBy: none
+		sourceColumn: SourceFile
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthStartDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: de832ae7-765d-48ec-8027-081ca6fa48c8
+		summarizeBy: none
+		sourceColumn: MonthStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition Fact_StdHours = m
+		mode: import
+		source = ```
+				let
+				    Source = fnSource("Cell_Standard_Hours"),
+				    Typed = Table.TransformColumnTypes(Source, {{"MonthKey", type text}, {"Year", Int64.Type}, {"MonthNo", Int64.Type}, {"CellID", type text}, {"CellName", type text}, {"Area", type text}, {"StdHours", type number}, {"UploadedBy", type text}, {"UploadDate", type date}, {"SourceFile", type text}}, "en-US"),
+				    AddMonthStart = Table.AddColumn(Typed, "MonthStartDate", each Date.FromText([MonthKey] & "-01"), type date)
+				in
+				    AddMonthStart
+				```
+
+	annotation PBI_ResultType = Table

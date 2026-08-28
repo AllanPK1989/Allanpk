@@ -1,0 +1,88 @@
+/// Maintenance technicians. Each has a personal QR code.
+table Dim_Technician
+	lineageTag: 2134cf53-5d23-4cbc-8b53-f6d6a298bc84
+
+	column TechID
+		dataType: string
+		lineageTag: 67330d8b-ca0c-4797-bffc-d95c4708eeac
+		summarizeBy: none
+		sourceColumn: TechID
+
+		annotation SummarizationSetBy = Automatic
+
+	column TechName
+		dataType: string
+		lineageTag: 321da3fb-1577-49de-9693-3a0b29b3ed40
+		summarizeBy: none
+		sourceColumn: TechName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Email
+		dataType: string
+		lineageTag: 1006bbc7-1c59-4c50-92a3-b28e9e4b84e8
+		summarizeBy: none
+		sourceColumn: Email
+
+		annotation SummarizationSetBy = Automatic
+
+	column Shift
+		dataType: string
+		lineageTag: eb5757a4-5c3e-4e30-b23d-7fdd644709dd
+		summarizeBy: none
+		sourceColumn: Shift
+
+		annotation SummarizationSetBy = Automatic
+
+	column SkillGroup
+		dataType: string
+		lineageTag: 2f8ec305-c1b1-4751-bbe4-9fb23fe3614a
+		summarizeBy: none
+		sourceColumn: SkillGroup
+
+		annotation SummarizationSetBy = Automatic
+
+	column PrimaryArea
+		dataType: string
+		lineageTag: ea2cb240-4528-4b67-b852-25603046f195
+		summarizeBy: none
+		sourceColumn: PrimaryArea
+
+		annotation SummarizationSetBy = Automatic
+
+	column DailyCapacityMin
+		dataType: int64
+		formatString: #,0
+		lineageTag: 49a81355-6395-4d68-8bc9-3c8a4e4510a6
+		summarizeBy: none
+		sourceColumn: DailyCapacityMin
+
+		annotation SummarizationSetBy = Automatic
+
+	column QRPayload
+		dataType: string
+		lineageTag: 7c5f59ac-eac6-47bc-9d2d-225ccac4124d
+		summarizeBy: none
+		sourceColumn: QRPayload
+
+		annotation SummarizationSetBy = Automatic
+
+	column Active
+		dataType: string
+		lineageTag: 333deb2f-1bf5-485c-9b32-6888c703d082
+		summarizeBy: none
+		sourceColumn: Active
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Technician = m
+		mode: import
+		source = ```
+				let
+				    Source = fnSource("Technician_Master"),
+				    Typed = Table.TransformColumnTypes(Source, {{"TechID", type text}, {"TechName", type text}, {"Email", type text}, {"Shift", type text}, {"SkillGroup", type text}, {"PrimaryArea", type text}, {"DailyCapacityMin", Int64.Type}, {"QRPayload", type text}, {"Active", type text}}, "en-US")
+				in
+				    Typed
+				```
+
+	annotation PBI_ResultType = Table

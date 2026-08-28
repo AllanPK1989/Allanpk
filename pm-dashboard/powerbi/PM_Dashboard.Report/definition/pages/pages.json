@@ -1,0 +1,16 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/pagesMetadata/1.0.0/schema.json",
+  "pageOrder": [
+    "pg01Overview",
+    "pg02Planning",
+    "pg03Schedule",
+    "pg04Execution",
+    "pg05Machine360",
+    "pg06Reliability",
+    "pg07Spares",
+    "pg08Abnormality",
+    "pg09Technician",
+    "pg10DataQuality"
+  ],
+  "activePageName": "pg01Overview"
+}

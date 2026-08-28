@@ -1,0 +1,9 @@
+CellID,CellName,Area,Plant,Criticality,PMIntervalStdHrs,CalendarBackstopMonths,BaselineMonthlyStdHrs,CostCenter,Active
+CELL-01,CNC Turning Line A,Machine Shop,Unit-1 Coimbatore,A,4000,12,1180,CC-1010,Yes
+CELL-02,CNC Turning Line B,Machine Shop,Unit-1 Coimbatore,A,4000,12,980,CC-1011,Yes
+CELL-03,Gear Cutting Cell,Machine Shop,Unit-1 Coimbatore,A,4000,12,760,CC-1020,Yes
+CELL-04,Heat Treatment,Heat Treat,Unit-1 Coimbatore,A,4000,12,1400,CC-1030,Yes
+CELL-05,Assembly Line 1,Assembly,Unit-1 Coimbatore,B,4000,12,890,CC-1040,Yes
+CELL-06,Paint & Finishing,Finishing,Unit-1 Coimbatore,B,4000,12,420,CC-1050,Yes
+CELL-07,Robotic Welding Bay,Fabrication,Unit-1 Coimbatore,A,4000,12,640,CC-1060,Yes
+CELL-08,Press Shop,Fabrication,Unit-1 Coimbatore,B,4000,12,330,CC-1070,Yes

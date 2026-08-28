@@ -1,0 +1,90 @@
+/// PM task library, one checklist per machine family.
+table Dim_Checklist
+	lineageTag: 115e15ff-47fe-4fb5-8d33-a294f24c0084
+
+	column ChecklistID
+		dataType: string
+		lineageTag: bf57e38a-2fa6-4b12-b425-20b95ea6f8af
+		summarizeBy: none
+		sourceColumn: ChecklistID
+
+		annotation SummarizationSetBy = Automatic
+
+	column TaskNo
+		dataType: int64
+		formatString: #,0
+		lineageTag: 3106932e-c462-4d22-96e6-25cbb4c49900
+		summarizeBy: none
+		sourceColumn: TaskNo
+
+		annotation SummarizationSetBy = Automatic
+
+	column TaskDescription
+		dataType: string
+		lineageTag: 23d4f1f0-0f9a-4876-94ab-af0d2b53d855
+		summarizeBy: none
+		sourceColumn: TaskDescription
+
+		annotation SummarizationSetBy = Automatic
+
+	column TaskType
+		dataType: string
+		lineageTag: 6f70ed85-2ee8-4193-baa5-24b9ab66ca44
+		summarizeBy: none
+		sourceColumn: TaskType
+
+		annotation SummarizationSetBy = Automatic
+
+	column AcceptanceStandard
+		dataType: string
+		lineageTag: 2c8abb07-4901-461f-9311-4f974cdf75a9
+		summarizeBy: none
+		sourceColumn: AcceptanceStandard
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mandatory
+		dataType: string
+		lineageTag: 51b580ea-ec88-4a45-9fd9-9d1c1b44c655
+		summarizeBy: none
+		sourceColumn: Mandatory
+
+		annotation SummarizationSetBy = Automatic
+
+	column SafetyCritical
+		dataType: string
+		lineageTag: 20d4d23d-fe3d-4597-ae7d-0e2bb01fd914
+		summarizeBy: none
+		sourceColumn: SafetyCritical
+
+		annotation SummarizationSetBy = Automatic
+
+	column EstMinutes
+		dataType: int64
+		formatString: #,0
+		lineageTag: 566983e5-584f-4600-9c1d-ecef693e6d06
+		summarizeBy: none
+		sourceColumn: EstMinutes
+
+		annotation SummarizationSetBy = Automatic
+
+	column TaskKey
+		dataType: string
+		lineageTag: 7c701038-050a-4e77-a3a1-7ba363d192fd
+		summarizeBy: none
+		sourceColumn: TaskKey
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Checklist = m
+		mode: import
+		source = ```
+				let
+				    Source = fnSource("PM_Checklist_Master"),
+				    Typed = Table.TransformColumnTypes(Source, {{"ChecklistID", type text}, {"TaskNo", Int64.Type}, {"TaskDescription", type text}, {"TaskType", type text}, {"AcceptanceStandard", type text}, {"Mandatory", type text}, {"SafetyCritical", type text}, {"EstMinutes", Int64.Type}}, "en-US"),
+				    AddKey = Table.AddColumn(Typed, "TaskKey", each [ChecklistID] & "|" & Text.From([TaskNo]), type text)
+				in
+				    AddKey
+				```
+
+	annotation PBI_ResultType = Table

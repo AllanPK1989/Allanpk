@@ -1,0 +1,31 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["SourceMode", "LocalDataFolder", "SharePointSiteUrl", "fnLocalCsv", "fnSpList", "fnSpExcel", "fnStdHoursFolder", "fnSource", "Dim_Date", "Dim_Cell", "Dim_Machine", "Dim_Technician", "Dim_SparePart", "Dim_Checklist", "Config", "Fact_StdHours", "Fact_HourLedger", "Fact_WorkOrders", "Fact_ChecklistResults", "Fact_Breakdowns", "Fact_SpareRequests", "Fact_SpareReplacements", "Fact_Abnormalities", "Fact_ScanLog", "_Measures"]
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_ProTooling = ["TMDL"]
+
+ref table Dim_Date
+ref table Dim_Cell
+ref table Dim_Machine
+ref table Dim_Technician
+ref table Dim_SparePart
+ref table Dim_Checklist
+ref table Config
+ref table Fact_StdHours
+ref table Fact_HourLedger
+ref table Fact_WorkOrders
+ref table Fact_ChecklistResults
+ref table Fact_Breakdowns
+ref table Fact_SpareRequests
+ref table Fact_SpareReplacements
+ref table Fact_Abnormalities
+ref table Fact_ScanLog
+ref table _Measures

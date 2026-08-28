@@ -1,0 +1,181 @@
+/// Abnormalities - the early warning layer before a breakdown.
+table Fact_Abnormalities
+	lineageTag: c9025257-159d-4682-bc63-11571eddf6b0
+
+	column AbnormalityID
+		dataType: string
+		lineageTag: 17ad5a1c-067c-49d6-a690-f9f1480c826b
+		summarizeBy: none
+		sourceColumn: AbnormalityID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		lineageTag: 19769dad-acd5-4039-a36b-ac76d627d489
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceRefID
+		dataType: string
+		lineageTag: b5b51c26-853b-4916-ade0-3c4519a9c058
+		summarizeBy: none
+		sourceColumn: SourceRefID
+
+		annotation SummarizationSetBy = Automatic
+
+	column MachineID
+		dataType: string
+		lineageTag: 0036d395-6a0a-4131-8124-124f98743005
+		summarizeBy: none
+		sourceColumn: MachineID
+
+		annotation SummarizationSetBy = Automatic
+
+	column MachineName
+		dataType: string
+		lineageTag: 4a4ab0fb-a546-4832-92e8-c65cf4068a39
+		summarizeBy: none
+		sourceColumn: MachineName
+
+		annotation SummarizationSetBy = Automatic
+
+	column CellID
+		dataType: string
+		lineageTag: 91c40a8d-4746-4da4-b3f8-ec49c591fd46
+		summarizeBy: none
+		sourceColumn: CellID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CellName
+		dataType: string
+		lineageTag: f4f84cc8-ec29-4119-8cb8-a3e9f9d3749e
+		summarizeBy: none
+		sourceColumn: CellName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Area
+		dataType: string
+		lineageTag: 5c29eb6d-16fb-42b8-9b11-9abd59e9b0f6
+		summarizeBy: none
+		sourceColumn: Area
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category
+		dataType: string
+		lineageTag: 1aff598a-60c3-4ee5-b300-7fb772602311
+		summarizeBy: none
+		sourceColumn: Category
+
+		annotation SummarizationSetBy = Automatic
+
+	column Severity
+		dataType: string
+		lineageTag: a4082f39-2845-4542-9a5e-2e9d9310bbbb
+		summarizeBy: none
+		sourceColumn: Severity
+
+		annotation SummarizationSetBy = Automatic
+
+	column Description
+		dataType: string
+		lineageTag: 5d270cb0-495d-4f71-899a-e632452652e7
+		summarizeBy: none
+		sourceColumn: Description
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReportedByTechID
+		dataType: string
+		lineageTag: d2397d87-5ad7-4466-85c9-0cafc4d1550e
+		summarizeBy: none
+		sourceColumn: ReportedByTechID
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReportedByName
+		dataType: string
+		lineageTag: 142a9860-caaa-4fe1-8e5b-1b156dda105e
+		summarizeBy: none
+		sourceColumn: ReportedByName
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReportedDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: e80c5e5c-60e1-4b56-aaf0-0471c17ce526
+		summarizeBy: none
+		sourceColumn: ReportedDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Status
+		dataType: string
+		lineageTag: 8d483db3-cc02-4288-b391-67bc03b5f0b4
+		summarizeBy: none
+		sourceColumn: Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column ClosedDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: efb44154-cb69-450c-8b5d-9c1b78f6d111
+		summarizeBy: none
+		sourceColumn: ClosedDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column CorrectiveAction
+		dataType: string
+		lineageTag: bdee1904-ff7b-42c3-93a8-115659d1dee2
+		summarizeBy: none
+		sourceColumn: CorrectiveAction
+
+		annotation SummarizationSetBy = Automatic
+
+	column OwnerFunction
+		dataType: string
+		lineageTag: 0b188519-88b0-4c8d-8b81-df09d5fffa80
+		summarizeBy: none
+		sourceColumn: OwnerFunction
+
+		annotation SummarizationSetBy = Automatic
+
+	column EscalationRequired
+		dataType: string
+		lineageTag: e5d0b024-81fe-4058-97c5-7f21a0a9a589
+		summarizeBy: none
+		sourceColumn: EscalationRequired
+
+		annotation SummarizationSetBy = Automatic
+
+	column PhotoURL
+		dataType: string
+		lineageTag: 0289e414-5022-4932-a17c-24bb1abe9d1c
+		summarizeBy: none
+		sourceColumn: PhotoURL
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_Abnormalities = m
+		mode: import
+		source = ```
+				let
+				    Source = fnSource("Abnormality_Log"),
+				    Typed = Table.TransformColumnTypes(Source, {{"AbnormalityID", type text}, {"Source", type text}, {"SourceRefID", type text}, {"MachineID", type text}, {"MachineName", type text}, {"CellID", type text}, {"CellName", type text}, {"Area", type text}, {"Category", type text}, {"Severity", type text}, {"Description", type text}, {"ReportedByTechID", type text}, {"ReportedByName", type text}, {"ReportedDate", type date}, {"Status", type text}, {"ClosedDate", type date}, {"CorrectiveAction", type text}, {"OwnerFunction", type text}, {"EscalationRequired", type text}, {"PhotoURL", type text}}, "en-US")
+				in
+				    Typed
+				```
+
+	annotation PBI_ResultType = Table

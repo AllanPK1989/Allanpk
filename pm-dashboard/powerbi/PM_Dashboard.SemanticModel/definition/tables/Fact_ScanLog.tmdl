@@ -1,0 +1,110 @@
+/// Every QR scan. Proves attendance at the machine.
+table Fact_ScanLog
+	lineageTag: 40c1ccd3-7bb6-490a-aec2-b916a185d76f
+
+	column ScanID
+		dataType: string
+		lineageTag: d580a35f-cc71-400f-8c6e-e3df769aaab0
+		summarizeBy: none
+		sourceColumn: ScanID
+
+		annotation SummarizationSetBy = Automatic
+
+	column QRType
+		dataType: string
+		lineageTag: 9c1b4f66-d4e5-4ba8-9ec2-ac87d140ce1b
+		summarizeBy: none
+		sourceColumn: QRType
+
+		annotation SummarizationSetBy = Automatic
+
+	column MachineID
+		dataType: string
+		lineageTag: a56fcd17-41aa-4513-8550-f837cd77cf41
+		summarizeBy: none
+		sourceColumn: MachineID
+
+		annotation SummarizationSetBy = Automatic
+
+	column MachineName
+		dataType: string
+		lineageTag: d2ff490c-7a1c-43a2-9262-9d8ec0b38f30
+		summarizeBy: none
+		sourceColumn: MachineName
+
+		annotation SummarizationSetBy = Automatic
+
+	column TechID
+		dataType: string
+		lineageTag: a8805faa-34d5-4b96-8353-bfadd288808a
+		summarizeBy: none
+		sourceColumn: TechID
+
+		annotation SummarizationSetBy = Automatic
+
+	column TechName
+		dataType: string
+		lineageTag: 5ac91513-41cb-4d68-ae0e-390783fbbcf7
+		summarizeBy: none
+		sourceColumn: TechName
+
+		annotation SummarizationSetBy = Automatic
+
+	column ScanDateTime
+		dataType: dateTime
+		formatString: yyyy-mm-dd hh:nn
+		lineageTag: e5900c0a-3a5f-4fff-bedc-e94468ee7a13
+		summarizeBy: none
+		sourceColumn: ScanDateTime
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column LinkedWOID
+		dataType: string
+		lineageTag: 9cf0fad9-a2aa-4661-b387-2a31c46642ae
+		summarizeBy: none
+		sourceColumn: LinkedWOID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Action
+		dataType: string
+		lineageTag: e402bf46-56fc-439e-a939-9ae44eab6b2a
+		summarizeBy: none
+		sourceColumn: Action
+
+		annotation SummarizationSetBy = Automatic
+
+	column CellID
+		dataType: string
+		lineageTag: eccf7765-bdc8-44e5-8e49-a5c9f8c3d503
+		summarizeBy: none
+		sourceColumn: CellID
+
+		annotation SummarizationSetBy = Automatic
+
+	column ScanDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: db6c14e9-1f04-4a4e-950a-bbbec87e7132
+		summarizeBy: none
+		sourceColumn: ScanDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition Fact_ScanLog = m
+		mode: import
+		source = ```
+				let
+				    Source = fnSource("QR_Scan_Log"),
+				    Typed = Table.TransformColumnTypes(Source, {{"ScanID", type text}, {"QRType", type text}, {"MachineID", type text}, {"MachineName", type text}, {"TechID", type text}, {"TechName", type text}, {"ScanDateTime", type datetime}, {"LinkedWOID", type text}, {"Action", type text}, {"CellID", type text}}, "en-US"),
+				    AddDate = Table.AddColumn(Typed, "ScanDate", each Date.From([ScanDateTime]), type date)
+				in
+				    AddDate
+				```
+
+	annotation PBI_ResultType = Table

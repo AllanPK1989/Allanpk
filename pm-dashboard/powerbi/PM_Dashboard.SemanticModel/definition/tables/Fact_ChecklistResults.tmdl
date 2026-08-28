@@ -1,0 +1,165 @@
+/// One row per checklist task per work order - the audit evidence.
+table Fact_ChecklistResults
+	lineageTag: 86a664f8-0de1-40f5-ab7e-5776939e61e5
+
+	column ResultID
+		dataType: string
+		lineageTag: df156b8a-2201-45b0-abbb-c8d9116247d1
+		summarizeBy: none
+		sourceColumn: ResultID
+
+		annotation SummarizationSetBy = Automatic
+
+	column WOID
+		dataType: string
+		lineageTag: c67a4a6b-e413-45bd-ba02-58e891df89b3
+		summarizeBy: none
+		sourceColumn: WOID
+
+		annotation SummarizationSetBy = Automatic
+
+	column MachineID
+		dataType: string
+		lineageTag: 4e14b9cd-e040-46a5-a09f-e765d7028103
+		summarizeBy: none
+		sourceColumn: MachineID
+
+		annotation SummarizationSetBy = Automatic
+
+	column MachineName
+		dataType: string
+		lineageTag: eb510bb6-54fd-421a-a232-25d04bf6e8d5
+		summarizeBy: none
+		sourceColumn: MachineName
+
+		annotation SummarizationSetBy = Automatic
+
+	column ChecklistID
+		dataType: string
+		lineageTag: e338a7f8-ff84-4d95-b26a-5e083aad0954
+		summarizeBy: none
+		sourceColumn: ChecklistID
+
+		annotation SummarizationSetBy = Automatic
+
+	column TaskNo
+		dataType: int64
+		formatString: #,0
+		lineageTag: bd794d32-9e69-40e7-bec2-bc7a4fc61395
+		summarizeBy: none
+		sourceColumn: TaskNo
+
+		annotation SummarizationSetBy = Automatic
+
+	column TaskDescription
+		dataType: string
+		lineageTag: 23271248-8ad2-4909-8237-3acda4b0298e
+		summarizeBy: none
+		sourceColumn: TaskDescription
+
+		annotation SummarizationSetBy = Automatic
+
+	column TaskType
+		dataType: string
+		lineageTag: 8f41f08f-ee31-4a3f-ad0d-bc9a6054bc20
+		summarizeBy: none
+		sourceColumn: TaskType
+
+		annotation SummarizationSetBy = Automatic
+
+	column AcceptanceStandard
+		dataType: string
+		lineageTag: 89e17c93-9506-4d51-96eb-eda439c9fc0b
+		summarizeBy: none
+		sourceColumn: AcceptanceStandard
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mandatory
+		dataType: string
+		lineageTag: 0aa46981-a93f-4ac4-9d16-a2e8292fc9f4
+		summarizeBy: none
+		sourceColumn: Mandatory
+
+		annotation SummarizationSetBy = Automatic
+
+	column SafetyCritical
+		dataType: string
+		lineageTag: 964b90b2-d949-4649-94e0-eda828d7c8c9
+		summarizeBy: none
+		sourceColumn: SafetyCritical
+
+		annotation SummarizationSetBy = Automatic
+
+	column Result
+		dataType: string
+		lineageTag: a6059dd0-3f67-4591-9110-d84b5e0f5d65
+		summarizeBy: none
+		sourceColumn: Result
+
+		annotation SummarizationSetBy = Automatic
+
+	column MeasuredValue
+		dataType: double
+		formatString: #,0.0
+		lineageTag: c0790286-39a0-42c8-97c9-5846b3d051e7
+		summarizeBy: none
+		sourceColumn: MeasuredValue
+
+		annotation SummarizationSetBy = Automatic
+
+	column Observation
+		dataType: string
+		lineageTag: e3d08f9e-1ca1-4e18-be84-c1dfb75d7a00
+		summarizeBy: none
+		sourceColumn: Observation
+
+		annotation SummarizationSetBy = Automatic
+
+	column TechID
+		dataType: string
+		lineageTag: 53dee90f-c04c-469a-bfd9-32000e8668b2
+		summarizeBy: none
+		sourceColumn: TechID
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordedDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 4b3bfe7e-e303-452c-994c-2c829a9f7a1f
+		summarizeBy: none
+		sourceColumn: RecordedDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column AbnormalityRaised
+		dataType: string
+		lineageTag: fde7a947-c26a-4600-ac8e-a2fcddac5f9f
+		summarizeBy: none
+		sourceColumn: AbnormalityRaised
+
+		annotation SummarizationSetBy = Automatic
+
+	column TaskKey
+		dataType: string
+		lineageTag: 7d4dd041-b966-4867-a57b-14cd41e9720e
+		summarizeBy: none
+		sourceColumn: TaskKey
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_ChecklistResults = m
+		mode: import
+		source = ```
+				let
+				    Source = fnSource("PM_ChecklistResults"),
+				    Typed = Table.TransformColumnTypes(Source, {{"ResultID", type text}, {"WOID", type text}, {"MachineID", type text}, {"MachineName", type text}, {"ChecklistID", type text}, {"TaskNo", Int64.Type}, {"TaskDescription", type text}, {"TaskType", type text}, {"AcceptanceStandard", type text}, {"Mandatory", type text}, {"SafetyCritical", type text}, {"Result", type text}, {"MeasuredValue", type number}, {"Observation", type text}, {"TechID", type text}, {"RecordedDate", type date}, {"AbnormalityRaised", type text}}, "en-US"),
+				    AddKey = Table.AddColumn(Typed, "TaskKey", each [ChecklistID] & "|" & Text.From([TaskNo]), type text)
+				in
+				    AddKey
+				```
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,98 @@
+/// Production cells. Carries the PM threshold and calendar backstop.
+table Dim_Cell
+	lineageTag: 3845a91f-45a0-493b-b175-938f4c6375de
+
+	column CellID
+		dataType: string
+		lineageTag: 9c4b903a-d242-4acb-a6eb-ece5ead9e0fb
+		summarizeBy: none
+		sourceColumn: CellID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CellName
+		dataType: string
+		lineageTag: 67620d32-8cbc-4a00-a9a7-b712f57bfeba
+		summarizeBy: none
+		sourceColumn: CellName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Area
+		dataType: string
+		lineageTag: 0e0eec57-b4e2-4f7f-977f-7fa2592b6c4e
+		summarizeBy: none
+		sourceColumn: Area
+
+		annotation SummarizationSetBy = Automatic
+
+	column Plant
+		dataType: string
+		lineageTag: 4031ee90-27cf-4b42-84a0-3ef210237381
+		summarizeBy: none
+		sourceColumn: Plant
+
+		annotation SummarizationSetBy = Automatic
+
+	column Criticality
+		dataType: string
+		lineageTag: 88aadd97-0c1f-42eb-a385-da8a212e5583
+		summarizeBy: none
+		sourceColumn: Criticality
+
+		annotation SummarizationSetBy = Automatic
+
+	column PMIntervalStdHrs
+		dataType: int64
+		formatString: #,0
+		lineageTag: 0b54aefd-8896-4e46-a2de-024a25795920
+		summarizeBy: none
+		sourceColumn: PMIntervalStdHrs
+
+		annotation SummarizationSetBy = Automatic
+
+	column CalendarBackstopMonths
+		dataType: int64
+		formatString: #,0
+		lineageTag: bfced831-3ac2-4e0b-aec5-5a75c03ab8df
+		summarizeBy: none
+		sourceColumn: CalendarBackstopMonths
+
+		annotation SummarizationSetBy = Automatic
+
+	column BaselineMonthlyStdHrs
+		dataType: int64
+		formatString: #,0
+		lineageTag: 8f27fdb0-278e-4cc1-9747-d33832720ccf
+		summarizeBy: none
+		sourceColumn: BaselineMonthlyStdHrs
+
+		annotation SummarizationSetBy = Automatic
+
+	column CostCenter
+		dataType: string
+		lineageTag: cbb1a61e-d216-4847-8c78-8b0887eb06c8
+		summarizeBy: none
+		sourceColumn: CostCenter
+
+		annotation SummarizationSetBy = Automatic
+
+	column Active
+		dataType: string
+		lineageTag: a8f847d6-08a2-4919-9425-c38ae972eb2c
+		summarizeBy: none
+		sourceColumn: Active
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Cell = m
+		mode: import
+		source = ```
+				let
+				    Source = fnSource("Cell_Master"),
+				    Typed = Table.TransformColumnTypes(Source, {{"CellID", type text}, {"CellName", type text}, {"Area", type text}, {"Plant", type text}, {"Criticality", type text}, {"PMIntervalStdHrs", Int64.Type}, {"CalendarBackstopMonths", Int64.Type}, {"BaselineMonthlyStdHrs", Int64.Type}, {"CostCenter", type text}, {"Active", type text}}, "en-US")
+				in
+				    Typed
+				```
+
+	annotation PBI_ResultType = Table

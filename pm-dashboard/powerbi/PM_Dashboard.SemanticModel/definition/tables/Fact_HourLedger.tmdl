@@ -1,0 +1,139 @@
+/// Cell hour counter month by month: opening, added, closing, trigger, carry-over.
+table Fact_HourLedger
+	lineageTag: 99735301-0cfe-4c04-a1d1-ffb5a303f89e
+
+	column MonthKey
+		dataType: string
+		lineageTag: d6f88319-ede8-43ae-807f-55080042b77f
+		summarizeBy: none
+		sourceColumn: MonthKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column CellID
+		dataType: string
+		lineageTag: 4deaad8e-3002-4f88-9be7-dae8ed08f94b
+		summarizeBy: none
+		sourceColumn: CellID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CellName
+		dataType: string
+		lineageTag: 6dbdf1ef-a609-4d66-bb4f-f3a9c08f4436
+		summarizeBy: none
+		sourceColumn: CellName
+
+		annotation SummarizationSetBy = Automatic
+
+	column OpeningStdHrs
+		dataType: double
+		formatString: #,0.0
+		lineageTag: 971803ea-7bb7-44d5-997f-593f8bfb5efb
+		summarizeBy: none
+		sourceColumn: OpeningStdHrs
+
+		annotation SummarizationSetBy = Automatic
+
+	column StdHoursAdded
+		dataType: double
+		formatString: #,0.0
+		lineageTag: d33b588b-ee5e-4fcf-bf64-2d9948f60a8a
+		summarizeBy: none
+		sourceColumn: StdHoursAdded
+
+		annotation SummarizationSetBy = Automatic
+
+	column ClosingStdHrs
+		dataType: double
+		formatString: #,0.0
+		lineageTag: 15049288-dd94-40a2-b062-37d0d2c1a550
+		summarizeBy: none
+		sourceColumn: ClosingStdHrs
+
+		annotation SummarizationSetBy = Automatic
+
+	column PMIntervalStdHrs
+		dataType: int64
+		formatString: #,0
+		lineageTag: e94b4a38-4e15-44c8-8c22-5f71272d95e8
+		summarizeBy: none
+		sourceColumn: PMIntervalStdHrs
+
+		annotation SummarizationSetBy = Automatic
+
+	column PMTriggered
+		dataType: string
+		lineageTag: cc85cb97-5c9e-4fd5-b813-b43aa91c43a5
+		summarizeBy: none
+		sourceColumn: PMTriggered
+
+		annotation SummarizationSetBy = Automatic
+
+	column TriggerType
+		dataType: string
+		lineageTag: 41ab6f16-cd4e-44b4-ab63-1a9007716b36
+		summarizeBy: none
+		sourceColumn: TriggerType
+
+		annotation SummarizationSetBy = Automatic
+
+	column CarryOverAfterPM
+		dataType: double
+		formatString: #,0.0
+		lineageTag: 91561244-f66b-429f-999c-c372175e33e4
+		summarizeBy: none
+		sourceColumn: CarryOverAfterPM
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthsSinceLastPM
+		dataType: int64
+		formatString: #,0
+		lineageTag: 7b1ec818-6568-4f60-a5a7-df94fc6f520d
+		summarizeBy: none
+		sourceColumn: MonthsSinceLastPM
+
+		annotation SummarizationSetBy = Automatic
+
+	column Scenario
+		dataType: string
+		lineageTag: 0ee844d0-d2ea-4a87-9524-6ce539ddfd59
+		summarizeBy: none
+		sourceColumn: Scenario
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthStartDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 92151093-fcec-4e76-9564-08c9d28eb751
+		summarizeBy: none
+		sourceColumn: MonthStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column PctOfThreshold
+		dataType: double
+		formatString: #,0.0
+		lineageTag: 2c68d1ae-03bc-41e9-a2f0-6777bf7da89a
+		summarizeBy: none
+		sourceColumn: PctOfThreshold
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_HourLedger = m
+		mode: import
+		source = ```
+				let
+				    Source = fnSource("PM_Hour_Ledger"),
+				    Typed = Table.TransformColumnTypes(Source, {{"MonthKey", type text}, {"CellID", type text}, {"CellName", type text}, {"OpeningStdHrs", type number}, {"StdHoursAdded", type number}, {"ClosingStdHrs", type number}, {"PMIntervalStdHrs", Int64.Type}, {"PMTriggered", type text}, {"TriggerType", type text}, {"CarryOverAfterPM", type number}, {"MonthsSinceLastPM", Int64.Type}, {"Scenario", type text}}, "en-US"),
+				    AddMonthStart = Table.AddColumn(Typed, "MonthStartDate", each Date.FromText([MonthKey] & "-01"), type date),
+				    AddPct = Table.AddColumn(AddMonthStart, "PctOfThreshold", each if [PMIntervalStdHrs] = null or [PMIntervalStdHrs] = 0 then null else [ClosingStdHrs] / [PMIntervalStdHrs], type number)
+				in
+				    AddPct
+				```
+
+	annotation PBI_ResultType = Table

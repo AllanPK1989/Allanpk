@@ -1,0 +1,131 @@
+/// Machines. Every QR code resolves to a row here.
+table Dim_Machine
+	lineageTag: 3b9f9a42-47ff-4da2-bf7d-a2f8aafc95aa
+
+	column MachineID
+		dataType: string
+		lineageTag: 3f96d668-a538-4467-b521-88db0b6f0ada
+		summarizeBy: none
+		sourceColumn: MachineID
+
+		annotation SummarizationSetBy = Automatic
+
+	column MachineName
+		dataType: string
+		lineageTag: 2446d9cf-afb1-4226-a55e-a5b877084aaf
+		summarizeBy: none
+		sourceColumn: MachineName
+
+		annotation SummarizationSetBy = Automatic
+
+	column CellID
+		dataType: string
+		lineageTag: d93c28cf-357f-4018-8225-21b44fca4025
+		summarizeBy: none
+		sourceColumn: CellID
+
+		annotation SummarizationSetBy = Automatic
+
+	column MachineType
+		dataType: string
+		lineageTag: e9b0f34e-1ddd-4466-aee7-de68d9f671ca
+		summarizeBy: none
+		sourceColumn: MachineType
+
+		annotation SummarizationSetBy = Automatic
+
+	column Make
+		dataType: string
+		lineageTag: d6f35bf9-2a4c-4509-bbfa-8ba31ffdc796
+		summarizeBy: none
+		sourceColumn: Make
+
+		annotation SummarizationSetBy = Automatic
+
+	column Model
+		dataType: string
+		lineageTag: 83035e3a-48fa-45ff-8129-b1904d377add
+		summarizeBy: none
+		sourceColumn: Model
+
+		annotation SummarizationSetBy = Automatic
+
+	column SerialNo
+		dataType: string
+		lineageTag: c18a9905-eb82-48fb-9a84-2a6ebbee3c84
+		summarizeBy: none
+		sourceColumn: SerialNo
+
+		annotation SummarizationSetBy = Automatic
+
+	column InstallDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 91af631b-82b1-4adc-a8a7-5db2c6281e6c
+		summarizeBy: none
+		sourceColumn: InstallDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Criticality
+		dataType: string
+		lineageTag: bbf9da76-82a6-4134-8bc4-09f678a04259
+		summarizeBy: none
+		sourceColumn: Criticality
+
+		annotation SummarizationSetBy = Automatic
+
+	column Location
+		dataType: string
+		lineageTag: de44d842-d5d0-4c96-865e-6000b3bf0f59
+		summarizeBy: none
+		sourceColumn: Location
+
+		annotation SummarizationSetBy = Automatic
+
+	column ChecklistID
+		dataType: string
+		lineageTag: d7a86569-1e43-405c-a9da-ffe64a7e6f6c
+		summarizeBy: none
+		sourceColumn: ChecklistID
+
+		annotation SummarizationSetBy = Automatic
+
+	column PMStdMinutes
+		dataType: int64
+		formatString: #,0
+		lineageTag: 0afe27ed-39b5-4d5b-9361-5b1d5a2f2b38
+		summarizeBy: none
+		sourceColumn: PMStdMinutes
+
+		annotation SummarizationSetBy = Automatic
+
+	column QRPayload
+		dataType: string
+		lineageTag: da2281f1-456f-4ea0-b05b-408212649647
+		summarizeBy: none
+		sourceColumn: QRPayload
+
+		annotation SummarizationSetBy = Automatic
+
+	column Active
+		dataType: string
+		lineageTag: fe95ad4c-00f5-497d-b117-18458da6e3da
+		summarizeBy: none
+		sourceColumn: Active
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Machine = m
+		mode: import
+		source = ```
+				let
+				    Source = fnSource("Machine_Master"),
+				    Typed = Table.TransformColumnTypes(Source, {{"MachineID", type text}, {"MachineName", type text}, {"CellID", type text}, {"MachineType", type text}, {"Make", type text}, {"Model", type text}, {"SerialNo", type text}, {"InstallDate", type date}, {"Criticality", type text}, {"Location", type text}, {"ChecklistID", type text}, {"PMStdMinutes", Int64.Type}, {"QRPayload", type text}, {"Active", type text}}, "en-US")
+				in
+				    Typed
+				```
+
+	annotation PBI_ResultType = Table

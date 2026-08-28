@@ -1,0 +1,138 @@
+/// Local reads the dummy CSVs. SharePoint reads the real lists and workbooks. This is the only switch you change at go-live.
+expression SourceMode = "Local" meta [IsParameterQuery=true, List={"Local", "SharePoint"}, DefaultValue="Local", Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 0fe64f54-3bca-4f54-8ec2-12312b992333
+	queryGroup: 0 Parameters
+
+	annotation PBI_ResultType = Text
+
+
+/// Folder holding the dummy CSVs. Only used when SourceMode = Local.
+expression LocalDataFolder = "C:\PMDashboard\data\dummy" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 1a7ef29c-16a6-484c-b72b-22f675d5ec2b
+	queryGroup: 0 Parameters
+
+	annotation PBI_ResultType = Text
+
+
+/// Root URL of the SharePoint site. Only used when SourceMode = SharePoint.
+expression SharePointSiteUrl = "https://contoso.sharepoint.com/sites/PMSystem" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 15d8a052-feec-4040-b759-1ccc25cf759b
+	queryGroup: 0 Parameters
+
+	annotation PBI_ResultType = Text
+
+
+/// Reads one dummy CSV and promotes headers.
+expression fnLocalCsv = ```
+		(logicalName as text) as table =>
+		let
+		    Sep = if Text.EndsWith(LocalDataFolder, "\") then "" else "\",
+		    Path = LocalDataFolder & Sep & logicalName & ".csv",
+		    Raw = Csv.Document(File.Contents(Path), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+		    Promoted = Table.PromoteHeaders(Raw, [PromoteAllScalars = true]),
+		    NullBlanks = Table.TransformColumns(Promoted, {}, each if _ = "" then null else _)
+		in
+		    NullBlanks
+		```
+	lineageTag: 989c8f19-fd5f-4324-afcb-867ef6ad6d41
+	queryGroup: 1 Functions
+
+	annotation PBI_ResultType = Function
+
+
+/// Reads one SharePoint list by its display name.
+expression fnSpList = ```
+		(listName as text) as table =>
+		let
+		    Nav = SharePoint.Tables(SharePointSiteUrl, [Implementation = "2.0", ViewMode = "All"]),
+		    Items = Nav{[Title = listName]}[Items]
+		in
+		    Items
+		```
+	lineageTag: 355e57e1-88ee-4f88-a89a-35cc8e426257
+	queryGroup: 1 Functions
+
+	annotation PBI_ResultType = Function
+
+
+/// Reads one named Excel table out of a workbook in the document library.
+expression fnSpExcel = ```
+		(relativePath as text, tableName as text) as table =>
+		let
+		    Files = SharePoint.Files(SharePointSiteUrl, [ApiVersion = 15]),
+		    Wanted = Table.SelectRows(Files, each Text.EndsWith([Folder Path] & [Name], relativePath)),
+		    Content = if Table.RowCount(Wanted) = 0
+		              then error "File not found in SharePoint: " & relativePath
+		              else Wanted{0}[Content],
+		    Book = Excel.Workbook(Content, true, true),
+		    Data = Book{[Item = tableName, Kind = "Table"]}[Data]
+		in
+		    Data
+		```
+	lineageTag: 2f2f68b5-95d7-41f4-92a8-fe19ffaafc30
+	queryGroup: 1 Functions
+
+	annotation PBI_ResultType = Function
+
+
+/// Combines every monthly standard-hours upload in the 02 Standard Hours folder. Add a file, refresh, and the new month appears - no query editing.
+expression fnStdHoursFolder = ```
+		() as table =>
+		let
+		    Files = SharePoint.Files(SharePointSiteUrl, [ApiVersion = 15]),
+		    Monthly = Table.SelectRows(
+		        Files,
+		        each Text.Contains([Folder Path], "/02 Standard Hours/")
+		            and not Text.Contains([Folder Path], "/_History/")
+		            and Text.StartsWith([Name], "Cell_Standard_Hours_")
+		            and Text.EndsWith(Text.Lower([Name]), ".xlsx")
+		            and not Text.Contains(Text.Upper([Name]), "TEMPLATE")
+		    ),
+		    WithData = Table.AddColumn(Monthly, "Data", each
+		        Excel.Workbook([Content], true, true){[Item = "tblStdHours", Kind = "Table"]}[Data]),
+		    Cols = {"MonthKey", "Year", "MonthNo", "CellID", "CellName", "Area",
+		            "StdHours", "UploadedBy", "UploadDate"},
+		    Expanded = Table.ExpandTableColumn(Table.SelectColumns(WithData, {"Name", "Data"}), "Data", Cols),
+		    Renamed = Table.RenameColumns(Expanded, {{"Name", "SourceFile"}}),
+		    NoBlank = Table.SelectRows(Renamed, each [MonthKey] <> null and [CellID] <> null)
+		in
+		    NoBlank
+		```
+	lineageTag: d235b879-87b4-42ed-b7b7-166c1a737564
+	queryGroup: 1 Functions
+
+	annotation PBI_ResultType = Function
+
+
+/// Single entry point for every table. Routes to CSV, SharePoint list or SharePoint workbook depending on SourceMode.
+expression fnSource = ```
+		(logicalName as text) as table =>
+		let
+		    SPLists = {"Abnormality_Log", "Breakdown_Reports", "PM_ChecklistResults", "PM_Hour_Ledger", "PM_WorkOrders", "QR_Scan_Log", "SparePart_Replacements", "SparePart_Requests"},
+		    ExcelMap = [
+		            Cell_Master = {"01 Master Data/Cell_Master.xlsx", "tblCellMaster"},
+		            Machine_Master = {"01 Master Data/Machine_Master.xlsx", "tblMachineMaster"},
+		            Technician_Master = {"01 Master Data/Technician_Master.xlsx", "tblTechnicianMaster"},
+		            PM_Checklist_Master = {"01 Master Data/PM_Checklist_Master.xlsx", "tblChecklistMaster"},
+		            SparePart_Master = {"01 Master Data/SparePart_Master.xlsx", "tblSparePartMaster"},
+		            PM_Config = {"01 Master Data/PM_Config.xlsx", "tblPMConfig"}
+		        ],
+		    Result =
+		        if SourceMode <> "SharePoint" then
+		            fnLocalCsv(logicalName)
+		        else if logicalName = "Cell_Standard_Hours" then
+		            fnStdHoursFolder()
+		        else if List.Contains(SPLists, logicalName) then
+		            fnSpList(logicalName)
+		        else if Record.HasFields(ExcelMap, logicalName) then
+		            fnSpExcel(Record.Field(ExcelMap, logicalName){0}, Record.Field(ExcelMap, logicalName){1})
+		        else
+		            error "fnSource: no binding defined for " & logicalName
+		in
+		    Result
+		```
+	lineageTag: 3e820482-77f7-4d80-96df-7a342adf8eb6
+	queryGroup: 1 Functions
+
+	annotation PBI_ResultType = Function
+

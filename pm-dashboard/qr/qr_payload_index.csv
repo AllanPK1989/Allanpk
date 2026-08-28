@@ -1,0 +1,44 @@
+QRType,ID,Name,Group,PayloadURL
+Machine,MC-001,CNC Lathe TL-01,CELL-01,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-001
+Machine,MC-002,CNC Lathe TL-02,CELL-01,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-002
+Machine,MC-003,CNC Lathe TL-03,CELL-01,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-003
+Machine,MC-004,Bar Feeder BF-01,CELL-01,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-004
+Machine,MC-005,Chip Conveyor CC-01,CELL-01,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-005
+Machine,MC-006,CNC Lathe TL-04,CELL-02,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-006
+Machine,MC-007,CNC Lathe TL-05,CELL-02,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-007
+Machine,MC-008,VMC MC-01,CELL-02,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-008
+Machine,MC-009,VMC MC-02,CELL-02,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-009
+Machine,MC-010,Gear Hobber GH-01,CELL-03,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-010
+Machine,MC-011,Gear Hobber GH-02,CELL-03,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-011
+Machine,MC-012,Gear Shaver GS-01,CELL-03,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-012
+Machine,MC-013,Deburring Unit DB-01,CELL-03,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-013
+Machine,MC-014,Sealed Quench SQ-01,CELL-04,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-014
+Machine,MC-015,Sealed Quench SQ-02,CELL-04,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-015
+Machine,MC-016,Tempering Furnace TF-01,CELL-04,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-016
+Machine,MC-017,Quench Oil Chiller CH-01,CELL-04,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-017
+Machine,MC-018,HT Compressor AC-01,CELL-04,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-018
+Machine,MC-019,Assembly Stn AS-01,CELL-05,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-019
+Machine,MC-020,Assembly Stn AS-02,CELL-05,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-020
+Machine,MC-021,Assembly Stn AS-03,CELL-05,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-021
+Machine,MC-022,Leak Test Rig LT-01,CELL-05,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-022
+Machine,MC-023,Assy Conveyor CV-01,CELL-05,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-023
+Machine,MC-024,Paint Booth PB-01,CELL-06,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-024
+Machine,MC-025,Curing Oven CO-01,CELL-06,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-025
+Machine,MC-026,Paint Chiller CH-02,CELL-06,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-026
+Machine,MC-027,Robot Weld Cell RW-01,CELL-07,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-027
+Machine,MC-028,Robot Weld Cell RW-02,CELL-07,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-028
+Machine,MC-029,Positioner PZ-01,CELL-07,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-029
+Machine,MC-030,Weld Compressor AC-02,CELL-07,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-030
+Machine,MC-031,Hyd Press HP-01,CELL-08,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-031
+Machine,MC-032,Hyd Press HP-02,CELL-08,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-032
+Machine,MC-033,Press Feeder PF-01,CELL-08,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=machine&id=MC-033
+Technician,TECH-01,Arun Kumar,Machine Shop,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=tech&id=TECH-01
+Technician,TECH-02,Suresh Babu,Machine Shop,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=tech&id=TECH-02
+Technician,TECH-03,Mohammed Rafi,Machine Shop,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=tech&id=TECH-03
+Technician,TECH-04,Vignesh S,Fabrication,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=tech&id=TECH-04
+Technician,TECH-05,Prakash R,Heat Treat,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=tech&id=TECH-05
+Technician,TECH-06,Deepak Nair,Heat Treat,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=tech&id=TECH-06
+Technician,TECH-07,Ramesh Chandran,Assembly,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=tech&id=TECH-07
+Technician,TECH-08,Karthik V,Fabrication,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=tech&id=TECH-08
+Technician,TECH-09,Sathish Kumar,Finishing,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=tech&id=TECH-09
+Technician,TECH-10,Naveen Raj,Assembly,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=tech&id=TECH-10

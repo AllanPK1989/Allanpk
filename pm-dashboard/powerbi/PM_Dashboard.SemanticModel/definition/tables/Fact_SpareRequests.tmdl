@@ -1,0 +1,220 @@
+/// Spare part requests raised from the machine QR.
+table Fact_SpareRequests
+	lineageTag: 1c58bfab-9578-4f1a-9432-e5f1ac054c7d
+
+	column RequestID
+		dataType: string
+		lineageTag: f379fbd3-ef21-4f59-8dd9-24500af320d2
+		summarizeBy: none
+		sourceColumn: RequestID
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceType
+		dataType: string
+		lineageTag: e8966926-5979-47a4-86a9-44c8d2eee47a
+		summarizeBy: none
+		sourceColumn: SourceType
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceID
+		dataType: string
+		lineageTag: ef829715-ddaf-416c-b608-f6dc82535600
+		summarizeBy: none
+		sourceColumn: SourceID
+
+		annotation SummarizationSetBy = Automatic
+
+	column MachineID
+		dataType: string
+		lineageTag: fc6c5597-bf01-4d5e-b6d0-38f4c7dd4d13
+		summarizeBy: none
+		sourceColumn: MachineID
+
+		annotation SummarizationSetBy = Automatic
+
+	column MachineName
+		dataType: string
+		lineageTag: 4db6ae87-58d5-45d6-8a57-19b332cf6cbd
+		summarizeBy: none
+		sourceColumn: MachineName
+
+		annotation SummarizationSetBy = Automatic
+
+	column CellID
+		dataType: string
+		lineageTag: dd7c1a93-6b2b-4101-a0ee-253046431bb3
+		summarizeBy: none
+		sourceColumn: CellID
+
+		annotation SummarizationSetBy = Automatic
+
+	column PartNo
+		dataType: string
+		lineageTag: 2cc014f7-378d-4a3c-9a14-f59700006354
+		summarizeBy: none
+		sourceColumn: PartNo
+
+		annotation SummarizationSetBy = Automatic
+
+	column PartName
+		dataType: string
+		lineageTag: 75c2035d-3e14-4d11-9fea-5d989755fff7
+		summarizeBy: none
+		sourceColumn: PartName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category
+		dataType: string
+		lineageTag: a44d43eb-5339-471a-9f18-abae9bc3ae95
+		summarizeBy: none
+		sourceColumn: Category
+
+		annotation SummarizationSetBy = Automatic
+
+	column UOM
+		dataType: string
+		lineageTag: 775b0fc7-aeec-4ee2-99f4-8493f5afa71f
+		summarizeBy: none
+		sourceColumn: UOM
+
+		annotation SummarizationSetBy = Automatic
+
+	column QtyRequested
+		dataType: int64
+		formatString: #,0
+		lineageTag: 256fc83a-a5f3-457b-96fb-05b90e4f8a98
+		summarizeBy: none
+		sourceColumn: QtyRequested
+
+		annotation SummarizationSetBy = Automatic
+
+	column UnitCostINR
+		dataType: double
+		formatString: "₹"#,0.00;("₹"#,0.00);"₹"#,0.00
+		lineageTag: 4d83a255-136f-4194-ada0-bb3b73055b4a
+		summarizeBy: none
+		sourceColumn: UnitCostINR
+
+		annotation SummarizationSetBy = Automatic
+
+	column TotalCostINR
+		dataType: double
+		formatString: "₹"#,0.00;("₹"#,0.00);"₹"#,0.00
+		lineageTag: 5b272ea7-426c-46dc-b825-e2f34821dfdd
+		summarizeBy: none
+		sourceColumn: TotalCostINR
+
+		annotation SummarizationSetBy = Automatic
+
+	column RequestedByTechID
+		dataType: string
+		lineageTag: b16d25d0-e7e3-402b-ac4d-13caa3c905ba
+		summarizeBy: none
+		sourceColumn: RequestedByTechID
+
+		annotation SummarizationSetBy = Automatic
+
+	column RequestedByName
+		dataType: string
+		lineageTag: 16a6f732-2bb3-4741-8dc6-279b3bfca0ae
+		summarizeBy: none
+		sourceColumn: RequestedByName
+
+		annotation SummarizationSetBy = Automatic
+
+	column RequestDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 54f32ef6-25be-4b13-8c46-164e85e0d2b6
+		summarizeBy: none
+		sourceColumn: RequestDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Urgency
+		dataType: string
+		lineageTag: a3022432-e69f-4654-8acd-e537a8b46733
+		summarizeBy: none
+		sourceColumn: Urgency
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		dataType: string
+		lineageTag: ed6c4cc5-2d05-483b-8f69-b184a43ff3ca
+		summarizeBy: none
+		sourceColumn: Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column ApprovedDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: d52d0eda-6d1c-4418-82cd-186813800ce4
+		summarizeBy: none
+		sourceColumn: ApprovedDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column ApprovedBy
+		dataType: string
+		lineageTag: f52cfc6b-50cd-454f-8b1d-f43e2ef4d50c
+		summarizeBy: none
+		sourceColumn: ApprovedBy
+
+		annotation SummarizationSetBy = Automatic
+
+	column IssuedDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 90d03b49-ab26-4983-a422-73367ccf6e62
+		summarizeBy: none
+		sourceColumn: IssuedDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column LeadTimeDays
+		dataType: int64
+		formatString: #,0
+		lineageTag: 195ccbe5-8941-4fb7-8a31-d981207b69bf
+		summarizeBy: none
+		sourceColumn: LeadTimeDays
+
+		annotation SummarizationSetBy = Automatic
+
+	column StoreBin
+		dataType: string
+		lineageTag: 6596eaea-599a-4d88-9097-915bb5d1114b
+		summarizeBy: none
+		sourceColumn: StoreBin
+
+		annotation SummarizationSetBy = Automatic
+
+	column RejectionReason
+		dataType: string
+		lineageTag: 77af9c47-5c98-4f01-81d8-c1be7dbed3b9
+		summarizeBy: none
+		sourceColumn: RejectionReason
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_SpareRequests = m
+		mode: import
+		source = ```
+				let
+				    Source = fnSource("SparePart_Requests"),
+				    Typed = Table.TransformColumnTypes(Source, {{"RequestID", type text}, {"SourceType", type text}, {"SourceID", type text}, {"MachineID", type text}, {"MachineName", type text}, {"CellID", type text}, {"PartNo", type text}, {"PartName", type text}, {"Category", type text}, {"UOM", type text}, {"QtyRequested", Int64.Type}, {"UnitCostINR", type number}, {"TotalCostINR", type number}, {"RequestedByTechID", type text}, {"RequestedByName", type text}, {"RequestDate", type date}, {"Urgency", type text}, {"Status", type text}, {"ApprovedDate", type date}, {"ApprovedBy", type text}, {"IssuedDate", type date}, {"LeadTimeDays", Int64.Type}, {"StoreBin", type text}, {"RejectionReason", type text}}, "en-US")
+				in
+				    Typed
+				```
+
+	annotation PBI_ResultType = Table

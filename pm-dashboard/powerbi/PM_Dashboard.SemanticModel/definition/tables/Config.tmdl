@@ -1,0 +1,48 @@
+/// Key/value configuration. Read by measures via LOOKUPVALUE.
+table Config
+	lineageTag: 47e8c6a5-9265-4024-8691-087728fb2367
+	isHidden
+
+	column ConfigKey
+		dataType: string
+		lineageTag: e3878731-2117-4a6f-a97e-b011193680a2
+		summarizeBy: none
+		sourceColumn: ConfigKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column ConfigValue
+		dataType: string
+		lineageTag: 418305ba-273a-4ff2-b7c1-046ed3d7489d
+		summarizeBy: none
+		sourceColumn: ConfigValue
+
+		annotation SummarizationSetBy = Automatic
+
+	column DataType
+		dataType: string
+		lineageTag: 52e7c460-7609-4ee4-85cd-6cbfa5777a11
+		summarizeBy: none
+		sourceColumn: DataType
+
+		annotation SummarizationSetBy = Automatic
+
+	column Description
+		dataType: string
+		lineageTag: 6edde833-9a0a-42ad-a3d7-812a660da3c8
+		summarizeBy: none
+		sourceColumn: Description
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Config = m
+		mode: import
+		source = ```
+				let
+				    Source = fnSource("PM_Config"),
+				    Typed = Table.TransformColumnTypes(Source, {{"ConfigKey", type text}, {"ConfigValue", type text}, {"DataType", type text}, {"Description", type text}}, "en-US")
+				in
+				    Typed
+				```
+
+	annotation PBI_ResultType = Table

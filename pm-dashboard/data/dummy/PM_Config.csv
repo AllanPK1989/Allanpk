@@ -1,0 +1,11 @@
+ConfigKey,ConfigValue,DataType,Description
+DefaultPMIntervalStdHrs,4000,Number,Standard hours a cell must accumulate before a PM is scheduled
+CalendarBackstopMonths,12,Number,Maximum months a cell may go without a PM regardless of hours
+ForecastRunRateMonths,3,Number,Trailing months averaged to project future standard hours
+PMDueSoonThresholdPct,85,Number,Counter percentage at which a cell shows as Due Soon
+OverdueGraceDays,0,Number,Days after DueDate before a work order is flagged Overdue
+ChecklistPhotoMandatoryOnFail,Yes,Yes/No,Force a photo when a checklist task is marked Not OK
+AbnormalityEscalationSeverity,High,Text,Severity that triggers an immediate email to the Maintenance Head
+SpareApprovalLimitINR,25000,Number,Value above which a spare request needs Plant Head approval
+StdHoursUploadDueDay,5,Number,Day of month by which Production must upload standard hours
+ReportRefreshTimesIST,"06:00,14:00,22:00",Text,Scheduled semantic model refresh times

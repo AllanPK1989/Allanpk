@@ -1,0 +1,221 @@
+/// Unplanned stoppages. Feeds MTBF, MTTR and availability.
+table Fact_Breakdowns
+	lineageTag: 0e34ff07-29c7-4885-9b91-82be8f85b8df
+
+	column BreakdownID
+		dataType: string
+		lineageTag: 75ba6396-d8c1-4963-b690-9b18e7478602
+		summarizeBy: none
+		sourceColumn: BreakdownID
+
+		annotation SummarizationSetBy = Automatic
+
+	column MachineID
+		dataType: string
+		lineageTag: 3c82a468-56a5-496c-9577-2cc756e0d99e
+		summarizeBy: none
+		sourceColumn: MachineID
+
+		annotation SummarizationSetBy = Automatic
+
+	column MachineName
+		dataType: string
+		lineageTag: 89fa1c10-d730-4483-ba01-71c55f9e48fe
+		summarizeBy: none
+		sourceColumn: MachineName
+
+		annotation SummarizationSetBy = Automatic
+
+	column CellID
+		dataType: string
+		lineageTag: ce5c4b27-ee61-48d3-88ef-bbd05d338ba5
+		summarizeBy: none
+		sourceColumn: CellID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CellName
+		dataType: string
+		lineageTag: d601d74b-6712-4b8c-aafd-9a8fc78ace74
+		summarizeBy: none
+		sourceColumn: CellName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Area
+		dataType: string
+		lineageTag: 0ad6f8e4-99a7-42a4-9a14-ae5c36f2dad0
+		summarizeBy: none
+		sourceColumn: Area
+
+		annotation SummarizationSetBy = Automatic
+
+	column MachineType
+		dataType: string
+		lineageTag: 951fda3d-c7be-45da-b1b2-ab81ca198ed4
+		summarizeBy: none
+		sourceColumn: MachineType
+
+		annotation SummarizationSetBy = Automatic
+
+	column Criticality
+		dataType: string
+		lineageTag: 956a3df0-61dd-4bd7-9061-37e1a656dba6
+		summarizeBy: none
+		sourceColumn: Criticality
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReportedDateTime
+		dataType: dateTime
+		formatString: yyyy-mm-dd hh:nn
+		lineageTag: aa9b53a2-4cc9-4600-9da3-25d045c321ef
+		summarizeBy: none
+		sourceColumn: ReportedDateTime
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column RestoredDateTime
+		dataType: dateTime
+		formatString: yyyy-mm-dd hh:nn
+		lineageTag: 136be32b-e8ae-4cda-848b-c18ef7677ae4
+		summarizeBy: none
+		sourceColumn: RestoredDateTime
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column DowntimeMinutes
+		dataType: int64
+		formatString: #,0
+		lineageTag: 9e3fbf23-532f-412d-a681-f8423fc7a688
+		summarizeBy: none
+		sourceColumn: DowntimeMinutes
+
+		annotation SummarizationSetBy = Automatic
+
+	column ResponseMinutes
+		dataType: int64
+		formatString: #,0
+		lineageTag: e9933cfc-875e-48c5-af1e-c45c9e991577
+		summarizeBy: none
+		sourceColumn: ResponseMinutes
+
+		annotation SummarizationSetBy = Automatic
+
+	column FailureMode
+		dataType: string
+		lineageTag: b6417b3c-712c-4c91-97e8-04dbde698779
+		summarizeBy: none
+		sourceColumn: FailureMode
+
+		annotation SummarizationSetBy = Automatic
+
+	column FailureCategory
+		dataType: string
+		lineageTag: acc522fb-ae7f-41c2-bdec-d1dd6d0f8b37
+		summarizeBy: none
+		sourceColumn: FailureCategory
+
+		annotation SummarizationSetBy = Automatic
+
+	column RootCause
+		dataType: string
+		lineageTag: f1c9d2ae-5fcd-4a33-b585-fb1d6314f10f
+		summarizeBy: none
+		sourceColumn: RootCause
+
+		annotation SummarizationSetBy = Automatic
+
+	column ActionTaken
+		dataType: string
+		lineageTag: 50d85baf-5521-4a0d-a293-33d91b7935c0
+		summarizeBy: none
+		sourceColumn: ActionTaken
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReportedBy
+		dataType: string
+		lineageTag: 89b41c7f-7f34-4ef0-8d3d-d2f7baa3863a
+		summarizeBy: none
+		sourceColumn: ReportedBy
+
+		annotation SummarizationSetBy = Automatic
+
+	column AttendedTechID
+		dataType: string
+		lineageTag: 0a023eb4-e3ae-48d1-906c-22e1d168d686
+		summarizeBy: none
+		sourceColumn: AttendedTechID
+
+		annotation SummarizationSetBy = Automatic
+
+	column AttendedTechName
+		dataType: string
+		lineageTag: bc76a709-1da5-4aef-89a4-ab56fa85474c
+		summarizeBy: none
+		sourceColumn: AttendedTechName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		dataType: string
+		lineageTag: a868eb00-feb6-4a17-a55d-f583da09910e
+		summarizeBy: none
+		sourceColumn: Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column SpareUsed
+		dataType: string
+		lineageTag: f4487380-e981-4ccc-becc-dd8535aae16e
+		summarizeBy: none
+		sourceColumn: SpareUsed
+
+		annotation SummarizationSetBy = Automatic
+
+	column Severity
+		dataType: string
+		lineageTag: 22853d9e-b72d-4477-b1a3-9c15e6f829c9
+		summarizeBy: none
+		sourceColumn: Severity
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReportedDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 46dac6c1-6671-441a-894a-639e16d3d7dd
+		summarizeBy: none
+		sourceColumn: ReportedDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column DowntimeHours
+		dataType: double
+		formatString: #,0.0
+		lineageTag: a2ad156b-a35f-4344-88a9-5604b1ef33c4
+		summarizeBy: none
+		sourceColumn: DowntimeHours
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_Breakdowns = m
+		mode: import
+		source = ```
+				let
+				    Source = fnSource("Breakdown_Reports"),
+				    Typed = Table.TransformColumnTypes(Source, {{"BreakdownID", type text}, {"MachineID", type text}, {"MachineName", type text}, {"CellID", type text}, {"CellName", type text}, {"Area", type text}, {"MachineType", type text}, {"Criticality", type text}, {"ReportedDateTime", type datetime}, {"RestoredDateTime", type datetime}, {"DowntimeMinutes", Int64.Type}, {"ResponseMinutes", Int64.Type}, {"FailureMode", type text}, {"FailureCategory", type text}, {"RootCause", type text}, {"ActionTaken", type text}, {"ReportedBy", type text}, {"AttendedTechID", type text}, {"AttendedTechName", type text}, {"Status", type text}, {"SpareUsed", type text}, {"Severity", type text}}, "en-US"),
+				    AddDate = Table.AddColumn(Typed, "ReportedDate", each Date.From([ReportedDateTime]), type date),
+				    AddHrs = Table.AddColumn(AddDate, "DowntimeHours", each if [DowntimeMinutes] = null then null else [DowntimeMinutes] / 60, type number)
+				in
+				    AddHrs
+				```
+
+	annotation PBI_ResultType = Table

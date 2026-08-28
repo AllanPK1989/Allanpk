@@ -1,0 +1,877 @@
+<!doctype html><html><head><meta charset="utf-8">
+<title>Machine QR Labels</title><style>
+:root { --ink:#0F2A3D; --accent:#1B6E8C; --line:#C9D6DE; --muted:#5A7183; }
+* { box-sizing:border-box; }
+body { margin:0; font-family:"Segoe UI",system-ui,sans-serif; color:var(--ink);
+       background:#F2F5F7; }
+@page { size:A4; margin:10mm; }
+.sheet { width:190mm; margin:0 auto; }
+.grid { display:grid; gap:6mm; }
+.g2 { grid-template-columns:repeat(2,1fr); }
+.g3 { grid-template-columns:repeat(3,1fr); }
+.card { background:#fff; border:1.5px solid var(--ink); border-radius:3mm;
+        padding:5mm; page-break-inside:avoid; break-inside:avoid; }
+.hdr { display:flex; justify-content:space-between; align-items:flex-start;
+       border-bottom:1.5px solid var(--ink); padding-bottom:2.5mm; margin-bottom:3mm; }
+.name { font-size:14pt; font-weight:700; line-height:1.15; }
+.id { font-size:20pt; font-weight:800; letter-spacing:.5px; color:var(--accent); }
+.meta { font-size:8pt; color:var(--muted); line-height:1.5; }
+.body { display:flex; gap:4mm; align-items:center; }
+.qr { width:34mm; height:34mm; flex:0 0 34mm; }
+.qr img { width:100%; height:100%; display:block; }
+.actions { font-size:8.5pt; line-height:1.65; }
+.actions b { display:block; font-size:8pt; text-transform:uppercase;
+             letter-spacing:.8px; color:var(--accent); margin-bottom:1.5mm; }
+.actions li { margin-left:-4mm; }
+.foot { margin-top:3mm; padding-top:2mm; border-top:1px dashed var(--line);
+        font-size:7pt; color:var(--muted); display:flex; justify-content:space-between; }
+.badge { text-align:center; }
+.badge .qr { width:42mm; height:42mm; margin:0 auto 3mm; }
+.badge .name { font-size:13pt; }
+.pill { display:inline-block; padding:.8mm 2.5mm; border-radius:10mm; font-size:7.5pt;
+        font-weight:700; background:#E4EDF2; color:var(--accent); }
+.crit-A { background:#FBE3E0; color:#B4451F; }
+.crit-B { background:#FDF0DC; color:#8A5A16; }
+.crit-C { background:#E4EDF2; color:#1B6E8C; }
+h1 { font-size:13pt; margin:0 0 1mm; }
+.subtitle { font-size:8.5pt; color:var(--muted); margin:0 0 6mm; }
+@media print { body { background:#fff; } .noprint { display:none; } }
+.noprint { background:#FFF4E5; border:1px solid #E8C99B; padding:4mm;
+           border-radius:2mm; font-size:9pt; margin-bottom:6mm; }
+</style></head><body>
+<div class="sheet">
+<div class="noprint">
+  <b>Print instructions</b><br>
+  Print A4, 100% scale, colour or mono. Laminate or use polyester label stock &mdash;
+  these live on machines. Fix at eye height near the operator panel, away from coolant spray.
+  Re-print any label after the Power App is republished to a new environment.
+</div>
+<h1>Machine QR Labels</h1>
+<p class="subtitle">33 machines &middot; PM Planning, Scheduling &amp; Tracking System</p>
+<div class="grid g2">
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">CNC Lathe TL-01</div>
+          <div class="meta">CNC Turning Line A &middot; CELL-01 / Bay 1</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-001</div>
+          <span class="pill crit-A">Criticality A</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-001"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Doosan Puma 2600SY &middot; SN SN20160001</span>
+        <span>Checklist CL-CNC-TURN &middot; PM 150 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">CNC Lathe TL-02</div>
+          <div class="meta">CNC Turning Line A &middot; CELL-01 / Bay 2</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-002</div>
+          <span class="pill crit-A">Criticality A</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAATEAAAExCAIAAACbBwI/AAAKG0lEQVR4nO3dyw1jNwwF0JlgCkgf6SHFp4f0kQ6cZZC3kCGIpK6Nc7b2+9m+EExI1M/X6/UDiPHb7RsA/kcmIYtMQhaZhCwyCVlkErLIJGSRScgik5Dl1/rl3//4c+Y+/vn7r6rbeJxqfez6ulu3sb7u1l1t6bvu1pkfxr6ykws9hPzajZOQRSYhi0xCFpmELG9qPA9bFZG1wr/mJ2c+OfakBLJ1qj6FX+j6zFsfzslH93DySd76tRsnIYtMQhaZhCwyCVn2ajwPY3WavikjW69uXXf9CIX1obWtD2dsotJYEatQ36/9wTgJWWQSssgkZJFJyHJU47mlcKZO4cKu9alurfM6KY+NrT67tewrk3ESssgkZJFJyCKTkCW0xlM4zaVwikxIcWXLWOOfwmMLWyh9IuMkZJFJyCKTkEUmIctRjSfz3/ZYX5y+KSN9faJPai0ny9z6Km1jq97Gfu3GScgik5BFJiGLTEKWvRrP2MqXvv/xJ2fu68g8VolZ65s/VNiCue+u1m8eY5yELDIJWWQSssgkZHlT47k1U6fwT3/fjk5rY9NNQvbGGiu9rI9dG/v2TxgnIYtMQhaZhCwyCVkq+/EUrmzaqi6MzZg5qWrcags0pq9MdWtx1lpf0yDjJGSRScgik5BFJiHLtbVat9oKZ856+cSt1G8dO/YIWwq/I+MkZJFJyCKTkEUmIUvlPJ7CvZPWChcNjc0C6Sv5FJaLtk7VV1rra5PT19hp683rCxknIYtMQhaZhCwyCVka904f60BT2I9nrNaS2ZJ4y9j2Xn3NmbZe3VohuD52zTgJWWQSssgkZJFJyPLz9XpVnSukuhBS1FnL3MBr6ya39DU6KvzYC489KfkYJyGLTEIWmYQsMglZ3szj6Zt+sXXdsTePFUgK1y6t33zyvH3tqte3sT527Ldx8mk8mMcDH0wmIYtMQhaZhCyVe6f3zYroW45UuKJqfeaHwkkha2NNkraM1Q4LWwr1FXUejJOQRSYhi0xCFpmELHN7pz+ErGxav9o3Uemhb/7Q2Oqkh8ISyNgiqbE+4NZqwSeRScgik5BFJiHL0d7pJxWRW4WZtbE9uQqLDX3Tifpucqy1z9ax6zeP9WoyTkIWmYQsMglZZBKyvOm5PNai96Q+NLbQaa3vEbYUFs/6ulevbyPkzVvM44GvJZOQRSYhi0xClr1+PH1TZPraCvc9wsnsorGNtB5OGtKsT1W4OGtsRtTYfl5bjJOQRSYhi0xCFpmELHv7aq2d/Mu/tYHXSYVgrG10YTHpRN88rT59tbS1k+c1TkIWmYQsMglZZBKyVPZcfuibm9K3/Gps7/T1XRXWlvr25Bqbe7R28ln1NaTWjwe+h0xCFpmELDIJWY7WamUudQmpD32iwhlRY22j1zJXzK0ZJyGLTEIWmYQsMglZ3vRcXhtb+dJXTBrr5bN15rFXx2Q+4NiMqAc9l+GTyCRkkUnIIpOQpbIfz0NfF5mxbbbGKkC3CjOFxZW1vsJMoa2d5PvmHhknIYtMQhaZhCwyCVmO9k4fm9mQuUbsEwska5nzafqqKVsKS4nm8cAnkUnIIpOQRSYhS2XP5cK/5mO7lI+t5BorRJ08/lghqrA6WFgfGqtZrhknIYtMQhaZhCwyCVn2+vGEtBUe26Qpc7evQn1FjvWF1m61yTlhXy34WjIJWWQSssgkZKlcq3Wr50phJeZWS+K1sbbCfUK6G4f0AbJWCz6JTEIWmYQsMglZ9vZOLxTSVvjkzetjt/TNPTo5dmy9VaHCLdy3PknzeOBrySRkkUnIIpOQpbIfT1/LmbG90/sa6fZNZOnrubz16sNYv6X1mbec/CbXr249r3ESssgkZJFJyCKTkGWvH8/a2MSOT9xLPLOpzNhSprEWSlvXPdG3Ys44CVlkErLIJGSRScjyZh7PSd2ib35JXx+gtbGNw251kV4f+1A4+ebkun2L79b6ynLGScgik5BFJiGLTEKWynk8D5/Y66Vwo/XMxj9bbj1C5qSfsYbjxknIIpOQRSYhi0xClr19tR76ZkWMnblwA68TfXfVt9ysrz3P1qlC1moVJsU4CVlkErLIJGSRSchyNI8nswNNYQ0gpJvLiVs9hPra1RR2VR57BP144IPJJGSRScgik5Clsefy2MqXzHLRllv7rp/cRuG3cKsg1Ndy+uRLMU5CFpmELDIJWWQSsuyt1eorvWRO3RibBNM3ZWTL2MyVsTrN+s1rtyYqGSchi0xCFpmELDIJWfbm8fR1zVlf6GGs++3arS4yt6ZAhcy2GbuQnsvAjx8yCWlkErLIJGRp3Fdr7SNW3KwvdHLsreLK2Gqsvq3jx7as31JYOzROQhaZhCwyCVlkErL82nr3rb/XJ//Ft848tgH4iZPHL6yHje0FVngbJ5WYvq3BHoyTkEUmIYtMQhaZhCx7NZ5CX1BdKPQRnX7Wpxorn2zdxvqTLKyWFVaAjJOQRSYhi0xCFpmELHs1nlv/xfvmaowtodq67q2Sz63OyCGvrm2Vi+yrBd9DJiGLTEIWmYQslfN4QjY8f+hbq3Vy3bE+0X1nHtuyfuvVh5MyVd9eb2vGScgik5BFJiGLTEKWNzWewn+9hVWNWzWPkJZCY3OPxrbourUz2vqubp3ZOAlZZBKyyCRkkUnI8qbG07doqLBRyvo2Cv+4j3XrKSw1jc1NOWmEc1LS6+s/NFbgfDBOQhaZhCwyCVlkErJUrtXq23h8faq+VTMnT1TY/Pek93HffuB9JZCt2xibEDa2s7pxErLIJGSRScgik5Dl5+v1Wrw8NtHhoW8tT1+XoMLr3vqc+/T11O6rDt5qC26chCwyCVlkErLIJGTZq/GcuLUt+VrfA/Y17xmr8RTuX7bWt0YspKXQFuMkZJFJyCKTkEUmIcubGk+fvg2e+noIFR6bqW9x1thMnTF9vxzjJGSRScgik5BFJiHLtRrPWl854SP2Ei+8yVurwLaMTYFav3ltbFaTcRKyyCRkkUnIIpOQZW/v9D5j+z2tja3lOXnzQ9/W4mNVja0zF27//tBXS9tinIQsMglZZBKyyCRk2dtX61b9IGS91cnm8H3rj8Y2hyo8c8h8qYeQllHGScgik5BFJiGLTEKWo73T+/7WnxRICo9d27pQYWVirE5TWAA7uY21k99V5vI64yRkkUnIIpOQRSYhy1GN55a+rZQKCxUhq89Orntyk30fe1/HnZNfjrVa8LVkErLIJGSRScgSWuM5+Wt+cqG+BVZ9vXzWFwopchQ2wsnc7v7BvlrwPWQSssgkZJFJyHJU47nVv+RW7+O+WT593YnGNg4rLMvdqodtXejkVGvGScgik5BFJiGLTEKWvRrP2DZbJ9e9td6qr/fxWOebrQ2tThYr3fpCt9xa5WechCwyCVlkErLIJGT5+Xq9bt8D8B/jJGSRScgik5BFJiGLTEIWmYQsMglZZBKyyCRk+ReEMyS1fdNkOQAAAABJRU5ErkJggg==" alt="QR MC-002"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Doosan Puma 2600SY &middot; SN SN20170002</span>
+        <span>Checklist CL-CNC-TURN &middot; PM 150 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">CNC Lathe TL-03</div>
+          <div class="meta">CNC Turning Line A &middot; CELL-01 / Bay 3</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-003</div>
+          <span class="pill crit-A">Criticality A</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAATEAAAExCAIAAACbBwI/AAAKH0lEQVR4nO3dwY1rwY0FUNuYACYP5+DgnYPzmAz+rP0W1SBIVt22z9lKek8t9UVBBIv11z9//vwFiPG3128A+DcyCVlkErLIJGSRScgik5BFJiGLTEIWmYQs/3N++H///o877+P//vXPw31Lj56d/6Lzjc5P7tj7e0v3PSt9OHuvPet8Za/+2z+sk5BFJiGLTEIWmYQsP9R4Pl5VF0qXOr/JTrGhdN/B+lCpMjFYH+oU3gZdKyadL9VRehvWScgik5BFJiGLTEKWWo3nY68bo1Oo2Ot6+Rh8k+dH99p6Bt9kx2AXV2apqcQ6CVlkErLIJGSRScjSqvHs6fzK3yvqDNqrauwVwK51CJVeO3jlENZJyCKTkEUmIYtMQpbQGk/JYF/L4ParvR1knUc71bJSveRaceVa29Y11knIIpOQRSYhi0xCllaN51f8nn61pagzKXhvxvTePq+QYdZ7JZ9r/+3WScgik5BFJiGLTEKWWo0nc+fLtWku13ZUlQw2DL2aixPyDZ6ffI11ErLIJGSRScgik5DlhxrPq06dkKO2Q8o2Z3sNQx17rUh783hC+tKsk5BFJiGLTEIWmYQsf/3z58/UtV6dfrXXb3GtfJI5KfhV9ehVk9P5tWeDm9Gsk5BFJiGLTEIWmYQsP/TxdFooOpfaO0nq7Fpd6trJWef7ll7befK1XVHXDpY/37fDOglZZBKyyCRkkUnI0urj2dvas3ffvV1CpUt1DDb9/IozyPYGNJ/t9QDp44HfRCYhi0xCFpmELK0+nsHf4p3XhpRtBptvzpca/Jxf9Q91voVrU5E6/96dOpx1ErLIJGSRScgik5Clda5W53ftq+k1g+efhwykHnztqwnUe1/33kydPdZJyCKTkEUmIYtMQpbauVqdX73Xul7OT/7Yqy3ttZu8ml8cMiWo1OS0Nwdo7/u1TkIWmYQsMglZZBKy1ObxZHZFZB7hdL7RqwnUr648aG+WT0jJxzoJWWQSssgkZJFJyFKbx/PxakDLta0919qYQt5GyOzjvYPSBscR7RWxrJOQRSYhi0xCFpmELK1ztUpe7ZkavFFJ5vHvZ69qPJnlwFfzlqyTkEUmIYtMQhaZhCytmcsfgyWBa8eD7xVXQppCzvbuO3hy1qDMQtSHdRKyyCRkkUnIIpOQpdXHc60Z5dV431euzYl5dd9rj36EDJQ6v0nrJGSRScgik5BFJiHL5F6twS1FIUWdvQPAS15NkT7LfFcfIbWlEuskZJFJyCKTkEUmIcsPNZ7BHUavjtn6CDnvac+1LUV7u8/2ziAruTZj+sM6CVlkErLIJGSRScgyWeN5NaF4r5qSOex4bxTyYEfUtWPYQ97V4JdinYQsMglZZBKyyCRk+WHm8uA55IM32vt5vTc0aPCju3aE+2BFpFMAezWCebAjqvSVWSchi0xCFpmELDIJWWrnag3+2n41oOVssJPjfOWQk+QHDfbTlK58vlHpbXQMfgvWScgik5BFJiGLTEKWH2o8g5uV9n7Wn+3t5RnsTXk1+qV0o5AjzffaawYrfPp44D+HTEIWmYQsMglZWnu1Or+YO5uzzq5N7B1sChls3Lk2y+faOWKl0trel3K+0WD7lHUSssgkZJFJyCKTkKW1V2vvZKVXh1Kd30bpydfmU5ce/Risl1ybP/QrProO6yRkkUnIIpOQRSYhyw/nan28mqpy7eykV8NsSgZ3Nl3zam/aq//JDuskZJFJyCKTkEUmIUutj+fjVafOq6LOq11gZyE9T4PbzUK2BL76JK2TkEUmIYtMQhaZhCytmcvX5rUMFoTOb2OwatW50bWul2tljFdntpfsNUiVrmydhCwyCVlkErLIJGRpzVwu6by29BN5b2hQyLyWa5/k+b57c3E69r7Qs05n0od1ErLIJGSRScgik5ClNo/nY3A8z17DUEmnArT353fsnRY+eKNX2+s6zOOB/xYyCVlkErLIJGS5N3O5Y++08GvNKHsNNNceLbm23ezaHPBrrJOQRSYhi0xCFpmELJNnp3cu9XHe6nJ+8p69wTAhpYhXu8BKOt/C3lc22KhknYQsMglZZBKyyCRkqdV4BndUZf5S79xor6FkcNvX3n6rkr3pxtc2o5VeW2KdhCwyCVlkErLIJGRpnatVem3Ivphrp1C92rm2d6OPzlFZ50uV3tXev2ipmWzwXVknIYtMQhaZhCwyCVlqfTwfe8NsfsWYnJK9s+I7lZhSc9W1HXPXOmZKb+Pafa2TkEUmIYtMQhaZhCyteTwle8OOSyWQUnPG+VKlR6/9+ddGTp+FbFU7/72dD2dverV1ErLIJGSRScgik5Clda7W2d4JRyHnPV2b5dN58uB9O68N2VDWufK178g6CVlkErLIJGSRScjyQ43nVQ3gWm/KtaPBfkUL1OBE5mvlwMFS07WS3pl1ErLIJGSRScgik5Dlh71ar34xlwzuuPkYrB8MniP2qnq0V4d7tYPsY++DLb0N6yRkkUnIIpOQRSYhy+S5WqUf7teGHXf+hGunQXU+ulfVo2uFmb1msk5Zbm+0t3USssgkZJFJyCKTkKU2j+fs2pic82vP9rYj/catW+crlwyeQjW4KezVtJ7Saz+sk5BFJiGLTEIWmYQsi30813R+5b86H/sjs2zzMTg1p/TkzKLO+dHOjayTkEUmIYtMQhaZhCyT83j2+lr2GmgGSyCdvWm/Yj7N+bWdT/LaTO3M4tmHdRKyyCRkkUnIIpOQpdbH05mpMzgKuXSj0qOdt3GtEDXYInOtLDfoWh/P4LTuEuskZJFJyCKTkEUmIcsPNZ6zVw0Wg7tmrr3n0o/+wSO6fkXP09mr7+jVHkDrJGSRScgik5BFJiHLDzOX96a57N2o5Nq2oMGBNINezbYp3ejs1Znte0ODrJOQRSYhi0xCFpmELK15PB2vah6Dm5U+9jZ2hVRTzpe6VqXb29f2aj71h3USssgkZJFJyCKTkKW1V6ujU00ZbM64VqgI2V9Wuu+rEUrXupquNe6UWCchi0xCFpmELDIJWSbPTu8oTXMeLIF07G0L6nSf7E0JKl3qWp1msPQSUkyyTkIWmYQsMglZZBKy1ObxXPtp3rnUR+dH/7WZOiGHh+89+fzakr2GocHXmscD/zlkErLIJGSRScgyea7W2V4VZ++1H3vVhczmm9J9Xx3/3nnyq615Z9ZJyCKTkEUmIYtMQpZn83jO9rptSq+9Nhi6VAF6VbXKPGZr708Y3PZVehvWScgik5BFJiGLTEKW0BrPqxOwOzrtJoNlqpJrhZnBjWxng407g7N8nKsFv5hMQhaZhCwyCVl+xzyekIE0g1NkXo3J2ase7e23Kt33Vf1vMBrWScgik5BFJiGLTEKWWo1nT+b0270KwatxNXuunUMeUng761zKOglZZBKyyCRkkUnI8kONB7jMOglZZBKyyCRkkUnIIpOQRSYhi0xCFpmELDIJWf4fNB0KWF85y58AAAAASUVORK5CYII=" alt="QR MC-003"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Mazak QTN 250MY &middot; SN SN20180003</span>
+        <span>Checklist CL-CNC-TURN &middot; PM 150 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Bar Feeder BF-01</div>
+          <div class="meta">CNC Turning Line A &middot; CELL-01 / Bay 4</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-004</div>
+          <span class="pill crit-C">Criticality C</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-004"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>LNS Quick6 &middot; SN SN20190004</span>
+        <span>Checklist CL-UTIL &middot; PM 80 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Chip Conveyor CC-01</div>
+          <div class="meta">CNC Turning Line A &middot; CELL-01 / Bay 1</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-005</div>
+          <span class="pill crit-C">Criticality C</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAATEAAAExCAIAAACbBwI/AAAKTUlEQVR4nO3d0Y0jyw0F0F3DATgP5+DgXw7OwxmMPw33RwlEkeyrxTm/I3X3SHNRGKLI+v3z8/MLiPG3tx8A+D8yCVlkErLIJGSRScgik5BFJiGLTEIWmYQsfz//+B///NfOc/zn3391PcbjUuf3nu9beozzfUtPVTJ339KX0nijm8+5dKOHkL926yRkkUnIIpOQRSYhy4caz0OpInK2VuQouSkInWseZ3MVoNJ9zxrLNuf73nx0Dzef5Ft/7dZJyCKTkEUmIYtMQpZajeehcQvFzZUbH6PxIc9VjZsSyNyH07iB5uanmeb+2h+sk5BFJiGLTEIWmYQsVzWeb1TqMGrci9PY59XYjBbSffZWp14m6yRkkUnIIpOQRSYhS2iNp7Er6qZs01jyOV/5/N657rOStYk7jSOUvpF1ErLIJGSRScgik5Dlqsaz9t/2WlGntBdnbsvI3Jzom1rLTZvbzZdSulTjjR7W/tqtk5BFJiGLTEIWmYQstRrPWufL3P/xN1eeGzq8Vok5m9s/1DiCee6pzi9eY52ELDIJWWQSssgkZPlQ43mrL6bxn/65E53O1rabzH1Ha/N4Got2Z2vf/g3rJGSRScgik5BFJiFL5zyexhkzjTOIGwsVN1WNuWalEHNlqreas87mhgZZJyGLTEIWmYQsMglZXuvVemuscOaul7lC1MPcuetr7137FUoa/66sk5BFJiGLTEIWmYQsnft4Gs9OOmtsGlrbBbI2B6h039KLS6fBP6wdSVa68lqPWOlG1knIIpOQRSYhi0xClg81npD/p0tXfpgrctz8dG2o9Jy1473mhjOVflrqEDy/98w6CVlkErLIJGSRScjy++fn5/Djufk0NxqP6Z47Kutsrevt5pnXZgg1nl9Weoy5996UfKyTkEUmIYtMQhaZhCy1Xq25vQsPczNX1oo6pTnRpfeeNW5yCpkS1NiLV3rxzafxYB8PfDGZhCwyCVlkErJ0np0+tytibcNQSFXj5sXnx5gbklQy98GeX3wzUmiuqPNgnYQsMglZZBKyyCRk2Ts7/WFtmsv5vo3lk5v3zjVYvdWM1lgCWWuSWpsDrlcLvolMQhaZhCwyCVmuzk6/2X7RWBB6q+Tz1hTp82M0XnluK9LaaJ/Se88vnivLPVgnIYtMQhaZhCwyCVlqM5ff2kLRuK+lpHGM8twpY3OPMXckWempvvHF9vHAn0MmIYtMQhaZhCy1eTxzW2Tmxgo3vjdk485cR1XIfJrGF8/VaeZYJyGLTEIWmYQsMglZPtR45jqqzjd668ym0ntLzzy3nWhuG9P5Um+dFV/yVp3m5kbWScgik5BFJiGLTEKWzpnLD3N7U+b+U58bstL4C659OI1Vq7lWtcbPam4OuHk88MVkErLIJGSRSchy1as1N8/3xlwJpHHTz5y3vpS1sdEla3/AjVUr6yRkkUnIIpOQRSYhy4eZy2drg3DeOhzqrS0y31haO5s7o2puL875xTfMXIZvIpOQRSYhi0xCltq5WiVz/23fvHetTlN678PcgVYhtaW5r2zuKLTG955ZJyGLTEIWmYQsMglZrs5OX9vZkLmR5SsKJCWZ+2nmqikljXUp+3jgm8gkZJFJyCKTkKVz5vLcYVilg6UaSxGNnVxrhaibX3+tELV22ldIL16JdRKyyCRkkUnIIpOQpTaP560TsB/WDmlaq1us9Zed77t2o7O3mu9uOFcL/lgyCVlkErLIJGTp7NWaa945a6zEvDWS+GxtWNGczJlJc3+TZ3q14JvIJGSRScgik5CldnZ6o7XaQ+P84tKLQ5qzbt671m/VqPEI99InaR8P/LFkErLIJGSRScjSOY9nrqpx/gd6bfDP2q6mkCnSpZ8+rM1bOl+55OZv8vzT0u9rnYQsMglZZBKyyCRkqc3jOVvb2DHXfjW3ryVzqMxaK9PaCKXSfW/MdcxZJyGLTEIWmYQsMglZPuzjualbzO0veWumTuPvG9KqNvcYjT1T5ys3bhgqmSvLWSchi0xCFpmELDIJWTr38Tx846yXxgartbavOZmbb0LuO1c8s05CFpmELDIJWWQSsry2j2dtQ0npf/HG7SaZlZjG6tHNeJ61b6Gx3Wyt8GadhCwyCVlkErLIJGS52sezNoFm7nyrtcnI5/uWrjw3YehsrivqrY89ZJLTg3USssgkZJFJyCKTkOXqXK2bA4/e6se5efFZSA9R6akav8Hzi89uPrrSY7zVBKdXC76YTEIWmYQsMglZar1ajadYr1Vi3trW842zgEPOIDvf6ObFjRWvudHP1knIIpOQRSYhi0xCllqvVuZenIe188BL5kpNa7WWt9qv5kpr5xuZuQz8+iWTkEYmIYtMQpZar1Zjb8ta+aSxqDM3J+Z8qcbp1TdFnZARSm8V3ta6z6yTkEUmIYtMQhaZhCy1Gk/jv+Zrw44bO25urjxXASq9uLEeNlc9mnuMtcE/N5eyTkIWmYQsMglZZBKyXPVqPaydFVW68vlGa5t+5uYAnZ/qrS+l0dynETK76ME6CVlkErLIJGSRSchy1av10Nhh1Pjis7X5NKX7Nv6+c21f5xvdXPmtn541Hjp2Zp2ELDIJWWQSssgkZKmdq/VwbnR665zqh7lerZv7rk2vzpyLfXZzGvzD2slojayTkEUmIYtMQhaZhCwfajxrGx1utpuUzJ2OPjee562zsd6a5jxXlyo91VtXtk5CFpmELDIJWWQSsnyYxzN3lNKctYO05i51Y+1osMZ6WON2orlpPWu/r3USssgkZJFJyCKTkKXz7PS3qgtvHaa9dqT52oSh0n0bO5vWPufSlR/WBjRbJyGLTEIWmYQsMglZajWes6+o4oTsIHmY6xErXeqmmHT+6U0j282vv9Ze11i0s05CFpmELDIJWWQSsnT2ap2FHMT9sLYHaG668dyWoLXus8YtMo2nbjXet8Q6CVlkErLIJGSRScjyocYzZ20/zVwHWcj8oZK1fUtvzadeM/eXY52ELDIJWWQSssgkZHmtxnO2Nu428yzxxofM/AUf5mYXfeOuJuskZJFJyCKTkEUmIcuHeTwhh2HN9fKcb7S2oWRuxM6Nt04KaxyU3Pjtn+nVgj+WTEIWmYQsMglZrs7VuvHWbozSexu3E51ffCNkM0rjueuNNyoJGRllnYQsMglZZBKyyCRkuTpXa+7f+sajlEqP0biB5q3tNY1Xbqxp3TzG2c3fVWZ7nXUSssgkZJFJyCKTkKXz7PQ1meNqHt5qZTq7KWLd3KjxK5vb43UzFkivFvyxZBKyyCRkkUnIElrjufnX/OH8z/fc2drnxzh7azzPXJGjcRDOW5tvGstjztWCbyKTkEUmIYtMQparGs9b80vm6iVr/VZrZ0Wtnas1V5YrXWpuo9Ja5ck6CVlkErLIJGSRSchSq/GsHbN1c9+1fqvGHrHSi+cm35QOtLppVnrrCy15a96SdRKyyCRkkUnIIpOQ5ffPz8/bzwD8j3USssgkZJFJyCKTkEUmIYtMQhaZhCwyCVlkErL8Fy8xB182YDUxAAAAAElFTkSuQmCC" alt="QR MC-005"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Hennig HC-400 &middot; SN SN20200005</span>
+        <span>Checklist CL-UTIL &middot; PM 80 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">CNC Lathe TL-04</div>
+          <div class="meta">CNC Turning Line B &middot; CELL-02 / Bay 2</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-006</div>
+          <span class="pill crit-A">Criticality A</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-006"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Haas ST-30 &middot; SN SN20210006</span>
+        <span>Checklist CL-CNC-TURN &middot; PM 150 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">CNC Lathe TL-05</div>
+          <div class="meta">CNC Turning Line B &middot; CELL-02 / Bay 3</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-007</div>
+          <span class="pill crit-B">Criticality B</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-007"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Haas ST-30 &middot; SN SN20220007</span>
+        <span>Checklist CL-CNC-TURN &middot; PM 150 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">VMC MC-01</div>
+          <div class="meta">CNC Turning Line B &middot; CELL-02 / Bay 4</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-008</div>
+          <span class="pill crit-A">Criticality A</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-008"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Makino PS95 &middot; SN SN20230008</span>
+        <span>Checklist CL-CNC-MILL &middot; PM 165 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">VMC MC-02</div>
+          <div class="meta">CNC Turning Line B &middot; CELL-02 / Bay 1</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-009</div>
+          <span class="pill crit-B">Criticality B</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-009"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Makino PS95 &middot; SN SN20150009</span>
+        <span>Checklist CL-CNC-MILL &middot; PM 165 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Gear Hobber GH-01</div>
+          <div class="meta">Gear Cutting Cell &middot; CELL-03 / Bay 2</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-010</div>
+          <span class="pill crit-A">Criticality A</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-010"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Liebherr LC180 &middot; SN SN20160010</span>
+        <span>Checklist CL-GEAR &middot; PM 180 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Gear Hobber GH-02</div>
+          <div class="meta">Gear Cutting Cell &middot; CELL-03 / Bay 3</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-011</div>
+          <span class="pill crit-A">Criticality A</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAATEAAAExCAIAAACbBwI/AAAKEElEQVR4nO3d0Y0suQ0F0PcWDsB5bA4bvHNwHs5g/GlsfaghiKRutc/5ne6q6pm+EIagqN8/Pz+/gBh/3H4A4G9kErLIJGSRScgik5BFJiGLTEIWmYQsMglZ/rH+8T///GvmOf7z739VPcbjUuv3ru+79Rjr+2491Zax+/bd6ORPdnKjh5Bvu3USssgkZJFJyCKTkOVDjedhqyKyVviv+cmVT967VfM4uVSfrfuO/XJOfnUPhTWtE1uPYZ2ELDIJWWQSssgkZNmr8TzcqtP0dXIUPuS6qlFYH1obaxjauu9YEatQ37f9wToJWWQSssgkZJFJyHJU4xnTV/Mo3Ni1vlThPq+Hk2cO2X12a6deJuskZJFJyCKTkEUmIUtojaew9NLXIrPWV1zZcquP5+S9hSOU3sg6CVlkErLIJGSRSchyVOO59d92X1Fnqxenr2Wkb070Sa3lZJtbYaVt6xMVfkXHvu3WScgik5BFJiGLTEKWvRrP2M6Xvv/jT67cN3R4rBKz1tc/VDiCue+p1i8eY52ELDIJWWQSssgkZPlQ48ns1LnVjLJlrN2k7280No+nsGi3NvbXP2GdhCwyCVlkErLIJGSpnMdTOGNmq7ow1jFzUtXo26wUoq9MdWtz1lrf0CDrJGSRScgik5BFJiHLtb1at8YKZ3a99BWiHk7qUlv63jv2EbYUfq+sk5BFJiGLTEIWmYQsH2o8Y1NkthRuGhrrAhmbA7R1360Xb50G/3Ay+fqh8JD2sT1iWzeyTkIWmYQsMglZZBKyNPbxjE2gKZzHM9Z8MzZUus/Y8V59w5m2frq1Q3D93jXrJGSRScgik5BFJiHL75+fn8WP++bTnCg8pvtW1SrzAK+th9zS90Uq/LUXvvek5GOdhCwyCVlkErLIJGT5UON5GJt8c2t889ZTFbYErY0NaO77RIUVkb5ay1jL15p1ErLIJGSRScgik5Blb6/WrXrJrYahvqrGyWNsGRuStGXsF1s4UujkG7vFOglZZBKyyCRkkUnI0nh2euE/wWM9MW88outhq4zRt1dr7K+/fvHWfcfmgNurBW8ik5BFJiGLTEKWo5nLhU0Sa2/s8lkbO+E8pB52a7TP1nvXL+6be/RgnYQsMglZZBKyyCRk2Zu5PHYo1UPfRJa1wgOt+k4Z23qMtbH5NFv3feOL9fHA95BJyCKTkEUmIcuHPp7CFpnCIsfYtN/1i8eOf99678nnDZlPM9YRdasDbM06CVlkErLIJGSRScjyocbTN5+mr8tnS2FFpG+68Un5pLBuUThie0xfLW3t5PNaJyGLTEIWmYQsMglZKmcuP/T1ptyajTvWuXJSWzq58tZ7x3qP1grrcH1zwM3jgReTScgik5BFJiHL0V6tvnm+J14xg7hP3yTorff2jY3eMvYFLqxaWSchi0xCFpmELDIJWT7MXF4b2/lyqzDTN6+lsH+or0BSqK99qq8XZ/3iE2Yuw5vIJGSRScgik5Bl71ytLX3/bZ+8d6xOs/Xeh1vHmWV2vfT1h/VN69bHA99DJiGLTEIWmYQsR2enj3U2ZO4Re0WBZEtmP01Io1JhXUofD7yJTEIWmYQsMglZKmcu9x1pfjJWuK+D5NZBWmsnH3+sEDV22lfIXrwt1knIIpOQRSYhi0xClr15PCFjhccOaRqrW9ya5txX5FjfaO3W5rsTztWCryWTkEUmIYtMQpbKvVp9m3fWvm9C8cPYsKI+mTOT+r6Ta/ZqwZvIJGSRScgik5Bl7+z0QmO1h8L5xSf3XevrPTp579h+q0KFR7ifHDuvjwe+h0xCFpmELDIJWSrn8fRVNfp6cfoqQJknSa2NjRQq/E2ur7zl5Du5/unW57VOQhaZhCwyCVlkErLszeNZG2vs6OvF+b6JO2tjW5nGRiht3fdEXynROglZZBKyyCRkkUnI8qGP56Rjpq+/ZOtwqEIhp5SP3ajwr3+yZ2p95bHNd+srF7JOQhaZhCwyCVlkErJU9vE8vHHWS+EGq5MXZ466Wfv6pp+xgePWScgik5BFJiGLTEKWvXO1Hsb6WvquXHiA14mTnVyZh5099M0fCtmrVZgU6yRkkUnIIpOQRSYhy9G5Wif/125Nzv2+Bpq+HUYhu7FOqnSFBaG+j79m5jJ8D5mELDIJWWQSsjTOXH5Ff0mhsYPWC+978hhjA6kfCk8o6/sSnvxRrJOQRSYhi0xCFpmELHt7tV7R9bJ+b1/v0cmlXnH418lj9J0k39ea03cpfTzwJjIJWWQSssgkZNnr4ykscqyv3Dc1J/Optl7c99O1kG6bsRuZuQz8+iWTkEYmIYtMQpYP83gexjZYhRR1Tu57YusjjBV1xtqYCr8ba333tVcLvodMQhaZhCwyCVn2ajy3tuecFBu2WjfGDgA/0Td0uHC488l7+x4jZBK0vVrwJjIJWWQSssgkZKncq9W3H2cts+mnb3PW1lPd+qMUCtlt92AeD/y/kEnIIpOQRSYhy9FerYfCHUaFL14bm0+zdd++OdF9x6GHjLq5dXybc7Xga8kkZJFJyCKTkOVDjedko1PImVx9e7VO7ttXinjou3LfX3CrELVWuENw/eJC1knIIpOQRSYhi0xClg81nrFGh5N2ky23pgQVjhQa6z26Nc25ry619VS3rmydhCwyCVlkErLIJGT5MI+n7yilPn0zdcYuteXW36iwHlbYTtQ3rWfs81onIYtMQhaZhCwyCVkqZy6v9VUXxg5LP3mMsRs93Hpx3wnnayGb0czjge8hk5BFJiGLTEKWvT6evpm8D2Onshfq6/MIORzqxNgZZGtjk75Pmrqsk5BFJiGLTEIWmYQslXu11kIO4t4y1l00VuMZO89ry61uqrHf5BbrJGSRScgik5BFJiHL3l6tQmMTWQoPHi987y0h2776OnXG9H1zrJOQRSYhi0xCFpmELNdqPGu3mmBCzhLvGzgU8gEf+rqL3jhT2zoJWWQSssgkZJFJyPLh7PSQw7DGHiNkbnLhyeonbp0Utr5y4fHvDyG1NOskZJFJyCKTkEUmIcuHGs/DrfpBXzdG3+6krZ+eCGlGKTx3vfBGW0JGRlknIYtMQhaZhCwyCVn2ajwPff/Wn7S5FL537dZhWH1Fjr4C2MljrJ18rzK311knIYtMQhaZhCwyCVmOajy39B2lVFio6BscPNYEU1iIKvy19/V4nXxz7NWCryWTkEUmIYtMQpbQGs/Jv+YnN+prvtlyazxPX5GjcBDOreabk9/G+r4P1knIIpOQRSYhi0xClqMaz635JSd7eU7mAN3q8gn5CH0dM1s3Wl+qr1Fp7NtunYQsMglZZBKyyCRk2avxjDWynNy3rxLzUHgM09aL+ybfbB1odbJZKbO48nBrl591ErLIJGSRScgik5Dl98/Pz+1nAP7HOglZZBKyyCRkkUnIIpOQRSYhi0xCFpmELDIJWf4LfvUYANquMMUAAAAASUVORK5CYII=" alt="QR MC-011"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Mitsubishi GE15A &middot; SN SN20170011</span>
+        <span>Checklist CL-GEAR &middot; PM 180 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Gear Shaver GS-01</div>
+          <div class="meta">Gear Cutting Cell &middot; CELL-03 / Bay 4</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-012</div>
+          <span class="pill crit-B">Criticality B</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAATEAAAExCAIAAACbBwI/AAAKKUlEQVR4nO3dwY1sNw4FUNuYAJyHc3DwzmHycAY969FCBYGkdOvjnG13vfe6qi+EIijq95+fn9+AGH+8fgDg/8gkZJFJyCKTkEUmIYtMQhaZhCwyCVlkErL8Z//jP//6+85z/Pvffzb3Pfrp3v4v2t9o/8sVc3/v0X0XlQ/l6FJ7c5/v0Wsb7R/DOglZZBKyyCRkkUnI8qHGs7hWXTh6jKMSSGMVp7Hmsdf4GJV6SeOnf6RSEGr8N6s4egzrJGSRScgik5BFJiHLWY1nMdeNcVSoeNX1Urnv/q271tZz9JBzbS6NXVxzDzn3376wTkIWmYQsMglZZBKylGo8cyolkFftJkca6xaV2tJc4a1yqaPXNl45hHUSssgkZJFJyCKTkCW0xrOYq1vsL3X0GNd2kO01jtipPNW14krIhrJG1knIIpOQRSYhi0xCllKN5ysGtMxNZGlsJ7o2U2dun1fIMOu5ks+1/3brJGSRScgik5BFJiHLWY0nc+fLtWkujVe+NiVoMfdeNW6/evUJ7n/5GuskZJFJyCKTkEUmIcuHGs+rTp2Qo7ZDyjZ7cw1DFa+O97r2nzPHOglZZBKyyCRkkUnI8vvPz0/Xta4N/91fqtG18knmpOBX1aNXTU771+41bkazTkIWmYQsMglZZBKyfOjjqbRQVC517ZTyxbW61Nw+r0p1YW7Q0bVdUdcOlt/ft8I6CVlkErLIJGSRScjyoY/nWkPJte/Tc7uEji5Vca2mtTfXt3RtQPPeXA+QPh74JjIJWWQSssgkZOmcxzPXQVLpH9rf6FqRo7FvqfF9ftU/VPkUrk1FqpSaKlvVrJOQRSYhi0xCFpmELKVztSrfa19NrzmqEDTWlhrN7T96NYF67uOem6kzxzoJWWQSssgkZJFJyNI5j6dyqbl5zZVv6te2I1Weau9aX8u1KUFHTU5z/xtzn691ErLIJGSRScgik5Dl7FytzK6IxhvNlV6u7eSaOwzr1Qzixdwsn5CSj3USssgkZJFJyCKTkOWsj2dx7WCpylNVtvY01gDmijoVmbOP54ZKN44jmitiWSchi0xCFpmELDIJWc76eI7MNf3MzePZ//KRzOPf917VeK61QDVeeY51ErLIJGSRScgik5ClNHN5UTkdaf/Tue1Xc8WVkKaQxbUyRuPJWY3mtpvZqwW/LJmELDIJWWQSspT6eOa2urzqegkZGhQyJ+bafed+ugj539g/pHUSssgkZJFJyCKTkKVzr1bjlqJXZzYdvXZ/qcZmlGvVhSOvjvc6ElJbOmKdhCwyCVlkErLIJGT5UONp3GEU0jHzan7x/pcbXZtAM/fGzp1BduTVJ2idhCwyCVlkErLIJGTprPG8mlAc0kAzd/75XKVt/5CV1147hj3kqRorfNZJyCKTkEUmIYtMQpazvVohx11VXnttXsurqcpHvmLvUsW12lLjm2OdhCwyCVlkErLIJGQ5O1er8Yt7SA1gMTeAZ27mckipqbGf5ujK+xsdPUZF4/tsnYQsMglZZBKyyCRk+VDjadwH9GpczdxenspDhgzvObrRVxxpfq336Oh/4yhH1knIIpOQRSYhi0xClg81nrlvzEdfgue2UO1vdG2877XGnWv72uaGM736UPY3amyQsk5CFpmELDIJWWQSspT2as1tCwoZ7nL0J7yaT33000VjvaTy6V/bYHXtrauwTkIWmYQsMglZZBKylGYuX5uqcu3spMzJyIvGnU3XvNqb9up/ssI6CVlkErLIJGSRSchy1sezeNWpc+208P2lGndUVZ4qpOep8c0J2RL46p20TkIWmYQsMglZZBKylGYuX5vXUukfmjvv/ehS187VOnKtjNFYmPmK0c+VK1snIYtMQhaZhCwyCVlKM5ePNJZPjn66/+XMiTtHj3FkbhRy5VKNGucAHal0Ji2sk5BFJiGLTEIWmYQsgzOXK5c60rgNqvJUc506FXMfWeUxFiEfypG5c+atk5BFJiGLTEIWmYQs92YuV8ydFn6tGaVxH9Crs9NfHdK+9+q+c6yTkEUmIYtMQhaZhCydfTyVSy32W132vzxnbjdWyLTfReaE4letSJXHsFcLvphMQhaZhCwyCVnOajyNI5gzv6k3XqqxoaRxK9PcWWBH5qYbz53X1ngU2p51ErLIJGSRScgik5CldK7W0Wsbp7lcqw+9mjG9uFZdqNy3Mp/m1Yido7LctQFL1knIIpOQRSYhi0xClrM+nkZzdZrGMTnX9qYt5sonleOfru2Ye1XT2j/GtftaJyGLTEIWmYQsMglZOufxVMa3zA1KbmzOmKu1HAkZOb0XslVt//dW3pzGkdML6yRkkUnIIpOQRSYhS+e5Wkev3Zvr5HhVe9ibG+DbeN/Ka0M2lFWufO0zsk5CFpmELDIJWWQSsnyo8TR2J7w6PLxyo72vqMQcXWruKPW9ucdYhJT09qyTkEUmIYtMQhaZhCwf9mo1DkpeNE6wbdxxs2isH8xtN7tWPZrbI/ZqB9li7o09egzrJGSRScgik5BFJiFL57laR1/c577HLyp/wrXToCpv3avq0bXCzNyGssYJUnv2asEXk0nIIpOQRSYhS+lcrcZzlxq/fDcWZl61BM0VV0KOjp8bzzNXeZorFy2sk5BFJiGLTEIWmYQsnedqXWvNWVT2xbw6H3txrTJR0biB7uiXr43J3rv2j2SdhCwyCVlkErLIJGQ5m8fT2Kwwd0515UYVjRusMufT7F/b2PQzN1M7s3i2sE5CFpmELDIJWWQSspydnV4RcjjU3tysl2vjjBchzTcVc0d0HV3qiJnL8OuQScgik5BFJiHL2czlkAaLxl0z19prGo/o2rtWaqqYG1jc+Bm92gNonYQsMglZZBKyyCRk+dDHMzfNZe5GR17N5G2cMXNkrveo4lpT17WinT4e+HXIJGSRScgik5DlbB5Po1f7gPa9Go3zaSquTYKeaxiaM1dLezWfemGdhCwyCVlkErLIJGQpnZ1eUammNDZnXCtUzO0v26sUsRrPe997NYH6WuPOEeskZJFJyCKTkEUmIcvZPJ45+1OoFo2DUirmtgXNHWe2f23FqzpNY+klpJhknYQsMglZZBKyyCRkOZvHc+2reeVSja6dM5U563nuUPqQ465eTc02jwe+iUxCFpmELDIJWUp7teZOR6rc6Oi+c3/CUZ0ms/nm6L7fePz7q615e9ZJyCKTkEUmIYtMQpZn83j2KqWXxtc2Nu5UemLmRr80Hlmf+VRHvzy37evoMayTkEUmIYtMQhaZhCyhNZ5XJ2BXVNpNGstUR64VZq4d0t7YuFO5lHO14Nchk5BFJiGLTEKW75jHEzKQZu6k8WtjcuaqR3P7rY7u+6r+1xgN6yRkkUnIIpOQRSYhy1mNZ07m9Nu5CsGrcTVzrp1DHlJ426tcyjoJWWQSssgkZJFJyPKhxgNcZp2ELDIJWWQSssgkZJFJyCKTkEUmIYtMQhaZhCz/A0AONhdsS+jZAAAAAElFTkSuQmCC" alt="QR MC-012"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Gleason Genesis 160 &middot; SN SN20180012</span>
+        <span>Checklist CL-GEAR &middot; PM 150 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Deburring Unit DB-01</div>
+          <div class="meta">Gear Cutting Cell &middot; CELL-03 / Bay 1</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-013</div>
+          <span class="pill crit-C">Criticality C</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-013"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Rosler R320 &middot; SN SN20190013</span>
+        <span>Checklist CL-UTIL &middot; PM 80 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Sealed Quench SQ-01</div>
+          <div class="meta">Heat Treatment &middot; CELL-04 / Bay 2</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-014</div>
+          <span class="pill crit-A">Criticality A</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-014"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Ipsen T-6 &middot; SN SN20200014</span>
+        <span>Checklist CL-FURNACE &middot; PM 240 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Sealed Quench SQ-02</div>
+          <div class="meta">Heat Treatment &middot; CELL-04 / Bay 3</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-015</div>
+          <span class="pill crit-A">Criticality A</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-015"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Ipsen T-6 &middot; SN SN20210015</span>
+        <span>Checklist CL-FURNACE &middot; PM 240 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Tempering Furnace TF-01</div>
+          <div class="meta">Heat Treatment &middot; CELL-04 / Bay 4</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-016</div>
+          <span class="pill crit-A">Criticality A</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-016"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Aichelin TF-900 &middot; SN SN20220016</span>
+        <span>Checklist CL-FURNACE &middot; PM 180 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Quench Oil Chiller CH-01</div>
+          <div class="meta">Heat Treatment &middot; CELL-04 / Bay 1</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-017</div>
+          <span class="pill crit-B">Criticality B</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-017"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Voltas VC-60TR &middot; SN SN20230017</span>
+        <span>Checklist CL-UTIL &middot; PM 130 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">HT Compressor AC-01</div>
+          <div class="meta">Heat Treatment &middot; CELL-04 / Bay 2</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-018</div>
+          <span class="pill crit-A">Criticality A</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-018"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Atlas Copco GA55 &middot; SN SN20150018</span>
+        <span>Checklist CL-UTIL &middot; PM 120 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Assembly Stn AS-01</div>
+          <div class="meta">Assembly Line 1 &middot; CELL-05 / Bay 3</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-019</div>
+          <span class="pill crit-B">Criticality B</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-019"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>In-house ASSY-1 &middot; SN SN20160019</span>
+        <span>Checklist CL-ASSY &middot; PM 90 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Assembly Stn AS-02</div>
+          <div class="meta">Assembly Line 1 &middot; CELL-05 / Bay 4</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-020</div>
+          <span class="pill crit-B">Criticality B</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-020"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>In-house ASSY-1 &middot; SN SN20170020</span>
+        <span>Checklist CL-ASSY &middot; PM 90 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Assembly Stn AS-03</div>
+          <div class="meta">Assembly Line 1 &middot; CELL-05 / Bay 1</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-021</div>
+          <span class="pill crit-B">Criticality B</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-021"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>In-house ASSY-2 &middot; SN SN20180021</span>
+        <span>Checklist CL-ASSY &middot; PM 90 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Leak Test Rig LT-01</div>
+          <div class="meta">Assembly Line 1 &middot; CELL-05 / Bay 2</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-022</div>
+          <span class="pill crit-A">Criticality A</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-022"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>ATEQ F620 &middot; SN SN20190022</span>
+        <span>Checklist CL-ASSY &middot; PM 110 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Assy Conveyor CV-01</div>
+          <div class="meta">Assembly Line 1 &middot; CELL-05 / Bay 3</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-023</div>
+          <span class="pill crit-C">Criticality C</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-023"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Interroll IR-2000 &middot; SN SN20200023</span>
+        <span>Checklist CL-UTIL &middot; PM 80 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Paint Booth PB-01</div>
+          <div class="meta">Paint & Finishing &middot; CELL-06 / Bay 4</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-024</div>
+          <span class="pill crit-A">Criticality A</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-024"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Nordson NB-4 &middot; SN SN20210024</span>
+        <span>Checklist CL-PAINT &middot; PM 200 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Curing Oven CO-01</div>
+          <div class="meta">Paint & Finishing &middot; CELL-06 / Bay 1</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-025</div>
+          <span class="pill crit-B">Criticality B</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-025"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Eisenmann CO-12 &middot; SN SN20220025</span>
+        <span>Checklist CL-PAINT &middot; PM 160 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Paint Chiller CH-02</div>
+          <div class="meta">Paint & Finishing &middot; CELL-06 / Bay 2</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-026</div>
+          <span class="pill crit-C">Criticality C</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-026"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Blue Star BS-30TR &middot; SN SN20230026</span>
+        <span>Checklist CL-UTIL &middot; PM 130 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Robot Weld Cell RW-01</div>
+          <div class="meta">Robotic Welding Bay &middot; CELL-07 / Bay 3</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-027</div>
+          <span class="pill crit-A">Criticality A</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-027"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Fanuc ARC Mate 120 &middot; SN SN20150027</span>
+        <span>Checklist CL-WELD &middot; PM 190 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Robot Weld Cell RW-02</div>
+          <div class="meta">Robotic Welding Bay &middot; CELL-07 / Bay 4</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-028</div>
+          <span class="pill crit-A">Criticality A</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-028"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Fanuc ARC Mate 120 &middot; SN SN20160028</span>
+        <span>Checklist CL-WELD &middot; PM 190 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Positioner PZ-01</div>
+          <div class="meta">Robotic Welding Bay &middot; CELL-07 / Bay 1</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-029</div>
+          <span class="pill crit-C">Criticality C</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-029"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Fanuc 2AX-500 &middot; SN SN20170029</span>
+        <span>Checklist CL-UTIL &middot; PM 80 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Weld Compressor AC-02</div>
+          <div class="meta">Robotic Welding Bay &middot; CELL-07 / Bay 2</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-030</div>
+          <span class="pill crit-B">Criticality B</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAATEAAAExCAIAAACbBwI/AAAKJ0lEQVR4nO3d241suQ0F0HsHDsB5TA4TvHNwHs6g/WmMPtQQRFK72mv9dlWdU48NoQmR+v319fULiPHH6xsA/kYmIYtMQhaZhCwyCVlkErLIJGSRScgik5DlH/s///PPv2bu4z///lfVbSwvtX/u/rpHt7G/7tFdHem77s0n+REXWoT82q2TkEUmIYtMQhaZhCzf1HgWRxWRvbEix5GbgtC+uLLXVwE6um7fg48+nMK7uvkkX/3arZOQRSYhi0xCFpmELGc1nkXhFoqjV+7byVF4k/uqxk0J5Oj9Fj64cMPQWBGrUN+vfWGdhCwyCVlkErLIJGS5qvGM6dtRUdjYtX+pwvLJkZty0Vj32atOvUzWScgik5BFJiGLTEKW0BpPX7fOTb1kbPRL4Z6YkJ64wndUWPDLZJ2ELDIJWWQSssgkZLmq8Yz9t33TytQ3F6dvy0jfnOibWstNm1tfpa1vC9Ri7NdunYQsMglZZBKyyCRkOavxjHW+9P0ff/PKhTtX+mbbFDZ2FU6vLhzB3HdX+wePsU5CFpmELDIJWWQSsnxT43nVF1P4T3/fiU57Y9tN+r6jsXk8hUW7vbFv/4Z1ErLIJGSRScgik5Clch5PYWfTUXVhbMfMTVXj1VigMWODoceas/b6hgZZJyGLTEIWmYQsMglZnvVq9e0CObpuob5SU+Gom75z18eeO/YWjhT+rqyTkEUmIYtMQhaZhCzf1HhenZ20V9g0NLYLZGx30dF1b26yr7TWNyanb7DT0YP3F7JOQhaZhCwyCVlkErJczeMp7Lc60jePp2/zzb5A8qr2cGPseK++4UxHfz3qENw/d886CVlkErLIJGSRScjy++vrq+q1QqoLH3FM91jX21gX2F7foKPCUlPhc29KPtZJyCKTkEUmIYtMQpazXq2+vQv76/Y9+GaPSGGBpLB6VLjJ6VVD2f65r34bhce/71knIYtMQhaZhCwyCVkqz07v2xVROKB5fxt7fR1Ge30TaAovdGSsdlg4UqivqLOwTkIWmYQsMglZZBKyzJ2dvhib5nJ03bEjuvpGGR0N/tkr3E509Neb2+jbTrRX2CJnnYQsMglZZBKyyCRkuTo7fayJ5tUun72+EkjhJ3nTUNZ3k2PlsaPn7h/cN/doYZ2ELDIJWWQSssgkZPlm5nLIForCfS1HCjuq+k4ZO7qNxatz1/e3EfLgxVjJxzoJWWQSssgkZJFJyHI2j6dvEE7fWOHCt1A4kaWw3ayw4hUyn2ZsR9SrHWB71knIIpOQRSYhi0xClrN9PHtjp5QfXXestafwFKr9Kx/pq1u8Oiv+SOFum7Ev1DoJWWQSssgkZJFJyFI5c3kRUiDZX2hR2HHz6sDzQoWHUvW1qt18Vn0Dqc3jgZ9DJiGLTEIWmYQsV71ar/am7GXWhz7CzT33DeDuu6tXHXN71knIIpOQRSYhi0xClm96tfYK/ycee+7i1byWzC6hPmNNUq9OZT+iVws+iUxCFpmELDIJWSrn8Sz6/tu+ee5YnebouYu+A61Cakt9X1nfUWiFz92zTkIWmYQsMglZZBKyXJ2dPrazIXMjy0cUSI5k7qfpq6YcKaxL2ccDn0QmIYtMQhaZhCyVM5f7DsO6OYe8bwfJzaDkvbETypa/jhWiCquDhfWhsZrlnnUSssgkZJFJyCKTkOVsHs+rE7AXY4c0ZZ72VaivyLG/0N6r5rsbztWCH0smIYtMQhaZhCyVvVp9zTt7hZWYzMOwxoYV9cmcmdT3m9zTqwWfRCYhi0xCFpmELGdnpxfq23xzc6FXNYC+vUc3zx3rtypUeIT70SdpHw/8WDIJWWQSssgkZKmcx9M3cmZs4k7fAU8hJ0ntjY0UKpy3tH/lIze/yf1fj96vdRKyyCRkkUnIIpOQ5Wwez97Yxo7MeTxHL7V/8JixVqaxr+zoujf6Ouask5BFJiGLTEIWmYQs3+zjuZle07e/pG8O0N7NGVWLsbfQ141VuPlmcXTdvua7vb6ynHUSssgkZJFJyCKTkKVyH8/iE2e9vNq482r472JsPvUnbvoZGzhunYQsMglZZBKyyCRkOTtXa9G3K2LslQtH7Ny46eR6ddhZYUGo71sY+8oKk2KdhCwyCVlkErLIJGS5Oler79/6vn0eIfuHCsf77h/86v3eVOkKC0J9dak9M5fh55BJyCKTkEUmIUvjzOW+zpdMIT1EN17tauqbXzz2wRZ+KdZJyCKTkEUmIYtMQpazXq2+sTEhJyuN1S1e9Uzt9d1G30nyfVtz+l7KPh74JDIJWWQSssgkZDnbx5M5nidzAs2isNT0aoNUyG6bsQuZuQz8+iWTkEYmIYtMQpZv5vEsXrUFveq42etrKDt6C2NFncKC0M1NvpqbPLYvzToJWWQSssgkZJFJyHJW4ymsEIy1UB29cl8vT18F6OjBhfWwvupR322ETILWqwWfRCYhi0xCFpmELHO9Wn3/fL+qLozNAcpskhoT0m23MI8H/l/IJGSRScgik5ClslersMOo8MF7Y/Npjq5b+H772r72F7p55Vd/3Tvq5NKrBT+HTEIWmYQsMglZrnq19o1OIceh9/Vq3Vy3rxSx6Hvlvm/wqBC1Vzi8e//gQtZJyCKTkEUmIYtMQpazGs/eWFXjVc0jZKTQ2N6jV9Oc++pSR3f16pWtk5BFJiGLTEIWmYQs38zj6TtKqc+rKTKv2s1ubuPouTcvNbadqG9az9j7tU5CFpmELDIJWWQSspzNXF68qgCNTSh+NWPm5kKLVw/uO+F8L6QZzTwe+DlkErLIJGSRSchyto+nbybvoq+X59UUmZADvPbP7TN2Btne2KTvm91U1knIIpOQRSYhi0xClsperb2Qg7j3CrduvNohdHSTe2Mnq7/62MdGCh2xTkIWmYQsMglZZBKyXPVq3RibyNI3nyZk/tCNV2dU9e3UGdP3y7FOQhaZhCwyCVlkErI8q/HsjY27DRnfsugbOHR03ZuXOjK2BWr/4L2xXU3WScgik5BFJiGLTEKWb85ODzkMa+w2xuYIL/pOVr8xVtU4euXC498XfcO7j1gnIYtMQhaZhCwyCVm+qfEsXtUPbooNIYdSvZr1PGZs1vOP/yStk5BFJiGLTEIWmYQsZzWexdi035vdGEe3UbiBpq/k01fk6CuA3dzG3s3vKrO9zjoJWWQSssgkZJFJyHJV43mlb1xN306OkBPKbopYNxcq/Mr6Ju7cVOn0asGPJZOQRSYhi0xCltAaz82/5ov9P9+vztbue25f+eSmyFE4COfV5pvCm3SuFnwSmYQsMglZZBKyXNV4Xs0v6auX9J261XdXRw/u2wPUV5Y7eqm+jUpjlSfrJGSRScgik5BFJiHLWY1n7Hyrm+v2VWIWY0eaj02+uZle3bcXJ6SUOFb/s05CFpmELDIJWWQSsvz++vp6fQ/A/1gnIYtMQhaZhCwyCVlkErLIJGSRScgik5BFJiHLfwGYNB+/90AQSwAAAABJRU5ErkJggg==" alt="QR MC-030"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Elgi EG37 &middot; SN SN20180030</span>
+        <span>Checklist CL-UTIL &middot; PM 120 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Hyd Press HP-01</div>
+          <div class="meta">Press Shop &middot; CELL-08 / Bay 3</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-031</div>
+          <span class="pill crit-A">Criticality A</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-031"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Schuler MSD-250 &middot; SN SN20190031</span>
+        <span>Checklist CL-PRESS &middot; PM 175 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Hyd Press HP-02</div>
+          <div class="meta">Press Shop &middot; CELL-08 / Bay 4</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-032</div>
+          <span class="pill crit-B">Criticality B</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAATEAAAExCAIAAACbBwI/AAAKFUlEQVR4nO3dwY0rtxIF0PcMB+A8nIOD/zk4D2cgLw33gkJ9sopX8jnb0XS3ZnRBqMAq/ny9Xj+AGL/cfgDgX2QSssgkZJFJyCKTkEUmIYtMQhaZhCwyCVl+Xf/4t9//mHmOv/7836nHeFxq/bvr+5YeY33f0lOV9N135y/5ETd6CPm0Wychi0xCFpmELDIJWd7UeB5KFZG1ne/Tfd/U1wWS9WOUfrd0qT4hlaf175Zu9ND3MSspPYZ1ErLIJGSRScgik5ClVuN5OLiFYn3lvl0+65/u7IlZ/+5OCaT0fvsqXqW3f/Cpbun7tD9YJyGLTEIWmYQsMglZtmo8Yw6WBEp1i4N7cQ72eZXslIvGus9udeplsk5CFpmELDIJWWQSsoTWePraZHauPDb6JXPHzNjEnYMjlD6RdRKyyCRkkUnIIpOQZavGM/Zte6eVqW8uTt+Wkb450QfbzUpP1Vdp69sC9TD2abdOQhaZhCwyCVlkErLUajxjnS993+N3rnxw58rY4J+Sg1Wrg//Bsadav3iMdRKyyCRkkUnIIpOQ5U2N51ZfzMEv/X0nOq2NbTfp+x+NzeM5WLRbG/vv77BOQhaZhCwyCVlkErKcnMdzsLOpVF0Y2zGzU9W4NRZozNhg6LHmrLW+oUHWScgik5BFJiGLTEKWa71afbtASvc9qK/U1NeqdvDFY7879hZKDn6urJOQRSYhi0xCFpmELG9qPLfOTlo72DQ0tgvkVsnn4Ljq0mnwDzuTrx8OHtJ+q1q2vpF1ErLIJGSRScgik5Dl5+v1+r9/eey4q7FRyKUXj3WBHaw93OqKGvvj9G3c2ak8lf5W1knIIpOQRSYhi0xCllqN59bX64exYtL6vmO7QNZubesp6Rt0dLDUdPB3d0o+1knIIpOQRSYhi0xCljc1noPbL0pujW8uPdXBAsmtv2TpRn0fhr7/4NiVD37MrJOQRSYhi0xCFpmELCfPTu+rl9zaMHSrxLV+jJKxIUklY3/YgyOFdj6xJdZJyCKTkEUmIYtMQpZrZ6dnzuPpq2k9jO0vGdu39HCwBDK2I2psDrheLfgkMglZZBKyyCRkaZzHc/D79K2ZK+vH6DuTK7NV7eFWg9VayJlcerXge8gkZJFJyCKTkGVrHs/6xWtjhYq+gkHpRpn1odKlxqb1hLy4xD4e+FoyCVlkErLIJGSpzeMZG+B78KkOzvI5WJi51W52cOJO33yagy8OOc+rxDoJWWQSssgkZJFJyPKmxtP3rXen86V0377WrZ1nPviHzSzq9D1GSV8tbW3n/VonIYtMQhaZhCwyCVlOzlx+6NubcmuWz61JP+tLjf3pdg6lujUWaOwfah4PfC2ZhCwyCVlkErJs9Wpltrrcas+51TP1cOuf0rfrpe+pQg5oe7BOQhaZhCwyCVlkErLUztV6GOt8GSvMHLzv2sFDmvo2lByU+QZvleXMXIZPIpOQRSYhi0xClpPzeB5KU2R2Bvj2fVMfqwDdKsyEtH2FjPZZP9XYEV3WScgik5BFJiGLTEKWrbPTx3Y2ZPaIfWKBZC1zP01fNaXkYCnRPh74JDIJWWQSssgkZDk5c/nWYVh9pYi+QclrB2cQl97+WCFq7LSvkF68EuskZJFJyCKTkEUmIUttHs+tE7Afxg5pGqtbfOKA5p0brYVMry5xrhZ8LZmELDIJWWQSspzs1bo1c+VgJebWSOK1sbHCfUKmG4fMAdKrBZ9EJiGLTEIWmYQstbPTD+qrPRxszhqrAfTtPdr53bF+q4MOHuFe+kvaxwNfSyYhi0xCFpmELCfn8fSNnFl/gR4b/FMaZnPwRmt9M5dLP30Ym7e0vnLJzmdy/dPS+7VOQhaZhCwyCVlkErLU5vGsjW3s6Gu/6pvXnDlUZqyVaWyEUum+O/o65qyTkEUmIYtMQhaZhCxv9vHslE/69pfc6iG6dXDYjp2/1a0jq0pXvvV37vuYWSchi0xCFpmELDIJWU7u43n4xFkvtzbuZO7yefiPb/oZGzhunYQsMglZZBKyyCRkqZ2r9dC3K2LsygcP8NqxU+Ppq0z0PWTpd9eXCunVOpgU6yRkkUnIIpOQRSYhy9Y+ni/4Wn9r/9BYh9GtElffuJqDU5UzJzlZJyGLTEIWmYQsMglZGmcuj3W+hMx67ushWrs1Y+bgf+FWQaiv+2znn2KdhCwyCVlkErLIJGSp9WplNiuVrnxr79H6Un1bRkrGdq6M1WnWL167tVHJOglZZBKyyCRkkUnIUtvHMzaeZ33fsem3IY1OIVugQnbbjN3IzGXgxw+ZhDQyCVlkErK8OTv94da37dKN+s57eujb1VR6C2NFnbFtTKUT3Xf03VevFnwPmYQsMglZZBKy1Go8O1+vD57oVHqM0pXHDgDfsfP2D9bD+qpHfY+xU3oZ6+OzTkIWmYQsMglZZBKyzPVq9X35vlVdGDveK7NJakxIt92DeTzwXyGTkEUmIYtMQpZrvVpjx6Gvjc2nKd23b070wbav9Y12rnzrp2ulTi69WvA9ZBKyyCRkkUnIstWrtW50CjnwvK9Xa+e+faWIh8zz3tdKhai1nTJV31lva9ZJyCKTkEUmIYtMQpY3NZ6D33oPVjVu1TxCRgqN7T26Nc25ry5VeqpbV7ZOQhaZhCwyCVlkErLU5vE8hOx7eOibqXPwUn2TjdbGBgePlW3GpvWMvV/rJGSRScgik5BFJiHL3D6evurCrcO0+440L/XErY0VhA7u8So9xtiGsLEBzdZJyCKTkEUmIYtMQpbaPJ61j6jifMQOkoMvLl1qp5Nr/dOdTU47PWJj7XUHq4PWScgik5BFJiGLTEKWN71afVtkQoztAerrA1q/eP2Qa2Mnqx/cInPw1K2D9y2xTkIWmYQsMglZZBKybM3j2TG2n6avgyxk/tCOW3uP+uZTj+n75FgnIYtMQhaZhCwyCVmu1XjWxsbdZp4lfvAhx7b17Di42+Zghe9hbFeTdRKyyCRkkUnIIpOQpTZzuc/YSVJ941vW9+27Ud/R4mNVjdKVDx7//jA2YGnNOglZZBKyyCRkkUnIUpu5fKt+ENJvldmcdWts9PpSayH7pR5CRkZZJyGLTEIWmYQsMglZts7V6vtaf+sopb4NNH1Hgx3UNwl65zHWdj5Xme111knIIpOQRSYhi0xClpNnp485OL5lrFBxcI7w2CaYnYfsG4PUN3Fn53OlVwu+lkxCFpmELDIJWUJrPDtfzXdePHa2dt/v9pVPdoocByttn3jc/fq+D9ZJyCKTkEUmIYtMQpatGs+t+SV99ZK+U7f6nqr04r49QH2VttKl+jYqjVWerJOQRSYhi0xCFpmELLUaz62xwmPzfEuX6jvS/OCNDl75YLPSrX9oSV+72Zp1ErLIJGSRScgik5Dl5+v1uv0MwD+sk5BFJiGLTEIWmYQsMglZZBKyyCRkkUnIIpOQ5W/t2jHkdJ7GAgAAAABJRU5ErkJggg==" alt="QR MC-032"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Schuler MSD-160 &middot; SN SN20200032</span>
+        <span>Checklist CL-PRESS &middot; PM 175 min</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <div class="name">Press Feeder PF-01</div>
+          <div class="meta">Press Shop &middot; CELL-08 / Bay 1</div>
+        </div>
+        <div style="text-align:right">
+          <div class="id">MC-033</div>
+          <span class="pill crit-C">Criticality C</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="qr"><img src="data:image/png;base64,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" alt="QR MC-033"></div>
+        <div class="actions">
+          <b>Scan with your phone camera</b>
+          <ul style="margin:0;padding-left:4mm">
+            <li>View last PM done date &amp; full history</li><li>Start / continue the PM checklist</li><li>Report a breakdown</li><li>Request a spare part</li><li>Record a spare part replaced</li><li>Log an abnormality</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Bruderer BSV-75 &middot; SN SN20210033</span>
+        <span>Checklist CL-UTIL &middot; PM 80 min</span>
+      </div>
+    </div></div>
+</div></body></html>

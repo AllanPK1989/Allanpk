@@ -1,0 +1,189 @@
+/// What was actually fitted to the machine.
+table Fact_SpareReplacements
+	lineageTag: 44873517-ab76-4ee1-863a-ec9ec711fdf4
+
+	column ReplacementID
+		dataType: string
+		lineageTag: da22d1aa-b1e1-48c7-b450-dc1c3a40b727
+		summarizeBy: none
+		sourceColumn: ReplacementID
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceType
+		dataType: string
+		lineageTag: 2eb91e69-bb98-469c-b1df-3b5d79f1806d
+		summarizeBy: none
+		sourceColumn: SourceType
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceID
+		dataType: string
+		lineageTag: 2c5f200b-877c-4614-8a50-450e6c03955b
+		summarizeBy: none
+		sourceColumn: SourceID
+
+		annotation SummarizationSetBy = Automatic
+
+	column RequestID
+		dataType: string
+		lineageTag: ae1f480b-d9f0-419f-a471-478d3c3d4220
+		summarizeBy: none
+		sourceColumn: RequestID
+
+		annotation SummarizationSetBy = Automatic
+
+	column MachineID
+		dataType: string
+		lineageTag: 8a30b891-906b-48ee-93c9-b6a45c995a63
+		summarizeBy: none
+		sourceColumn: MachineID
+
+		annotation SummarizationSetBy = Automatic
+
+	column MachineName
+		dataType: string
+		lineageTag: e1440cf0-a380-477e-9567-ecae8d840373
+		summarizeBy: none
+		sourceColumn: MachineName
+
+		annotation SummarizationSetBy = Automatic
+
+	column CellID
+		dataType: string
+		lineageTag: c44b1231-063a-48ba-8adf-677223073f79
+		summarizeBy: none
+		sourceColumn: CellID
+
+		annotation SummarizationSetBy = Automatic
+
+	column MachineType
+		dataType: string
+		lineageTag: f1df68dc-c3e7-4f29-8761-6025e0cfd52c
+		summarizeBy: none
+		sourceColumn: MachineType
+
+		annotation SummarizationSetBy = Automatic
+
+	column PartNo
+		dataType: string
+		lineageTag: 420d5eee-09e4-4272-b3c3-ce382efec4d0
+		summarizeBy: none
+		sourceColumn: PartNo
+
+		annotation SummarizationSetBy = Automatic
+
+	column PartName
+		dataType: string
+		lineageTag: 9221a03a-a16a-4063-bbdf-c3daee347156
+		summarizeBy: none
+		sourceColumn: PartName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category
+		dataType: string
+		lineageTag: 80b755b5-ed32-45e3-8a18-154b65d8c742
+		summarizeBy: none
+		sourceColumn: Category
+
+		annotation SummarizationSetBy = Automatic
+
+	column UOM
+		dataType: string
+		lineageTag: b25e2d60-8fab-411c-a18c-66eadf72f3e8
+		summarizeBy: none
+		sourceColumn: UOM
+
+		annotation SummarizationSetBy = Automatic
+
+	column QtyReplaced
+		dataType: int64
+		formatString: #,0
+		lineageTag: b78ea536-bab1-4c39-bef5-4ed9ac6797dd
+		summarizeBy: none
+		sourceColumn: QtyReplaced
+
+		annotation SummarizationSetBy = Automatic
+
+	column UnitCostINR
+		dataType: double
+		formatString: "₹"#,0.00;("₹"#,0.00);"₹"#,0.00
+		lineageTag: 5028eb14-58de-4d86-b5d3-751a097915b3
+		summarizeBy: none
+		sourceColumn: UnitCostINR
+
+		annotation SummarizationSetBy = Automatic
+
+	column TotalCostINR
+		dataType: double
+		formatString: "₹"#,0.00;("₹"#,0.00);"₹"#,0.00
+		lineageTag: fd0819ec-9fcb-4df7-9090-4ae0595763ed
+		summarizeBy: none
+		sourceColumn: TotalCostINR
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReplacedByTechID
+		dataType: string
+		lineageTag: 16d464b0-d9ad-4899-b865-cdcd547c99e9
+		summarizeBy: none
+		sourceColumn: ReplacedByTechID
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReplacedByName
+		dataType: string
+		lineageTag: 645319a1-892d-4774-97cf-ba3da9ca543a
+		summarizeBy: none
+		sourceColumn: ReplacedByName
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReplacedDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: b504e6ca-9d1b-4a24-906f-aeac212b6f92
+		summarizeBy: none
+		sourceColumn: ReplacedDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column OldPartCondition
+		dataType: string
+		lineageTag: 3fd6c726-5dd8-498d-b244-4452d579c80c
+		summarizeBy: none
+		sourceColumn: OldPartCondition
+
+		annotation SummarizationSetBy = Automatic
+
+	column WarrantyClaim
+		dataType: string
+		lineageTag: a450eb0e-a278-4440-80ce-3d00360880e0
+		summarizeBy: none
+		sourceColumn: WarrantyClaim
+
+		annotation SummarizationSetBy = Automatic
+
+	column Remarks
+		dataType: string
+		lineageTag: 8ee3ceee-d0b0-4b3f-bd3a-83f35cd724ce
+		summarizeBy: none
+		sourceColumn: Remarks
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_SpareReplacements = m
+		mode: import
+		source = ```
+				let
+				    Source = fnSource("SparePart_Replacements"),
+				    Typed = Table.TransformColumnTypes(Source, {{"ReplacementID", type text}, {"SourceType", type text}, {"SourceID", type text}, {"RequestID", type text}, {"MachineID", type text}, {"MachineName", type text}, {"CellID", type text}, {"MachineType", type text}, {"PartNo", type text}, {"PartName", type text}, {"Category", type text}, {"UOM", type text}, {"QtyReplaced", Int64.Type}, {"UnitCostINR", type number}, {"TotalCostINR", type number}, {"ReplacedByTechID", type text}, {"ReplacedByName", type text}, {"ReplacedDate", type date}, {"OldPartCondition", type text}, {"WarrantyClaim", type text}, {"Remarks", type text}}, "en-US")
+				in
+				    Typed
+				```
+
+	annotation PBI_ResultType = Table

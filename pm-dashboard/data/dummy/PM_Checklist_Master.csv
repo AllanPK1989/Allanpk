@@ -1,0 +1,101 @@
+ChecklistID,TaskNo,TaskDescription,TaskType,AcceptanceStandard,Mandatory,SafetyCritical,EstMinutes
+CL-CNC-TURN,1,Lock out / tag out verified before start,Safety,LOTO applied,Yes,Yes,18
+CL-CNC-TURN,2,"Clean chip conveyor, coolant tank and chip tray",Cleaning,No chip accumulation,Yes,No,20
+CL-CNC-TURN,3,Check coolant concentration,Measurement,6 - 9 %,Yes,No,15
+CL-CNC-TURN,4,Check way lube level and top up,Lubrication,Above MIN mark,Yes,No,16
+CL-CNC-TURN,5,Inspect way covers and wipers for damage,Visual,No tear / no leak,Yes,No,18
+CL-CNC-TURN,6,Spindle vibration check,Measurement,<= 2.8 mm/s RMS,Yes,No,14
+CL-CNC-TURN,7,Spindle temperature after 30 min run,Measurement,<= 55 deg C,Yes,No,17
+CL-CNC-TURN,8,Check hydraulic pressure,Measurement,35 - 40 bar,Yes,No,14
+CL-CNC-TURN,9,Turret indexing time and repeatability,Measurement,<= 1.2 s,Yes,No,18
+CL-CNC-TURN,10,Tailstock / chuck clamping pressure,Measurement,18 - 22 bar,Yes,Yes,17
+CL-CNC-TURN,11,Check air filter / regulator / lubricator (FRL),Visual,"Bowl clean, no water",Yes,No,20
+CL-CNC-TURN,12,Verify E-stop and door interlock function,Safety,Stops within 1 s,Yes,Yes,18
+CL-CNC-TURN,13,Backlash check X and Z axis,Measurement,<= 0.01 mm,No,No,15
+CL-CNC-TURN,14,Electrical panel cleaning and terminal tightness,Electrical,"No dust, no loose lug",Yes,Yes,20
+CL-CNC-MILL,1,Lock out / tag out verified before start,Safety,LOTO applied,Yes,Yes,18
+CL-CNC-MILL,2,"Clean work enclosure, chip auger and coolant tank",Cleaning,No chip accumulation,Yes,No,20
+CL-CNC-MILL,3,Check coolant concentration,Measurement,6 - 9 %,Yes,No,15
+CL-CNC-MILL,4,Grease ball screws and linear guides,Lubrication,As per lube chart,Yes,No,17
+CL-CNC-MILL,5,Spindle taper cleaning and condition check,Visual,No fretting / burr,Yes,No,18
+CL-CNC-MILL,6,Spindle vibration check,Measurement,<= 2.8 mm/s RMS,Yes,No,14
+CL-CNC-MILL,7,ATC arm alignment and tool clamp force,Measurement,Within OEM spec,Yes,Yes,18
+CL-CNC-MILL,8,Check hydraulic / pneumatic pressure,Measurement,5.5 - 6.5 bar,Yes,No,17
+CL-CNC-MILL,9,Verify axis home position repeatability,Measurement,<= 0.005 mm,No,No,18
+CL-CNC-MILL,10,Verify E-stop and door interlock function,Safety,Stops within 1 s,Yes,Yes,18
+CL-CNC-MILL,11,Electrical panel cleaning and terminal tightness,Electrical,"No dust, no loose lug",Yes,Yes,20
+CL-CNC-MILL,12,Check chiller for spindle - temp and level,Measurement,20 +/- 2 deg C,Yes,No,18
+CL-GEAR,1,Lock out / tag out verified before start,Safety,LOTO applied,Yes,Yes,18
+CL-GEAR,2,"Clean machine bed, swarf tray and coolant filter",Cleaning,Filter clear,Yes,No,20
+CL-GEAR,3,Hob head / cutter spindle runout,Measurement,<= 0.008 mm,Yes,No,16
+CL-GEAR,4,Work spindle bearing temperature,Measurement,<= 60 deg C,Yes,No,16
+CL-GEAR,5,Check and top up gearbox oil,Lubrication,Between MIN and MAX,Yes,No,15
+CL-GEAR,6,Inspect timing belts / drive couplings,Visual,"No crack, correct tension",Yes,No,18
+CL-GEAR,7,Index table backlash check,Measurement,<= 0.01 deg,No,No,14
+CL-GEAR,8,Coolant flow at cutting zone,Measurement,>= 40 L/min,Yes,No,15
+CL-GEAR,9,Check guarding and interlocks,Safety,All interlocks active,Yes,Yes,15
+CL-GEAR,10,Electrical panel cleaning and terminal tightness,Electrical,"No dust, no loose lug",Yes,Yes,20
+CL-GEAR,11,Hydraulic power pack pressure and leak check,Measurement,"45 - 55 bar, no leak",Yes,No,19
+CL-FURNACE,1,Lock out / tag out and gas isolation verified,Safety,LOTO + gas isolated,Yes,Yes,19
+CL-FURNACE,2,Thermocouple calibration check (all zones),Measurement,+/- 3 deg C of master,Yes,Yes,18
+CL-FURNACE,3,Inspect heating elements / radiant tubes,Visual,"No bulge, no crack",Yes,Yes,18
+CL-FURNACE,4,Door seal and curtain condition,Visual,"No gap, no burn-through",Yes,Yes,16
+CL-FURNACE,5,"Quench oil level, temperature and condition",Measurement,"Level OK, <= 80 deg C",Yes,No,19
+CL-FURNACE,6,Quench agitator motor current and vibration,Measurement,"<= FLC, <= 4.5 mm/s",Yes,No,19
+CL-FURNACE,7,Atmosphere gas flow and carbon potential probe,Measurement,Probe mV stable,Yes,Yes,20
+CL-FURNACE,8,Burner flame condition and flame-failure trip test,Safety,Trips within 3 s,Yes,Yes,20
+CL-FURNACE,9,Refractory / insulation inspection,Visual,No spalling,Yes,No,16
+CL-FURNACE,10,Cooling water flow and chiller performance,Measurement,>= 60 L/min,Yes,No,18
+CL-FURNACE,11,Exhaust fan / flue condition,Visual,Free flow,Yes,No,15
+CL-FURNACE,12,Electrical panel cleaning and terminal tightness,Electrical,"No dust, no loose lug",Yes,Yes,20
+CL-FURNACE,13,Emergency stop and over-temperature trip test,Safety,Trips at setpoint +20,Yes,Yes,19
+CL-ASSY,1,Lock out / tag out verified before start,Safety,LOTO applied,Yes,Yes,18
+CL-ASSY,2,"Clean station, fixtures and locating pins",Cleaning,No debris,Yes,No,18
+CL-ASSY,3,Torque tool calibration verification,Measurement,+/- 3 % of setpoint,Yes,Yes,17
+CL-ASSY,4,Poka-yoke sensor function test,Functional,All sensors respond,Yes,Yes,16
+CL-ASSY,5,Pneumatic FRL check and drain,Visual,"Bowl clean, no water",Yes,No,15
+CL-ASSY,6,Fixture clamp wear and repeatability,Measurement,<= 0.05 mm,Yes,No,17
+CL-ASSY,7,Leak test rig master part verification,Functional,"Pass master, reject NG",Yes,Yes,18
+CL-ASSY,8,Check station lighting and andon,Visual,>= 500 lux,No,No,16
+CL-ASSY,9,Verify E-stop and light curtain,Safety,Stops within 1 s,Yes,Yes,16
+CL-ASSY,10,Electrical panel cleaning and terminal tightness,Electrical,"No dust, no loose lug",Yes,Yes,20
+CL-PAINT,1,Lock out / tag out verified before start,Safety,LOTO applied,Yes,Yes,18
+CL-PAINT,2,Replace / clean intake and exhaust filters,Cleaning,dP <= 250 Pa,Yes,No,18
+CL-PAINT,3,Booth air velocity check,Measurement,0.4 - 0.6 m/s,Yes,Yes,14
+CL-PAINT,4,Spray gun / applicator cleaning and nozzle wear,Visual,No orifice wear,Yes,No,20
+CL-PAINT,5,Paint circulation pump pressure,Measurement,3 - 5 bar,Yes,No,16
+CL-PAINT,6,Oven zone temperature uniformity survey,Measurement,+/- 5 deg C,Yes,No,18
+CL-PAINT,7,Conveyor chain lubrication and tension,Lubrication,Sag <= 15 mm,Yes,No,18
+CL-PAINT,8,Fire suppression and gas detection check,Safety,"System armed, no fault",Yes,Yes,18
+CL-PAINT,9,Exhaust stack and scrubber condition,Visual,No blockage,Yes,No,17
+CL-PAINT,10,Electrical panel cleaning (flame-proof integrity),Electrical,Glands intact,Yes,Yes,20
+CL-WELD,1,Lock out / tag out verified before start,Safety,LOTO applied,Yes,Yes,18
+CL-WELD,2,Torch / nozzle / contact tip replacement,Replacement,New tip fitted,Yes,No,18
+CL-WELD,3,Wire feeder rollers and liner condition,Visual,No wear groove,Yes,No,18
+CL-WELD,4,Shielding gas flow and leak check,Measurement,15 - 20 L/min,Yes,Yes,16
+CL-WELD,5,Robot TCP calibration check,Measurement,<= 0.5 mm deviation,Yes,Yes,15
+CL-WELD,6,Robot axis grease level / battery voltage,Lubrication,Battery >= 3.4 V,Yes,No,18
+CL-WELD,7,Fume extraction flow rate,Measurement,>= 1000 m3/h,Yes,Yes,14
+CL-WELD,8,Positioner rotation and clamp function,Functional,"Smooth, no slip",Yes,No,18
+CL-WELD,9,Weld cell light curtain and door interlock,Safety,Stops within 1 s,Yes,Yes,18
+CL-WELD,10,Water cooling circuit flow and leak check,Measurement,">= 4 L/min, no leak",Yes,No,18
+CL-WELD,11,Electrical panel cleaning and terminal tightness,Electrical,"No dust, no loose lug",Yes,Yes,20
+CL-PRESS,1,Lock out / tag out and ram blocked,Safety,Safety block inserted,Yes,Yes,16
+CL-PRESS,2,"Hydraulic oil level, temperature and sample",Measurement,"<= 55 deg C, ISO 18/16/13",Yes,No,19
+CL-PRESS,3,Replace / inspect return-line filter,Replacement,dP indicator green,Yes,No,17
+CL-PRESS,4,Check for hydraulic leaks at hoses and manifolds,Visual,Zero leak,Yes,Yes,20
+CL-PRESS,5,Ram parallelism and slide gib clearance,Measurement,<= 0.10 mm,Yes,No,18
+CL-PRESS,6,Brake / clutch response time test,Safety,<= 250 ms,Yes,Yes,16
+CL-PRESS,7,Bolster and die clamp integrity,Visual,"No crack, torque OK",Yes,Yes,16
+CL-PRESS,8,Lubrication system function and grease lines,Lubrication,All points receiving,Yes,No,19
+CL-PRESS,9,Two-hand control and light curtain test,Safety,Stops within spec,Yes,Yes,18
+CL-PRESS,10,Electrical panel cleaning and terminal tightness,Electrical,"No dust, no loose lug",Yes,Yes,20
+CL-UTIL,1,Lock out / tag out verified before start,Safety,LOTO applied,Yes,Yes,18
+CL-UTIL,2,General cleaning and housekeeping,Cleaning,No debris,Yes,No,16
+CL-UTIL,3,Belt / chain tension and alignment,Measurement,As per OEM,Yes,No,16
+CL-UTIL,4,Bearing greasing as per lube chart,Lubrication,All points,Yes,No,16
+CL-UTIL,5,Motor current and vibration check,Measurement,"<= FLC, <= 4.5 mm/s",Yes,No,16
+CL-UTIL,6,Air / oil filter condition,Visual,Clean or replace,Yes,No,14
+CL-UTIL,7,Condensate drain and moisture trap,Cleaning,Free draining,Yes,No,16
+CL-UTIL,8,Safety guard and E-stop check,Safety,Functional,Yes,Yes,15
+CL-UTIL,9,Electrical panel cleaning and terminal tightness,Electrical,"No dust, no loose lug",Yes,Yes,20

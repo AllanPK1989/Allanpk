@@ -1,0 +1,988 @@
+/// Every measure in the model lives here. The table itself holds no data.
+table _Measures
+	lineageTag: 80900df7-a22b-4fe1-b443-597e5071e03a
+
+	/// Latest calendar date in the model. Use it on every page footer.
+	measure 'Data As Of' = ```
+			CALCULATE ( MAX ( Dim_Date[Date] ), Dim_Date[RelativeToToday] IN { "Past", "Today" }, ALL ( Dim_Date ) )
+			```
+		formatString: yyyy-mm-dd
+		displayFolder: 00 Context
+		lineageTag: b4b3aa81-5309-497a-b496-238c50990720
+
+	/// The most recent month for which Production has uploaded standard hours.
+	measure 'Latest Std Hours Month' = ```
+			VAR LastM =
+			    CALCULATE ( MAX ( Fact_StdHours[MonthStartDate] ), ALL ( Dim_Date ), ALL ( Dim_Cell ) )
+			RETURN
+			    IF ( ISBLANK ( LastM ), "No upload yet", FORMAT ( LastM, "MMM yyyy" ) )
+			```
+		displayFolder: 00 Context
+		lineageTag: 69f1e6bf-7020-4757-88da-766153d4e524
+
+	/// Default hour threshold read from PM_Config, so the rule can be retuned without editing the model.
+	measure 'Cfg PM Interval Std Hrs' = ```
+			VAR Raw = LOOKUPVALUE ( Config[ConfigValue], Config[ConfigKey], "DefaultPMIntervalStdHrs" )
+			RETURN
+			    IF ( ISBLANK ( Raw ), 4000, VALUE ( Raw ) )
+			```
+		formatString: #,0
+		displayFolder: 00 Context
+		lineageTag: 9b400d0a-7bd1-499f-b8fc-879b91efaf20
+
+	/// Counter percentage at which a cell starts showing as Due Soon.
+	measure 'Cfg Due Soon Pct' = ```
+			VAR Raw = LOOKUPVALUE ( Config[ConfigValue], Config[ConfigKey], "PMDueSoonThresholdPct" )
+			RETURN
+			    DIVIDE ( IF ( ISBLANK ( Raw ), 85, VALUE ( Raw ) ), 100 )
+			```
+		formatString: 0%
+		displayFolder: 00 Context
+		lineageTag: 816a6976-c715-4187-9770-baacf4f8fd78
+
+	/// Production standard hours earned, from the monthly upload.
+	measure 'Std Hours' = ```
+			SUM ( Fact_StdHours[StdHours] )
+			```
+		formatString: #,0
+		displayFolder: 01 Standard Hours
+		lineageTag: c0feaf60-9b21-4637-8986-293caea5b40f
+
+	/// Standard hours in the previous month.
+	measure 'Std Hours PM' = ```
+			CALCULATE ( [Std Hours], DATEADD ( Dim_Date[Date], -1, MONTH ) )
+			```
+		formatString: #,0
+		displayFolder: 01 Standard Hours
+		lineageTag: 60b01b2d-28bb-4cb3-833c-befef702189c
+
+	/// Month-on-month movement in standard hours.
+	measure 'Std Hours MoM %' = ```
+			DIVIDE ( [Std Hours] - [Std Hours PM], [Std Hours PM] )
+			```
+		formatString: 0.0%
+		displayFolder: 01 Standard Hours
+		lineageTag: afac4c07-18ea-4e13-be4c-47783b6b0d6f
+
+	/// Rolling twelve-month standard hours.
+	measure 'Std Hours 12M' = ```
+			CALCULATE ( [Std Hours], DATESINPERIOD ( Dim_Date[Date], MAX ( Dim_Date[Date] ), -12, MONTH ) )
+			```
+		formatString: #,0
+		displayFolder: 01 Standard Hours
+		lineageTag: 72916568-3cf2-401b-b2cf-57ba361dfbf1
+
+	/// Last month for which the hour ledger holds actual (not forecast) data.
+	measure 'Latest Ledger Month' = ```
+			CALCULATE (
+			    MAX ( Fact_HourLedger[MonthStartDate] ),
+			    Fact_HourLedger[Scenario] = "Actual",
+			    ALL ( Dim_Date )
+			)
+			```
+		formatString: yyyy-mm-dd
+		displayFolder: 01 Standard Hours
+		lineageTag: b67da6e7-b255-446b-b07b-81515ed16bd6
+
+	/// Where the cell's hour counter stands right now, after the latest upload.
+	measure 'Current Counter Std Hrs' = ```
+			VAR LastM = [Latest Ledger Month]
+			RETURN
+			    CALCULATE (
+			        SUM ( Fact_HourLedger[ClosingStdHrs] ),
+			        Fact_HourLedger[MonthStartDate] = LastM,
+			        Fact_HourLedger[Scenario] = "Actual",
+			        ALL ( Dim_Date )
+			    )
+			```
+		formatString: #,0
+		displayFolder: 01 Standard Hours
+		lineageTag: 37cac9f5-dd26-46fe-9f7f-b001120e3e96
+
+	/// The hour threshold for the cells in context. Sums correctly across a multi-cell selection.
+	measure 'PM Threshold Std Hrs' = ```
+			SUMX ( VALUES ( Dim_Cell[CellID] ), CALCULATE ( MAX ( Dim_Cell[PMIntervalStdHrs] ) ) )
+			```
+		formatString: #,0
+		displayFolder: 01 Standard Hours
+		lineageTag: 79357d10-57a0-41c1-ad20-b1a7aa232ab0
+
+	/// Standard hours still to be earned before the next PM falls due.
+	measure 'Hours to Next PM' = ```
+			MAX ( 0, [PM Threshold Std Hrs] - [Current Counter Std Hrs] )
+			```
+		formatString: #,0
+		displayFolder: 01 Standard Hours
+		lineageTag: f6b3418b-3c71-4eb5-b520-a507df6c6432
+
+	/// Counter as a percentage of the threshold. The headline gauge on the planning page.
+	measure '% to PM Threshold' = ```
+			DIVIDE ( [Current Counter Std Hrs], [PM Threshold Std Hrs] )
+			```
+		formatString: 0.0%
+		displayFolder: 01 Standard Hours
+		lineageTag: 04f93cbe-5308-4efb-a97f-426751dae2be
+
+	/// Conditional colour for the counter gauge: over threshold, due soon, or comfortable.
+	measure '% to PM Threshold Color' = ```
+			VAR P = [% to PM Threshold]
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        P >= 1, "#C4553B",
+			        P >= [Cfg Due Soon Pct], "#D08B2C",
+			        "#2F9E7E"
+			    )
+			```
+		displayFolder: 01 Standard Hours
+		lineageTag: f96eea19-9b9d-41c7-ad07-dbe18e97bdf1
+
+	/// Trailing three-month average standard hours. The run rate used for every projection.
+	measure 'Run Rate 3M Std Hrs' = ```
+			VAR LastM = [Latest Ledger Month]
+			VAR Total =
+			    CALCULATE (
+			        SUM ( Fact_StdHours[StdHours] ),
+			        ALL ( Dim_Date ),
+			        Fact_StdHours[MonthStartDate] <= LastM,
+			        Fact_StdHours[MonthStartDate] > EDATE ( LastM, -3 )
+			    )
+			RETURN
+			    DIVIDE ( Total, 3 )
+			```
+		formatString: #,0
+		displayFolder: 01 Standard Hours
+		lineageTag: b438470f-3f90-45ce-89d2-292cd2341520
+
+	/// How many months at the current run rate before the hour threshold is reached.
+	measure 'Months to PM Projected' = ```
+			VAR Rate = [Run Rate 3M Std Hrs]
+			RETURN
+			    IF ( Rate <= 0, BLANK (), ROUNDUP ( DIVIDE ( [Hours to Next PM], Rate ), 0 ) )
+			```
+		formatString: #,0
+		displayFolder: 01 Standard Hours
+		lineageTag: 09319d53-c111-4b73-b697-3342a77cbe37
+
+	/// Most recent completed PM in the current context - cell, machine or technician.
+	measure 'Last PM Date' = ```
+			CALCULATE (
+			    MAX ( Fact_WorkOrders[ActualEndDate] ),
+			    Fact_WorkOrders[Status] = "Completed",
+			    ALL ( Dim_Date )
+			)
+			```
+		formatString: yyyy-mm-dd
+		displayFolder: 01 Standard Hours
+		lineageTag: d2b726f2-2114-4807-8028-8cc22bcbf993
+
+	/// Elapsed months since the last completed PM. Drives the calendar backstop.
+	measure 'Months Since Last PM' = ```
+			VAR L = [Last PM Date]
+			RETURN
+			    IF ( ISBLANK ( L ), BLANK (), DATEDIFF ( L, TODAY (), MONTH ) )
+			```
+		formatString: #,0
+		displayFolder: 01 Standard Hours
+		lineageTag: d704e5eb-d622-44d1-a6bb-9f220ab6b6dc
+
+	/// Months left before the calendar backstop forces a PM regardless of hours.
+	measure 'Backstop Months Remaining' = ```
+			VAR Limit = MAX ( Dim_Cell[CalendarBackstopMonths] )
+			VAR Elapsed = [Months Since Last PM]
+			RETURN
+			    IF ( ISBLANK ( Elapsed ), BLANK (), MAX ( 0, Limit - Elapsed ) )
+			```
+		formatString: #,0
+		displayFolder: 01 Standard Hours
+		lineageTag: 683760be-ba0e-416a-b1ba-d098f76d88ab
+
+	/// The earlier of the hour projection and the calendar backstop. This is the date the plan works to.
+	measure 'Projected Next PM Date' = ```
+			VAR MonthsOut = [Months to PM Projected]
+			VAR LedgerM = [Latest Ledger Month]
+			VAR HoursDate = IF ( ISBLANK ( MonthsOut ), BLANK (), EOMONTH ( EDATE ( LedgerM, MonthsOut ), 0 ) )
+			VAR Backstop = MAX ( Dim_Cell[CalendarBackstopMonths] )
+			VAR LastPM = [Last PM Date]
+			VAR CalDate = IF ( ISBLANK ( LastPM ), BLANK (), EOMONTH ( EDATE ( LastPM, Backstop ), 0 ) )
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        ISBLANK ( HoursDate ), CalDate,
+			        ISBLANK ( CalDate ), HoursDate,
+			        MIN ( HoursDate, CalDate )
+			    )
+			```
+		formatString: yyyy-mm-dd
+		displayFolder: 01 Standard Hours
+		lineageTag: f9407d28-5588-47b2-a1f4-595014525c82
+
+	/// Why the next PM will fire - useful when a low-utilisation cell is riding the backstop.
+	measure 'Projected Trigger Reason' = ```
+			VAR MonthsOut = [Months to PM Projected]
+			VAR LedgerM = [Latest Ledger Month]
+			VAR HoursDate = IF ( ISBLANK ( MonthsOut ), BLANK (), EOMONTH ( EDATE ( LedgerM, MonthsOut ), 0 ) )
+			VAR Backstop = MAX ( Dim_Cell[CalendarBackstopMonths] )
+			VAR LastPM = [Last PM Date]
+			VAR CalDate = IF ( ISBLANK ( LastPM ), BLANK (), EOMONTH ( EDATE ( LastPM, Backstop ), 0 ) )
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        ISBLANK ( HoursDate ) && ISBLANK ( CalDate ), "No projection",
+			        ISBLANK ( HoursDate ), "Calendar backstop",
+			        ISBLANK ( CalDate ), "Std hours",
+			        HoursDate <= CalDate, "Std hours",
+			        "Calendar backstop"
+			    )
+			```
+		displayFolder: 01 Standard Hours
+		lineageTag: b7508038-6f26-4767-86cb-4c1533f5f234
+
+	/// Cells whose counter tripped inside the selected period.
+	measure 'Cells Due In Period' = ```
+			CALCULATE (
+			    DISTINCTCOUNT ( Fact_HourLedger[CellID] ),
+			    Fact_HourLedger[PMTriggered] = "Yes"
+			)
+			```
+		formatString: #,0
+		displayFolder: 01 Standard Hours
+		lineageTag: 96021e17-4c77-4763-93be-daa987342868
+
+	/// Forward look: how many cells fall due in the next quarter. The manpower planning number.
+	measure 'Cells Due Next 3 Months' = ```
+			VAR LastM = [Latest Ledger Month]
+			RETURN
+			    CALCULATE (
+			        DISTINCTCOUNT ( Fact_HourLedger[CellID] ),
+			        ALL ( Dim_Date ),
+			        Fact_HourLedger[PMTriggered] = "Yes",
+			        Fact_HourLedger[MonthStartDate] > LastM,
+			        Fact_HourLedger[MonthStartDate] <= EDATE ( LastM, 3 )
+			    )
+			```
+		formatString: #,0
+		displayFolder: 01 Standard Hours
+		lineageTag: c611584d-fa8e-43a7-aae1-034b9fdfb6cb
+
+	/// Total PM work orders in context.
+	measure 'PM Work Orders' = ```
+			COUNTROWS ( Fact_WorkOrders )
+			```
+		formatString: #,0
+		displayFolder: 02 PM Execution
+		lineageTag: 43792dee-d90c-43c2-a3db-7ed55effdeb1
+
+	/// Work orders finished.
+	measure 'PM Completed' = ```
+			CALCULATE ( [PM Work Orders], Fact_WorkOrders[Status] = "Completed" )
+			```
+		formatString: #,0
+		displayFolder: 02 PM Execution
+		lineageTag: cca36afa-3bf4-4381-84bd-68ea02f0e2b2
+
+	/// Work orders raised but not yet started.
+	measure 'PM Scheduled' = ```
+			CALCULATE ( [PM Work Orders], Fact_WorkOrders[Status] = "Scheduled" )
+			```
+		formatString: #,0
+		displayFolder: 02 PM Execution
+		lineageTag: 3f6e1bd2-0927-4edc-b5f1-21e1d7199299
+
+	/// Work orders a technician has started but not closed.
+	measure 'PM In Progress' = ```
+			CALCULATE ( [PM Work Orders], Fact_WorkOrders[Status] = "In Progress" )
+			```
+		formatString: #,0
+		displayFolder: 02 PM Execution
+		lineageTag: d35d0cb0-41d1-4d70-a0a8-981c092e4dc7
+
+	/// Past due date and still not complete.
+	measure 'PM Overdue' = ```
+			CALCULATE ( [PM Work Orders], Fact_WorkOrders[Status] = "Overdue" )
+			```
+		formatString: #,0
+		displayFolder: 02 PM Execution
+		lineageTag: 5c41d43a-3333-4cd9-a253-906b961933b0
+
+	/// Formally pushed to a later window with approval.
+	measure 'PM Deferred' = ```
+			CALCULATE ( [PM Work Orders], Fact_WorkOrders[Status] = "Deferred" )
+			```
+		formatString: #,0
+		displayFolder: 02 PM Execution
+		lineageTag: 94778683-d029-489a-991d-58043821c890
+
+	/// Everything still to be done.
+	measure 'PM Open' = ```
+			CALCULATE (
+			    [PM Work Orders],
+			    Fact_WorkOrders[Status] IN { "Scheduled", "In Progress", "Overdue" }
+			)
+			```
+		formatString: #,0
+		displayFolder: 02 PM Execution
+		lineageTag: 103c7bc4-6a6c-4bd1-bb22-9396f1afaefe
+
+	/// Share of raised work orders that are complete.
+	measure 'PM Completion %' = ```
+			DIVIDE ( [PM Completed], [PM Work Orders] )
+			```
+		formatString: 0.0%
+		displayFolder: 02 PM Execution
+		lineageTag: de70b7bd-ee13-4122-8e1c-894c7b18da04
+
+	/// Work orders whose due date has already passed - the fair denominator for compliance.
+	measure 'PM Due To Date' = ```
+			CALCULATE ( [PM Work Orders], Fact_WorkOrders[DueDate] <= TODAY () )
+			```
+		formatString: #,0
+		displayFolder: 02 PM Execution
+		lineageTag: 08b8fcb9-fb2f-4735-a041-cc0987aee036
+
+	/// Completed on or before the due date.
+	measure 'PM On Time' = ```
+			CALCULATE ( [PM Work Orders], Fact_WorkOrders[OnTimeFlag] = "Yes" )
+			```
+		formatString: #,0
+		displayFolder: 02 PM Execution
+		lineageTag: 3f367a58-5b80-40bb-924e-87fd004f5a05
+
+	/// The headline KPI: of everything that fell due, how much was done on time.
+	measure 'PM Compliance %' = ```
+			DIVIDE ( [PM On Time], [PM Due To Date] )
+			```
+		formatString: 0.0%
+		displayFolder: 02 PM Execution
+		lineageTag: b3e9e92c-23ce-4575-af2c-0b4122aabe46
+
+	/// Green at or above 95%, amber to 85%, red below.
+	measure 'PM Compliance % Color' = ```
+			VAR P = [PM Compliance %]
+			RETURN
+			    SWITCH ( TRUE (), ISBLANK ( P ), "#7B93A3", P >= 0.95, "#2F9E7E", P >= 0.85, "#D08B2C", "#C4553B" )
+			```
+		displayFolder: 02 PM Execution
+		lineageTag: 283b041d-c485-4851-8027-93171382525c
+
+	/// Average days between due date and actual completion. Negative is early.
+	measure 'PM Schedule Slip Days' = ```
+			AVERAGEX (
+			    FILTER ( Fact_WorkOrders, NOT ISBLANK ( Fact_WorkOrders[ActualEndDate] ) ),
+			    DATEDIFF ( Fact_WorkOrders[DueDate], Fact_WorkOrders[ActualEndDate], DAY )
+			)
+			```
+		formatString: #,0.0
+		displayFolder: 02 PM Execution
+		lineageTag: e14eb266-e927-4156-9d33-d689ecdfc6ec
+
+	/// How long overdue work has been sitting, on average.
+	measure 'Open WO Ageing Days' = ```
+			AVERAGEX (
+			    FILTER (
+			        Fact_WorkOrders,
+			        Fact_WorkOrders[Status] IN { "Scheduled", "In Progress", "Overdue" }
+			            && Fact_WorkOrders[DueDate] < TODAY ()
+			    ),
+			    DATEDIFF ( Fact_WorkOrders[DueDate], TODAY (), DAY )
+			)
+			```
+		formatString: #,0.0
+		displayFolder: 02 PM Execution
+		lineageTag: 7c0ad3d1-af44-493c-b434-66c8d89a4bd1
+
+	/// Actual hands-on maintenance hours recorded against PM work orders.
+	measure 'PM Wrench Hours' = ```
+			DIVIDE ( SUM ( Fact_WorkOrders[DurationMin] ), 60 )
+			```
+		formatString: #,0.0
+		displayFolder: 02 PM Execution
+		lineageTag: 51bcce62-36e5-4eac-b577-444ee6e81407
+
+	/// Planned hours from the machine master. The capacity planning figure.
+	measure 'PM Planned Hours' = ```
+			DIVIDE ( SUM ( Fact_WorkOrders[StdMinutes] ), 60 )
+			```
+		formatString: #,0.0
+		displayFolder: 02 PM Execution
+		lineageTag: f8ccf093-f491-4e7f-b6c5-10bf8aea44f5
+
+	/// Actual against standard time. Persistently over 130% means the standard is wrong or the job has grown.
+	measure 'PM Duration vs Std %' = ```
+			DIVIDE ( SUM ( Fact_WorkOrders[DurationMin] ), SUM ( Fact_WorkOrders[StdMinutes] ) )
+			```
+		formatString: 0.0%
+		displayFolder: 02 PM Execution
+		lineageTag: 46b7fa07-3c14-4482-90a8-b79e6a49a5ce
+
+	/// Average minutes per completed PM.
+	measure 'Avg PM Duration Min' = ```
+			AVERAGE ( Fact_WorkOrders[DurationMin] )
+			```
+		formatString: #,0
+		displayFolder: 02 PM Execution
+		lineageTag: abc84185-976e-45ee-92b0-05888befc6cb
+
+	/// Checklist lines recorded.
+	measure 'Checklist Tasks' = ```
+			COUNTROWS ( Fact_ChecklistResults )
+			```
+		formatString: #,0
+		displayFolder: 03 Checklist Quality
+		lineageTag: c570ea2d-19e4-4c09-bff9-66b7bc1cd754
+
+	/// Lines that failed their acceptance standard.
+	measure 'Checklist Tasks Not OK' = ```
+			CALCULATE ( [Checklist Tasks], Fact_ChecklistResults[Result] = "Not OK" )
+			```
+		formatString: #,0
+		displayFolder: 03 Checklist Quality
+		lineageTag: c3d46d2a-5cfd-4edf-812b-6fece5b35c99
+
+	/// Share of checklist lines failing. A rising rate is a real reliability signal, not noise.
+	measure 'Checklist Fail Rate %' = ```
+			DIVIDE ( [Checklist Tasks Not OK], [Checklist Tasks] )
+			```
+		formatString: 0.0%
+		displayFolder: 03 Checklist Quality
+		lineageTag: c6f7fc05-856a-4439-8b96-417a88ecce5e
+
+	/// Failed lines on safety-critical tasks. This number should be reviewed every week, without exception.
+	measure 'Safety Critical Fails' = ```
+			CALCULATE (
+			    [Checklist Tasks Not OK],
+			    Dim_Checklist[SafetyCritical] = "Yes"
+			)
+			```
+		formatString: #,0
+		displayFolder: 03 Checklist Quality
+		lineageTag: 67f436f0-bb92-4302-8730-73f23c4f7ac4
+
+	/// How much of the checklist actually got answered across the work orders in context.
+	measure 'Checklist Completion %' = ```
+			DIVIDE (
+			    SUM ( Fact_WorkOrders[ChecklistDoneTasks] ),
+			    SUM ( Fact_WorkOrders[ChecklistTotalTasks] )
+			)
+			```
+		formatString: 0.0%
+		displayFolder: 03 Checklist Quality
+		lineageTag: 399cac22-3ff7-443d-989b-3ad8610d17c9
+
+	/// Completed work orders that have a machine QR scan against them.
+	measure 'QR Verified Completions' = ```
+			CALCULATE ( [PM Completed], Fact_WorkOrders[MachineQRScanned] = "Yes" )
+			```
+		formatString: #,0
+		displayFolder: 03 Checklist Quality
+		lineageTag: 59ff299d-4310-4d9e-83be-e71b4aa2dcda
+
+	/// Proof of attendance. Should sit at 100%; anything less needs a conversation.
+	measure 'QR Verification %' = ```
+			DIVIDE ( [QR Verified Completions], [PM Completed] )
+			```
+		formatString: 0.0%
+		displayFolder: 03 Checklist Quality
+		lineageTag: a86e60c7-d2a9-46ca-85a1-b4e239ea8695
+
+	/// Work orders closed without anyone scanning the machine. Investigate every one.
+	measure 'Desk Closed WOs' = ```
+			[PM Completed] - [QR Verified Completions]
+			```
+		formatString: #,0
+		displayFolder: 03 Checklist Quality
+		lineageTag: 36fc69b2-e180-4066-a56c-2896bafe6645
+
+	/// Unplanned stoppages reported.
+	measure 'Breakdowns' = ```
+			COUNTROWS ( Fact_Breakdowns )
+			```
+		formatString: #,0
+		displayFolder: 04 Reliability
+		lineageTag: a7d807e5-b7dc-45e7-b555-7fb96bd3ad45
+
+	/// Still not restored or still waiting on a spare.
+	measure 'Open Breakdowns' = ```
+			CALCULATE ( [Breakdowns], Fact_Breakdowns[Status] <> "Closed" )
+			```
+		formatString: #,0
+		displayFolder: 04 Reliability
+		lineageTag: b3e0aa12-b300-4773-a980-228ae91ae392
+
+	/// Total unplanned downtime.
+	measure 'Downtime Hours' = ```
+			DIVIDE ( SUM ( Fact_Breakdowns[DowntimeMinutes] ), 60 )
+			```
+		formatString: #,0.0
+		displayFolder: 04 Reliability
+		lineageTag: b638f2ea-d253-4e42-935f-2a2bb40e1b57
+
+	/// Mean time to repair - average hours from stoppage to restoration.
+	measure 'MTTR Hours' = ```
+			DIVIDE (
+			    SUM ( Fact_Breakdowns[DowntimeMinutes] ),
+			    CALCULATE ( [Breakdowns], NOT ISBLANK ( Fact_Breakdowns[DowntimeMinutes] ) ) * 60
+			)
+			```
+		formatString: #,0.0
+		displayFolder: 04 Reliability
+		lineageTag: ffb7202a-418b-45bc-8a34-55094b59bd37
+
+	/// Average minutes from the call to a technician arriving.
+	measure 'Avg Response Min' = ```
+			AVERAGE ( Fact_Breakdowns[ResponseMinutes] )
+			```
+		formatString: #,0
+		displayFolder: 04 Reliability
+		lineageTag: f9520824-a0b7-4f72-b695-6dc8eefac325
+
+	/// Cell standard hours spread evenly across the machines in the cell, so MTBF works at machine level. It is an allocation, not a meter reading - say so on the page.
+	measure 'Operating Hours Allocated' = ```
+			SUMX (
+			    VALUES ( Dim_Machine[MachineID] ),
+			    VAR TheCell = CALCULATE ( SELECTEDVALUE ( Dim_Machine[CellID] ) )
+			    VAR MachinesInCell =
+			        CALCULATE ( COUNTROWS ( Dim_Machine ), ALLEXCEPT ( Dim_Machine, Dim_Machine[CellID] ) )
+			    VAR CellHours =
+			        CALCULATE (
+			            SUM ( Fact_StdHours[StdHours] ),
+			            ALL ( Dim_Machine ),
+			            Fact_StdHours[CellID] = TheCell
+			        )
+			    RETURN
+			        DIVIDE ( CellHours, MachinesInCell )
+			)
+			```
+		formatString: #,0
+		displayFolder: 04 Reliability
+		lineageTag: 18c08f2f-3bfc-46ec-a8d9-58d1f2f1e0f7
+
+	/// Mean operating hours between failures.
+	measure 'MTBF Hours' = ```
+			DIVIDE ( [Operating Hours Allocated], [Breakdowns] )
+			```
+		formatString: #,0
+		displayFolder: 04 Reliability
+		lineageTag: 77e7cdf4-da80-4897-8436-9d5ca75751f3
+
+	/// Operating hours less unplanned downtime, over operating hours.
+	measure 'Availability %' = ```
+			VAR Op = [Operating Hours Allocated]
+			RETURN
+			    IF ( Op = 0, BLANK (), DIVIDE ( Op - [Downtime Hours], Op ) )
+			```
+		formatString: 0.0%
+		displayFolder: 04 Reliability
+		lineageTag: e9204a83-da9e-42b2-93fb-56e9e1fcb49c
+
+	/// Green at or above 97%, amber to 93%, red below.
+	measure 'Availability % Color' = ```
+			VAR A = [Availability %]
+			RETURN
+			    SWITCH ( TRUE (), ISBLANK ( A ), "#7B93A3", A >= 0.97, "#2F9E7E", A >= 0.93, "#D08B2C", "#C4553B" )
+			```
+		displayFolder: 04 Reliability
+		lineageTag: 6a5d6b56-cff1-4f4b-ac5e-18a1d66a1518
+
+	/// Machine and failure-mode pairs seen more than once. Each one is a root cause that was never closed out.
+	measure 'Repeat Failure Count' = ```
+			COUNTROWS (
+			    FILTER (
+			        ADDCOLUMNS (
+			            SUMMARIZE (
+			                Fact_Breakdowns,
+			                Fact_Breakdowns[MachineID],
+			                Fact_Breakdowns[FailureMode]
+			            ),
+			            "@Cnt", CALCULATE ( COUNTROWS ( Fact_Breakdowns ) )
+			        ),
+			        [@Cnt] > 1
+			    )
+			)
+			```
+		formatString: #,0
+		displayFolder: 04 Reliability
+		lineageTag: 1302e656-06d3-4bbe-ab1c-3752742d6b9e
+
+	/// Failures within a fortnight of a PM. This is the sharpest available measure of PM quality - a high number means the PM is being signed off, not done.
+	measure 'Breakdowns Within 15d of PM' = ```
+			COUNTROWS (
+			    FILTER (
+			        Fact_Breakdowns,
+			        VAR M = Fact_Breakdowns[MachineID]
+			        VAR D = Fact_Breakdowns[ReportedDate]
+			        VAR LastPM =
+			            CALCULATE (
+			                MAX ( Fact_WorkOrders[ActualEndDate] ),
+			                ALL ( Fact_WorkOrders ),
+			                Fact_WorkOrders[MachineID] = M,
+			                Fact_WorkOrders[Status] = "Completed",
+			                Fact_WorkOrders[ActualEndDate] <= D
+			            )
+			        RETURN
+			            NOT ISBLANK ( LastPM ) && DATEDIFF ( LastPM, D, DAY ) <= 15
+			    )
+			)
+			```
+		formatString: #,0
+		displayFolder: 04 Reliability
+		lineageTag: 34207494-c87e-433a-8e34-5563ec41de16
+
+	/// Share of failures that follow closely on a PM.
+	measure 'PM Induced Failure %' = ```
+			DIVIDE ( [Breakdowns Within 15d of PM], [Breakdowns] )
+			```
+		formatString: 0.0%
+		displayFolder: 04 Reliability
+		lineageTag: 1ddc95b8-f9d9-432c-a2e5-b9d81201003a
+
+	/// Requests raised.
+	measure 'Spare Requests' = ```
+			COUNTROWS ( Fact_SpareRequests )
+			```
+		formatString: #,0
+		displayFolder: 05 Spare Parts
+		lineageTag: 03c5ec06-8e3d-4e69-a40b-a4f167153088
+
+	/// Value of everything requested.
+	measure 'Spare Request Value' = ```
+			SUM ( Fact_SpareRequests[TotalCostINR] )
+			```
+		formatString: "₹"#,0;("₹"#,0);"₹"#,0
+		displayFolder: 05 Spare Parts
+		lineageTag: a07c9cc2-c08e-4fc9-9e7e-9490b58663cb
+
+	/// Value actually issued from stores.
+	measure 'Spares Issued Value' = ```
+			CALCULATE ( [Spare Request Value], Fact_SpareRequests[Status] = "Issued" )
+			```
+		formatString: "₹"#,0;("₹"#,0);"₹"#,0
+		displayFolder: 05 Spare Parts
+		lineageTag: 4d980159-85a4-4275-bfff-b5508569bbf3
+
+	/// Requests waiting on somebody's decision.
+	measure 'Pending Approvals' = ```
+			CALCULATE ( [Spare Requests], Fact_SpareRequests[Status] = "Pending Approval" )
+			```
+		formatString: #,0
+		displayFolder: 05 Spare Parts
+		lineageTag: 7f9243ee-7c14-45d2-af35-0741c146dc35
+
+	/// Average days from request to approval.
+	measure 'Avg Approval TAT Days' = ```
+			AVERAGEX (
+			    FILTER ( Fact_SpareRequests, NOT ISBLANK ( Fact_SpareRequests[ApprovedDate] ) ),
+			    DATEDIFF ( Fact_SpareRequests[RequestDate], Fact_SpareRequests[ApprovedDate], DAY )
+			)
+			```
+		formatString: #,0.0
+		displayFolder: 05 Spare Parts
+		lineageTag: 902edc84-08c2-462d-920c-92685b86609f
+
+	/// Share of requests raised as emergencies. A high figure means planning is losing to firefighting.
+	measure 'Emergency Request %' = ```
+			DIVIDE (
+			    CALCULATE ( [Spare Requests], Fact_SpareRequests[Urgency] = "Emergency" ),
+			    [Spare Requests]
+			)
+			```
+		formatString: 0.0%
+		displayFolder: 05 Spare Parts
+		lineageTag: 213c488b-7903-4c53-b3a1-472e7985c4e7
+
+	/// Quantity actually fitted.
+	measure 'Spares Replaced Qty' = ```
+			SUM ( Fact_SpareReplacements[QtyReplaced] )
+			```
+		formatString: #,0
+		displayFolder: 05 Spare Parts
+		lineageTag: c96905d8-dcef-46b5-98bb-b189264a8500
+
+	/// Value of parts actually consumed - not the same as requested, and the gap is worth watching.
+	measure 'Spare Consumption Value' = ```
+			SUM ( Fact_SpareReplacements[TotalCostINR] )
+			```
+		formatString: "₹"#,0;("₹"#,0);"₹"#,0
+		displayFolder: 05 Spare Parts
+		lineageTag: 5571273b-289b-455c-b877-9697078af45e
+
+	/// Maintenance material cost per production standard hour. The unit-cost trend to hold flat.
+	measure 'Spend per Std Hour' = ```
+			DIVIDE ( [Spare Consumption Value], [Std Hours] )
+			```
+		formatString: "₹"#,0;("₹"#,0);"₹"#,0
+		displayFolder: 05 Spare Parts
+		lineageTag: e3c47b4c-2ab4-4864-90a8-d5de176e6fa5
+
+	/// Catalogue lines under their reorder level as at the last stock upload.
+	measure 'Parts Below Min Stock' = ```
+			COUNTROWS ( FILTER ( Dim_SparePart, Dim_SparePart[CurrentStock] < Dim_SparePart[MinStock] ) )
+			```
+		formatString: #,0
+		displayFolder: 05 Spare Parts
+		lineageTag: bb0392a9-5818-48af-9169-59966c89e2cb
+
+	/// Value sitting in the store.
+	measure 'Stock Value' = ```
+			SUMX ( Dim_SparePart, Dim_SparePart[CurrentStock] * Dim_SparePart[UnitCostINR] )
+			```
+		formatString: "₹"#,0;("₹"#,0);"₹"#,0
+		displayFolder: 05 Spare Parts
+		lineageTag: 1406fa19-c16c-4f95-ab40-96b486031ca1
+
+	/// Abnormalities logged.
+	measure 'Abnormalities' = ```
+			COUNTROWS ( Fact_Abnormalities )
+			```
+		formatString: #,0
+		displayFolder: 06 Abnormalities
+		lineageTag: 673e4c6a-6deb-4e6b-809b-28487327daa1
+
+	/// Still open.
+	measure 'Open Abnormalities' = ```
+			CALCULATE ( [Abnormalities], Fact_Abnormalities[Status] <> "Closed" )
+			```
+		formatString: #,0
+		displayFolder: 06 Abnormalities
+		lineageTag: cf74901c-cb93-492a-b7ba-1819008e7ab0
+
+	/// Open and rated High. This is the escalation list.
+	measure 'High Severity Open' = ```
+			CALCULATE (
+			    [Abnormalities],
+			    Fact_Abnormalities[Status] <> "Closed",
+			    Fact_Abnormalities[Severity] = "High"
+			)
+			```
+		formatString: #,0
+		displayFolder: 06 Abnormalities
+		lineageTag: b779519d-2e06-467e-8d82-7c52e3550920
+
+	/// Share closed out.
+	measure 'Abnormality Closure %' = ```
+			DIVIDE (
+			    CALCULATE ( [Abnormalities], Fact_Abnormalities[Status] = "Closed" ),
+			    [Abnormalities]
+			)
+			```
+		formatString: 0.0%
+		displayFolder: 06 Abnormalities
+		lineageTag: a6302e31-6c9c-4d7e-ac7f-dbb54b3285c5
+
+	/// Average days from report to closure.
+	measure 'Avg Abnormality Closure Days' = ```
+			AVERAGEX (
+			    FILTER ( Fact_Abnormalities, NOT ISBLANK ( Fact_Abnormalities[ClosedDate] ) ),
+			    DATEDIFF ( Fact_Abnormalities[ReportedDate], Fact_Abnormalities[ClosedDate], DAY )
+			)
+			```
+		formatString: #,0.0
+		displayFolder: 06 Abnormalities
+		lineageTag: 43392b54-cac2-474a-895b-6d47a9a93a28
+
+	/// Open beyond thirty days. These are the ones that turn into breakdowns.
+	measure 'Abnormalities Open Over 30d' = ```
+			COUNTROWS (
+			    FILTER (
+			        Fact_Abnormalities,
+			        Fact_Abnormalities[Status] <> "Closed"
+			            && DATEDIFF ( Fact_Abnormalities[ReportedDate], TODAY (), DAY ) > 30
+			    )
+			)
+			```
+		formatString: #,0
+		displayFolder: 06 Abnormalities
+		lineageTag: 107102c9-745d-41e6-be4a-4c073327a420
+
+	/// Red if anything High is open, amber if anything has aged past thirty days.
+	measure 'Open Abnormality Color' = ```
+			VAR H = [High Severity Open]
+			VAR A = [Abnormalities Open Over 30d]
+			RETURN
+			    SWITCH ( TRUE (), H > 0, "#C4553B", A > 0, "#D08B2C", "#2F9E7E" )
+			```
+		displayFolder: 06 Abnormalities
+		lineageTag: 6ad6b496-13b9-4d0f-b25b-3b8999d06f03
+
+	/// Headcount available for assignment.
+	measure 'Technicians Active' = ```
+			CALCULATE ( DISTINCTCOUNT ( Dim_Technician[TechID] ), Dim_Technician[Active] = "Yes" )
+			```
+		formatString: #,0
+		displayFolder: 07 Technician
+		lineageTag: 5ef458a9-c4b6-4490-a85c-ac4d7f5367c5
+
+	/// Available wrench hours in the selected period, from daily capacity times working days.
+	measure 'Technician Capacity Hours' = ```
+			VAR WorkDays =
+			    CALCULATE (
+			        COUNTROWS ( Dim_Date ),
+			        Dim_Date[IsWeekend] = "No",
+			        Dim_Date[IsHoliday] = "No"
+			    )
+			VAR DailyMin =
+			    SUMX (
+			        VALUES ( Dim_Technician[TechID] ),
+			        CALCULATE ( MAX ( Dim_Technician[DailyCapacityMin] ) )
+			    )
+			RETURN
+			    DIVIDE ( DailyMin * WorkDays, 60 )
+			```
+		formatString: #,0.0
+		displayFolder: 07 Technician
+		lineageTag: a3329adc-f990-4cc5-ab2a-15b131182a68
+
+	/// PM hours against available hours. Anything above about 70% leaves no room for breakdowns.
+	measure 'Technician Utilisation %' = ```
+			DIVIDE ( [PM Wrench Hours], [Technician Capacity Hours] )
+			```
+		formatString: 0.0%
+		displayFolder: 07 Technician
+		lineageTag: af002213-a2f2-4879-9117-f7a93e4d7f76
+
+	/// Average work order load per person - the load balancing view.
+	measure 'WOs per Technician' = ```
+			DIVIDE ( [PM Work Orders], DISTINCTCOUNT ( Fact_WorkOrders[AssignedTechID] ) )
+			```
+		formatString: #,0.0
+		displayFolder: 07 Technician
+		lineageTag: 090c12bb-c502-43b5-a409-f2ee9f9bd0ff
+
+	/// Total QR scans.
+	measure 'QR Scans' = ```
+			COUNTROWS ( Fact_ScanLog )
+			```
+		formatString: #,0
+		displayFolder: 07 Technician
+		lineageTag: e470c23b-36cf-42d3-b826-03d0d290736b
+
+	/// Scans at a machine.
+	measure 'Machine Scans' = ```
+			CALCULATE ( [QR Scans], Fact_ScanLog[QRType] = "Machine QR" )
+			```
+		formatString: #,0
+		displayFolder: 07 Technician
+		lineageTag: 50de59f4-ad82-40e0-80b6-0d587da12786
+
+	/// Distinct machines scanned - shop floor coverage.
+	measure 'Machines Touched' = ```
+			CALCULATE ( DISTINCTCOUNT ( Fact_ScanLog[MachineID] ), Fact_ScanLog[QRType] = "Machine QR" )
+			```
+		formatString: #,0
+		displayFolder: 07 Technician
+		lineageTag: 25ed2df2-c756-4e41-91bd-6e9c3c1eecfa
+
+	/// How many cell-month rows the upload should contain for the selected period.
+	measure 'Expected Std Hours Rows' = ```
+			VAR ActiveCells =
+			    CALCULATE ( DISTINCTCOUNT ( Dim_Cell[CellID] ), Dim_Cell[Active] = "Yes", ALL ( Dim_Date ) )
+			VAR FirstUpload =
+			    CALCULATE ( MIN ( Fact_StdHours[MonthStartDate] ), ALL ( Dim_Date ), ALL ( Dim_Cell ) )
+			VAR LastUpload =
+			    CALCULATE ( MAX ( Fact_StdHours[MonthStartDate] ), ALL ( Dim_Date ), ALL ( Dim_Cell ) )
+			VAR MonthsInScope =
+			    IF (
+			        ISBLANK ( FirstUpload ),
+			        0,
+			        CALCULATE (
+			            DISTINCTCOUNT ( Dim_Date[MonthKey] ),
+			            Dim_Date[Date] >= FirstUpload,
+			            Dim_Date[Date] <= EOMONTH ( LastUpload, 0 )
+			        )
+			    )
+			RETURN
+			    ActiveCells * MonthsInScope
+			```
+		formatString: #,0
+		displayFolder: 08 Data Quality
+		lineageTag: ebe398b9-ba83-4fed-bc96-9120603d241a
+
+	/// Gaps in the monthly upload. Anything above zero means a cell is not accruing hours and will never be scheduled.
+	measure 'Missing Std Hours Rows' = ```
+			MAX ( 0, [Expected Std Hours Rows] - COUNTROWS ( Fact_StdHours ) )
+			```
+		formatString: #,0
+		displayFolder: 08 Data Quality
+		lineageTag: 6f886a10-c922-4921-9731-7f947b0779ad
+
+	/// Completed work orders with no checklist evidence behind them.
+	measure 'WOs Without Checklist' = ```
+			COUNTROWS (
+			    FILTER (
+			        Fact_WorkOrders,
+			        Fact_WorkOrders[Status] = "Completed"
+			            && ISBLANK ( CALCULATE ( COUNTROWS ( Fact_ChecklistResults ) ) )
+			    )
+			)
+			```
+		formatString: #,0
+		displayFolder: 08 Data Quality
+		lineageTag: 700cea4c-a3db-42a9-b5d1-3931639bf01d
+
+	/// One number for the health of the inputs. It should be zero.
+	measure 'Data Quality Issues' = ```
+			[Missing Std Hours Rows] + [Desk Closed WOs] + [WOs Without Checklist]
+			```
+		formatString: #,0
+		displayFolder: 08 Data Quality
+		lineageTag: c2ab6eb5-b9f9-436e-a7fd-921b95ec70dd
+
+	/// Green only at zero.
+	measure 'Data Quality Color' = ```
+			VAR I = [Data Quality Issues]
+			RETURN
+			    SWITCH ( TRUE (), I = 0, "#2F9E7E", I <= 5, "#D08B2C", "#C4553B" )
+			```
+		displayFolder: 08 Data Quality
+		lineageTag: 6f8dba84-6b7d-41b2-b773-ff4297adee06
+
+	/// Dynamic subtitle for the planning page.
+	measure 'Title Planning' = ```
+			"PM planning as at " & [Latest Std Hours Month]
+			    & "  |  " & [Cells Due Next 3 Months] & " cell(s) fall due in the next 3 months"
+			```
+		displayFolder: 09 Titles
+		lineageTag: d05f203e-26dc-4de8-86c1-edf1ac46c292
+
+	/// Dynamic subtitle for the execution page.
+	measure 'Title Compliance' = ```
+			VAR P = [PM Compliance %]
+			RETURN
+			    "PM compliance " & FORMAT ( P, "0.0%" )
+			        & "  |  " & [PM Overdue] & " overdue, " & [PM Open] & " open"
+			```
+		displayFolder: 09 Titles
+		lineageTag: 7c6f8c7e-5e3b-413b-a772-02958432fcbf
+
+	/// Header for the Machine 360 page - the same line the QR scan shows on the phone.
+	measure 'Machine Header' = ```
+			VAR M = SELECTEDVALUE ( Dim_Machine[MachineName] )
+			VAR ID = SELECTEDVALUE ( Dim_Machine[MachineID] )
+			VAR L = [Last PM Date]
+			RETURN
+			    IF (
+			        ISBLANK ( M ),
+			        "Select a machine",
+			        M & "  (" & ID & ")   |   Last PM: "
+			            & IF ( ISBLANK ( L ), "never recorded", FORMAT ( L, "dd MMM yyyy" ) )
+			    )
+			```
+		displayFolder: 09 Titles
+		lineageTag: 5507b407-7cf0-44e0-882d-03ebb98adc70
+
+	column _Placeholder
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: c2ba2a1c-d79f-492f-a9be-d5a261e144f3
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [_Placeholder]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Measures = calculated
+		mode: import
+		source = ROW("_Placeholder", 1)
+
+	annotation PBI_Id = measures_table

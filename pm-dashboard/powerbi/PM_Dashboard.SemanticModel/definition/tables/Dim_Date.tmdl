@@ -1,0 +1,176 @@
+/// Marked date table. One row per day, 2024-01-01 to 2028-12-31.
+table Dim_Date
+	dataCategory: Time
+	lineageTag: 17bfd8d7-02eb-45c4-a9f5-07315d77aa4a
+
+	column Date
+		dataType: dateTime
+		isKey
+		formatString: yyyy-mm-dd
+		lineageTag: 68852b7a-353d-4ae4-863f-d2951272b096
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Year
+		dataType: int64
+		formatString: #,0
+		lineageTag: 4ce17cdd-a5b3-417a-bb9c-9b5ee8d7950c
+		summarizeBy: none
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthNo
+		dataType: int64
+		formatString: #,0
+		lineageTag: 1711d295-aa75-4e91-99f6-e65951c475d8
+		summarizeBy: none
+		sourceColumn: MonthNo
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthShort
+		dataType: string
+		lineageTag: fd9bbae7-ac5c-4516-ba9d-a0d4ae2817d1
+		summarizeBy: none
+		sourceColumn: MonthShort
+		sortByColumn: MonthNo
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthKey
+		dataType: string
+		lineageTag: f7eefacb-0392-4a61-a5f2-ecc4aadfcc59
+		summarizeBy: none
+		sourceColumn: MonthKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quarter
+		dataType: int64
+		formatString: #,0
+		lineageTag: e95742f0-dba6-4df3-b2d4-0b018a6312a6
+		summarizeBy: none
+		sourceColumn: Quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column Day
+		dataType: int64
+		formatString: #,0
+		lineageTag: f118a9c9-a555-43df-bfca-86058ca1e72f
+		summarizeBy: none
+		sourceColumn: Day
+
+		annotation SummarizationSetBy = Automatic
+
+	column DayShort
+		dataType: string
+		lineageTag: be12b4b8-362a-49fb-b02f-c023916005b5
+		summarizeBy: none
+		sourceColumn: DayShort
+
+		annotation SummarizationSetBy = Automatic
+
+	column DayOfWeek
+		dataType: int64
+		formatString: #,0
+		lineageTag: cd07c4f7-714f-452a-8bbd-30cbad39be05
+		summarizeBy: none
+		sourceColumn: DayOfWeek
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsWeekend
+		dataType: string
+		lineageTag: 1f7e8583-c45f-4f09-b2a5-8b08c1d70fa8
+		summarizeBy: none
+		sourceColumn: IsWeekend
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsHoliday
+		dataType: string
+		lineageTag: ab1f7d2e-054a-410a-a1fe-0f6b89e02409
+		summarizeBy: none
+		sourceColumn: IsHoliday
+
+		annotation SummarizationSetBy = Automatic
+
+	column FinancialYear
+		dataType: string
+		lineageTag: 4337b5e3-1ef2-4c06-aceb-b6743e837f1b
+		summarizeBy: none
+		sourceColumn: FinancialYear
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalMonthNo
+		dataType: int64
+		formatString: #,0
+		lineageTag: 90e99ce1-06be-4c79-a93f-14f5aec759fc
+		summarizeBy: none
+		sourceColumn: FiscalMonthNo
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthSort
+		dataType: string
+		lineageTag: 93afb127-200b-4791-99a1-97aafd9eea71
+		summarizeBy: none
+		sourceColumn: MonthSort
+
+		annotation SummarizationSetBy = Automatic
+
+	column RelativeToToday
+		dataType: string
+		lineageTag: 4a86ccbc-e0e0-45ef-adea-c0a89de3f9cb
+		summarizeBy: none
+		sourceColumn: RelativeToToday
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Date = m
+		mode: import
+		source = ```
+				let
+				    StartDate = #date(2024, 1, 1),
+				    EndDate = #date(2028, 12, 31),
+				    Holidays = {
+				        #date(2025,1,14), #date(2025,1,26), #date(2025,4,14), #date(2025,8,15),
+				        #date(2025,10,20), #date(2025,10,21), #date(2025,12,25),
+				        #date(2026,1,14), #date(2026,1,26), #date(2026,4,14), #date(2026,8,15),
+				        #date(2026,11,8), #date(2026,12,25),
+				        #date(2027,1,14), #date(2027,1,26), #date(2027,4,14)
+				    },
+				    Days = List.Dates(StartDate, Duration.Days(EndDate - StartDate) + 1, #duration(1,0,0,0)),
+				    Base = Table.FromList(Days, Splitter.SplitByNothing(), {"Date"}),
+				    T0 = Table.TransformColumnTypes(Base, {{"Date", type date}}),
+				    T1 = Table.AddColumn(T0, "Year", each Date.Year([Date]), Int64.Type),
+				    T2 = Table.AddColumn(T1, "MonthNo", each Date.Month([Date]), Int64.Type),
+				    T3 = Table.AddColumn(T2, "MonthShort", each Date.ToText([Date], "MMM"), type text),
+				    T4 = Table.AddColumn(T3, "MonthKey", each Date.ToText([Date], "yyyy-MM"), type text),
+				    T5 = Table.AddColumn(T4, "Quarter", each Date.QuarterOfYear([Date]), Int64.Type),
+				    T6 = Table.AddColumn(T5, "Day", each Date.Day([Date]), Int64.Type),
+				    T7 = Table.AddColumn(T6, "DayShort", each Date.ToText([Date], "ddd"), type text),
+				    T8 = Table.AddColumn(T7, "DayOfWeek", each Date.DayOfWeek([Date], Day.Monday) + 1, Int64.Type),
+				    T9 = Table.AddColumn(T8, "IsWeekend", each if Date.DayOfWeek([Date], Day.Monday) >= 5 then "Yes" else "No", type text),
+				    TA = Table.AddColumn(T9, "IsHoliday", each if List.Contains(Holidays, [Date]) then "Yes" else "No", type text),
+				    TB = Table.AddColumn(TA, "FinancialYear", each
+				            let y = if Date.Month([Date]) >= 4 then Date.Year([Date]) else Date.Year([Date]) - 1
+				            in "FY" & Text.End(Text.From(y), 2) & "-" & Text.End(Text.From(y + 1), 2), type text),
+				    TC = Table.AddColumn(TB, "FiscalMonthNo", each Number.Mod(Date.Month([Date]) - 4, 12) + 1, Int64.Type),
+				    TD = Table.AddColumn(TC, "MonthSort", each Date.Year([Date]) * 100 + Date.Month([Date]), Int64.Type),
+				    TE = Table.AddColumn(TD, "RelativeToToday", each
+				            if [Date] < Date.From(DateTime.LocalNow()) then "Past"
+				            else if [Date] = Date.From(DateTime.LocalNow()) then "Today"
+				            else "Future", type text)
+				in
+				    TE
+				```
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,282 @@
+/// One row per machine per PM cycle. The core transactional table.
+table Fact_WorkOrders
+	lineageTag: 3d177cfb-edd3-46f9-8d74-7705fd5231b9
+
+	column WOID
+		dataType: string
+		lineageTag: 3f65b336-e192-40ed-98dd-089d65895d70
+		summarizeBy: none
+		sourceColumn: WOID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CycleID
+		dataType: string
+		lineageTag: f52f5df4-19e1-4545-b3a3-63402730eadc
+		summarizeBy: none
+		sourceColumn: CycleID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CellID
+		dataType: string
+		lineageTag: d68f422d-c6fd-4d44-90fb-eac8d512bb06
+		summarizeBy: none
+		sourceColumn: CellID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CellName
+		dataType: string
+		lineageTag: 11b384d6-87ee-463a-ac3f-3d36fa877d47
+		summarizeBy: none
+		sourceColumn: CellName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Area
+		dataType: string
+		lineageTag: 88ea0c0e-d1c9-4e28-9f69-e8f455225ef2
+		summarizeBy: none
+		sourceColumn: Area
+
+		annotation SummarizationSetBy = Automatic
+
+	column MachineID
+		dataType: string
+		lineageTag: 66b6bd4b-2149-4d1a-9108-301b9f9b6072
+		summarizeBy: none
+		sourceColumn: MachineID
+
+		annotation SummarizationSetBy = Automatic
+
+	column MachineName
+		dataType: string
+		lineageTag: db351757-0781-48a2-a86c-a338c920e43e
+		summarizeBy: none
+		sourceColumn: MachineName
+
+		annotation SummarizationSetBy = Automatic
+
+	column MachineType
+		dataType: string
+		lineageTag: 7c7cbc00-bef2-45f9-afeb-4f5dd219d0dc
+		summarizeBy: none
+		sourceColumn: MachineType
+
+		annotation SummarizationSetBy = Automatic
+
+	column Criticality
+		dataType: string
+		lineageTag: 1a7a920b-bf5d-403a-a6a1-0bc73d8501f7
+		summarizeBy: none
+		sourceColumn: Criticality
+
+		annotation SummarizationSetBy = Automatic
+
+	column PMType
+		dataType: string
+		lineageTag: e874c95c-3547-474e-98af-35ebea3b53c6
+		summarizeBy: none
+		sourceColumn: PMType
+
+		annotation SummarizationSetBy = Automatic
+
+	column TriggerType
+		dataType: string
+		lineageTag: 484605c2-3ed9-4b48-a5e1-b4eb8ad213e7
+		summarizeBy: none
+		sourceColumn: TriggerType
+
+		annotation SummarizationSetBy = Automatic
+
+	column TriggerStdHrs
+		dataType: double
+		formatString: #,0.0
+		lineageTag: 95b92837-4726-48bf-b215-ed738df0416e
+		summarizeBy: none
+		sourceColumn: TriggerStdHrs
+
+		annotation SummarizationSetBy = Automatic
+
+	column PlanMonth
+		dataType: string
+		lineageTag: 2fdbade3-b961-4e38-bca9-da4a70e40365
+		summarizeBy: none
+		sourceColumn: PlanMonth
+
+		annotation SummarizationSetBy = Automatic
+
+	column PlannedDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 7db786fd-bd1e-4738-802c-5d2368542201
+		summarizeBy: none
+		sourceColumn: PlannedDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column DueDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 420e49be-5707-415e-9355-39f9fe0b7de0
+		summarizeBy: none
+		sourceColumn: DueDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column AssignedTechID
+		dataType: string
+		lineageTag: 2acf8275-db76-4eb0-be1a-c1df07d222ab
+		summarizeBy: none
+		sourceColumn: AssignedTechID
+
+		annotation SummarizationSetBy = Automatic
+
+	column AssignedTechName
+		dataType: string
+		lineageTag: a7e5384a-d4f5-4bc4-b06c-6f536ef6c6eb
+		summarizeBy: none
+		sourceColumn: AssignedTechName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Shift
+		dataType: string
+		lineageTag: 53776169-1b11-4dfc-a4bd-2ffaa621f87b
+		summarizeBy: none
+		sourceColumn: Shift
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		dataType: string
+		lineageTag: 543c598c-d49f-471c-879f-572b7aa1ae39
+		summarizeBy: none
+		sourceColumn: Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column ActualStartDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 786163f2-62c1-4f35-8f1a-32fd6ddae56e
+		summarizeBy: none
+		sourceColumn: ActualStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column ActualEndDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 79f5ce25-0027-4c1c-b97c-a6bcb2a8a1c7
+		summarizeBy: none
+		sourceColumn: ActualEndDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column DurationMin
+		dataType: int64
+		formatString: #,0
+		lineageTag: c2065b5a-c54f-4790-9e7f-f3158d8f6cd4
+		summarizeBy: none
+		sourceColumn: DurationMin
+
+		annotation SummarizationSetBy = Automatic
+
+	column ChecklistTotalTasks
+		dataType: int64
+		formatString: #,0
+		lineageTag: ea2058a1-0da8-43cc-b882-25f986505835
+		summarizeBy: none
+		sourceColumn: ChecklistTotalTasks
+
+		annotation SummarizationSetBy = Automatic
+
+	column ChecklistDoneTasks
+		dataType: int64
+		formatString: #,0
+		lineageTag: e5822437-74c0-4ae5-a4b6-767ea9a18bc0
+		summarizeBy: none
+		sourceColumn: ChecklistDoneTasks
+
+		annotation SummarizationSetBy = Automatic
+
+	column ChecklistFailTasks
+		dataType: int64
+		formatString: #,0
+		lineageTag: 21268c7d-6fd3-4e96-8e20-14ac214016b8
+		summarizeBy: none
+		sourceColumn: ChecklistFailTasks
+
+		annotation SummarizationSetBy = Automatic
+
+	column ChecklistCompletionPct
+		dataType: double
+		formatString: #,0.0
+		lineageTag: dd00edfb-1239-44e3-96de-88cb5ac75ead
+		summarizeBy: none
+		sourceColumn: ChecklistCompletionPct
+
+		annotation SummarizationSetBy = Automatic
+
+	column MachineQRScanned
+		dataType: string
+		lineageTag: 14615170-e72b-475d-9406-207ce3ea9432
+		summarizeBy: none
+		sourceColumn: MachineQRScanned
+
+		annotation SummarizationSetBy = Automatic
+
+	column PMResult
+		dataType: string
+		lineageTag: 7dcb8806-1de3-4029-8b10-7c72dc2c36b3
+		summarizeBy: none
+		sourceColumn: PMResult
+
+		annotation SummarizationSetBy = Automatic
+
+	column OnTimeFlag
+		dataType: string
+		lineageTag: aa37ea5f-0abe-4cb3-a05d-4c36001192d9
+		summarizeBy: none
+		sourceColumn: OnTimeFlag
+
+		annotation SummarizationSetBy = Automatic
+
+	column StdMinutes
+		dataType: int64
+		formatString: #,0
+		lineageTag: 93542ee1-336e-4643-bdd9-1311ac4720c4
+		summarizeBy: none
+		sourceColumn: StdMinutes
+
+		annotation SummarizationSetBy = Automatic
+
+	column Remarks
+		dataType: string
+		lineageTag: 0ff6db3a-fe3c-4900-9c57-53cc6fba3b73
+		summarizeBy: none
+		sourceColumn: Remarks
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_WorkOrders = m
+		mode: import
+		source = ```
+				let
+				    Source = fnSource("PM_WorkOrders"),
+				    Typed = Table.TransformColumnTypes(Source, {{"WOID", type text}, {"CycleID", type text}, {"CellID", type text}, {"CellName", type text}, {"Area", type text}, {"MachineID", type text}, {"MachineName", type text}, {"MachineType", type text}, {"Criticality", type text}, {"PMType", type text}, {"TriggerType", type text}, {"TriggerStdHrs", type number}, {"PlanMonth", type text}, {"PlannedDate", type date}, {"DueDate", type date}, {"AssignedTechID", type text}, {"AssignedTechName", type text}, {"Shift", type text}, {"Status", type text}, {"ActualStartDate", type date}, {"ActualEndDate", type date}, {"DurationMin", Int64.Type}, {"ChecklistTotalTasks", Int64.Type}, {"ChecklistDoneTasks", Int64.Type}, {"ChecklistFailTasks", Int64.Type}, {"ChecklistCompletionPct", type number}, {"MachineQRScanned", type text}, {"PMResult", type text}, {"OnTimeFlag", type text}, {"StdMinutes", Int64.Type}, {"Remarks", type text}}, "en-US")
+				in
+				    Typed
+				```
+
+	annotation PBI_ResultType = Table

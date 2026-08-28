@@ -1,0 +1,99 @@
+/// Spare parts catalogue with stock and minimum levels.
+table Dim_SparePart
+	lineageTag: 70a544d9-3f90-490b-8d5e-9f1ee33ae7b9
+
+	column PartNo
+		dataType: string
+		lineageTag: db1993cd-54fb-49ba-9d15-7d4518881c05
+		summarizeBy: none
+		sourceColumn: PartNo
+
+		annotation SummarizationSetBy = Automatic
+
+	column PartName
+		dataType: string
+		lineageTag: b9b4576a-0f04-4d7d-b01b-f679fa531a18
+		summarizeBy: none
+		sourceColumn: PartName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category
+		dataType: string
+		lineageTag: 7c063413-f0cf-4db9-9f52-6c395276339b
+		summarizeBy: none
+		sourceColumn: Category
+
+		annotation SummarizationSetBy = Automatic
+
+	column UOM
+		dataType: string
+		lineageTag: 8781a3cc-18cd-424b-81e6-c6df5e04828b
+		summarizeBy: none
+		sourceColumn: UOM
+
+		annotation SummarizationSetBy = Automatic
+
+	column UnitCostINR
+		dataType: double
+		formatString: "₹"#,0.00;("₹"#,0.00);"₹"#,0.00
+		lineageTag: eca5a18b-e167-4188-83c2-818f0961fc4b
+		summarizeBy: none
+		sourceColumn: UnitCostINR
+
+		annotation SummarizationSetBy = Automatic
+
+	column MinStock
+		dataType: int64
+		formatString: #,0
+		lineageTag: 33cbe9b2-5256-4413-ab30-1f69b9b9bcf3
+		summarizeBy: none
+		sourceColumn: MinStock
+
+		annotation SummarizationSetBy = Automatic
+
+	column CurrentStock
+		dataType: int64
+		formatString: #,0
+		lineageTag: c000efa1-1fe5-4891-adab-1feb703a1658
+		summarizeBy: none
+		sourceColumn: CurrentStock
+
+		annotation SummarizationSetBy = Automatic
+
+	column LeadTimeDays
+		dataType: int64
+		formatString: #,0
+		lineageTag: 45ee2a09-5b36-4845-a296-df3aea4911d8
+		summarizeBy: none
+		sourceColumn: LeadTimeDays
+
+		annotation SummarizationSetBy = Automatic
+
+	column StoreBin
+		dataType: string
+		lineageTag: 586e2ad0-2bc8-4733-b3d8-8c9096935534
+		summarizeBy: none
+		sourceColumn: StoreBin
+
+		annotation SummarizationSetBy = Automatic
+
+	column AppliesToMachineType
+		dataType: string
+		lineageTag: 7c4c4a02-0965-4e17-87b1-03fef58e7887
+		summarizeBy: none
+		sourceColumn: AppliesToMachineType
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_SparePart = m
+		mode: import
+		source = ```
+				let
+				    Source = fnSource("SparePart_Master"),
+				    Typed = Table.TransformColumnTypes(Source, {{"PartNo", type text}, {"PartName", type text}, {"Category", type text}, {"UOM", type text}, {"UnitCostINR", type number}, {"MinStock", Int64.Type}, {"CurrentStock", Int64.Type}, {"LeadTimeDays", Int64.Type}, {"StoreBin", type text}, {"AppliesToMachineType", type text}}, "en-US")
+				in
+				    Typed
+				```
+
+	annotation PBI_ResultType = Table
