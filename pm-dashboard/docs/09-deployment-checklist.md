@@ -9,9 +9,11 @@ Work top to bottom. Each phase assumes the previous one is done.
 - [ ] `python3 scripts/build_sharepoint_templates.py`
 - [ ] `python3 scripts/generate_qr_codes.py`
 - [ ] `python3 scripts/build_pbip.py`
-- [ ] Copy `data/dummy/` to `C:\PMDashboard\data\dummy` (or edit the
-      `LocalDataFolder` parameter to point wherever you put it)
-- [ ] Open `powerbi/PM_Dashboard.pbip` in Power BI Desktop, refresh, check all ten
+- [ ] `python3 scripts/validate_pbip.py` — 692 checks; do not open Desktop until
+      this passes
+- [ ] Copy `powerbi/` to `C:\PM_Dashboard` (the CSVs ship inside it, and
+      `LocalDataFolder` already points at `C:\PM_Dashboard\data`)
+- [ ] Open `PM_Dashboard.pbip` in Power BI Desktop, refresh, check all ten
       pages render
 
 **If the project will not open** — different Desktop versions accept different PBIR

@@ -1,0 +1,193 @@
+MonthKey,Year,MonthNo,CellID,CellName,Area,StdHours,UploadedBy,UploadDate,SourceFile
+2024-09,2024,9,CELL-01,CNC Turning Line A,Machine Shop,1104.9,Production Planning,2024-09-30,Cell_Standard_Hours_2024_09.xlsx
+2024-10,2024,10,CELL-01,CNC Turning Line A,Machine Shop,911.1,Production Planning,2024-10-31,Cell_Standard_Hours_2024_10.xlsx
+2024-11,2024,11,CELL-01,CNC Turning Line A,Machine Shop,1099.4,Production Planning,2024-11-30,Cell_Standard_Hours_2024_11.xlsx
+2024-12,2024,12,CELL-01,CNC Turning Line A,Machine Shop,1276.9,Production Planning,2024-12-31,Cell_Standard_Hours_2024_12.xlsx
+2025-01,2025,1,CELL-01,CNC Turning Line A,Machine Shop,1263.1,Production Planning,2025-01-31,Cell_Standard_Hours_2025_01.xlsx
+2025-02,2025,2,CELL-01,CNC Turning Line A,Machine Shop,1342.3,Production Planning,2025-02-28,Cell_Standard_Hours_2025_02.xlsx
+2025-03,2025,3,CELL-01,CNC Turning Line A,Machine Shop,1160.9,Production Planning,2025-03-31,Cell_Standard_Hours_2025_03.xlsx
+2025-04,2025,4,CELL-01,CNC Turning Line A,Machine Shop,979.7,Production Planning,2025-04-30,Cell_Standard_Hours_2025_04.xlsx
+2025-05,2025,5,CELL-01,CNC Turning Line A,Machine Shop,1065.9,Production Planning,2025-05-31,Cell_Standard_Hours_2025_05.xlsx
+2025-06,2025,6,CELL-01,CNC Turning Line A,Machine Shop,1136.5,Production Planning,2025-06-30,Cell_Standard_Hours_2025_06.xlsx
+2025-07,2025,7,CELL-01,CNC Turning Line A,Machine Shop,1241.6,Production Planning,2025-07-31,Cell_Standard_Hours_2025_07.xlsx
+2025-08,2025,8,CELL-01,CNC Turning Line A,Machine Shop,1080.7,Production Planning,2025-08-31,Cell_Standard_Hours_2025_08.xlsx
+2025-09,2025,9,CELL-01,CNC Turning Line A,Machine Shop,1238.2,Production Planning,2025-09-30,Cell_Standard_Hours_2025_09.xlsx
+2025-10,2025,10,CELL-01,CNC Turning Line A,Machine Shop,1075.1,Production Planning,2025-10-31,Cell_Standard_Hours_2025_10.xlsx
+2025-11,2025,11,CELL-01,CNC Turning Line A,Machine Shop,1280.4,Production Planning,2025-11-30,Cell_Standard_Hours_2025_11.xlsx
+2025-12,2025,12,CELL-01,CNC Turning Line A,Machine Shop,1171.3,Production Planning,2025-12-31,Cell_Standard_Hours_2025_12.xlsx
+2026-01,2026,1,CELL-01,CNC Turning Line A,Machine Shop,1309.0,Production Planning,2026-01-31,Cell_Standard_Hours_2026_01.xlsx
+2026-02,2026,2,CELL-01,CNC Turning Line A,Machine Shop,1394.6,Production Planning,2026-02-28,Cell_Standard_Hours_2026_02.xlsx
+2026-03,2026,3,CELL-01,CNC Turning Line A,Machine Shop,1200.4,Production Planning,2026-03-31,Cell_Standard_Hours_2026_03.xlsx
+2026-04,2026,4,CELL-01,CNC Turning Line A,Machine Shop,1153.8,Production Planning,2026-04-30,Cell_Standard_Hours_2026_04.xlsx
+2026-05,2026,5,CELL-01,CNC Turning Line A,Machine Shop,1374.8,Production Planning,2026-05-31,Cell_Standard_Hours_2026_05.xlsx
+2026-06,2026,6,CELL-01,CNC Turning Line A,Machine Shop,1250.4,Production Planning,2026-06-30,Cell_Standard_Hours_2026_06.xlsx
+2026-07,2026,7,CELL-01,CNC Turning Line A,Machine Shop,1188.6,Production Planning,2026-07-31,Cell_Standard_Hours_2026_07.xlsx
+2026-08,2026,8,CELL-01,CNC Turning Line A,Machine Shop,1346.9,Production Planning,2026-08-28,Cell_Standard_Hours_2026_08.xlsx
+2024-09,2024,9,CELL-02,CNC Turning Line B,Machine Shop,937.7,Production Planning,2024-09-30,Cell_Standard_Hours_2024_09.xlsx
+2024-10,2024,10,CELL-02,CNC Turning Line B,Machine Shop,713.4,Production Planning,2024-10-31,Cell_Standard_Hours_2024_10.xlsx
+2024-11,2024,11,CELL-02,CNC Turning Line B,Machine Shop,1076.9,Production Planning,2024-11-30,Cell_Standard_Hours_2024_11.xlsx
+2024-12,2024,12,CELL-02,CNC Turning Line B,Machine Shop,1010.6,Production Planning,2024-12-31,Cell_Standard_Hours_2024_12.xlsx
+2025-01,2025,1,CELL-02,CNC Turning Line B,Machine Shop,1067.3,Production Planning,2025-01-31,Cell_Standard_Hours_2025_01.xlsx
+2025-02,2025,2,CELL-02,CNC Turning Line B,Machine Shop,1046.8,Production Planning,2025-02-28,Cell_Standard_Hours_2025_02.xlsx
+2025-03,2025,3,CELL-02,CNC Turning Line B,Machine Shop,1073.7,Production Planning,2025-03-31,Cell_Standard_Hours_2025_03.xlsx
+2025-04,2025,4,CELL-02,CNC Turning Line B,Machine Shop,914.6,Production Planning,2025-04-30,Cell_Standard_Hours_2025_04.xlsx
+2025-05,2025,5,CELL-02,CNC Turning Line B,Machine Shop,952.1,Production Planning,2025-05-31,Cell_Standard_Hours_2025_05.xlsx
+2025-06,2025,6,CELL-02,CNC Turning Line B,Machine Shop,1000.7,Production Planning,2025-06-30,Cell_Standard_Hours_2025_06.xlsx
+2025-07,2025,7,CELL-02,CNC Turning Line B,Machine Shop,1078.0,Production Planning,2025-07-31,Cell_Standard_Hours_2025_07.xlsx
+2025-08,2025,8,CELL-02,CNC Turning Line B,Machine Shop,1020.5,Production Planning,2025-08-31,Cell_Standard_Hours_2025_08.xlsx
+2025-09,2025,9,CELL-02,CNC Turning Line B,Machine Shop,1175.6,Production Planning,2025-09-30,Cell_Standard_Hours_2025_09.xlsx
+2025-10,2025,10,CELL-02,CNC Turning Line B,Machine Shop,828.6,Production Planning,2025-10-31,Cell_Standard_Hours_2025_10.xlsx
+2025-11,2025,11,CELL-02,CNC Turning Line B,Machine Shop,1046.5,Production Planning,2025-11-30,Cell_Standard_Hours_2025_11.xlsx
+2025-12,2025,12,CELL-02,CNC Turning Line B,Machine Shop,864.6,Production Planning,2025-12-31,Cell_Standard_Hours_2025_12.xlsx
+2026-01,2026,1,CELL-02,CNC Turning Line B,Machine Shop,915.7,Production Planning,2026-01-31,Cell_Standard_Hours_2026_01.xlsx
+2026-02,2026,2,CELL-02,CNC Turning Line B,Machine Shop,933.4,Production Planning,2026-02-28,Cell_Standard_Hours_2026_02.xlsx
+2026-03,2026,3,CELL-02,CNC Turning Line B,Machine Shop,945.9,Production Planning,2026-03-31,Cell_Standard_Hours_2026_03.xlsx
+2026-04,2026,4,CELL-02,CNC Turning Line B,Machine Shop,753.6,Production Planning,2026-04-30,Cell_Standard_Hours_2026_04.xlsx
+2026-05,2026,5,CELL-02,CNC Turning Line B,Machine Shop,883.0,Production Planning,2026-05-31,Cell_Standard_Hours_2026_05.xlsx
+2026-06,2026,6,CELL-02,CNC Turning Line B,Machine Shop,932.9,Production Planning,2026-06-30,Cell_Standard_Hours_2026_06.xlsx
+2026-07,2026,7,CELL-02,CNC Turning Line B,Machine Shop,1033.3,Production Planning,2026-07-31,Cell_Standard_Hours_2026_07.xlsx
+2026-08,2026,8,CELL-02,CNC Turning Line B,Machine Shop,865.7,Production Planning,2026-08-28,Cell_Standard_Hours_2026_08.xlsx
+2024-09,2024,9,CELL-03,Gear Cutting Cell,Machine Shop,754.0,Production Planning,2024-09-30,Cell_Standard_Hours_2024_09.xlsx
+2024-10,2024,10,CELL-03,Gear Cutting Cell,Machine Shop,583.2,Production Planning,2024-10-31,Cell_Standard_Hours_2024_10.xlsx
+2024-11,2024,11,CELL-03,Gear Cutting Cell,Machine Shop,854.9,Production Planning,2024-11-30,Cell_Standard_Hours_2024_11.xlsx
+2024-12,2024,12,CELL-03,Gear Cutting Cell,Machine Shop,794.3,Production Planning,2024-12-31,Cell_Standard_Hours_2024_12.xlsx
+2025-01,2025,1,CELL-03,Gear Cutting Cell,Machine Shop,786.9,Production Planning,2025-01-31,Cell_Standard_Hours_2025_01.xlsx
+2025-02,2025,2,CELL-03,Gear Cutting Cell,Machine Shop,694.1,Production Planning,2025-02-28,Cell_Standard_Hours_2025_02.xlsx
+2025-03,2025,3,CELL-03,Gear Cutting Cell,Machine Shop,879.7,Production Planning,2025-03-31,Cell_Standard_Hours_2025_03.xlsx
+2025-04,2025,4,CELL-03,Gear Cutting Cell,Machine Shop,569.2,Production Planning,2025-04-30,Cell_Standard_Hours_2025_04.xlsx
+2025-05,2025,5,CELL-03,Gear Cutting Cell,Machine Shop,741.3,Production Planning,2025-05-31,Cell_Standard_Hours_2025_05.xlsx
+2025-06,2025,6,CELL-03,Gear Cutting Cell,Machine Shop,873.4,Production Planning,2025-06-30,Cell_Standard_Hours_2025_06.xlsx
+2025-07,2025,7,CELL-03,Gear Cutting Cell,Machine Shop,799.2,Production Planning,2025-07-31,Cell_Standard_Hours_2025_07.xlsx
+2025-08,2025,8,CELL-03,Gear Cutting Cell,Machine Shop,782.2,Production Planning,2025-08-31,Cell_Standard_Hours_2025_08.xlsx
+2025-09,2025,9,CELL-03,Gear Cutting Cell,Machine Shop,875.6,Production Planning,2025-09-30,Cell_Standard_Hours_2025_09.xlsx
+2025-10,2025,10,CELL-03,Gear Cutting Cell,Machine Shop,693.6,Production Planning,2025-10-31,Cell_Standard_Hours_2025_10.xlsx
+2025-11,2025,11,CELL-03,Gear Cutting Cell,Machine Shop,832.4,Production Planning,2025-11-30,Cell_Standard_Hours_2025_11.xlsx
+2025-12,2025,12,CELL-03,Gear Cutting Cell,Machine Shop,714.9,Production Planning,2025-12-31,Cell_Standard_Hours_2025_12.xlsx
+2026-01,2026,1,CELL-03,Gear Cutting Cell,Machine Shop,673.0,Production Planning,2026-01-31,Cell_Standard_Hours_2026_01.xlsx
+2026-02,2026,2,CELL-03,Gear Cutting Cell,Machine Shop,735.4,Production Planning,2026-02-28,Cell_Standard_Hours_2026_02.xlsx
+2026-03,2026,3,CELL-03,Gear Cutting Cell,Machine Shop,783.9,Production Planning,2026-03-31,Cell_Standard_Hours_2026_03.xlsx
+2026-04,2026,4,CELL-03,Gear Cutting Cell,Machine Shop,585.8,Production Planning,2026-04-30,Cell_Standard_Hours_2026_04.xlsx
+2026-05,2026,5,CELL-03,Gear Cutting Cell,Machine Shop,874.7,Production Planning,2026-05-31,Cell_Standard_Hours_2026_05.xlsx
+2026-06,2026,6,CELL-03,Gear Cutting Cell,Machine Shop,861.2,Production Planning,2026-06-30,Cell_Standard_Hours_2026_06.xlsx
+2026-07,2026,7,CELL-03,Gear Cutting Cell,Machine Shop,739.5,Production Planning,2026-07-31,Cell_Standard_Hours_2026_07.xlsx
+2026-08,2026,8,CELL-03,Gear Cutting Cell,Machine Shop,736.1,Production Planning,2026-08-28,Cell_Standard_Hours_2026_08.xlsx
+2024-09,2024,9,CELL-04,Heat Treatment,Heat Treat,1687.5,Production Planning,2024-09-30,Cell_Standard_Hours_2024_09.xlsx
+2024-10,2024,10,CELL-04,Heat Treatment,Heat Treat,1136.5,Production Planning,2024-10-31,Cell_Standard_Hours_2024_10.xlsx
+2024-11,2024,11,CELL-04,Heat Treatment,Heat Treat,1311.9,Production Planning,2024-11-30,Cell_Standard_Hours_2024_11.xlsx
+2024-12,2024,12,CELL-04,Heat Treatment,Heat Treat,1306.7,Production Planning,2024-12-31,Cell_Standard_Hours_2024_12.xlsx
+2025-01,2025,1,CELL-04,Heat Treatment,Heat Treat,1432.8,Production Planning,2025-01-31,Cell_Standard_Hours_2025_01.xlsx
+2025-02,2025,2,CELL-04,Heat Treatment,Heat Treat,1317.1,Production Planning,2025-02-28,Cell_Standard_Hours_2025_02.xlsx
+2025-03,2025,3,CELL-04,Heat Treatment,Heat Treat,1562.2,Production Planning,2025-03-31,Cell_Standard_Hours_2025_03.xlsx
+2025-04,2025,4,CELL-04,Heat Treatment,Heat Treat,1289.7,Production Planning,2025-04-30,Cell_Standard_Hours_2025_04.xlsx
+2025-05,2025,5,CELL-04,Heat Treatment,Heat Treat,1377.4,Production Planning,2025-05-31,Cell_Standard_Hours_2025_05.xlsx
+2025-06,2025,6,CELL-04,Heat Treatment,Heat Treat,1307.9,Production Planning,2025-06-30,Cell_Standard_Hours_2025_06.xlsx
+2025-07,2025,7,CELL-04,Heat Treatment,Heat Treat,1619.8,Production Planning,2025-07-31,Cell_Standard_Hours_2025_07.xlsx
+2025-08,2025,8,CELL-04,Heat Treatment,Heat Treat,1427.7,Production Planning,2025-08-31,Cell_Standard_Hours_2025_08.xlsx
+2025-09,2025,9,CELL-04,Heat Treatment,Heat Treat,1363.7,Production Planning,2025-09-30,Cell_Standard_Hours_2025_09.xlsx
+2025-10,2025,10,CELL-04,Heat Treatment,Heat Treat,1022.7,Production Planning,2025-10-31,Cell_Standard_Hours_2025_10.xlsx
+2025-11,2025,11,CELL-04,Heat Treatment,Heat Treat,1274.1,Production Planning,2025-11-30,Cell_Standard_Hours_2025_11.xlsx
+2025-12,2025,12,CELL-04,Heat Treatment,Heat Treat,1483.8,Production Planning,2025-12-31,Cell_Standard_Hours_2025_12.xlsx
+2026-01,2026,1,CELL-04,Heat Treatment,Heat Treat,1552.2,Production Planning,2026-01-31,Cell_Standard_Hours_2026_01.xlsx
+2026-02,2026,2,CELL-04,Heat Treatment,Heat Treat,1405.8,Production Planning,2026-02-28,Cell_Standard_Hours_2026_02.xlsx
+2026-03,2026,3,CELL-04,Heat Treatment,Heat Treat,1364.5,Production Planning,2026-03-31,Cell_Standard_Hours_2026_03.xlsx
+2026-04,2026,4,CELL-04,Heat Treatment,Heat Treat,1142.9,Production Planning,2026-04-30,Cell_Standard_Hours_2026_04.xlsx
+2026-05,2026,5,CELL-04,Heat Treatment,Heat Treat,1644.3,Production Planning,2026-05-31,Cell_Standard_Hours_2026_05.xlsx
+2026-06,2026,6,CELL-04,Heat Treatment,Heat Treat,1457.7,Production Planning,2026-06-30,Cell_Standard_Hours_2026_06.xlsx
+2026-07,2026,7,CELL-04,Heat Treatment,Heat Treat,1639.2,Production Planning,2026-07-31,Cell_Standard_Hours_2026_07.xlsx
+2026-08,2026,8,CELL-04,Heat Treatment,Heat Treat,1442.4,Production Planning,2026-08-28,Cell_Standard_Hours_2026_08.xlsx
+2024-09,2024,9,CELL-05,Assembly Line 1,Assembly,1020.6,Production Planning,2024-09-30,Cell_Standard_Hours_2024_09.xlsx
+2024-10,2024,10,CELL-05,Assembly Line 1,Assembly,764.0,Production Planning,2024-10-31,Cell_Standard_Hours_2024_10.xlsx
+2024-11,2024,11,CELL-05,Assembly Line 1,Assembly,892.3,Production Planning,2024-11-30,Cell_Standard_Hours_2024_11.xlsx
+2024-12,2024,12,CELL-05,Assembly Line 1,Assembly,822.3,Production Planning,2024-12-31,Cell_Standard_Hours_2024_12.xlsx
+2025-01,2025,1,CELL-05,Assembly Line 1,Assembly,911.0,Production Planning,2025-01-31,Cell_Standard_Hours_2025_01.xlsx
+2025-02,2025,2,CELL-05,Assembly Line 1,Assembly,778.1,Production Planning,2025-02-28,Cell_Standard_Hours_2025_02.xlsx
+2025-03,2025,3,CELL-05,Assembly Line 1,Assembly,922.1,Production Planning,2025-03-31,Cell_Standard_Hours_2025_03.xlsx
+2025-04,2025,4,CELL-05,Assembly Line 1,Assembly,701.2,Production Planning,2025-04-30,Cell_Standard_Hours_2025_04.xlsx
+2025-05,2025,5,CELL-05,Assembly Line 1,Assembly,972.7,Production Planning,2025-05-31,Cell_Standard_Hours_2025_05.xlsx
+2025-06,2025,6,CELL-05,Assembly Line 1,Assembly,950.2,Production Planning,2025-06-30,Cell_Standard_Hours_2025_06.xlsx
+2025-07,2025,7,CELL-05,Assembly Line 1,Assembly,799.7,Production Planning,2025-07-31,Cell_Standard_Hours_2025_07.xlsx
+2025-08,2025,8,CELL-05,Assembly Line 1,Assembly,853.3,Production Planning,2025-08-31,Cell_Standard_Hours_2025_08.xlsx
+2025-09,2025,9,CELL-05,Assembly Line 1,Assembly,835.3,Production Planning,2025-09-30,Cell_Standard_Hours_2025_09.xlsx
+2025-10,2025,10,CELL-05,Assembly Line 1,Assembly,774.4,Production Planning,2025-10-31,Cell_Standard_Hours_2025_10.xlsx
+2025-11,2025,11,CELL-05,Assembly Line 1,Assembly,930.8,Production Planning,2025-11-30,Cell_Standard_Hours_2025_11.xlsx
+2025-12,2025,12,CELL-05,Assembly Line 1,Assembly,792.7,Production Planning,2025-12-31,Cell_Standard_Hours_2025_12.xlsx
+2026-01,2026,1,CELL-05,Assembly Line 1,Assembly,869.4,Production Planning,2026-01-31,Cell_Standard_Hours_2026_01.xlsx
+2026-02,2026,2,CELL-05,Assembly Line 1,Assembly,859.1,Production Planning,2026-02-28,Cell_Standard_Hours_2026_02.xlsx
+2026-03,2026,3,CELL-05,Assembly Line 1,Assembly,809.7,Production Planning,2026-03-31,Cell_Standard_Hours_2026_03.xlsx
+2026-04,2026,4,CELL-05,Assembly Line 1,Assembly,728.2,Production Planning,2026-04-30,Cell_Standard_Hours_2026_04.xlsx
+2026-05,2026,5,CELL-05,Assembly Line 1,Assembly,833.2,Production Planning,2026-05-31,Cell_Standard_Hours_2026_05.xlsx
+2026-06,2026,6,CELL-05,Assembly Line 1,Assembly,885.0,Production Planning,2026-06-30,Cell_Standard_Hours_2026_06.xlsx
+2026-07,2026,7,CELL-05,Assembly Line 1,Assembly,824.7,Production Planning,2026-07-31,Cell_Standard_Hours_2026_07.xlsx
+2026-08,2026,8,CELL-05,Assembly Line 1,Assembly,632.9,Production Planning,2026-08-28,Cell_Standard_Hours_2026_08.xlsx
+2024-09,2024,9,CELL-06,Paint & Finishing,Finishing,392.6,Production Planning,2024-09-30,Cell_Standard_Hours_2024_09.xlsx
+2024-10,2024,10,CELL-06,Paint & Finishing,Finishing,386.0,Production Planning,2024-10-31,Cell_Standard_Hours_2024_10.xlsx
+2024-11,2024,11,CELL-06,Paint & Finishing,Finishing,465.0,Production Planning,2024-11-30,Cell_Standard_Hours_2024_11.xlsx
+2024-12,2024,12,CELL-06,Paint & Finishing,Finishing,459.7,Production Planning,2024-12-31,Cell_Standard_Hours_2024_12.xlsx
+2025-01,2025,1,CELL-06,Paint & Finishing,Finishing,398.2,Production Planning,2025-01-31,Cell_Standard_Hours_2025_01.xlsx
+2025-02,2025,2,CELL-06,Paint & Finishing,Finishing,369.0,Production Planning,2025-02-28,Cell_Standard_Hours_2025_02.xlsx
+2025-03,2025,3,CELL-06,Paint & Finishing,Finishing,503.2,Production Planning,2025-03-31,Cell_Standard_Hours_2025_03.xlsx
+2025-04,2025,4,CELL-06,Paint & Finishing,Finishing,389.0,Production Planning,2025-04-30,Cell_Standard_Hours_2025_04.xlsx
+2025-05,2025,5,CELL-06,Paint & Finishing,Finishing,372.9,Production Planning,2025-05-31,Cell_Standard_Hours_2025_05.xlsx
+2025-06,2025,6,CELL-06,Paint & Finishing,Finishing,420.4,Production Planning,2025-06-30,Cell_Standard_Hours_2025_06.xlsx
+2025-07,2025,7,CELL-06,Paint & Finishing,Finishing,371.3,Production Planning,2025-07-31,Cell_Standard_Hours_2025_07.xlsx
+2025-08,2025,8,CELL-06,Paint & Finishing,Finishing,453.3,Production Planning,2025-08-31,Cell_Standard_Hours_2025_08.xlsx
+2025-09,2025,9,CELL-06,Paint & Finishing,Finishing,490.5,Production Planning,2025-09-30,Cell_Standard_Hours_2025_09.xlsx
+2025-10,2025,10,CELL-06,Paint & Finishing,Finishing,310.7,Production Planning,2025-10-31,Cell_Standard_Hours_2025_10.xlsx
+2025-11,2025,11,CELL-06,Paint & Finishing,Finishing,420.2,Production Planning,2025-11-30,Cell_Standard_Hours_2025_11.xlsx
+2025-12,2025,12,CELL-06,Paint & Finishing,Finishing,429.3,Production Planning,2025-12-31,Cell_Standard_Hours_2025_12.xlsx
+2026-01,2026,1,CELL-06,Paint & Finishing,Finishing,395.8,Production Planning,2026-01-31,Cell_Standard_Hours_2026_01.xlsx
+2026-02,2026,2,CELL-06,Paint & Finishing,Finishing,468.1,Production Planning,2026-02-28,Cell_Standard_Hours_2026_02.xlsx
+2026-03,2026,3,CELL-06,Paint & Finishing,Finishing,448.2,Production Planning,2026-03-31,Cell_Standard_Hours_2026_03.xlsx
+2026-04,2026,4,CELL-06,Paint & Finishing,Finishing,319.9,Production Planning,2026-04-30,Cell_Standard_Hours_2026_04.xlsx
+2026-05,2026,5,CELL-06,Paint & Finishing,Finishing,429.2,Production Planning,2026-05-31,Cell_Standard_Hours_2026_05.xlsx
+2026-06,2026,6,CELL-06,Paint & Finishing,Finishing,452.1,Production Planning,2026-06-30,Cell_Standard_Hours_2026_06.xlsx
+2026-07,2026,7,CELL-06,Paint & Finishing,Finishing,389.4,Production Planning,2026-07-31,Cell_Standard_Hours_2026_07.xlsx
+2026-08,2026,8,CELL-06,Paint & Finishing,Finishing,363.8,Production Planning,2026-08-28,Cell_Standard_Hours_2026_08.xlsx
+2024-09,2024,9,CELL-07,Robotic Welding Bay,Fabrication,720.2,Production Planning,2024-09-30,Cell_Standard_Hours_2024_09.xlsx
+2024-10,2024,10,CELL-07,Robotic Welding Bay,Fabrication,520.8,Production Planning,2024-10-31,Cell_Standard_Hours_2024_10.xlsx
+2024-11,2024,11,CELL-07,Robotic Welding Bay,Fabrication,656.0,Production Planning,2024-11-30,Cell_Standard_Hours_2024_11.xlsx
+2024-12,2024,12,CELL-07,Robotic Welding Bay,Fabrication,589.3,Production Planning,2024-12-31,Cell_Standard_Hours_2024_12.xlsx
+2025-01,2025,1,CELL-07,Robotic Welding Bay,Fabrication,614.5,Production Planning,2025-01-31,Cell_Standard_Hours_2025_01.xlsx
+2025-02,2025,2,CELL-07,Robotic Welding Bay,Fabrication,641.9,Production Planning,2025-02-28,Cell_Standard_Hours_2025_02.xlsx
+2025-03,2025,3,CELL-07,Robotic Welding Bay,Fabrication,751.6,Production Planning,2025-03-31,Cell_Standard_Hours_2025_03.xlsx
+2025-04,2025,4,CELL-07,Robotic Welding Bay,Fabrication,519.9,Production Planning,2025-04-30,Cell_Standard_Hours_2025_04.xlsx
+2025-05,2025,5,CELL-07,Robotic Welding Bay,Fabrication,638.4,Production Planning,2025-05-31,Cell_Standard_Hours_2025_05.xlsx
+2025-06,2025,6,CELL-07,Robotic Welding Bay,Fabrication,615.5,Production Planning,2025-06-30,Cell_Standard_Hours_2025_06.xlsx
+2025-07,2025,7,CELL-07,Robotic Welding Bay,Fabrication,732.4,Production Planning,2025-07-31,Cell_Standard_Hours_2025_07.xlsx
+2025-08,2025,8,CELL-07,Robotic Welding Bay,Fabrication,659.3,Production Planning,2025-08-31,Cell_Standard_Hours_2025_08.xlsx
+2025-09,2025,9,CELL-07,Robotic Welding Bay,Fabrication,866.6,Production Planning,2025-09-30,Cell_Standard_Hours_2025_09.xlsx
+2025-10,2025,10,CELL-07,Robotic Welding Bay,Fabrication,656.8,Production Planning,2025-10-31,Cell_Standard_Hours_2025_10.xlsx
+2025-11,2025,11,CELL-07,Robotic Welding Bay,Fabrication,646.7,Production Planning,2025-11-30,Cell_Standard_Hours_2025_11.xlsx
+2025-12,2025,12,CELL-07,Robotic Welding Bay,Fabrication,687.8,Production Planning,2025-12-31,Cell_Standard_Hours_2025_12.xlsx
+2026-01,2026,1,CELL-07,Robotic Welding Bay,Fabrication,785.1,Production Planning,2026-01-31,Cell_Standard_Hours_2026_01.xlsx
+2026-02,2026,2,CELL-07,Robotic Welding Bay,Fabrication,696.5,Production Planning,2026-02-28,Cell_Standard_Hours_2026_02.xlsx
+2026-03,2026,3,CELL-07,Robotic Welding Bay,Fabrication,740.8,Production Planning,2026-03-31,Cell_Standard_Hours_2026_03.xlsx
+2026-04,2026,4,CELL-07,Robotic Welding Bay,Fabrication,710.4,Production Planning,2026-04-30,Cell_Standard_Hours_2026_04.xlsx
+2026-05,2026,5,CELL-07,Robotic Welding Bay,Fabrication,795.4,Production Planning,2026-05-31,Cell_Standard_Hours_2026_05.xlsx
+2026-06,2026,6,CELL-07,Robotic Welding Bay,Fabrication,781.6,Production Planning,2026-06-30,Cell_Standard_Hours_2026_06.xlsx
+2026-07,2026,7,CELL-07,Robotic Welding Bay,Fabrication,858.8,Production Planning,2026-07-31,Cell_Standard_Hours_2026_07.xlsx
+2026-08,2026,8,CELL-07,Robotic Welding Bay,Fabrication,788.1,Production Planning,2026-08-28,Cell_Standard_Hours_2026_08.xlsx
+2024-09,2024,9,CELL-08,Press Shop,Fabrication,316.2,Production Planning,2024-09-30,Cell_Standard_Hours_2024_09.xlsx
+2024-10,2024,10,CELL-08,Press Shop,Fabrication,265.0,Production Planning,2024-10-31,Cell_Standard_Hours_2024_10.xlsx
+2024-11,2024,11,CELL-08,Press Shop,Fabrication,322.1,Production Planning,2024-11-30,Cell_Standard_Hours_2024_11.xlsx
+2024-12,2024,12,CELL-08,Press Shop,Fabrication,325.6,Production Planning,2024-12-31,Cell_Standard_Hours_2024_12.xlsx
+2025-01,2025,1,CELL-08,Press Shop,Fabrication,349.3,Production Planning,2025-01-31,Cell_Standard_Hours_2025_01.xlsx
+2025-02,2025,2,CELL-08,Press Shop,Fabrication,343.7,Production Planning,2025-02-28,Cell_Standard_Hours_2025_02.xlsx
+2025-03,2025,3,CELL-08,Press Shop,Fabrication,401.5,Production Planning,2025-03-31,Cell_Standard_Hours_2025_03.xlsx
+2025-04,2025,4,CELL-08,Press Shop,Fabrication,237.9,Production Planning,2025-04-30,Cell_Standard_Hours_2025_04.xlsx
+2025-05,2025,5,CELL-08,Press Shop,Fabrication,317.6,Production Planning,2025-05-31,Cell_Standard_Hours_2025_05.xlsx
+2025-06,2025,6,CELL-08,Press Shop,Fabrication,311.4,Production Planning,2025-06-30,Cell_Standard_Hours_2025_06.xlsx
+2025-07,2025,7,CELL-08,Press Shop,Fabrication,358.6,Production Planning,2025-07-31,Cell_Standard_Hours_2025_07.xlsx
+2025-08,2025,8,CELL-08,Press Shop,Fabrication,302.3,Production Planning,2025-08-31,Cell_Standard_Hours_2025_08.xlsx
+2025-09,2025,9,CELL-08,Press Shop,Fabrication,320.3,Production Planning,2025-09-30,Cell_Standard_Hours_2025_09.xlsx
+2025-10,2025,10,CELL-08,Press Shop,Fabrication,262.1,Production Planning,2025-10-31,Cell_Standard_Hours_2025_10.xlsx
+2025-11,2025,11,CELL-08,Press Shop,Fabrication,316.8,Production Planning,2025-11-30,Cell_Standard_Hours_2025_11.xlsx
+2025-12,2025,12,CELL-08,Press Shop,Fabrication,303.4,Production Planning,2025-12-31,Cell_Standard_Hours_2025_12.xlsx
+2026-01,2026,1,CELL-08,Press Shop,Fabrication,300.4,Production Planning,2026-01-31,Cell_Standard_Hours_2026_01.xlsx
+2026-02,2026,2,CELL-08,Press Shop,Fabrication,360.8,Production Planning,2026-02-28,Cell_Standard_Hours_2026_02.xlsx
+2026-03,2026,3,CELL-08,Press Shop,Fabrication,342.4,Production Planning,2026-03-31,Cell_Standard_Hours_2026_03.xlsx
+2026-04,2026,4,CELL-08,Press Shop,Fabrication,290.5,Production Planning,2026-04-30,Cell_Standard_Hours_2026_04.xlsx
+2026-05,2026,5,CELL-08,Press Shop,Fabrication,325.8,Production Planning,2026-05-31,Cell_Standard_Hours_2026_05.xlsx
+2026-06,2026,6,CELL-08,Press Shop,Fabrication,280.5,Production Planning,2026-06-30,Cell_Standard_Hours_2026_06.xlsx
+2026-07,2026,7,CELL-08,Press Shop,Fabrication,365.2,Production Planning,2026-07-31,Cell_Standard_Hours_2026_07.xlsx
+2026-08,2026,8,CELL-08,Press Shop,Fabrication,316.2,Production Planning,2026-08-28,Cell_Standard_Hours_2026_08.xlsx

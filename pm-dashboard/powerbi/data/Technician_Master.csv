@@ -1,0 +1,11 @@
+TechID,TechName,Email,Shift,SkillGroup,PrimaryArea,DailyCapacityMin,QRPayload,Active
+TECH-01,Arun Kumar,arun.kumar@example.com,Shift A,Mechanical,Machine Shop,420,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=tech&id=TECH-01,Yes
+TECH-02,Suresh Babu,suresh.babu@example.com,Shift A,Electrical,Machine Shop,420,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=tech&id=TECH-02,Yes
+TECH-03,Mohammed Rafi,mohammed.rafi@example.com,Shift B,Mechanical,Machine Shop,420,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=tech&id=TECH-03,Yes
+TECH-04,Vignesh S,vignesh.s@example.com,Shift B,Hydraulics,Fabrication,420,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=tech&id=TECH-04,Yes
+TECH-05,Prakash R,prakash.r@example.com,Shift A,Furnace,Heat Treat,420,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=tech&id=TECH-05,Yes
+TECH-06,Deepak Nair,deepak.nair@example.com,Shift C,Electrical,Heat Treat,360,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=tech&id=TECH-06,Yes
+TECH-07,Ramesh Chandran,ramesh.chandran@example.com,Shift A,Mechanical,Assembly,420,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=tech&id=TECH-07,Yes
+TECH-08,Karthik V,karthik.v@example.com,Shift B,Automation,Fabrication,420,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=tech&id=TECH-08,Yes
+TECH-09,Sathish Kumar,sathish.kumar@example.com,Shift A,Utilities,Finishing,420,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=tech&id=TECH-09,Yes
+TECH-10,Naveen Raj,naveen.raj@example.com,Shift B,Automation,Assembly,420,https://apps.powerapps.com/play/e/<ENV_ID>/a/<APP_ID>?tenantId=<TENANT_ID>&source=qr&type=tech&id=TECH-10,Yes

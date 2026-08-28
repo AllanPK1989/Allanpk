@@ -1,10 +1,10 @@
 /// Spare parts catalogue with stock and minimum levels.
 table Dim_SparePart
-	lineageTag: 70a544d9-3f90-490b-8d5e-9f1ee33ae7b9
+	lineageTag: 9ba957f7-b0ca-45d6-af3f-aa9c1210dc84
 
 	column PartNo
 		dataType: string
-		lineageTag: db1993cd-54fb-49ba-9d15-7d4518881c05
+		lineageTag: 0c32bdf0-b6d5-4c58-9921-efe0a4242ced
 		summarizeBy: none
 		sourceColumn: PartNo
 
@@ -12,7 +12,7 @@ table Dim_SparePart
 
 	column PartName
 		dataType: string
-		lineageTag: b9b4576a-0f04-4d7d-b01b-f679fa531a18
+		lineageTag: 2617580d-31bc-42c9-9d87-3f090a5a7119
 		summarizeBy: none
 		sourceColumn: PartName
 
@@ -20,7 +20,7 @@ table Dim_SparePart
 
 	column Category
 		dataType: string
-		lineageTag: 7c063413-f0cf-4db9-9f52-6c395276339b
+		lineageTag: 14becf45-634b-48c8-b1cf-6a4ea5d43412
 		summarizeBy: none
 		sourceColumn: Category
 
@@ -28,7 +28,7 @@ table Dim_SparePart
 
 	column UOM
 		dataType: string
-		lineageTag: 8781a3cc-18cd-424b-81e6-c6df5e04828b
+		lineageTag: 7b44199c-e879-4015-8470-1ea448906374
 		summarizeBy: none
 		sourceColumn: UOM
 
@@ -37,7 +37,7 @@ table Dim_SparePart
 	column UnitCostINR
 		dataType: double
 		formatString: "₹"#,0.00;("₹"#,0.00);"₹"#,0.00
-		lineageTag: eca5a18b-e167-4188-83c2-818f0961fc4b
+		lineageTag: 0b3d1716-a4b0-4e9e-b70a-28a75ead0dad
 		summarizeBy: none
 		sourceColumn: UnitCostINR
 
@@ -46,7 +46,7 @@ table Dim_SparePart
 	column MinStock
 		dataType: int64
 		formatString: #,0
-		lineageTag: 33cbe9b2-5256-4413-ab30-1f69b9b9bcf3
+		lineageTag: 306de852-a715-43b5-aa34-65fe5a4676b5
 		summarizeBy: none
 		sourceColumn: MinStock
 
@@ -55,7 +55,7 @@ table Dim_SparePart
 	column CurrentStock
 		dataType: int64
 		formatString: #,0
-		lineageTag: c000efa1-1fe5-4891-adab-1feb703a1658
+		lineageTag: 6960d303-9531-4319-9051-1464e52d7a86
 		summarizeBy: none
 		sourceColumn: CurrentStock
 
@@ -64,7 +64,7 @@ table Dim_SparePart
 	column LeadTimeDays
 		dataType: int64
 		formatString: #,0
-		lineageTag: 45ee2a09-5b36-4845-a296-df3aea4911d8
+		lineageTag: 28909efd-e59f-44be-b199-2ef49a7a289f
 		summarizeBy: none
 		sourceColumn: LeadTimeDays
 
@@ -72,7 +72,7 @@ table Dim_SparePart
 
 	column StoreBin
 		dataType: string
-		lineageTag: 586e2ad0-2bc8-4733-b3d8-8c9096935534
+		lineageTag: 0efbcd3e-1701-4102-9beb-dce06119bccf
 		summarizeBy: none
 		sourceColumn: StoreBin
 
@@ -80,7 +80,7 @@ table Dim_SparePart
 
 	column AppliesToMachineType
 		dataType: string
-		lineageTag: 7c4c4a02-0965-4e17-87b1-03fef58e7887
+		lineageTag: 2498d37e-ee4c-4d3c-aa3a-e0a68e62e1c9
 		summarizeBy: none
 		sourceColumn: AppliesToMachineType
 

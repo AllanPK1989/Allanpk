@@ -1,0 +1,43 @@
+PartNo,PartName,Category,UOM,UnitCostINR,MinStock,CurrentStock,LeadTimeDays,StoreBin,AppliesToMachineType
+SP-1001,Spindle bearing set 7014,Bearing,Set,18500,4,6,45,A-01-03,CNC Turning Center
+SP-1002,Way wiper kit X/Z,Seal,Kit,2400,6,9,21,A-01-05,CNC Turning Center
+SP-1003,Coolant pump 0.75 kW,Pump,No,12800,2,1,30,A-02-01,CNC Turning Center
+SP-1004,Hydraulic solenoid valve 4/3,Hydraulic,No,8600,3,4,25,A-02-04,CNC Turning Center
+SP-1005,Chuck jaw set 8 inch,Tooling,Set,9200,4,7,20,A-03-02,CNC Turning Center
+SP-1010,ATC cam follower,Mechanical,No,5400,4,5,28,A-03-06,CNC Machining Center
+SP-1011,Ball screw support bearing,Bearing,No,14200,2,2,40,A-01-07,CNC Machining Center
+SP-1012,Spindle chiller compressor,Chiller,No,46000,1,1,60,B-01-01,CNC Machining Center
+SP-1020,Hob spindle bearing,Bearing,No,22400,2,3,50,A-01-09,Gear Hobbing Machine
+SP-1021,Index table oil seal,Seal,No,1800,8,12,15,A-01-11,Gear Hobbing Machine
+SP-1022,Timing belt HTD 8M,Belt,No,3600,6,4,18,A-04-02,Gear Hobbing Machine
+SP-1030,Radiant tube 150 mm,Furnace,No,74000,2,2,75,B-02-01,Sealed Quench Furnace
+SP-1031,K-type thermocouple 1200 mm,Instrument,No,4200,8,11,20,B-02-03,Sealed Quench Furnace
+SP-1032,Door seal rope 25 mm,Seal,Mtr,650,20,34,14,B-02-05,Sealed Quench Furnace
+SP-1033,Quench agitator seal kit,Seal,Kit,6800,3,2,35,B-02-07,Sealed Quench Furnace
+SP-1034,Carbon potential probe,Instrument,No,58000,1,1,90,B-02-09,Sealed Quench Furnace
+SP-1035,Burner ignition electrode,Furnace,No,5600,4,6,30,B-03-01,Tempering Furnace
+SP-1040,Torque transducer 30 Nm,Instrument,No,32000,1,2,55,C-01-01,Assembly Station
+SP-1041,Poka-yoke proximity sensor,Electrical,No,2200,10,15,12,C-01-03,Assembly Station
+SP-1042,Fixture clamp cylinder,Pneumatic,No,7400,4,3,24,C-01-05,Assembly Station
+SP-1043,Leak test seal head,Seal,No,11200,2,2,38,C-01-07,Leak Test Rig
+SP-1050,Booth intake filter 600x600,Filter,No,950,24,40,10,C-02-01,Paint Booth
+SP-1051,Spray gun nozzle set,Tooling,Set,8800,3,4,22,C-02-03,Paint Booth
+SP-1052,Paint circulation pump seal,Seal,Kit,4600,3,5,26,C-02-05,Paint Booth
+SP-1053,Oven conveyor chain 3 mtr,Chain,Mtr,2800,10,14,20,C-02-07,Curing Oven
+SP-1060,Welding contact tip 1.2 mm,Consumable,No,120,100,260,7,D-01-01,Robotic Welding Cell
+SP-1061,Welding nozzle 16 mm,Consumable,No,480,40,62,10,D-01-03,Robotic Welding Cell
+SP-1062,Wire feed roller set,Mechanical,Set,3400,6,8,18,D-01-05,Robotic Welding Cell
+SP-1063,Robot axis battery pack,Electrical,No,2600,8,10,15,D-01-07,Robotic Welding Cell
+SP-1064,Torch cable assembly 3 mtr,Cable,No,16800,2,1,35,D-01-09,Robotic Welding Cell
+SP-1070,Hydraulic return filter element,Filter,No,3900,8,10,16,D-02-01,Hydraulic Press
+SP-1071,Ram gib liner,Mechanical,No,21000,2,2,48,D-02-03,Hydraulic Press
+SP-1072,Hydraulic hose 1 inch x 2 mtr,Hydraulic,No,4800,6,9,14,D-02-05,Hydraulic Press
+SP-1073,Brake friction disc,Mechanical,No,27500,2,1,52,D-02-07,Hydraulic Press
+SP-1080,V-belt SPB 2500,Belt,No,1400,12,18,10,E-01-01,Air Compressor
+SP-1081,Compressor air/oil separator,Filter,No,9600,3,4,28,E-01-03,Air Compressor
+SP-1082,Compressor oil 20 L,Lubricant,Can,7200,4,6,12,E-01-05,Air Compressor
+SP-1083,Chiller expansion valve,Chiller,No,13400,2,2,40,E-02-01,Chiller Unit
+SP-1084,Conveyor roller 50 mm,Mechanical,No,1100,20,26,12,E-03-01,Conveyor System
+SP-1085,Drive motor 2.2 kW,Motor,No,18900,2,3,32,E-03-03,Conveyor System
+SP-1086,Gear reducer 1:30,Mechanical,No,24600,1,1,45,E-03-05,Conveyor System
+SP-1087,Lubrication grease NLGI-2 1 kg,Lubricant,No,620,30,48,7,E-04-01,All

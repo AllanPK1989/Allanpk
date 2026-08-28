@@ -273,8 +273,25 @@ in
     fn_splist = """
 (listName as text) as table =>
 let
-    Nav = SharePoint.Tables(SharePointSiteUrl, [Implementation = "2.0", ViewMode = "All"]),
-    Items = Nav{[Title = listName]}[Items]
+    // ApiVersion 15 is required for non-English SharePoint sites and is safe everywhere.
+    // Implementation 2.0 is the current connector; if a list has more than 12 Person or
+    // Lookup columns it hits a hard join limit, in which case drop Implementation and
+    // ViewMode to fall back to the 1.0 connector.
+    Nav = SharePoint.Tables(
+        SharePointSiteUrl,
+        [ApiVersion = 15, Implementation = "2.0", ViewMode = "All"]
+    ),
+    // The navigation column is called Title on some tenants and Name on others.
+    Cols = Table.ColumnNames(Nav),
+    NameCol =
+        if List.Contains(Cols, "Title") then "Title"
+        else if List.Contains(Cols, "Name") then "Name"
+        else error "SharePoint.Tables returned no Title or Name column to navigate by.",
+    Matches = Table.SelectRows(Nav, each Record.Field(_, NameCol) = listName),
+    Items =
+        if Table.RowCount(Matches) = 0
+        then error "SharePoint list not found: " & listName
+        else Matches{0}[Items]
 in
     Items
 """
@@ -369,8 +386,9 @@ in
         "This is the only switch you change at go-live.",
         allowed='"Local", "SharePoint"'))
     out.append(param(
-        "LocalDataFolder", "C:\\PMDashboard\\data\\dummy", "Text",
-        "Folder holding the dummy CSVs. Only used when SourceMode = Local."))
+        "LocalDataFolder", "C:\\PM_Dashboard\\data", "Text",
+        "Folder holding the CSVs. Only used when SourceMode = Local. "
+        "Unzip the project to C:\\PM_Dashboard and this default is already correct."))
     out.append(param(
         "SharePointSiteUrl", "https://contoso.sharepoint.com/sites/PMSystem", "Text",
         "Root URL of the SharePoint site. Only used when SourceMode = SharePoint."))
@@ -1304,6 +1322,23 @@ def build_report(base: str, inject: bool = False) -> None:
     print(f"  report: {len(built)} pages, {n_vis} visuals")
 
 
+def copy_local_data(base: str) -> None:
+    """Put a copy of the dummy CSVs next to the .pbip so the project is
+    self-contained: one folder to point LocalDataFolder at."""
+    dest = os.path.join(base, "data")
+    if os.path.isdir(dest):
+        shutil.rmtree(dest)
+    shutil.copytree(DATA, dest)
+    n = len([f for f in os.listdir(dest) if f.endswith(".csv")])
+    print(f"  local data: {n} CSVs copied to powerbi/data/")
+
+    # keep the open-and-connect instructions next to the file they describe
+    src_doc = os.path.join(ROOT, "docs", "11-opening-the-pbip.md")
+    if os.path.exists(src_doc):
+        shutil.copyfile(src_doc, os.path.join(base, "SETUP.md"))
+        print("  setup guide: powerbi/SETUP.md")
+
+
 def validate(base: str) -> bool:
     ok = True
     for root, _dirs, files in os.walk(base):
@@ -1345,6 +1380,7 @@ def main() -> None:
         })
         build_semantic_model(base)
         build_report(base)
+        copy_local_data(base)
 
     print("  validating JSON ...")
     print("  all JSON valid\n" if validate(base) else "  FIX THE ERRORS ABOVE\n")

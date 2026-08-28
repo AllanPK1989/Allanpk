@@ -1,11 +1,11 @@
 /// Key/value configuration. Read by measures via LOOKUPVALUE.
 table Config
-	lineageTag: 47e8c6a5-9265-4024-8691-087728fb2367
+	lineageTag: bcabf064-08a2-4bc0-af0b-367bade12e7f
 	isHidden
 
 	column ConfigKey
 		dataType: string
-		lineageTag: e3878731-2117-4a6f-a97e-b011193680a2
+		lineageTag: e6b9d628-0770-4465-a3b9-3444d69b55db
 		summarizeBy: none
 		sourceColumn: ConfigKey
 
@@ -13,7 +13,7 @@ table Config
 
 	column ConfigValue
 		dataType: string
-		lineageTag: 418305ba-273a-4ff2-b7c1-046ed3d7489d
+		lineageTag: ff971e86-1e8c-43af-a56c-4e6f85776fdf
 		summarizeBy: none
 		sourceColumn: ConfigValue
 
@@ -21,7 +21,7 @@ table Config
 
 	column DataType
 		dataType: string
-		lineageTag: 52e7c460-7609-4ee4-85cd-6cbfa5777a11
+		lineageTag: 865116de-55a6-457d-be54-9d6889de5608
 		summarizeBy: none
 		sourceColumn: DataType
 
@@ -29,7 +29,7 @@ table Config
 
 	column Description
 		dataType: string
-		lineageTag: 6edde833-9a0a-42ad-a3d7-812a660da3c8
+		lineageTag: ea0be232-0f3e-4ace-a49d-38441d67cfae
 		summarizeBy: none
 		sourceColumn: Description
 

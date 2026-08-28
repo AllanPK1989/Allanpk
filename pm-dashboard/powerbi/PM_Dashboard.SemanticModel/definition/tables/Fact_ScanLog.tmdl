@@ -1,10 +1,10 @@
 /// Every QR scan. Proves attendance at the machine.
 table Fact_ScanLog
-	lineageTag: 40c1ccd3-7bb6-490a-aec2-b916a185d76f
+	lineageTag: 8b5d054c-dce5-4a31-a276-be06782afa4d
 
 	column ScanID
 		dataType: string
-		lineageTag: d580a35f-cc71-400f-8c6e-e3df769aaab0
+		lineageTag: 82d28eef-43fb-4c7f-b309-e1e47336a619
 		summarizeBy: none
 		sourceColumn: ScanID
 
@@ -12,7 +12,7 @@ table Fact_ScanLog
 
 	column QRType
 		dataType: string
-		lineageTag: 9c1b4f66-d4e5-4ba8-9ec2-ac87d140ce1b
+		lineageTag: 267e8d8d-36b6-4eb5-b017-104d97447044
 		summarizeBy: none
 		sourceColumn: QRType
 
@@ -20,7 +20,7 @@ table Fact_ScanLog
 
 	column MachineID
 		dataType: string
-		lineageTag: a56fcd17-41aa-4513-8550-f837cd77cf41
+		lineageTag: 0d1eeb97-53f7-45ce-8061-8c3f314126a6
 		summarizeBy: none
 		sourceColumn: MachineID
 
@@ -28,7 +28,7 @@ table Fact_ScanLog
 
 	column MachineName
 		dataType: string
-		lineageTag: d2ff490c-7a1c-43a2-9262-9d8ec0b38f30
+		lineageTag: b575424f-bf74-49e8-a121-aa8cc5abfae6
 		summarizeBy: none
 		sourceColumn: MachineName
 
@@ -36,7 +36,7 @@ table Fact_ScanLog
 
 	column TechID
 		dataType: string
-		lineageTag: a8805faa-34d5-4b96-8353-bfadd288808a
+		lineageTag: 5c10a01d-bdd0-49f4-92de-82157527ad10
 		summarizeBy: none
 		sourceColumn: TechID
 
@@ -44,7 +44,7 @@ table Fact_ScanLog
 
 	column TechName
 		dataType: string
-		lineageTag: 5ac91513-41cb-4d68-ae0e-390783fbbcf7
+		lineageTag: 7396bca7-2f66-4a88-a251-c9f1ccaec044
 		summarizeBy: none
 		sourceColumn: TechName
 
@@ -53,7 +53,7 @@ table Fact_ScanLog
 	column ScanDateTime
 		dataType: dateTime
 		formatString: yyyy-mm-dd hh:nn
-		lineageTag: e5900c0a-3a5f-4fff-bedc-e94468ee7a13
+		lineageTag: 2addac91-d45f-4794-869f-081fe51cd999
 		summarizeBy: none
 		sourceColumn: ScanDateTime
 
@@ -63,7 +63,7 @@ table Fact_ScanLog
 
 	column LinkedWOID
 		dataType: string
-		lineageTag: 9cf0fad9-a2aa-4661-b387-2a31c46642ae
+		lineageTag: cba5718d-8d06-4436-ba7a-64c7b44fc95c
 		summarizeBy: none
 		sourceColumn: LinkedWOID
 
@@ -71,7 +71,7 @@ table Fact_ScanLog
 
 	column Action
 		dataType: string
-		lineageTag: e402bf46-56fc-439e-a939-9ae44eab6b2a
+		lineageTag: 9459bd5e-2592-4661-8d93-d5db0382a88b
 		summarizeBy: none
 		sourceColumn: Action
 
@@ -79,7 +79,7 @@ table Fact_ScanLog
 
 	column CellID
 		dataType: string
-		lineageTag: eccf7765-bdc8-44e5-8e49-a5c9f8c3d503
+		lineageTag: e2bbf91a-beff-4343-9160-efd2f9a771a2
 		summarizeBy: none
 		sourceColumn: CellID
 
@@ -88,7 +88,7 @@ table Fact_ScanLog
 	column ScanDate
 		dataType: dateTime
 		formatString: yyyy-mm-dd
-		lineageTag: db6c14e9-1f04-4a4e-950a-bbbec87e7132
+		lineageTag: 151fd2a4-a91a-4f30-be62-78e1337a56d4
 		summarizeBy: none
 		sourceColumn: ScanDate
 

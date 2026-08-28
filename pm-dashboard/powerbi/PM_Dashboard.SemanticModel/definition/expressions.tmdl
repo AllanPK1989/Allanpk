@@ -1,14 +1,14 @@
 /// Local reads the dummy CSVs. SharePoint reads the real lists and workbooks. This is the only switch you change at go-live.
 expression SourceMode = "Local" meta [IsParameterQuery=true, List={"Local", "SharePoint"}, DefaultValue="Local", Type="Text", IsParameterQueryRequired=true]
-	lineageTag: 0fe64f54-3bca-4f54-8ec2-12312b992333
+	lineageTag: c08063ac-b498-4818-8b83-eb0675f679ad
 	queryGroup: 0 Parameters
 
 	annotation PBI_ResultType = Text
 
 
-/// Folder holding the dummy CSVs. Only used when SourceMode = Local.
-expression LocalDataFolder = "C:\PMDashboard\data\dummy" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
-	lineageTag: 1a7ef29c-16a6-484c-b72b-22f675d5ec2b
+/// Folder holding the CSVs. Only used when SourceMode = Local. Unzip the project to C:\PM_Dashboard and this default is already correct.
+expression LocalDataFolder = "C:\PM_Dashboard\data" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 23256864-502b-403d-a7c2-b3223ad09dcf
 	queryGroup: 0 Parameters
 
 	annotation PBI_ResultType = Text
@@ -16,7 +16,7 @@ expression LocalDataFolder = "C:\PMDashboard\data\dummy" meta [IsParameterQuery=
 
 /// Root URL of the SharePoint site. Only used when SourceMode = SharePoint.
 expression SharePointSiteUrl = "https://contoso.sharepoint.com/sites/PMSystem" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
-	lineageTag: 15d8a052-feec-4040-b759-1ccc25cf759b
+	lineageTag: 9ad57a4e-4892-40c1-bbcd-1914173e001b
 	queryGroup: 0 Parameters
 
 	annotation PBI_ResultType = Text
@@ -34,7 +34,7 @@ expression fnLocalCsv = ```
 		in
 		    NullBlanks
 		```
-	lineageTag: 989c8f19-fd5f-4324-afcb-867ef6ad6d41
+	lineageTag: 43648934-ba41-4411-8aa9-3d561c188c76
 	queryGroup: 1 Functions
 
 	annotation PBI_ResultType = Function
@@ -44,12 +44,29 @@ expression fnLocalCsv = ```
 expression fnSpList = ```
 		(listName as text) as table =>
 		let
-		    Nav = SharePoint.Tables(SharePointSiteUrl, [Implementation = "2.0", ViewMode = "All"]),
-		    Items = Nav{[Title = listName]}[Items]
+		    // ApiVersion 15 is required for non-English SharePoint sites and is safe everywhere.
+		    // Implementation 2.0 is the current connector; if a list has more than 12 Person or
+		    // Lookup columns it hits a hard join limit, in which case drop Implementation and
+		    // ViewMode to fall back to the 1.0 connector.
+		    Nav = SharePoint.Tables(
+		        SharePointSiteUrl,
+		        [ApiVersion = 15, Implementation = "2.0", ViewMode = "All"]
+		    ),
+		    // The navigation column is called Title on some tenants and Name on others.
+		    Cols = Table.ColumnNames(Nav),
+		    NameCol =
+		        if List.Contains(Cols, "Title") then "Title"
+		        else if List.Contains(Cols, "Name") then "Name"
+		        else error "SharePoint.Tables returned no Title or Name column to navigate by.",
+		    Matches = Table.SelectRows(Nav, each Record.Field(_, NameCol) = listName),
+		    Items =
+		        if Table.RowCount(Matches) = 0
+		        then error "SharePoint list not found: " & listName
+		        else Matches{0}[Items]
 		in
 		    Items
 		```
-	lineageTag: 355e57e1-88ee-4f88-a89a-35cc8e426257
+	lineageTag: 2ae7872b-446c-44ca-a3ee-7c30779894c3
 	queryGroup: 1 Functions
 
 	annotation PBI_ResultType = Function
@@ -69,7 +86,7 @@ expression fnSpExcel = ```
 		in
 		    Data
 		```
-	lineageTag: 2f2f68b5-95d7-41f4-92a8-fe19ffaafc30
+	lineageTag: ced6e650-b23a-4cf8-80e4-3be10a69b655
 	queryGroup: 1 Functions
 
 	annotation PBI_ResultType = Function
@@ -98,7 +115,7 @@ expression fnStdHoursFolder = ```
 		in
 		    NoBlank
 		```
-	lineageTag: d235b879-87b4-42ed-b7b7-166c1a737564
+	lineageTag: cb6741be-dd60-4465-a1ee-3b92739c1085
 	queryGroup: 1 Functions
 
 	annotation PBI_ResultType = Function
@@ -131,7 +148,7 @@ expression fnSource = ```
 		in
 		    Result
 		```
-	lineageTag: 3e820482-77f7-4d80-96df-7a342adf8eb6
+	lineageTag: 16b9d33d-4f92-4f0e-9a0c-3b3ab5ef5eaa
 	queryGroup: 1 Functions
 
 	annotation PBI_ResultType = Function

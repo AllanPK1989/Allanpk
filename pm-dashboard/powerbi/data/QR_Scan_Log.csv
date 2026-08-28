@@ -1,0 +1,1660 @@
+ScanID,QRType,MachineID,MachineName,TechID,TechName,ScanDateTime,LinkedWOID,Action,CellID
+SC-000001,Machine QR,MC-006,CNC Lathe TL-04,TECH-03,Mohammed Rafi,2024-09-04T18:49:00,WO-00056,Start PM Checklist,CELL-02
+SC-000002,Machine QR,MC-001,CNC Lathe TL-01,TECH-02,Suresh Babu,2024-09-06T10:03:00,WO-00001,Start PM Checklist,CELL-01
+SC-000003,Machine QR,MC-002,CNC Lathe TL-02,TECH-01,Arun Kumar,2024-09-13T08:38:00,WO-00002,Start PM Checklist,CELL-01
+SC-000004,Machine QR,MC-007,CNC Lathe TL-05,TECH-02,Suresh Babu,2024-09-14T14:06:00,WO-00057,Start PM Checklist,CELL-02
+SC-000005,Machine QR,MC-003,CNC Lathe TL-03,TECH-03,Mohammed Rafi,2024-09-15T17:45:00,WO-00003,Start PM Checklist,CELL-01
+SC-000006,Machine QR,MC-008,VMC MC-01,TECH-01,Arun Kumar,2024-09-18T14:29:00,WO-00058,Start PM Checklist,CELL-02
+SC-000007,Machine QR,MC-004,Bar Feeder BF-01,TECH-02,Suresh Babu,2024-09-20T08:00:00,WO-00004,Start PM Checklist,CELL-01
+SC-000008,Machine QR,MC-009,VMC MC-02,TECH-03,Mohammed Rafi,2024-09-26T14:54:00,WO-00059,Start PM Checklist,CELL-02
+SC-000009,Machine QR,MC-005,Chip Conveyor CC-01,TECH-01,Arun Kumar,2024-09-27T12:56:00,WO-00005,Start PM Checklist,CELL-01
+SC-000010,Technician QR,,,TECH-02,Suresh Babu,2024-09-27T13:00:00,,Open My PM List,
+SC-000011,Machine QR,MC-008,VMC MC-01,TECH-09,Sathish Kumar,2024-09-27T19:04:00,,View Last PM,CELL-02
+SC-000012,Technician QR,,,TECH-01,Arun Kumar,2024-09-28T17:06:00,,Open My PM List,
+SC-000013,Technician QR,,,TECH-04,Vignesh S,2024-09-28T21:39:00,,Open My PM List,
+SC-000014,Machine QR,MC-021,Assembly Stn AS-03,TECH-06,Deepak Nair,2024-09-29T14:48:00,,Log Abnormality,CELL-05
+SC-000015,Machine QR,MC-032,Hyd Press HP-02,TECH-03,Mohammed Rafi,2024-09-29T16:48:00,,Request Spare,CELL-08
+SC-000016,Technician QR,,,TECH-03,Mohammed Rafi,2024-09-29T22:31:00,,Open My PM List,
+SC-000017,Technician QR,,,TECH-06,Deepak Nair,2024-09-30T07:58:00,,Open My PM List,
+SC-000018,Technician QR,,,TECH-02,Suresh Babu,2024-10-01T11:40:00,,Open My PM List,
+SC-000019,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-08,Karthik V,2024-10-01T14:58:00,,Log Abnormality,CELL-07
+SC-000020,Machine QR,MC-013,Deburring Unit DB-01,TECH-01,Arun Kumar,2024-10-03T14:43:00,,Log Abnormality,CELL-03
+SC-000021,Technician QR,,,TECH-03,Mohammed Rafi,2024-10-03T15:17:00,,Open My PM List,
+SC-000022,Technician QR,,,TECH-07,Ramesh Chandran,2024-10-03T15:54:00,,Open My PM List,
+SC-000023,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-08,Karthik V,2024-10-03T17:48:00,,View Last PM,CELL-07
+SC-000024,Machine QR,MC-007,CNC Lathe TL-05,TECH-03,Mohammed Rafi,2024-10-03T18:27:00,,Log Abnormality,CELL-02
+SC-000025,Machine QR,MC-017,Quench Oil Chiller CH-01,TECH-07,Ramesh Chandran,2024-10-05T10:34:00,,View Last PM,CELL-04
+SC-000026,Technician QR,,,TECH-05,Prakash R,2024-10-05T14:33:00,,Open My PM List,
+SC-000027,Technician QR,,,TECH-06,Deepak Nair,2024-10-06T15:49:00,,Open My PM List,
+SC-000028,Technician QR,,,TECH-07,Ramesh Chandran,2024-10-07T10:38:00,,Open My PM List,
+SC-000029,Technician QR,,,TECH-07,Ramesh Chandran,2024-10-08T15:06:00,,Open My PM List,
+SC-000030,Technician QR,,,TECH-09,Sathish Kumar,2024-10-09T08:45:00,,Open My PM List,
+SC-000031,Technician QR,,,TECH-10,Naveen Raj,2024-10-09T10:13:00,,Open My PM List,
+SC-000032,Machine QR,MC-010,Gear Hobber GH-01,TECH-03,Mohammed Rafi,2024-10-09T13:29:00,WO-00092,Start PM Checklist,CELL-03
+SC-000033,Machine QR,MC-001,CNC Lathe TL-01,TECH-03,Mohammed Rafi,2024-10-09T19:35:00,,Request Spare,CELL-01
+SC-000034,Technician QR,,,TECH-10,Naveen Raj,2024-10-09T19:52:00,,Open My PM List,
+SC-000035,Machine QR,MC-031,Hyd Press HP-01,TECH-02,Suresh Babu,2024-10-11T10:59:00,,Report Breakdown,CELL-08
+SC-000036,Machine QR,MC-021,Assembly Stn AS-03,TECH-08,Karthik V,2024-10-11T21:29:00,,View Last PM,CELL-05
+SC-000037,Technician QR,,,TECH-08,Karthik V,2024-10-12T06:14:00,,Open My PM List,
+SC-000038,Technician QR,,,TECH-02,Suresh Babu,2024-10-13T16:48:00,,Open My PM List,
+SC-000039,Technician QR,,,TECH-10,Naveen Raj,2024-10-13T21:13:00,,Open My PM List,
+SC-000040,Technician QR,,,TECH-08,Karthik V,2024-10-13T22:33:00,,Open My PM List,
+SC-000041,Technician QR,,,TECH-10,Naveen Raj,2024-10-14T11:17:00,,Open My PM List,
+SC-000042,Technician QR,,,TECH-03,Mohammed Rafi,2024-10-14T14:01:00,,Open My PM List,
+SC-000043,Technician QR,,,TECH-09,Sathish Kumar,2024-10-14T18:02:00,,Open My PM List,
+SC-000044,Machine QR,MC-003,CNC Lathe TL-03,TECH-05,Prakash R,2024-10-14T19:13:00,,View Last PM,CELL-01
+SC-000045,Machine QR,MC-019,Assembly Stn AS-01,TECH-02,Suresh Babu,2024-10-15T12:58:00,,Report Breakdown,CELL-05
+SC-000046,Technician QR,,,TECH-04,Vignesh S,2024-10-15T14:09:00,,Open My PM List,
+SC-000047,Technician QR,,,TECH-07,Ramesh Chandran,2024-10-15T14:22:00,,Open My PM List,
+SC-000048,Machine QR,MC-001,CNC Lathe TL-01,TECH-10,Naveen Raj,2024-10-16T07:06:00,,View Last PM,CELL-01
+SC-000049,Machine QR,MC-031,Hyd Press HP-01,TECH-05,Prakash R,2024-10-16T09:26:00,,Report Breakdown,CELL-08
+SC-000050,Machine QR,MC-033,Press Feeder PF-01,TECH-09,Sathish Kumar,2024-10-16T10:05:00,,Log Abnormality,CELL-08
+SC-000051,Technician QR,,,TECH-06,Deepak Nair,2024-10-16T18:08:00,,Open My PM List,
+SC-000052,Technician QR,,,TECH-01,Arun Kumar,2024-10-17T18:26:00,,Open My PM List,
+SC-000053,Machine QR,MC-031,Hyd Press HP-01,TECH-10,Naveen Raj,2024-10-18T08:10:00,,Report Breakdown,CELL-08
+SC-000054,Technician QR,,,TECH-04,Vignesh S,2024-10-19T19:07:00,,Open My PM List,
+SC-000055,Machine QR,MC-032,Hyd Press HP-02,TECH-06,Deepak Nair,2024-10-20T14:51:00,,Record Spare Replaced,CELL-08
+SC-000056,Machine QR,MC-031,Hyd Press HP-01,TECH-09,Sathish Kumar,2024-10-20T20:22:00,,View Last PM,CELL-08
+SC-000057,Technician QR,,,TECH-09,Sathish Kumar,2024-10-21T07:40:00,,Open My PM List,
+SC-000058,Technician QR,,,TECH-04,Vignesh S,2024-10-21T15:23:00,,Open My PM List,
+SC-000059,Machine QR,MC-024,Paint Booth PB-01,TECH-03,Mohammed Rafi,2024-10-21T22:51:00,,Record Spare Replaced,CELL-06
+SC-000060,Machine QR,MC-019,Assembly Stn AS-01,TECH-07,Ramesh Chandran,2024-10-22T15:44:00,,Log Abnormality,CELL-05
+SC-000061,Machine QR,MC-019,Assembly Stn AS-01,TECH-09,Sathish Kumar,2024-10-23T20:08:00,,Log Abnormality,CELL-05
+SC-000062,Technician QR,,,TECH-09,Sathish Kumar,2024-10-23T22:16:00,,Open My PM List,
+SC-000063,Machine QR,MC-013,Deburring Unit DB-01,TECH-03,Mohammed Rafi,2024-10-24T08:55:00,WO-00095,Start PM Checklist,CELL-03
+SC-000064,Technician QR,,,TECH-02,Suresh Babu,2024-10-25T08:04:00,,Open My PM List,
+SC-000065,Technician QR,,,TECH-07,Ramesh Chandran,2024-10-25T10:17:00,,Open My PM List,
+SC-000066,Technician QR,,,TECH-09,Sathish Kumar,2024-10-25T11:56:00,,Open My PM List,
+SC-000067,Technician QR,,,TECH-06,Deepak Nair,2024-10-25T17:39:00,,Open My PM List,
+SC-000068,Technician QR,,,TECH-10,Naveen Raj,2024-10-26T07:14:00,,Open My PM List,
+SC-000069,Technician QR,,,TECH-08,Karthik V,2024-10-26T11:43:00,,Open My PM List,
+SC-000070,Technician QR,,,TECH-02,Suresh Babu,2024-10-27T07:11:00,,Open My PM List,
+SC-000071,Technician QR,,,TECH-10,Naveen Raj,2024-10-27T13:18:00,,Open My PM List,
+SC-000072,Technician QR,,,TECH-07,Ramesh Chandran,2024-10-28T11:27:00,,Open My PM List,
+SC-000073,Technician QR,,,TECH-08,Karthik V,2024-10-28T12:49:00,,Open My PM List,
+SC-000074,Machine QR,MC-025,Curing Oven CO-01,TECH-05,Prakash R,2024-10-28T12:52:00,,Report Breakdown,CELL-06
+SC-000075,Technician QR,,,TECH-10,Naveen Raj,2024-10-28T18:35:00,,Open My PM List,
+SC-000076,Machine QR,MC-025,Curing Oven CO-01,TECH-09,Sathish Kumar,2024-10-28T19:51:00,,View Last PM,CELL-06
+SC-000077,Technician QR,,,TECH-06,Deepak Nair,2024-10-28T21:38:00,,Open My PM List,
+SC-000078,Technician QR,,,TECH-05,Prakash R,2024-10-29T06:02:00,,Open My PM List,
+SC-000079,Technician QR,,,TECH-05,Prakash R,2024-10-29T06:07:00,,Open My PM List,
+SC-000080,Technician QR,,,TECH-05,Prakash R,2024-10-29T08:53:00,,Open My PM List,
+SC-000081,Technician QR,,,TECH-07,Ramesh Chandran,2024-10-30T17:30:00,,Open My PM List,
+SC-000082,Technician QR,,,TECH-09,Sathish Kumar,2024-10-30T20:19:00,,Open My PM List,
+SC-000083,Technician QR,,,TECH-03,Mohammed Rafi,2024-10-31T16:04:00,,Open My PM List,
+SC-000084,Machine QR,MC-013,Deburring Unit DB-01,TECH-01,Arun Kumar,2024-10-31T17:46:00,,Request Spare,CELL-03
+SC-000085,Technician QR,,,TECH-02,Suresh Babu,2024-10-31T18:56:00,,Open My PM List,
+SC-000086,Machine QR,MC-018,HT Compressor AC-01,TECH-10,Naveen Raj,2024-11-01T17:02:00,,View Last PM,CELL-04
+SC-000087,Machine QR,MC-025,Curing Oven CO-01,TECH-03,Mohammed Rafi,2024-11-01T18:29:00,,View Last PM,CELL-06
+SC-000088,Technician QR,,,TECH-08,Karthik V,2024-11-01T20:07:00,,Open My PM List,
+SC-000089,Machine QR,MC-032,Hyd Press HP-02,TECH-08,Karthik V,2024-11-02T19:26:00,,View Last PM,CELL-08
+SC-000090,Machine QR,MC-012,Gear Shaver GS-01,TECH-05,Prakash R,2024-11-03T06:19:00,,View Last PM,CELL-03
+SC-000091,Technician QR,,,TECH-08,Karthik V,2024-11-03T11:55:00,,Open My PM List,
+SC-000092,Technician QR,,,TECH-03,Mohammed Rafi,2024-11-03T16:29:00,,Open My PM List,
+SC-000093,Technician QR,,,TECH-09,Sathish Kumar,2024-11-03T16:47:00,,Open My PM List,
+SC-000094,Technician QR,,,TECH-06,Deepak Nair,2024-11-04T08:21:00,,Open My PM List,
+SC-000095,Machine QR,MC-024,Paint Booth PB-01,TECH-07,Ramesh Chandran,2024-11-04T12:17:00,,View Last PM,CELL-06
+SC-000096,Machine QR,MC-012,Gear Shaver GS-01,TECH-01,Arun Kumar,2024-11-04T13:42:00,WO-00094,Start PM Checklist,CELL-03
+SC-000097,Machine QR,MC-014,Sealed Quench SQ-01,TECH-05,Prakash R,2024-11-05T10:28:00,WO-00120,Start PM Checklist,CELL-04
+SC-000098,Technician QR,,,TECH-02,Suresh Babu,2024-11-05T13:08:00,,Open My PM List,
+SC-000099,Technician QR,,,TECH-03,Mohammed Rafi,2024-11-05T19:25:00,,Open My PM List,
+SC-000100,Machine QR,MC-003,CNC Lathe TL-03,TECH-10,Naveen Raj,2024-11-06T20:02:00,,Record Spare Replaced,CELL-01
+SC-000101,Technician QR,,,TECH-04,Vignesh S,2024-11-07T07:25:00,,Open My PM List,
+SC-000102,Machine QR,MC-006,CNC Lathe TL-04,TECH-07,Ramesh Chandran,2024-11-07T18:45:00,,Log Abnormality,CELL-02
+SC-000103,Machine QR,MC-005,Chip Conveyor CC-01,TECH-06,Deepak Nair,2024-11-07T18:58:00,,Log Abnormality,CELL-01
+SC-000104,Technician QR,,,TECH-09,Sathish Kumar,2024-11-08T12:18:00,,Open My PM List,
+SC-000105,Machine QR,MC-019,Assembly Stn AS-01,TECH-10,Naveen Raj,2024-11-08T17:46:00,WO-00185,Start PM Checklist,CELL-05
+SC-000106,Technician QR,,,TECH-06,Deepak Nair,2024-11-09T08:29:00,,Open My PM List,
+SC-000107,Machine QR,MC-004,Bar Feeder BF-01,TECH-04,Vignesh S,2024-11-09T12:34:00,,View Last PM,CELL-01
+SC-000108,Technician QR,,,TECH-05,Prakash R,2024-11-09T21:25:00,,Open My PM List,
+SC-000109,Technician QR,,,TECH-09,Sathish Kumar,2024-11-10T12:04:00,,Open My PM List,
+SC-000110,Machine QR,MC-015,Sealed Quench SQ-02,TECH-02,Suresh Babu,2024-11-11T10:07:00,WO-00121,Start PM Checklist,CELL-04
+SC-000111,Technician QR,,,TECH-05,Prakash R,2024-11-11T22:21:00,,Open My PM List,
+SC-000112,Machine QR,MC-003,CNC Lathe TL-03,TECH-03,Mohammed Rafi,2024-11-12T14:59:00,,View Last PM,CELL-01
+SC-000113,Technician QR,,,TECH-10,Naveen Raj,2024-11-13T06:53:00,,Open My PM List,
+SC-000114,Machine QR,MC-026,Paint Chiller CH-02,TECH-10,Naveen Raj,2024-11-13T07:13:00,,View Last PM,CELL-06
+SC-000115,Machine QR,MC-002,CNC Lathe TL-02,TECH-10,Naveen Raj,2024-11-13T09:07:00,,Report Breakdown,CELL-01
+SC-000116,Machine QR,MC-020,Assembly Stn AS-02,TECH-10,Naveen Raj,2024-11-13T14:57:00,WO-00186,Start PM Checklist,CELL-05
+SC-000117,Technician QR,,,TECH-10,Naveen Raj,2024-11-14T06:19:00,,Open My PM List,
+SC-000118,Machine QR,MC-023,Assy Conveyor CV-01,TECH-05,Prakash R,2024-11-14T15:46:00,,View Last PM,CELL-05
+SC-000119,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-04,Vignesh S,2024-11-15T07:48:00,,Log Abnormality,CELL-07
+SC-000120,Machine QR,MC-007,CNC Lathe TL-05,TECH-03,Mohammed Rafi,2024-11-15T08:18:00,,View Last PM,CELL-02
+SC-000121,Technician QR,,,TECH-06,Deepak Nair,2024-11-15T13:22:00,,Open My PM List,
+SC-000122,Technician QR,,,TECH-03,Mohammed Rafi,2024-11-16T06:19:00,,Open My PM List,
+SC-000123,Technician QR,,,TECH-04,Vignesh S,2024-11-16T08:33:00,,Open My PM List,
+SC-000124,Technician QR,,,TECH-07,Ramesh Chandran,2024-11-16T16:34:00,,Open My PM List,
+SC-000125,Machine QR,MC-006,CNC Lathe TL-04,TECH-02,Suresh Babu,2024-11-17T08:46:00,,View Last PM,CELL-02
+SC-000126,Machine QR,MC-030,Weld Compressor AC-02,TECH-06,Deepak Nair,2024-11-17T11:15:00,,Log Abnormality,CELL-07
+SC-000127,Machine QR,MC-018,HT Compressor AC-01,TECH-04,Vignesh S,2024-11-18T17:36:00,,Log Abnormality,CELL-04
+SC-000128,Technician QR,,,TECH-03,Mohammed Rafi,2024-11-18T21:27:00,,Open My PM List,
+SC-000129,Machine QR,MC-023,Assy Conveyor CV-01,TECH-10,Naveen Raj,2024-11-19T17:20:00,,View Last PM,CELL-05
+SC-000130,Machine QR,MC-023,Assy Conveyor CV-01,TECH-04,Vignesh S,2024-11-19T22:18:00,,View Last PM,CELL-05
+SC-000131,Machine QR,MC-024,Paint Booth PB-01,TECH-01,Arun Kumar,2024-11-20T10:16:00,,Log Abnormality,CELL-06
+SC-000132,Technician QR,,,TECH-04,Vignesh S,2024-11-20T13:02:00,,Open My PM List,
+SC-000133,Machine QR,MC-022,Leak Test Rig LT-01,TECH-10,Naveen Raj,2024-11-20T14:55:00,WO-00188,Start PM Checklist,CELL-05
+SC-000134,Technician QR,,,TECH-03,Mohammed Rafi,2024-11-21T08:06:00,,Open My PM List,
+SC-000135,Technician QR,,,TECH-06,Deepak Nair,2024-11-21T09:42:00,,Open My PM List,
+SC-000136,Technician QR,,,TECH-04,Vignesh S,2024-11-21T11:09:00,,Open My PM List,
+SC-000137,Technician QR,,,TECH-07,Ramesh Chandran,2024-11-21T20:47:00,,Open My PM List,
+SC-000138,Machine QR,MC-029,Positioner PZ-01,TECH-01,Arun Kumar,2024-11-22T08:55:00,,Report Breakdown,CELL-07
+SC-000139,Technician QR,,,TECH-02,Suresh Babu,2024-11-22T17:55:00,,Open My PM List,
+SC-000140,Technician QR,,,TECH-09,Sathish Kumar,2024-11-22T20:27:00,,Open My PM List,
+SC-000141,Technician QR,,,TECH-04,Vignesh S,2024-11-23T07:36:00,,Open My PM List,
+SC-000142,Technician QR,,,TECH-07,Ramesh Chandran,2024-11-23T19:42:00,,Open My PM List,
+SC-000143,Machine QR,MC-023,Assy Conveyor CV-01,TECH-10,Naveen Raj,2024-11-24T09:17:00,WO-00189,Start PM Checklist,CELL-05
+SC-000144,Machine QR,MC-010,Gear Hobber GH-01,TECH-07,Ramesh Chandran,2024-11-24T13:02:00,,View Last PM,CELL-03
+SC-000145,Machine QR,MC-005,Chip Conveyor CC-01,TECH-02,Suresh Babu,2024-11-25T06:30:00,,Report Breakdown,CELL-01
+SC-000146,Technician QR,,,TECH-01,Arun Kumar,2024-11-25T18:02:00,,Open My PM List,
+SC-000147,Technician QR,,,TECH-03,Mohammed Rafi,2024-11-25T22:31:00,,Open My PM List,
+SC-000148,Technician QR,,,TECH-10,Naveen Raj,2024-11-26T21:43:00,,Open My PM List,
+SC-000149,Technician QR,,,TECH-03,Mohammed Rafi,2024-11-27T11:39:00,,Open My PM List,
+SC-000150,Machine QR,MC-020,Assembly Stn AS-02,TECH-05,Prakash R,2024-11-27T17:56:00,,View Last PM,CELL-05
+SC-000151,Machine QR,MC-019,Assembly Stn AS-01,TECH-09,Sathish Kumar,2024-11-28T11:19:00,,Report Breakdown,CELL-05
+SC-000152,Machine QR,MC-009,VMC MC-02,TECH-07,Ramesh Chandran,2024-11-29T08:35:00,,View Last PM,CELL-02
+SC-000153,Technician QR,,,TECH-05,Prakash R,2024-11-30T06:10:00,,Open My PM List,
+SC-000154,Technician QR,,,TECH-05,Prakash R,2024-11-30T16:01:00,,Open My PM List,
+SC-000155,Machine QR,MC-030,Weld Compressor AC-02,TECH-05,Prakash R,2024-12-01T11:00:00,,View Last PM,CELL-07
+SC-000156,Machine QR,MC-031,Hyd Press HP-01,TECH-08,Karthik V,2024-12-01T11:15:00,,View Last PM,CELL-08
+SC-000157,Machine QR,MC-003,CNC Lathe TL-03,TECH-01,Arun Kumar,2024-12-01T13:44:00,,Request Spare,CELL-01
+SC-000158,Machine QR,MC-009,VMC MC-02,TECH-09,Sathish Kumar,2024-12-01T15:03:00,,Log Abnormality,CELL-02
+SC-000159,Machine QR,MC-017,Quench Oil Chiller CH-01,TECH-05,Prakash R,2024-12-02T12:15:00,WO-00123,Start PM Checklist,CELL-04
+SC-000160,Technician QR,,,TECH-07,Ramesh Chandran,2024-12-03T07:34:00,,Open My PM List,
+SC-000161,Technician QR,,,TECH-08,Karthik V,2024-12-03T11:22:00,,Open My PM List,
+SC-000162,Technician QR,,,TECH-01,Arun Kumar,2024-12-03T11:46:00,,Open My PM List,
+SC-000163,Machine QR,MC-030,Weld Compressor AC-02,TECH-08,Karthik V,2024-12-04T07:22:00,,View Last PM,CELL-07
+SC-000164,Machine QR,MC-007,CNC Lathe TL-05,TECH-07,Ramesh Chandran,2024-12-04T13:55:00,,Log Abnormality,CELL-02
+SC-000165,Technician QR,,,TECH-04,Vignesh S,2024-12-04T22:28:00,,Open My PM List,
+SC-000166,Machine QR,MC-002,CNC Lathe TL-02,TECH-04,Vignesh S,2024-12-05T08:55:00,,View Last PM,CELL-01
+SC-000167,Machine QR,MC-021,Assembly Stn AS-03,TECH-10,Naveen Raj,2024-12-06T13:32:00,WO-00187,Start PM Checklist,CELL-05
+SC-000168,Technician QR,,,TECH-10,Naveen Raj,2024-12-06T16:06:00,,Open My PM List,
+SC-000169,Technician QR,,,TECH-02,Suresh Babu,2024-12-07T10:09:00,,Open My PM List,
+SC-000170,Machine QR,MC-009,VMC MC-02,TECH-05,Prakash R,2024-12-07T13:37:00,,Report Breakdown,CELL-02
+SC-000171,Technician QR,,,TECH-06,Deepak Nair,2024-12-07T17:36:00,,Open My PM List,
+SC-000172,Technician QR,,,TECH-02,Suresh Babu,2024-12-08T08:33:00,,Open My PM List,
+SC-000173,Technician QR,,,TECH-02,Suresh Babu,2024-12-08T16:08:00,,Open My PM List,
+SC-000174,Technician QR,,,TECH-04,Vignesh S,2024-12-08T17:33:00,,Open My PM List,
+SC-000175,Technician QR,,,TECH-05,Prakash R,2024-12-08T18:40:00,,Open My PM List,
+SC-000176,Machine QR,MC-017,Quench Oil Chiller CH-01,TECH-08,Karthik V,2024-12-09T09:27:00,,View Last PM,CELL-04
+SC-000177,Technician QR,,,TECH-03,Mohammed Rafi,2024-12-09T16:29:00,,Open My PM List,
+SC-000178,Technician QR,,,TECH-01,Arun Kumar,2024-12-11T18:58:00,,Open My PM List,
+SC-000179,Technician QR,,,TECH-09,Sathish Kumar,2024-12-11T22:19:00,,Open My PM List,
+SC-000180,Technician QR,,,TECH-01,Arun Kumar,2024-12-12T07:45:00,,Open My PM List,
+SC-000181,Technician QR,,,TECH-05,Prakash R,2024-12-12T12:36:00,,Open My PM List,
+SC-000182,Technician QR,,,TECH-06,Deepak Nair,2024-12-12T13:10:00,,Open My PM List,
+SC-000183,Technician QR,,,TECH-01,Arun Kumar,2024-12-13T14:35:00,,Open My PM List,
+SC-000184,Technician QR,,,TECH-01,Arun Kumar,2024-12-13T16:59:00,,Open My PM List,
+SC-000185,Technician QR,,,TECH-05,Prakash R,2024-12-13T20:37:00,,Open My PM List,
+SC-000186,Machine QR,MC-018,HT Compressor AC-01,TECH-02,Suresh Babu,2024-12-14T19:43:00,,Log Abnormality,CELL-04
+SC-000187,Technician QR,,,TECH-08,Karthik V,2024-12-14T20:31:00,,Open My PM List,
+SC-000188,Technician QR,,,TECH-06,Deepak Nair,2024-12-15T06:59:00,,Open My PM List,
+SC-000189,Machine QR,MC-003,CNC Lathe TL-03,TECH-08,Karthik V,2024-12-15T11:43:00,,Record Spare Replaced,CELL-01
+SC-000190,Technician QR,,,TECH-01,Arun Kumar,2024-12-15T14:02:00,,Open My PM List,
+SC-000191,Technician QR,,,TECH-06,Deepak Nair,2024-12-15T17:21:00,,Open My PM List,
+SC-000192,Technician QR,,,TECH-01,Arun Kumar,2024-12-16T07:35:00,,Open My PM List,
+SC-000193,Technician QR,,,TECH-05,Prakash R,2024-12-16T09:59:00,,Open My PM List,
+SC-000194,Technician QR,,,TECH-08,Karthik V,2024-12-16T11:36:00,,Open My PM List,
+SC-000195,Technician QR,,,TECH-03,Mohammed Rafi,2024-12-16T18:30:00,,Open My PM List,
+SC-000196,Technician QR,,,TECH-09,Sathish Kumar,2024-12-17T10:06:00,,Open My PM List,
+SC-000197,Technician QR,,,TECH-01,Arun Kumar,2024-12-17T18:58:00,,Open My PM List,
+SC-000198,Machine QR,MC-033,Press Feeder PF-01,TECH-03,Mohammed Rafi,2024-12-17T19:52:00,,View Last PM,CELL-08
+SC-000199,Machine QR,MC-026,Paint Chiller CH-02,TECH-04,Vignesh S,2024-12-17T22:21:00,,Record Spare Replaced,CELL-06
+SC-000200,Machine QR,MC-033,Press Feeder PF-01,TECH-02,Suresh Babu,2024-12-18T07:59:00,,Record Spare Replaced,CELL-08
+SC-000201,Machine QR,MC-022,Leak Test Rig LT-01,TECH-08,Karthik V,2024-12-18T12:44:00,,Log Abnormality,CELL-05
+SC-000202,Technician QR,,,TECH-02,Suresh Babu,2024-12-18T16:55:00,,Open My PM List,
+SC-000203,Machine QR,MC-010,Gear Hobber GH-01,TECH-02,Suresh Babu,2024-12-18T22:06:00,,View Last PM,CELL-03
+SC-000204,Machine QR,MC-003,CNC Lathe TL-03,TECH-03,Mohammed Rafi,2024-12-18T22:10:00,,View Last PM,CELL-01
+SC-000205,Machine QR,MC-003,CNC Lathe TL-03,TECH-08,Karthik V,2024-12-19T06:11:00,,View Last PM,CELL-01
+SC-000206,Technician QR,,,TECH-02,Suresh Babu,2024-12-19T17:15:00,,Open My PM List,
+SC-000207,Machine QR,MC-008,VMC MC-01,TECH-07,Ramesh Chandran,2024-12-20T09:07:00,,View Last PM,CELL-02
+SC-000208,Machine QR,MC-027,Robot Weld Cell RW-01,TECH-06,Deepak Nair,2024-12-20T10:51:00,,Record Spare Replaced,CELL-07
+SC-000209,Technician QR,,,TECH-06,Deepak Nair,2024-12-21T16:30:00,,Open My PM List,
+SC-000210,Machine QR,MC-025,Curing Oven CO-01,TECH-06,Deepak Nair,2024-12-21T18:11:00,,Request Spare,CELL-06
+SC-000211,Machine QR,MC-011,Gear Hobber GH-02,TECH-06,Deepak Nair,2024-12-21T18:15:00,,Log Abnormality,CELL-03
+SC-000212,Machine QR,MC-030,Weld Compressor AC-02,TECH-06,Deepak Nair,2024-12-22T16:39:00,,View Last PM,CELL-07
+SC-000213,Technician QR,,,TECH-03,Mohammed Rafi,2024-12-22T17:36:00,,Open My PM List,
+SC-000214,Machine QR,MC-022,Leak Test Rig LT-01,TECH-03,Mohammed Rafi,2024-12-22T19:09:00,,Request Spare,CELL-05
+SC-000215,Machine QR,MC-005,Chip Conveyor CC-01,TECH-10,Naveen Raj,2024-12-22T20:48:00,,View Last PM,CELL-01
+SC-000216,Machine QR,MC-003,CNC Lathe TL-03,TECH-06,Deepak Nair,2024-12-23T15:32:00,,Record Spare Replaced,CELL-01
+SC-000217,Technician QR,,,TECH-10,Naveen Raj,2024-12-23T19:55:00,,Open My PM List,
+SC-000218,Technician QR,,,TECH-02,Suresh Babu,2024-12-24T18:54:00,,Open My PM List,
+SC-000219,Technician QR,,,TECH-01,Arun Kumar,2024-12-24T21:27:00,,Open My PM List,
+SC-000220,Technician QR,,,TECH-05,Prakash R,2024-12-25T22:12:00,,Open My PM List,
+SC-000221,Technician QR,,,TECH-01,Arun Kumar,2024-12-26T09:22:00,,Open My PM List,
+SC-000222,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-05,Prakash R,2024-12-26T16:39:00,,View Last PM,CELL-07
+SC-000223,Machine QR,MC-020,Assembly Stn AS-02,TECH-09,Sathish Kumar,2024-12-27T10:35:00,,Log Abnormality,CELL-05
+SC-000224,Technician QR,,,TECH-10,Naveen Raj,2024-12-28T08:03:00,,Open My PM List,
+SC-000225,Machine QR,MC-001,CNC Lathe TL-01,TECH-06,Deepak Nair,2024-12-28T21:37:00,,View Last PM,CELL-01
+SC-000226,Technician QR,,,TECH-08,Karthik V,2024-12-29T13:05:00,,Open My PM List,
+SC-000227,Machine QR,MC-007,CNC Lathe TL-05,TECH-03,Mohammed Rafi,2024-12-29T18:30:00,,Record Spare Replaced,CELL-02
+SC-000228,Machine QR,MC-002,CNC Lathe TL-02,TECH-06,Deepak Nair,2024-12-30T14:15:00,,View Last PM,CELL-01
+SC-000229,Technician QR,,,TECH-10,Naveen Raj,2024-12-30T14:51:00,,Open My PM List,
+SC-000230,Technician QR,,,TECH-03,Mohammed Rafi,2024-12-31T06:06:00,,Open My PM List,
+SC-000231,Technician QR,,,TECH-06,Deepak Nair,2024-12-31T06:49:00,,Open My PM List,
+SC-000232,Technician QR,,,TECH-06,Deepak Nair,2024-12-31T09:46:00,,Open My PM List,
+SC-000233,Technician QR,,,TECH-05,Prakash R,2024-12-31T12:48:00,,Open My PM List,
+SC-000234,Technician QR,,,TECH-03,Mohammed Rafi,2025-01-01T22:10:00,,Open My PM List,
+SC-000235,Machine QR,MC-014,Sealed Quench SQ-01,TECH-09,Sathish Kumar,2025-01-01T22:54:00,,View Last PM,CELL-04
+SC-000236,Machine QR,MC-010,Gear Hobber GH-01,TECH-07,Ramesh Chandran,2025-01-02T07:59:00,,Request Spare,CELL-03
+SC-000237,Technician QR,,,TECH-04,Vignesh S,2025-01-02T20:00:00,,Open My PM List,
+SC-000238,Machine QR,MC-020,Assembly Stn AS-02,TECH-08,Karthik V,2025-01-03T09:33:00,,View Last PM,CELL-05
+SC-000239,Technician QR,,,TECH-05,Prakash R,2025-01-03T18:19:00,,Open My PM List,
+SC-000240,Machine QR,MC-026,Paint Chiller CH-02,TECH-09,Sathish Kumar,2025-01-03T22:49:00,,View Last PM,CELL-06
+SC-000241,Technician QR,,,TECH-06,Deepak Nair,2025-01-04T09:49:00,,Open My PM List,
+SC-000242,Technician QR,,,TECH-09,Sathish Kumar,2025-01-04T18:21:00,,Open My PM List,
+SC-000243,Technician QR,,,TECH-03,Mohammed Rafi,2025-01-04T22:20:00,,Open My PM List,
+SC-000244,Machine QR,MC-001,CNC Lathe TL-01,TECH-01,Arun Kumar,2025-01-05T11:59:00,WO-00006,Start PM Checklist,CELL-01
+SC-000245,Technician QR,,,TECH-01,Arun Kumar,2025-01-05T15:21:00,,Open My PM List,
+SC-000246,Technician QR,,,TECH-10,Naveen Raj,2025-01-05T18:03:00,,Open My PM List,
+SC-000247,Technician QR,,,TECH-07,Ramesh Chandran,2025-01-07T15:23:00,,Open My PM List,
+SC-000248,Technician QR,,,TECH-04,Vignesh S,2025-01-07T16:34:00,,Open My PM List,
+SC-000249,Machine QR,MC-017,Quench Oil Chiller CH-01,TECH-08,Karthik V,2025-01-07T19:28:00,,Log Abnormality,CELL-04
+SC-000250,Technician QR,,,TECH-07,Ramesh Chandran,2025-01-09T07:42:00,,Open My PM List,
+SC-000251,Machine QR,MC-002,CNC Lathe TL-02,TECH-03,Mohammed Rafi,2025-01-09T14:16:00,WO-00007,Start PM Checklist,CELL-01
+SC-000252,Machine QR,MC-027,Robot Weld Cell RW-01,TECH-08,Karthik V,2025-01-09T18:46:00,WO-00229,Start PM Checklist,CELL-07
+SC-000253,Technician QR,,,TECH-02,Suresh Babu,2025-01-09T21:59:00,,Open My PM List,
+SC-000254,Machine QR,MC-016,Tempering Furnace TF-01,TECH-10,Naveen Raj,2025-01-10T13:22:00,,View Last PM,CELL-04
+SC-000255,Technician QR,,,TECH-09,Sathish Kumar,2025-01-10T17:13:00,,Open My PM List,
+SC-000256,Technician QR,,,TECH-10,Naveen Raj,2025-01-10T21:29:00,,Open My PM List,
+SC-000257,Technician QR,,,TECH-05,Prakash R,2025-01-12T09:46:00,,Open My PM List,
+SC-000258,Machine QR,MC-003,CNC Lathe TL-03,TECH-09,Sathish Kumar,2025-01-12T16:53:00,,Log Abnormality,CELL-01
+SC-000259,Technician QR,,,TECH-09,Sathish Kumar,2025-01-12T22:54:00,,Open My PM List,
+SC-000260,Machine QR,MC-029,Positioner PZ-01,TECH-02,Suresh Babu,2025-01-13T08:03:00,,Record Spare Replaced,CELL-07
+SC-000261,Machine QR,MC-021,Assembly Stn AS-03,TECH-03,Mohammed Rafi,2025-01-13T12:16:00,,View Last PM,CELL-05
+SC-000262,Machine QR,MC-020,Assembly Stn AS-02,TECH-02,Suresh Babu,2025-01-14T10:29:00,,Request Spare,CELL-05
+SC-000263,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-04,Vignesh S,2025-01-14T15:22:00,WO-00230,Start PM Checklist,CELL-07
+SC-000264,Machine QR,MC-016,Tempering Furnace TF-01,TECH-07,Ramesh Chandran,2025-01-14T17:13:00,,Log Abnormality,CELL-04
+SC-000265,Machine QR,MC-025,Curing Oven CO-01,TECH-01,Arun Kumar,2025-01-15T15:03:00,,Log Abnormality,CELL-06
+SC-000266,Machine QR,MC-010,Gear Hobber GH-01,TECH-01,Arun Kumar,2025-01-17T22:18:00,,View Last PM,CELL-03
+SC-000267,Technician QR,,,TECH-03,Mohammed Rafi,2025-01-17T22:24:00,,Open My PM List,
+SC-000268,Machine QR,MC-013,Deburring Unit DB-01,TECH-03,Mohammed Rafi,2025-01-19T22:16:00,,View Last PM,CELL-03
+SC-000269,Machine QR,MC-006,CNC Lathe TL-04,TECH-07,Ramesh Chandran,2025-01-20T06:47:00,,Log Abnormality,CELL-02
+SC-000270,Technician QR,,,TECH-01,Arun Kumar,2025-01-20T06:55:00,,Open My PM List,
+SC-000271,Machine QR,MC-004,Bar Feeder BF-01,TECH-01,Arun Kumar,2025-01-20T12:37:00,WO-00009,Start PM Checklist,CELL-01
+SC-000272,Machine QR,MC-025,Curing Oven CO-01,TECH-03,Mohammed Rafi,2025-01-20T17:16:00,,Report Breakdown,CELL-06
+SC-000273,Technician QR,,,TECH-08,Karthik V,2025-01-20T18:18:00,,Open My PM List,
+SC-000274,Technician QR,,,TECH-10,Naveen Raj,2025-01-21T11:41:00,,Open My PM List,
+SC-000275,Technician QR,,,TECH-10,Naveen Raj,2025-01-21T19:01:00,,Open My PM List,
+SC-000276,Technician QR,,,TECH-05,Prakash R,2025-01-21T19:46:00,,Open My PM List,
+SC-000277,Machine QR,MC-004,Bar Feeder BF-01,TECH-09,Sathish Kumar,2025-01-22T12:48:00,,Report Breakdown,CELL-01
+SC-000278,Technician QR,,,TECH-05,Prakash R,2025-01-22T14:57:00,,Open My PM List,
+SC-000279,Technician QR,,,TECH-04,Vignesh S,2025-01-22T22:26:00,,Open My PM List,
+SC-000280,Machine QR,MC-017,Quench Oil Chiller CH-01,TECH-04,Vignesh S,2025-01-22T22:46:00,,Request Spare,CELL-04
+SC-000281,Machine QR,MC-029,Positioner PZ-01,TECH-09,Sathish Kumar,2025-01-23T07:53:00,WO-00231,Start PM Checklist,CELL-07
+SC-000282,Technician QR,,,TECH-09,Sathish Kumar,2025-01-23T12:44:00,,Open My PM List,
+SC-000283,Technician QR,,,TECH-04,Vignesh S,2025-01-23T12:55:00,,Open My PM List,
+SC-000284,Technician QR,,,TECH-05,Prakash R,2025-01-23T16:53:00,,Open My PM List,
+SC-000285,Technician QR,,,TECH-09,Sathish Kumar,2025-01-24T07:51:00,,Open My PM List,
+SC-000286,Technician QR,,,TECH-07,Ramesh Chandran,2025-01-24T08:21:00,,Open My PM List,
+SC-000287,Technician QR,,,TECH-01,Arun Kumar,2025-01-24T17:54:00,,Open My PM List,
+SC-000288,Technician QR,,,TECH-07,Ramesh Chandran,2025-01-25T09:54:00,,Open My PM List,
+SC-000289,Machine QR,MC-029,Positioner PZ-01,TECH-04,Vignesh S,2025-01-25T11:12:00,,View Last PM,CELL-07
+SC-000290,Machine QR,MC-030,Weld Compressor AC-02,TECH-08,Karthik V,2025-01-26T15:57:00,WO-00232,Start PM Checklist,CELL-07
+SC-000291,Technician QR,,,TECH-02,Suresh Babu,2025-01-27T08:35:00,,Open My PM List,
+SC-000292,Technician QR,,,TECH-06,Deepak Nair,2025-01-27T19:26:00,,Open My PM List,
+SC-000293,Technician QR,,,TECH-04,Vignesh S,2025-01-27T22:36:00,,Open My PM List,
+SC-000294,Technician QR,,,TECH-06,Deepak Nair,2025-01-28T17:45:00,,Open My PM List,
+SC-000295,Machine QR,MC-005,Chip Conveyor CC-01,TECH-03,Mohammed Rafi,2025-01-29T07:57:00,WO-00010,Start PM Checklist,CELL-01
+SC-000296,Technician QR,,,TECH-07,Ramesh Chandran,2025-01-29T18:48:00,,Open My PM List,
+SC-000297,Technician QR,,,TECH-04,Vignesh S,2025-01-30T08:28:00,,Open My PM List,
+SC-000298,Machine QR,MC-020,Assembly Stn AS-02,TECH-02,Suresh Babu,2025-01-31T08:12:00,,Record Spare Replaced,CELL-05
+SC-000299,Technician QR,,,TECH-05,Prakash R,2025-01-31T17:07:00,,Open My PM List,
+SC-000300,Technician QR,,,TECH-08,Karthik V,2025-01-31T18:38:00,,Open My PM List,
+SC-000301,Technician QR,,,TECH-09,Sathish Kumar,2025-02-01T12:51:00,,Open My PM List,
+SC-000302,Machine QR,MC-003,CNC Lathe TL-03,TECH-02,Suresh Babu,2025-02-01T13:35:00,WO-00008,Start PM Checklist,CELL-01
+SC-000303,Machine QR,MC-004,Bar Feeder BF-01,TECH-01,Arun Kumar,2025-02-02T15:54:00,,View Last PM,CELL-01
+SC-000304,Technician QR,,,TECH-08,Karthik V,2025-02-03T12:45:00,,Open My PM List,
+SC-000305,Technician QR,,,TECH-02,Suresh Babu,2025-02-03T19:41:00,,Open My PM List,
+SC-000306,Technician QR,,,TECH-10,Naveen Raj,2025-02-05T12:12:00,,Open My PM List,
+SC-000307,Machine QR,MC-014,Sealed Quench SQ-01,TECH-02,Suresh Babu,2025-02-05T16:00:00,WO-00125,Start PM Checklist,CELL-04
+SC-000308,Machine QR,MC-009,VMC MC-02,TECH-05,Prakash R,2025-02-05T19:13:00,,Log Abnormality,CELL-02
+SC-000309,Machine QR,MC-018,HT Compressor AC-01,TECH-10,Naveen Raj,2025-02-07T09:15:00,,Request Spare,CELL-04
+SC-000310,Technician QR,,,TECH-04,Vignesh S,2025-02-08T13:00:00,,Open My PM List,
+SC-000311,Machine QR,MC-006,CNC Lathe TL-04,TECH-01,Arun Kumar,2025-02-08T13:31:00,WO-00060,Start PM Checklist,CELL-02
+SC-000312,Machine QR,MC-017,Quench Oil Chiller CH-01,TECH-03,Mohammed Rafi,2025-02-08T16:13:00,,View Last PM,CELL-04
+SC-000313,Machine QR,MC-030,Weld Compressor AC-02,TECH-07,Ramesh Chandran,2025-02-10T09:12:00,,Request Spare,CELL-07
+SC-000314,Machine QR,MC-019,Assembly Stn AS-01,TECH-05,Prakash R,2025-02-10T09:57:00,,View Last PM,CELL-05
+SC-000315,Machine QR,MC-015,Sealed Quench SQ-02,TECH-06,Deepak Nair,2025-02-10T10:37:00,WO-00126,Start PM Checklist,CELL-04
+SC-000316,Technician QR,,,TECH-09,Sathish Kumar,2025-02-10T12:26:00,,Open My PM List,
+SC-000317,Technician QR,,,TECH-10,Naveen Raj,2025-02-10T16:04:00,,Open My PM List,
+SC-000318,Technician QR,,,TECH-08,Karthik V,2025-02-11T18:44:00,,Open My PM List,
+SC-000319,Technician QR,,,TECH-07,Ramesh Chandran,2025-02-11T19:22:00,,Open My PM List,
+SC-000320,Technician QR,,,TECH-07,Ramesh Chandran,2025-02-12T10:07:00,,Open My PM List,
+SC-000321,Machine QR,MC-007,CNC Lathe TL-05,TECH-03,Mohammed Rafi,2025-02-12T14:35:00,WO-00061,Start PM Checklist,CELL-02
+SC-000322,Technician QR,,,TECH-08,Karthik V,2025-02-12T20:42:00,,Open My PM List,
+SC-000323,Technician QR,,,TECH-03,Mohammed Rafi,2025-02-14T19:25:00,,Open My PM List,
+SC-000324,Machine QR,MC-003,CNC Lathe TL-03,TECH-04,Vignesh S,2025-02-15T16:12:00,,Log Abnormality,CELL-01
+SC-000325,Machine QR,MC-016,Tempering Furnace TF-01,TECH-05,Prakash R,2025-02-16T16:06:00,WO-00127,Start PM Checklist,CELL-04
+SC-000326,Machine QR,MC-030,Weld Compressor AC-02,TECH-03,Mohammed Rafi,2025-02-16T18:50:00,,Request Spare,CELL-07
+SC-000327,Machine QR,MC-023,Assy Conveyor CV-01,TECH-05,Prakash R,2025-02-16T21:16:00,,View Last PM,CELL-05
+SC-000328,Machine QR,MC-007,CNC Lathe TL-05,TECH-05,Prakash R,2025-02-17T09:32:00,,Request Spare,CELL-02
+SC-000329,Machine QR,MC-009,VMC MC-02,TECH-05,Prakash R,2025-02-18T06:49:00,,View Last PM,CELL-02
+SC-000330,Machine QR,MC-004,Bar Feeder BF-01,TECH-05,Prakash R,2025-02-18T09:01:00,,Request Spare,CELL-01
+SC-000331,Technician QR,,,TECH-05,Prakash R,2025-02-18T12:31:00,,Open My PM List,
+SC-000332,Technician QR,,,TECH-06,Deepak Nair,2025-02-18T21:18:00,,Open My PM List,
+SC-000333,Machine QR,MC-007,CNC Lathe TL-05,TECH-06,Deepak Nair,2025-02-19T08:12:00,,View Last PM,CELL-02
+SC-000334,Technician QR,,,TECH-02,Suresh Babu,2025-02-19T12:38:00,,Open My PM List,
+SC-000335,Technician QR,,,TECH-01,Arun Kumar,2025-02-19T14:11:00,,Open My PM List,
+SC-000336,Machine QR,MC-017,Quench Oil Chiller CH-01,TECH-02,Suresh Babu,2025-02-19T15:19:00,WO-00128,Start PM Checklist,CELL-04
+SC-000337,Technician QR,,,TECH-04,Vignesh S,2025-02-19T15:21:00,,Open My PM List,
+SC-000338,Machine QR,MC-011,Gear Hobber GH-02,TECH-02,Suresh Babu,2025-02-20T08:13:00,,Log Abnormality,CELL-03
+SC-000339,Machine QR,MC-008,VMC MC-01,TECH-02,Suresh Babu,2025-02-20T18:34:00,WO-00062,Start PM Checklist,CELL-02
+SC-000340,Technician QR,,,TECH-06,Deepak Nair,2025-02-21T07:38:00,,Open My PM List,
+SC-000341,Technician QR,,,TECH-03,Mohammed Rafi,2025-02-21T17:04:00,,Open My PM List,
+SC-000342,Technician QR,,,TECH-10,Naveen Raj,2025-02-22T06:46:00,,Open My PM List,
+SC-000343,Technician QR,,,TECH-03,Mohammed Rafi,2025-02-22T16:55:00,,Open My PM List,
+SC-000344,Technician QR,,,TECH-04,Vignesh S,2025-02-23T10:06:00,,Open My PM List,
+SC-000345,Technician QR,,,TECH-10,Naveen Raj,2025-02-23T13:20:00,,Open My PM List,
+SC-000346,Machine QR,MC-018,HT Compressor AC-01,TECH-06,Deepak Nair,2025-02-23T14:45:00,WO-00129,Start PM Checklist,CELL-04
+SC-000347,Machine QR,MC-005,Chip Conveyor CC-01,TECH-01,Arun Kumar,2025-02-23T20:43:00,,View Last PM,CELL-01
+SC-000348,Technician QR,,,TECH-06,Deepak Nair,2025-02-23T21:18:00,,Open My PM List,
+SC-000349,Machine QR,MC-024,Paint Booth PB-01,TECH-01,Arun Kumar,2025-02-24T07:16:00,,Request Spare,CELL-06
+SC-000350,Technician QR,,,TECH-09,Sathish Kumar,2025-02-24T08:51:00,,Open My PM List,
+SC-000351,Machine QR,MC-002,CNC Lathe TL-02,TECH-10,Naveen Raj,2025-02-24T09:46:00,,Log Abnormality,CELL-01
+SC-000352,Technician QR,,,TECH-01,Arun Kumar,2025-02-24T09:51:00,,Open My PM List,
+SC-000353,Technician QR,,,TECH-07,Ramesh Chandran,2025-02-24T10:24:00,,Open My PM List,
+SC-000354,Technician QR,,,TECH-09,Sathish Kumar,2025-02-24T12:00:00,,Open My PM List,
+SC-000355,Machine QR,MC-026,Paint Chiller CH-02,TECH-05,Prakash R,2025-02-24T16:37:00,,View Last PM,CELL-06
+SC-000356,Machine QR,MC-003,CNC Lathe TL-03,TECH-06,Deepak Nair,2025-02-24T18:46:00,,Log Abnormality,CELL-01
+SC-000357,Machine QR,MC-016,Tempering Furnace TF-01,TECH-07,Ramesh Chandran,2025-02-24T20:02:00,,View Last PM,CELL-04
+SC-000358,Technician QR,,,TECH-02,Suresh Babu,2025-02-25T07:20:00,,Open My PM List,
+SC-000359,Machine QR,MC-012,Gear Shaver GS-01,TECH-05,Prakash R,2025-02-25T09:28:00,,Log Abnormality,CELL-03
+SC-000360,Machine QR,MC-013,Deburring Unit DB-01,TECH-05,Prakash R,2025-02-26T10:20:00,,View Last PM,CELL-03
+SC-000361,Technician QR,,,TECH-03,Mohammed Rafi,2025-02-26T12:49:00,,Open My PM List,
+SC-000362,Machine QR,MC-002,CNC Lathe TL-02,TECH-01,Arun Kumar,2025-02-26T22:32:00,,Request Spare,CELL-01
+SC-000363,Technician QR,,,TECH-02,Suresh Babu,2025-02-27T13:54:00,,Open My PM List,
+SC-000364,Technician QR,,,TECH-07,Ramesh Chandran,2025-02-28T08:22:00,,Open My PM List,
+SC-000365,Technician QR,,,TECH-07,Ramesh Chandran,2025-03-01T07:42:00,,Open My PM List,
+SC-000366,Technician QR,,,TECH-02,Suresh Babu,2025-03-02T11:51:00,,Open My PM List,
+SC-000367,Technician QR,,,TECH-01,Arun Kumar,2025-03-02T18:15:00,,Open My PM List,
+SC-000368,Machine QR,MC-005,Chip Conveyor CC-01,TECH-05,Prakash R,2025-03-06T15:44:00,,Record Spare Replaced,CELL-01
+SC-000369,Technician QR,,,TECH-04,Vignesh S,2025-03-07T14:20:00,,Open My PM List,
+SC-000370,Machine QR,MC-029,Positioner PZ-01,TECH-03,Mohammed Rafi,2025-03-07T14:58:00,,Log Abnormality,CELL-07
+SC-000371,Technician QR,,,TECH-06,Deepak Nair,2025-03-07T22:25:00,,Open My PM List,
+SC-000372,Technician QR,,,TECH-06,Deepak Nair,2025-03-08T10:36:00,,Open My PM List,
+SC-000373,Machine QR,MC-024,Paint Booth PB-01,TECH-08,Karthik V,2025-03-08T21:30:00,,View Last PM,CELL-06
+SC-000374,Technician QR,,,TECH-09,Sathish Kumar,2025-03-09T07:51:00,,Open My PM List,
+SC-000375,Technician QR,,,TECH-10,Naveen Raj,2025-03-09T11:10:00,,Open My PM List,
+SC-000376,Machine QR,MC-027,Robot Weld Cell RW-01,TECH-05,Prakash R,2025-03-09T13:14:00,,View Last PM,CELL-07
+SC-000377,Technician QR,,,TECH-06,Deepak Nair,2025-03-09T18:32:00,,Open My PM List,
+SC-000378,Technician QR,,,TECH-05,Prakash R,2025-03-10T09:49:00,,Open My PM List,
+SC-000379,Technician QR,,,TECH-09,Sathish Kumar,2025-03-10T11:32:00,,Open My PM List,
+SC-000380,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-06,Deepak Nair,2025-03-11T09:59:00,,View Last PM,CELL-07
+SC-000381,Machine QR,MC-021,Assembly Stn AS-03,TECH-06,Deepak Nair,2025-03-11T22:13:00,,Log Abnormality,CELL-05
+SC-000382,Machine QR,MC-008,VMC MC-01,TECH-09,Sathish Kumar,2025-03-12T13:36:00,,Report Breakdown,CELL-02
+SC-000383,Technician QR,,,TECH-08,Karthik V,2025-03-13T10:53:00,,Open My PM List,
+SC-000384,Machine QR,MC-020,Assembly Stn AS-02,TECH-06,Deepak Nair,2025-03-13T11:01:00,,View Last PM,CELL-05
+SC-000385,Machine QR,MC-003,CNC Lathe TL-03,TECH-07,Ramesh Chandran,2025-03-13T15:48:00,,View Last PM,CELL-01
+SC-000386,Machine QR,MC-009,VMC MC-02,TECH-10,Naveen Raj,2025-03-14T13:06:00,,View Last PM,CELL-02
+SC-000387,Machine QR,MC-011,Gear Hobber GH-02,TECH-03,Mohammed Rafi,2025-03-14T15:02:00,WO-00097,Start PM Checklist,CELL-03
+SC-000388,Machine QR,MC-009,VMC MC-02,TECH-09,Sathish Kumar,2025-03-14T15:13:00,,View Last PM,CELL-02
+SC-000389,Technician QR,,,TECH-09,Sathish Kumar,2025-03-14T20:20:00,,Open My PM List,
+SC-000390,Technician QR,,,TECH-07,Ramesh Chandran,2025-03-14T21:55:00,,Open My PM List,
+SC-000391,Technician QR,,,TECH-01,Arun Kumar,2025-03-15T12:23:00,,Open My PM List,
+SC-000392,Technician QR,,,TECH-10,Naveen Raj,2025-03-15T14:10:00,,Open My PM List,
+SC-000393,Technician QR,,,TECH-03,Mohammed Rafi,2025-03-15T18:40:00,,Open My PM List,
+SC-000394,Machine QR,MC-006,CNC Lathe TL-04,TECH-04,Vignesh S,2025-03-16T19:10:00,,Request Spare,CELL-02
+SC-000395,Machine QR,MC-001,CNC Lathe TL-01,TECH-02,Suresh Babu,2025-03-17T08:21:00,,View Last PM,CELL-01
+SC-000396,Technician QR,,,TECH-02,Suresh Babu,2025-03-17T11:30:00,,Open My PM List,
+SC-000397,Technician QR,,,TECH-07,Ramesh Chandran,2025-03-17T19:11:00,,Open My PM List,
+SC-000398,Machine QR,MC-030,Weld Compressor AC-02,TECH-06,Deepak Nair,2025-03-18T06:28:00,,View Last PM,CELL-07
+SC-000399,Machine QR,MC-012,Gear Shaver GS-01,TECH-02,Suresh Babu,2025-03-18T18:19:00,WO-00098,Start PM Checklist,CELL-03
+SC-000400,Technician QR,,,TECH-08,Karthik V,2025-03-20T08:58:00,,Open My PM List,
+SC-000401,Machine QR,MC-001,CNC Lathe TL-01,TECH-08,Karthik V,2025-03-21T22:45:00,,Log Abnormality,CELL-01
+SC-000402,Technician QR,,,TECH-07,Ramesh Chandran,2025-03-23T12:09:00,,Open My PM List,
+SC-000403,Machine QR,MC-023,Assy Conveyor CV-01,TECH-08,Karthik V,2025-03-25T17:44:00,,View Last PM,CELL-05
+SC-000404,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-06,Deepak Nair,2025-03-26T07:28:00,,View Last PM,CELL-07
+SC-000405,Technician QR,,,TECH-03,Mohammed Rafi,2025-03-26T14:49:00,,Open My PM List,
+SC-000406,Technician QR,,,TECH-06,Deepak Nair,2025-03-26T22:25:00,,Open My PM List,
+SC-000407,Technician QR,,,TECH-04,Vignesh S,2025-03-27T09:26:00,,Open My PM List,
+SC-000408,Technician QR,,,TECH-05,Prakash R,2025-03-27T12:56:00,,Open My PM List,
+SC-000409,Technician QR,,,TECH-09,Sathish Kumar,2025-03-28T13:24:00,,Open My PM List,
+SC-000410,Technician QR,,,TECH-03,Mohammed Rafi,2025-03-28T22:07:00,,Open My PM List,
+SC-000411,Technician QR,,,TECH-09,Sathish Kumar,2025-03-29T08:58:00,,Open My PM List,
+SC-000412,Machine QR,MC-015,Sealed Quench SQ-02,TECH-10,Naveen Raj,2025-03-31T06:14:00,,View Last PM,CELL-04
+SC-000413,Technician QR,,,TECH-09,Sathish Kumar,2025-03-31T09:03:00,,Open My PM List,
+SC-000414,Technician QR,,,TECH-06,Deepak Nair,2025-03-31T14:05:00,,Open My PM List,
+SC-000415,Technician QR,,,TECH-09,Sathish Kumar,2025-03-31T15:40:00,,Open My PM List,
+SC-000416,Machine QR,MC-012,Gear Shaver GS-01,TECH-10,Naveen Raj,2025-03-31T21:47:00,,View Last PM,CELL-03
+SC-000417,Machine QR,MC-013,Deburring Unit DB-01,TECH-01,Arun Kumar,2025-04-01T10:33:00,WO-00099,Start PM Checklist,CELL-03
+SC-000418,Technician QR,,,TECH-08,Karthik V,2025-04-01T17:49:00,,Open My PM List,
+SC-000419,Technician QR,,,TECH-06,Deepak Nair,2025-04-01T18:14:00,,Open My PM List,
+SC-000420,Machine QR,MC-026,Paint Chiller CH-02,TECH-07,Ramesh Chandran,2025-04-02T10:07:00,,Record Spare Replaced,CELL-06
+SC-000421,Machine QR,MC-010,Gear Hobber GH-01,TECH-01,Arun Kumar,2025-04-02T11:21:00,WO-00096,Start PM Checklist,CELL-03
+SC-000422,Technician QR,,,TECH-05,Prakash R,2025-04-03T09:15:00,,Open My PM List,
+SC-000423,Machine QR,MC-001,CNC Lathe TL-01,TECH-03,Mohammed Rafi,2025-04-03T09:56:00,WO-00011,Start PM Checklist,CELL-01
+SC-000424,Technician QR,,,TECH-06,Deepak Nair,2025-04-03T22:13:00,,Open My PM List,
+SC-000425,Technician QR,,,TECH-05,Prakash R,2025-04-04T08:11:00,,Open My PM List,
+SC-000426,Machine QR,MC-001,CNC Lathe TL-01,TECH-06,Deepak Nair,2025-04-04T16:14:00,,View Last PM,CELL-01
+SC-000427,Technician QR,,,TECH-02,Suresh Babu,2025-04-04T21:20:00,,Open My PM List,
+SC-000428,Technician QR,,,TECH-01,Arun Kumar,2025-04-05T07:17:00,,Open My PM List,
+SC-000429,Technician QR,,,TECH-10,Naveen Raj,2025-04-05T11:34:00,,Open My PM List,
+SC-000430,Machine QR,MC-001,CNC Lathe TL-01,TECH-03,Mohammed Rafi,2025-04-05T20:43:00,,View Last PM,CELL-01
+SC-000431,Machine QR,MC-031,Hyd Press HP-01,TECH-09,Sathish Kumar,2025-04-06T09:25:00,,View Last PM,CELL-08
+SC-000432,Technician QR,,,TECH-09,Sathish Kumar,2025-04-06T12:08:00,,Open My PM List,
+SC-000433,Technician QR,,,TECH-02,Suresh Babu,2025-04-06T12:38:00,,Open My PM List,
+SC-000434,Machine QR,MC-019,Assembly Stn AS-01,TECH-07,Ramesh Chandran,2025-04-06T14:56:00,WO-00190,Start PM Checklist,CELL-05
+SC-000435,Technician QR,,,TECH-08,Karthik V,2025-04-06T19:04:00,,Open My PM List,
+SC-000436,Technician QR,,,TECH-03,Mohammed Rafi,2025-04-07T15:08:00,,Open My PM List,
+SC-000437,Technician QR,,,TECH-01,Arun Kumar,2025-04-07T18:23:00,,Open My PM List,
+SC-000438,Machine QR,MC-003,CNC Lathe TL-03,TECH-04,Vignesh S,2025-04-08T06:40:00,,View Last PM,CELL-01
+SC-000439,Machine QR,MC-020,Assembly Stn AS-02,TECH-07,Ramesh Chandran,2025-04-08T08:23:00,WO-00191,Start PM Checklist,CELL-05
+SC-000440,Technician QR,,,TECH-04,Vignesh S,2025-04-08T12:36:00,,Open My PM List,
+SC-000441,Machine QR,MC-002,CNC Lathe TL-02,TECH-02,Suresh Babu,2025-04-09T07:54:00,WO-00012,Start PM Checklist,CELL-01
+SC-000442,Machine QR,MC-024,Paint Booth PB-01,TECH-09,Sathish Kumar,2025-04-09T13:20:00,WO-00220,Start PM Checklist,CELL-06
+SC-000443,Technician QR,,,TECH-07,Ramesh Chandran,2025-04-09T20:18:00,,Open My PM List,
+SC-000444,Machine QR,MC-015,Sealed Quench SQ-02,TECH-06,Deepak Nair,2025-04-10T07:17:00,,Report Breakdown,CELL-04
+SC-000445,Machine QR,MC-021,Assembly Stn AS-03,TECH-10,Naveen Raj,2025-04-10T07:25:00,,View Last PM,CELL-05
+SC-000446,Machine QR,MC-033,Press Feeder PF-01,TECH-03,Mohammed Rafi,2025-04-10T12:42:00,,Log Abnormality,CELL-08
+SC-000447,Machine QR,MC-030,Weld Compressor AC-02,TECH-02,Suresh Babu,2025-04-10T17:39:00,,View Last PM,CELL-07
+SC-000448,Machine QR,MC-016,Tempering Furnace TF-01,TECH-09,Sathish Kumar,2025-04-11T22:24:00,,Record Spare Replaced,CELL-04
+SC-000449,Technician QR,,,TECH-01,Arun Kumar,2025-04-12T09:20:00,,Open My PM List,
+SC-000450,Machine QR,MC-024,Paint Booth PB-01,TECH-07,Ramesh Chandran,2025-04-12T19:25:00,,Record Spare Replaced,CELL-06
+SC-000451,Technician QR,,,TECH-05,Prakash R,2025-04-13T20:43:00,,Open My PM List,
+SC-000452,Technician QR,,,TECH-08,Karthik V,2025-04-14T14:43:00,,Open My PM List,
+SC-000453,Technician QR,,,TECH-02,Suresh Babu,2025-04-14T17:37:00,,Open My PM List,
+SC-000454,Technician QR,,,TECH-08,Karthik V,2025-04-14T18:38:00,,Open My PM List,
+SC-000455,Machine QR,MC-025,Curing Oven CO-01,TECH-09,Sathish Kumar,2025-04-15T08:16:00,WO-00221,Start PM Checklist,CELL-06
+SC-000456,Machine QR,MC-003,CNC Lathe TL-03,TECH-01,Arun Kumar,2025-04-15T11:22:00,WO-00013,Start PM Checklist,CELL-01
+SC-000457,Machine QR,MC-026,Paint Chiller CH-02,TECH-05,Prakash R,2025-04-15T11:41:00,,Log Abnormality,CELL-06
+SC-000458,Technician QR,,,TECH-09,Sathish Kumar,2025-04-15T21:20:00,,Open My PM List,
+SC-000459,Machine QR,MC-008,VMC MC-01,TECH-01,Arun Kumar,2025-04-16T10:49:00,,Log Abnormality,CELL-02
+SC-000460,Machine QR,MC-021,Assembly Stn AS-03,TECH-07,Ramesh Chandran,2025-04-16T11:58:00,WO-00192,Start PM Checklist,CELL-05
+SC-000461,Technician QR,,,TECH-04,Vignesh S,2025-04-16T14:38:00,,Open My PM List,
+SC-000462,Technician QR,,,TECH-07,Ramesh Chandran,2025-04-17T13:17:00,,Open My PM List,
+SC-000463,Machine QR,MC-031,Hyd Press HP-01,TECH-02,Suresh Babu,2025-04-19T06:03:00,,View Last PM,CELL-08
+SC-000464,Machine QR,MC-001,CNC Lathe TL-01,TECH-10,Naveen Raj,2025-04-19T12:07:00,,View Last PM,CELL-01
+SC-000465,Technician QR,,,TECH-09,Sathish Kumar,2025-04-20T18:19:00,,Open My PM List,
+SC-000466,Technician QR,,,TECH-03,Mohammed Rafi,2025-04-20T21:38:00,,Open My PM List,
+SC-000467,Technician QR,,,TECH-10,Naveen Raj,2025-04-21T20:26:00,,Open My PM List,
+SC-000468,Technician QR,,,TECH-09,Sathish Kumar,2025-04-22T11:30:00,,Open My PM List,
+SC-000469,Machine QR,MC-004,Bar Feeder BF-01,TECH-03,Mohammed Rafi,2025-04-23T11:11:00,WO-00014,Start PM Checklist,CELL-01
+SC-000470,Machine QR,MC-026,Paint Chiller CH-02,TECH-09,Sathish Kumar,2025-04-24T10:07:00,WO-00222,Start PM Checklist,CELL-06
+SC-000471,Machine QR,MC-023,Assy Conveyor CV-01,TECH-07,Ramesh Chandran,2025-04-24T10:19:00,WO-00194,Start PM Checklist,CELL-05
+SC-000472,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-05,Prakash R,2025-04-24T15:31:00,,View Last PM,CELL-07
+SC-000473,Technician QR,,,TECH-09,Sathish Kumar,2025-04-25T10:17:00,,Open My PM List,
+SC-000474,Machine QR,MC-005,Chip Conveyor CC-01,TECH-02,Suresh Babu,2025-04-25T13:38:00,WO-00015,Start PM Checklist,CELL-01
+SC-000475,Machine QR,MC-029,Positioner PZ-01,TECH-02,Suresh Babu,2025-04-26T09:36:00,,Report Breakdown,CELL-07
+SC-000476,Machine QR,MC-027,Robot Weld Cell RW-01,TECH-02,Suresh Babu,2025-04-26T18:57:00,,Request Spare,CELL-07
+SC-000477,Technician QR,,,TECH-02,Suresh Babu,2025-04-26T21:47:00,,Open My PM List,
+SC-000478,Machine QR,MC-025,Curing Oven CO-01,TECH-10,Naveen Raj,2025-04-27T07:18:00,,View Last PM,CELL-06
+SC-000479,Machine QR,MC-026,Paint Chiller CH-02,TECH-10,Naveen Raj,2025-04-27T10:16:00,,View Last PM,CELL-06
+SC-000480,Technician QR,,,TECH-07,Ramesh Chandran,2025-04-28T06:21:00,,Open My PM List,
+SC-000481,Machine QR,MC-013,Deburring Unit DB-01,TECH-08,Karthik V,2025-04-28T15:18:00,,Log Abnormality,CELL-03
+SC-000482,Technician QR,,,TECH-09,Sathish Kumar,2025-04-28T16:06:00,,Open My PM List,
+SC-000483,Technician QR,,,TECH-02,Suresh Babu,2025-04-28T20:26:00,,Open My PM List,
+SC-000484,Technician QR,,,TECH-03,Mohammed Rafi,2025-04-29T06:20:00,,Open My PM List,
+SC-000485,Machine QR,MC-013,Deburring Unit DB-01,TECH-02,Suresh Babu,2025-04-29T16:36:00,,Record Spare Replaced,CELL-03
+SC-000486,Technician QR,,,TECH-05,Prakash R,2025-04-29T20:43:00,,Open My PM List,
+SC-000487,Technician QR,,,TECH-09,Sathish Kumar,2025-04-30T06:20:00,,Open My PM List,
+SC-000488,Technician QR,,,TECH-07,Ramesh Chandran,2025-04-30T17:19:00,,Open My PM List,
+SC-000489,Machine QR,MC-007,CNC Lathe TL-05,TECH-01,Arun Kumar,2025-04-30T22:28:00,,View Last PM,CELL-02
+SC-000490,Technician QR,,,TECH-03,Mohammed Rafi,2025-05-01T09:02:00,,Open My PM List,
+SC-000491,Machine QR,MC-030,Weld Compressor AC-02,TECH-01,Arun Kumar,2025-05-01T11:35:00,,View Last PM,CELL-07
+SC-000492,Technician QR,,,TECH-07,Ramesh Chandran,2025-05-01T13:16:00,,Open My PM List,
+SC-000493,Machine QR,MC-032,Hyd Press HP-02,TECH-06,Deepak Nair,2025-05-01T19:21:00,,View Last PM,CELL-08
+SC-000494,Machine QR,MC-016,Tempering Furnace TF-01,TECH-02,Suresh Babu,2025-05-02T07:52:00,,View Last PM,CELL-04
+SC-000495,Technician QR,,,TECH-09,Sathish Kumar,2025-05-02T09:43:00,,Open My PM List,
+SC-000496,Technician QR,,,TECH-05,Prakash R,2025-05-02T15:23:00,,Open My PM List,
+SC-000497,Technician QR,,,TECH-04,Vignesh S,2025-05-02T18:53:00,,Open My PM List,
+SC-000498,Machine QR,MC-022,Leak Test Rig LT-01,TECH-07,Ramesh Chandran,2025-05-03T07:16:00,WO-00193,Start PM Checklist,CELL-05
+SC-000499,Technician QR,,,TECH-10,Naveen Raj,2025-05-03T13:42:00,,Open My PM List,
+SC-000500,Technician QR,,,TECH-10,Naveen Raj,2025-05-03T18:18:00,,Open My PM List,
+SC-000501,Technician QR,,,TECH-10,Naveen Raj,2025-05-04T07:49:00,,Open My PM List,
+SC-000502,Technician QR,,,TECH-09,Sathish Kumar,2025-05-04T09:08:00,,Open My PM List,
+SC-000503,Machine QR,MC-015,Sealed Quench SQ-02,TECH-07,Ramesh Chandran,2025-05-04T17:19:00,,View Last PM,CELL-04
+SC-000504,Technician QR,,,TECH-08,Karthik V,2025-05-05T14:08:00,,Open My PM List,
+SC-000505,Technician QR,,,TECH-10,Naveen Raj,2025-05-06T11:04:00,,Open My PM List,
+SC-000506,Machine QR,MC-014,Sealed Quench SQ-01,TECH-07,Ramesh Chandran,2025-05-06T12:31:00,,View Last PM,CELL-04
+SC-000507,Technician QR,,,TECH-07,Ramesh Chandran,2025-05-07T13:08:00,,Open My PM List,
+SC-000508,Technician QR,,,TECH-03,Mohammed Rafi,2025-05-07T16:23:00,,Open My PM List,
+SC-000509,Technician QR,,,TECH-06,Deepak Nair,2025-05-08T08:36:00,,Open My PM List,
+SC-000510,Machine QR,MC-015,Sealed Quench SQ-02,TECH-10,Naveen Raj,2025-05-08T12:15:00,,Report Breakdown,CELL-04
+SC-000511,Technician QR,,,TECH-06,Deepak Nair,2025-05-08T17:46:00,,Open My PM List,
+SC-000512,Machine QR,MC-003,CNC Lathe TL-03,TECH-09,Sathish Kumar,2025-05-09T16:27:00,,Report Breakdown,CELL-01
+SC-000513,Technician QR,,,TECH-05,Prakash R,2025-05-09T20:56:00,,Open My PM List,
+SC-000514,Technician QR,,,TECH-03,Mohammed Rafi,2025-05-10T16:42:00,,Open My PM List,
+SC-000515,Machine QR,MC-007,CNC Lathe TL-05,TECH-07,Ramesh Chandran,2025-05-10T19:09:00,,View Last PM,CELL-02
+SC-000516,Machine QR,MC-006,CNC Lathe TL-04,TECH-07,Ramesh Chandran,2025-05-11T14:40:00,,Log Abnormality,CELL-02
+SC-000517,Technician QR,,,TECH-07,Ramesh Chandran,2025-05-11T17:21:00,,Open My PM List,
+SC-000518,Technician QR,,,TECH-09,Sathish Kumar,2025-05-11T19:36:00,,Open My PM List,
+SC-000519,Machine QR,MC-003,CNC Lathe TL-03,TECH-01,Arun Kumar,2025-05-12T08:40:00,,Log Abnormality,CELL-01
+SC-000520,Technician QR,,,TECH-05,Prakash R,2025-05-12T16:06:00,,Open My PM List,
+SC-000521,Machine QR,MC-027,Robot Weld Cell RW-01,TECH-01,Arun Kumar,2025-05-13T06:49:00,,Report Breakdown,CELL-07
+SC-000522,Machine QR,MC-015,Sealed Quench SQ-02,TECH-05,Prakash R,2025-05-13T10:27:00,WO-00131,Start PM Checklist,CELL-04
+SC-000523,Technician QR,,,TECH-03,Mohammed Rafi,2025-05-13T22:41:00,,Open My PM List,
+SC-000524,Technician QR,,,TECH-03,Mohammed Rafi,2025-05-14T06:42:00,,Open My PM List,
+SC-000525,Machine QR,MC-032,Hyd Press HP-02,TECH-08,Karthik V,2025-05-14T07:47:00,,View Last PM,CELL-08
+SC-000526,Technician QR,,,TECH-06,Deepak Nair,2025-05-14T08:56:00,,Open My PM List,
+SC-000527,Technician QR,,,TECH-08,Karthik V,2025-05-14T17:03:00,,Open My PM List,
+SC-000528,Technician QR,,,TECH-07,Ramesh Chandran,2025-05-14T20:28:00,,Open My PM List,
+SC-000529,Technician QR,,,TECH-08,Karthik V,2025-05-14T22:02:00,,Open My PM List,
+SC-000530,Machine QR,MC-016,Tempering Furnace TF-01,TECH-02,Suresh Babu,2025-05-15T09:43:00,WO-00132,Start PM Checklist,CELL-04
+SC-000531,Technician QR,,,TECH-08,Karthik V,2025-05-15T13:43:00,,Open My PM List,
+SC-000532,Technician QR,,,TECH-01,Arun Kumar,2025-05-15T19:45:00,,Open My PM List,
+SC-000533,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-07,Ramesh Chandran,2025-05-17T11:44:00,,Log Abnormality,CELL-07
+SC-000534,Technician QR,,,TECH-10,Naveen Raj,2025-05-18T19:46:00,,Open My PM List,
+SC-000535,Technician QR,,,TECH-10,Naveen Raj,2025-05-20T10:04:00,,Open My PM List,
+SC-000536,Technician QR,,,TECH-03,Mohammed Rafi,2025-05-20T17:14:00,,Open My PM List,
+SC-000537,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-10,Naveen Raj,2025-05-20T17:18:00,,View Last PM,CELL-07
+SC-000538,Machine QR,MC-005,Chip Conveyor CC-01,TECH-01,Arun Kumar,2025-05-20T17:33:00,,View Last PM,CELL-01
+SC-000539,Technician QR,,,TECH-10,Naveen Raj,2025-05-20T19:03:00,,Open My PM List,
+SC-000540,Technician QR,,,TECH-04,Vignesh S,2025-05-21T14:34:00,,Open My PM List,
+SC-000541,Machine QR,MC-001,CNC Lathe TL-01,TECH-07,Ramesh Chandran,2025-05-21T20:50:00,,Report Breakdown,CELL-01
+SC-000542,Machine QR,MC-020,Assembly Stn AS-02,TECH-03,Mohammed Rafi,2025-05-21T22:06:00,,Record Spare Replaced,CELL-05
+SC-000543,Machine QR,MC-013,Deburring Unit DB-01,TECH-04,Vignesh S,2025-05-23T18:13:00,,View Last PM,CELL-03
+SC-000544,Technician QR,,,TECH-06,Deepak Nair,2025-05-23T20:01:00,,Open My PM List,
+SC-000545,Machine QR,MC-005,Chip Conveyor CC-01,TECH-03,Mohammed Rafi,2025-05-25T07:32:00,,View Last PM,CELL-01
+SC-000546,Machine QR,MC-018,HT Compressor AC-01,TECH-05,Prakash R,2025-05-25T12:55:00,WO-00134,Start PM Checklist,CELL-04
+SC-000547,Machine QR,MC-008,VMC MC-01,TECH-05,Prakash R,2025-05-26T06:29:00,,View Last PM,CELL-02
+SC-000548,Technician QR,,,TECH-04,Vignesh S,2025-05-26T19:14:00,,Open My PM List,
+SC-000549,Machine QR,MC-022,Leak Test Rig LT-01,TECH-03,Mohammed Rafi,2025-05-27T16:18:00,,View Last PM,CELL-05
+SC-000550,Technician QR,,,TECH-04,Vignesh S,2025-05-28T17:30:00,,Open My PM List,
+SC-000551,Technician QR,,,TECH-01,Arun Kumar,2025-05-28T22:15:00,,Open My PM List,
+SC-000552,Technician QR,,,TECH-03,Mohammed Rafi,2025-05-30T06:39:00,,Open My PM List,
+SC-000553,Technician QR,,,TECH-05,Prakash R,2025-05-30T16:50:00,,Open My PM List,
+SC-000554,Technician QR,,,TECH-02,Suresh Babu,2025-05-30T19:31:00,,Open My PM List,
+SC-000555,Technician QR,,,TECH-03,Mohammed Rafi,2025-05-31T07:17:00,,Open My PM List,
+SC-000556,Technician QR,,,TECH-09,Sathish Kumar,2025-05-31T09:32:00,,Open My PM List,
+SC-000557,Technician QR,,,TECH-10,Naveen Raj,2025-05-31T13:50:00,,Open My PM List,
+SC-000558,Machine QR,MC-022,Leak Test Rig LT-01,TECH-01,Arun Kumar,2025-05-31T15:07:00,,View Last PM,CELL-05
+SC-000559,Machine QR,MC-017,Quench Oil Chiller CH-01,TECH-06,Deepak Nair,2025-06-02T12:51:00,WO-00133,Start PM Checklist,CELL-04
+SC-000560,Machine QR,MC-014,Sealed Quench SQ-01,TECH-06,Deepak Nair,2025-06-02T13:38:00,WO-00130,Start PM Checklist,CELL-04
+SC-000561,Machine QR,MC-014,Sealed Quench SQ-01,TECH-01,Arun Kumar,2025-06-02T22:41:00,,Log Abnormality,CELL-04
+SC-000562,Technician QR,,,TECH-03,Mohammed Rafi,2025-06-03T11:32:00,,Open My PM List,
+SC-000563,Technician QR,,,TECH-01,Arun Kumar,2025-06-04T06:29:00,,Open My PM List,
+SC-000564,Technician QR,,,TECH-09,Sathish Kumar,2025-06-04T10:54:00,,Open My PM List,
+SC-000565,Technician QR,,,TECH-04,Vignesh S,2025-06-04T12:09:00,,Open My PM List,
+SC-000566,Technician QR,,,TECH-09,Sathish Kumar,2025-06-04T16:02:00,,Open My PM List,
+SC-000567,Machine QR,MC-013,Deburring Unit DB-01,TECH-07,Ramesh Chandran,2025-06-05T06:15:00,,Request Spare,CELL-03
+SC-000568,Machine QR,MC-006,CNC Lathe TL-04,TECH-02,Suresh Babu,2025-06-05T09:19:00,WO-00064,Start PM Checklist,CELL-02
+SC-000569,Technician QR,,,TECH-08,Karthik V,2025-06-05T18:12:00,,Open My PM List,
+SC-000570,Technician QR,,,TECH-02,Suresh Babu,2025-06-05T19:40:00,,Open My PM List,
+SC-000571,Technician QR,,,TECH-06,Deepak Nair,2025-06-06T10:28:00,,Open My PM List,
+SC-000572,Machine QR,MC-016,Tempering Furnace TF-01,TECH-03,Mohammed Rafi,2025-06-06T21:52:00,,View Last PM,CELL-04
+SC-000573,Technician QR,,,TECH-04,Vignesh S,2025-06-07T08:46:00,,Open My PM List,
+SC-000574,Machine QR,MC-011,Gear Hobber GH-02,TECH-04,Vignesh S,2025-06-07T09:45:00,,Request Spare,CELL-03
+SC-000575,Machine QR,MC-002,CNC Lathe TL-02,TECH-01,Arun Kumar,2025-06-07T10:01:00,,Log Abnormality,CELL-01
+SC-000576,Machine QR,MC-011,Gear Hobber GH-02,TECH-06,Deepak Nair,2025-06-07T18:52:00,,View Last PM,CELL-03
+SC-000577,Machine QR,MC-032,Hyd Press HP-02,TECH-09,Sathish Kumar,2025-06-08T18:59:00,,View Last PM,CELL-08
+SC-000578,Technician QR,,,TECH-05,Prakash R,2025-06-09T08:21:00,,Open My PM List,
+SC-000579,Technician QR,,,TECH-10,Naveen Raj,2025-06-10T14:06:00,,Open My PM List,
+SC-000580,Technician QR,,,TECH-02,Suresh Babu,2025-06-10T15:14:00,,Open My PM List,
+SC-000581,Machine QR,MC-011,Gear Hobber GH-02,TECH-01,Arun Kumar,2025-06-10T18:48:00,,View Last PM,CELL-03
+SC-000582,Technician QR,,,TECH-03,Mohammed Rafi,2025-06-10T22:51:00,,Open My PM List,
+SC-000583,Machine QR,MC-026,Paint Chiller CH-02,TECH-04,Vignesh S,2025-06-11T18:21:00,,View Last PM,CELL-06
+SC-000584,Technician QR,,,TECH-09,Sathish Kumar,2025-06-12T06:25:00,,Open My PM List,
+SC-000585,Technician QR,,,TECH-01,Arun Kumar,2025-06-12T15:09:00,,Open My PM List,
+SC-000586,Technician QR,,,TECH-08,Karthik V,2025-06-12T19:03:00,,Open My PM List,
+SC-000587,Technician QR,,,TECH-01,Arun Kumar,2025-06-13T06:44:00,,Open My PM List,
+SC-000588,Machine QR,MC-019,Assembly Stn AS-01,TECH-03,Mohammed Rafi,2025-06-13T11:23:00,,View Last PM,CELL-05
+SC-000589,Machine QR,MC-007,CNC Lathe TL-05,TECH-03,Mohammed Rafi,2025-06-13T14:31:00,,View Last PM,CELL-02
+SC-000590,Machine QR,MC-007,CNC Lathe TL-05,TECH-01,Arun Kumar,2025-06-14T11:30:00,WO-00065,Start PM Checklist,CELL-02
+SC-000591,Technician QR,,,TECH-04,Vignesh S,2025-06-14T22:17:00,,Open My PM List,
+SC-000592,Machine QR,MC-025,Curing Oven CO-01,TECH-04,Vignesh S,2025-06-15T17:23:00,,Request Spare,CELL-06
+SC-000593,Machine QR,MC-026,Paint Chiller CH-02,TECH-02,Suresh Babu,2025-06-16T13:13:00,,View Last PM,CELL-06
+SC-000594,Technician QR,,,TECH-06,Deepak Nair,2025-06-17T10:16:00,,Open My PM List,
+SC-000595,Technician QR,,,TECH-06,Deepak Nair,2025-06-17T18:20:00,,Open My PM List,
+SC-000596,Technician QR,,,TECH-07,Ramesh Chandran,2025-06-17T18:51:00,,Open My PM List,
+SC-000597,Technician QR,,,TECH-06,Deepak Nair,2025-06-18T06:34:00,,Open My PM List,
+SC-000598,Machine QR,MC-008,VMC MC-01,TECH-03,Mohammed Rafi,2025-06-18T07:09:00,WO-00066,Start PM Checklist,CELL-02
+SC-000599,Technician QR,,,TECH-02,Suresh Babu,2025-06-19T08:24:00,,Open My PM List,
+SC-000600,Technician QR,,,TECH-08,Karthik V,2025-06-19T18:16:00,,Open My PM List,
+SC-000601,Technician QR,,,TECH-08,Karthik V,2025-06-19T21:20:00,,Open My PM List,
+SC-000602,Technician QR,,,TECH-10,Naveen Raj,2025-06-20T12:17:00,,Open My PM List,
+SC-000603,Machine QR,MC-025,Curing Oven CO-01,TECH-04,Vignesh S,2025-06-20T13:30:00,,View Last PM,CELL-06
+SC-000604,Technician QR,,,TECH-03,Mohammed Rafi,2025-06-20T18:55:00,,Open My PM List,
+SC-000605,Machine QR,MC-011,Gear Hobber GH-02,TECH-01,Arun Kumar,2025-06-21T13:19:00,,View Last PM,CELL-03
+SC-000606,Technician QR,,,TECH-07,Ramesh Chandran,2025-06-22T07:19:00,,Open My PM List,
+SC-000607,Machine QR,MC-004,Bar Feeder BF-01,TECH-06,Deepak Nair,2025-06-22T12:12:00,,Log Abnormality,CELL-01
+SC-000608,Technician QR,,,TECH-05,Prakash R,2025-06-22T15:13:00,,Open My PM List,
+SC-000609,Machine QR,MC-029,Positioner PZ-01,TECH-09,Sathish Kumar,2025-06-22T19:48:00,,View Last PM,CELL-07
+SC-000610,Machine QR,MC-026,Paint Chiller CH-02,TECH-06,Deepak Nair,2025-06-23T07:10:00,,Log Abnormality,CELL-06
+SC-000611,Technician QR,,,TECH-06,Deepak Nair,2025-06-23T14:12:00,,Open My PM List,
+SC-000612,Technician QR,,,TECH-09,Sathish Kumar,2025-06-23T21:29:00,,Open My PM List,
+SC-000613,Machine QR,MC-013,Deburring Unit DB-01,TECH-09,Sathish Kumar,2025-06-24T11:38:00,,View Last PM,CELL-03
+SC-000614,Machine QR,MC-029,Positioner PZ-01,TECH-09,Sathish Kumar,2025-06-25T12:42:00,,Request Spare,CELL-07
+SC-000615,Technician QR,,,TECH-05,Prakash R,2025-06-25T20:20:00,,Open My PM List,
+SC-000616,Machine QR,MC-031,Hyd Press HP-01,TECH-09,Sathish Kumar,2025-06-25T22:50:00,,View Last PM,CELL-08
+SC-000617,Technician QR,,,TECH-09,Sathish Kumar,2025-06-26T09:54:00,,Open My PM List,
+SC-000618,Machine QR,MC-009,VMC MC-02,TECH-02,Suresh Babu,2025-06-26T13:28:00,WO-00067,Start PM Checklist,CELL-02
+SC-000619,Technician QR,,,TECH-04,Vignesh S,2025-06-26T14:20:00,,Open My PM List,
+SC-000620,Technician QR,,,TECH-02,Suresh Babu,2025-06-28T08:56:00,,Open My PM List,
+SC-000621,Machine QR,MC-032,Hyd Press HP-02,TECH-03,Mohammed Rafi,2025-06-28T10:32:00,,View Last PM,CELL-08
+SC-000622,Technician QR,,,TECH-10,Naveen Raj,2025-06-28T14:14:00,,Open My PM List,
+SC-000623,Machine QR,MC-012,Gear Shaver GS-01,TECH-04,Vignesh S,2025-06-29T11:57:00,,Log Abnormality,CELL-03
+SC-000624,Technician QR,,,TECH-10,Naveen Raj,2025-06-30T11:26:00,,Open My PM List,
+SC-000625,Machine QR,MC-024,Paint Booth PB-01,TECH-06,Deepak Nair,2025-06-30T13:09:00,,Log Abnormality,CELL-06
+SC-000626,Technician QR,,,TECH-10,Naveen Raj,2025-07-02T07:12:00,,Open My PM List,
+SC-000627,Technician QR,,,TECH-06,Deepak Nair,2025-07-03T18:51:00,,Open My PM List,
+SC-000628,Machine QR,MC-010,Gear Hobber GH-01,TECH-04,Vignesh S,2025-07-04T10:22:00,,Report Breakdown,CELL-03
+SC-000629,Machine QR,MC-021,Assembly Stn AS-03,TECH-07,Ramesh Chandran,2025-07-04T11:07:00,,View Last PM,CELL-05
+SC-000630,Machine QR,MC-014,Sealed Quench SQ-01,TECH-05,Prakash R,2025-07-04T21:06:00,,Log Abnormality,CELL-04
+SC-000631,Technician QR,,,TECH-06,Deepak Nair,2025-07-04T21:17:00,,Open My PM List,
+SC-000632,Technician QR,,,TECH-05,Prakash R,2025-07-05T06:26:00,,Open My PM List,
+SC-000633,Machine QR,MC-014,Sealed Quench SQ-01,TECH-05,Prakash R,2025-07-05T10:54:00,WO-00135,Start PM Checklist,CELL-04
+SC-000634,Machine QR,MC-021,Assembly Stn AS-03,TECH-08,Karthik V,2025-07-05T11:16:00,,View Last PM,CELL-05
+SC-000635,Technician QR,,,TECH-08,Karthik V,2025-07-05T13:36:00,,Open My PM List,
+SC-000636,Machine QR,MC-027,Robot Weld Cell RW-01,TECH-09,Sathish Kumar,2025-07-05T15:41:00,WO-00233,Start PM Checklist,CELL-07
+SC-000637,Technician QR,,,TECH-02,Suresh Babu,2025-07-05T22:34:00,,Open My PM List,
+SC-000638,Machine QR,MC-005,Chip Conveyor CC-01,TECH-01,Arun Kumar,2025-07-06T09:24:00,,Record Spare Replaced,CELL-01
+SC-000639,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-06,Deepak Nair,2025-07-06T21:20:00,,View Last PM,CELL-07
+SC-000640,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-05,Prakash R,2025-07-08T09:43:00,,Report Breakdown,CELL-07
+SC-000641,Technician QR,,,TECH-01,Arun Kumar,2025-07-08T12:01:00,,Open My PM List,
+SC-000642,Technician QR,,,TECH-05,Prakash R,2025-07-08T14:31:00,,Open My PM List,
+SC-000643,Machine QR,MC-012,Gear Shaver GS-01,TECH-01,Arun Kumar,2025-07-09T18:35:00,,Request Spare,CELL-03
+SC-000644,Machine QR,MC-023,Assy Conveyor CV-01,TECH-07,Ramesh Chandran,2025-07-11T06:30:00,,Log Abnormality,CELL-05
+SC-000645,Technician QR,,,TECH-10,Naveen Raj,2025-07-11T08:02:00,,Open My PM List,
+SC-000646,Machine QR,MC-010,Gear Hobber GH-01,TECH-08,Karthik V,2025-07-11T12:56:00,,Report Breakdown,CELL-03
+SC-000647,Technician QR,,,TECH-05,Prakash R,2025-07-11T17:58:00,,Open My PM List,
+SC-000648,Technician QR,,,TECH-02,Suresh Babu,2025-07-11T18:51:00,,Open My PM List,
+SC-000649,Technician QR,,,TECH-10,Naveen Raj,2025-07-12T14:35:00,,Open My PM List,
+SC-000650,Machine QR,MC-015,Sealed Quench SQ-02,TECH-02,Suresh Babu,2025-07-12T17:41:00,WO-00136,Start PM Checklist,CELL-04
+SC-000651,Technician QR,,,TECH-03,Mohammed Rafi,2025-07-12T21:33:00,,Open My PM List,
+SC-000652,Machine QR,MC-009,VMC MC-02,TECH-01,Arun Kumar,2025-07-12T22:02:00,,View Last PM,CELL-02
+SC-000653,Machine QR,MC-012,Gear Shaver GS-01,TECH-06,Deepak Nair,2025-07-13T06:06:00,,Report Breakdown,CELL-03
+SC-000654,Machine QR,MC-021,Assembly Stn AS-03,TECH-10,Naveen Raj,2025-07-13T07:31:00,,Request Spare,CELL-05
+SC-000655,Technician QR,,,TECH-03,Mohammed Rafi,2025-07-13T09:46:00,,Open My PM List,
+SC-000656,Technician QR,,,TECH-05,Prakash R,2025-07-13T12:14:00,,Open My PM List,
+SC-000657,Technician QR,,,TECH-03,Mohammed Rafi,2025-07-13T13:45:00,,Open My PM List,
+SC-000658,Machine QR,MC-019,Assembly Stn AS-01,TECH-07,Ramesh Chandran,2025-07-14T10:28:00,,View Last PM,CELL-05
+SC-000659,Technician QR,,,TECH-01,Arun Kumar,2025-07-14T15:24:00,,Open My PM List,
+SC-000660,Machine QR,MC-013,Deburring Unit DB-01,TECH-04,Vignesh S,2025-07-15T08:17:00,,Report Breakdown,CELL-03
+SC-000661,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-08,Karthik V,2025-07-16T07:05:00,WO-00234,Start PM Checklist,CELL-07
+SC-000662,Technician QR,,,TECH-01,Arun Kumar,2025-07-16T09:21:00,,Open My PM List,
+SC-000663,Machine QR,MC-014,Sealed Quench SQ-01,TECH-05,Prakash R,2025-07-17T06:10:00,,Request Spare,CELL-04
+SC-000664,Machine QR,MC-010,Gear Hobber GH-01,TECH-04,Vignesh S,2025-07-17T13:46:00,,Log Abnormality,CELL-03
+SC-000665,Technician QR,,,TECH-09,Sathish Kumar,2025-07-17T21:02:00,,Open My PM List,
+SC-000666,Machine QR,MC-013,Deburring Unit DB-01,TECH-08,Karthik V,2025-07-17T22:04:00,,View Last PM,CELL-03
+SC-000667,Machine QR,MC-016,Tempering Furnace TF-01,TECH-06,Deepak Nair,2025-07-18T09:55:00,WO-00137,Start PM Checklist,CELL-04
+SC-000668,Technician QR,,,TECH-06,Deepak Nair,2025-07-18T10:58:00,,Open My PM List,
+SC-000669,Technician QR,,,TECH-03,Mohammed Rafi,2025-07-19T12:42:00,,Open My PM List,
+SC-000670,Technician QR,,,TECH-09,Sathish Kumar,2025-07-19T13:18:00,,Open My PM List,
+SC-000671,Machine QR,MC-029,Positioner PZ-01,TECH-04,Vignesh S,2025-07-20T07:31:00,WO-00235,Start PM Checklist,CELL-07
+SC-000672,Technician QR,,,TECH-10,Naveen Raj,2025-07-20T07:39:00,,Open My PM List,
+SC-000673,Technician QR,,,TECH-02,Suresh Babu,2025-07-20T12:05:00,,Open My PM List,
+SC-000674,Machine QR,MC-012,Gear Shaver GS-01,TECH-10,Naveen Raj,2025-07-21T12:04:00,,View Last PM,CELL-03
+SC-000675,Machine QR,MC-032,Hyd Press HP-02,TECH-09,Sathish Kumar,2025-07-22T08:50:00,,Request Spare,CELL-08
+SC-000676,Technician QR,,,TECH-09,Sathish Kumar,2025-07-22T18:49:00,,Open My PM List,
+SC-000677,Machine QR,MC-017,Quench Oil Chiller CH-01,TECH-05,Prakash R,2025-07-23T13:26:00,WO-00138,Start PM Checklist,CELL-04
+SC-000678,Technician QR,,,TECH-10,Naveen Raj,2025-07-24T12:53:00,,Open My PM List,
+SC-000679,Machine QR,MC-022,Leak Test Rig LT-01,TECH-10,Naveen Raj,2025-07-24T19:17:00,,View Last PM,CELL-05
+SC-000680,Machine QR,MC-007,CNC Lathe TL-05,TECH-05,Prakash R,2025-07-25T20:03:00,,Log Abnormality,CELL-02
+SC-000681,Machine QR,MC-021,Assembly Stn AS-03,TECH-03,Mohammed Rafi,2025-07-26T17:51:00,,Log Abnormality,CELL-05
+SC-000682,Technician QR,,,TECH-09,Sathish Kumar,2025-07-26T20:07:00,,Open My PM List,
+SC-000683,Machine QR,MC-018,HT Compressor AC-01,TECH-02,Suresh Babu,2025-07-27T16:03:00,WO-00139,Start PM Checklist,CELL-04
+SC-000684,Machine QR,MC-013,Deburring Unit DB-01,TECH-07,Ramesh Chandran,2025-07-27T16:49:00,,View Last PM,CELL-03
+SC-000685,Technician QR,,,TECH-09,Sathish Kumar,2025-07-27T19:22:00,,Open My PM List,
+SC-000686,Technician QR,,,TECH-10,Naveen Raj,2025-07-28T14:45:00,,Open My PM List,
+SC-000687,Machine QR,MC-027,Robot Weld Cell RW-01,TECH-04,Vignesh S,2025-07-28T18:21:00,,Report Breakdown,CELL-07
+SC-000688,Technician QR,,,TECH-10,Naveen Raj,2025-07-28T20:58:00,,Open My PM List,
+SC-000689,Technician QR,,,TECH-01,Arun Kumar,2025-07-30T07:50:00,,Open My PM List,
+SC-000690,Technician QR,,,TECH-05,Prakash R,2025-07-30T12:22:00,,Open My PM List,
+SC-000691,Machine QR,MC-005,Chip Conveyor CC-01,TECH-05,Prakash R,2025-07-30T12:33:00,,View Last PM,CELL-01
+SC-000692,Machine QR,MC-007,CNC Lathe TL-05,TECH-05,Prakash R,2025-07-30T12:45:00,,View Last PM,CELL-02
+SC-000693,Machine QR,MC-024,Paint Booth PB-01,TECH-08,Karthik V,2025-07-31T15:41:00,,Record Spare Replaced,CELL-06
+SC-000694,Machine QR,MC-033,Press Feeder PF-01,TECH-09,Sathish Kumar,2025-07-31T18:25:00,,Log Abnormality,CELL-08
+SC-000695,Machine QR,MC-015,Sealed Quench SQ-02,TECH-02,Suresh Babu,2025-07-31T19:33:00,,Log Abnormality,CELL-04
+SC-000696,Technician QR,,,TECH-03,Mohammed Rafi,2025-07-31T19:59:00,,Open My PM List,
+SC-000697,Technician QR,,,TECH-07,Ramesh Chandran,2025-07-31T20:02:00,,Open My PM List,
+SC-000698,Technician QR,,,TECH-10,Naveen Raj,2025-07-31T21:01:00,,Open My PM List,
+SC-000699,Machine QR,MC-021,Assembly Stn AS-03,TECH-05,Prakash R,2025-08-01T13:46:00,,View Last PM,CELL-05
+SC-000700,Technician QR,,,TECH-02,Suresh Babu,2025-08-01T19:26:00,,Open My PM List,
+SC-000701,Machine QR,MC-016,Tempering Furnace TF-01,TECH-07,Ramesh Chandran,2025-08-01T21:34:00,,Report Breakdown,CELL-04
+SC-000702,Machine QR,MC-021,Assembly Stn AS-03,TECH-05,Prakash R,2025-08-02T08:07:00,,Record Spare Replaced,CELL-05
+SC-000703,Technician QR,,,TECH-03,Mohammed Rafi,2025-08-02T12:16:00,,Open My PM List,
+SC-000704,Technician QR,,,TECH-02,Suresh Babu,2025-08-02T22:46:00,,Open My PM List,
+SC-000705,Technician QR,,,TECH-03,Mohammed Rafi,2025-08-03T08:04:00,,Open My PM List,
+SC-000706,Machine QR,MC-026,Paint Chiller CH-02,TECH-04,Vignesh S,2025-08-03T18:04:00,,Report Breakdown,CELL-06
+SC-000707,Machine QR,MC-030,Weld Compressor AC-02,TECH-06,Deepak Nair,2025-08-03T18:54:00,,View Last PM,CELL-07
+SC-000708,Technician QR,,,TECH-07,Ramesh Chandran,2025-08-03T21:08:00,,Open My PM List,
+SC-000709,Technician QR,,,TECH-04,Vignesh S,2025-08-04T09:05:00,,Open My PM List,
+SC-000710,Machine QR,MC-017,Quench Oil Chiller CH-01,TECH-08,Karthik V,2025-08-04T15:29:00,,View Last PM,CELL-04
+SC-000711,Technician QR,,,TECH-01,Arun Kumar,2025-08-04T19:25:00,,Open My PM List,
+SC-000712,Technician QR,,,TECH-10,Naveen Raj,2025-08-05T06:35:00,,Open My PM List,
+SC-000713,Technician QR,,,TECH-01,Arun Kumar,2025-08-05T08:49:00,,Open My PM List,
+SC-000714,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-01,Arun Kumar,2025-08-05T13:04:00,,View Last PM,CELL-07
+SC-000715,Machine QR,MC-019,Assembly Stn AS-01,TECH-10,Naveen Raj,2025-08-05T14:38:00,WO-00195,Start PM Checklist,CELL-05
+SC-000716,Technician QR,,,TECH-08,Karthik V,2025-08-05T16:28:00,,Open My PM List,
+SC-000717,Machine QR,MC-031,Hyd Press HP-01,TECH-08,Karthik V,2025-08-06T08:24:00,WO-00253,Start PM Checklist,CELL-08
+SC-000718,Machine QR,MC-015,Sealed Quench SQ-02,TECH-02,Suresh Babu,2025-08-06T09:11:00,,Report Breakdown,CELL-04
+SC-000719,Machine QR,MC-010,Gear Hobber GH-01,TECH-02,Suresh Babu,2025-08-06T14:40:00,WO-00100,Start PM Checklist,CELL-03
+SC-000720,Technician QR,,,TECH-10,Naveen Raj,2025-08-07T07:20:00,,Open My PM List,
+SC-000721,Technician QR,,,TECH-07,Ramesh Chandran,2025-08-07T08:31:00,,Open My PM List,
+SC-000722,Technician QR,,,TECH-08,Karthik V,2025-08-07T10:40:00,,Open My PM List,
+SC-000723,Machine QR,MC-009,VMC MC-02,TECH-09,Sathish Kumar,2025-08-07T13:06:00,,View Last PM,CELL-02
+SC-000724,Machine QR,MC-004,Bar Feeder BF-01,TECH-04,Vignesh S,2025-08-07T13:23:00,,Record Spare Replaced,CELL-01
+SC-000725,Technician QR,,,TECH-07,Ramesh Chandran,2025-08-07T14:53:00,,Open My PM List,
+SC-000726,Machine QR,MC-013,Deburring Unit DB-01,TECH-02,Suresh Babu,2025-08-07T14:56:00,,Log Abnormality,CELL-03
+SC-000727,Machine QR,MC-010,Gear Hobber GH-01,TECH-04,Vignesh S,2025-08-09T07:15:00,,Record Spare Replaced,CELL-03
+SC-000728,Machine QR,MC-030,Weld Compressor AC-02,TECH-09,Sathish Kumar,2025-08-09T11:29:00,WO-00236,Start PM Checklist,CELL-07
+SC-000729,Machine QR,MC-022,Leak Test Rig LT-01,TECH-04,Vignesh S,2025-08-09T18:11:00,,Request Spare,CELL-05
+SC-000730,Machine QR,MC-001,CNC Lathe TL-01,TECH-10,Naveen Raj,2025-08-09T22:48:00,,View Last PM,CELL-01
+SC-000731,Technician QR,,,TECH-07,Ramesh Chandran,2025-08-10T10:37:00,,Open My PM List,
+SC-000732,Technician QR,,,TECH-07,Ramesh Chandran,2025-08-10T15:13:00,,Open My PM List,
+SC-000733,Technician QR,,,TECH-09,Sathish Kumar,2025-08-10T18:55:00,,Open My PM List,
+SC-000734,Machine QR,MC-033,Press Feeder PF-01,TECH-08,Karthik V,2025-08-10T22:29:00,,View Last PM,CELL-08
+SC-000735,Technician QR,,,TECH-09,Sathish Kumar,2025-08-11T06:36:00,,Open My PM List,
+SC-000736,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-03,Mohammed Rafi,2025-08-11T11:34:00,,Report Breakdown,CELL-07
+SC-000737,Technician QR,,,TECH-03,Mohammed Rafi,2025-08-11T16:26:00,,Open My PM List,
+SC-000738,Machine QR,MC-021,Assembly Stn AS-03,TECH-02,Suresh Babu,2025-08-11T19:32:00,,Report Breakdown,CELL-05
+SC-000739,Machine QR,MC-004,Bar Feeder BF-01,TECH-05,Prakash R,2025-08-12T22:22:00,,View Last PM,CELL-01
+SC-000740,Machine QR,MC-020,Assembly Stn AS-02,TECH-10,Naveen Raj,2025-08-13T10:36:00,WO-00196,Start PM Checklist,CELL-05
+SC-000741,Machine QR,MC-002,CNC Lathe TL-02,TECH-01,Arun Kumar,2025-08-13T13:04:00,WO-00017,Start PM Checklist,CELL-01
+SC-000742,Machine QR,MC-011,Gear Hobber GH-02,TECH-01,Arun Kumar,2025-08-13T16:19:00,WO-00101,Start PM Checklist,CELL-03
+SC-000743,Technician QR,,,TECH-04,Vignesh S,2025-08-13T18:02:00,,Open My PM List,
+SC-000744,Technician QR,,,TECH-10,Naveen Raj,2025-08-13T19:04:00,,Open My PM List,
+SC-000745,Technician QR,,,TECH-02,Suresh Babu,2025-08-14T06:47:00,,Open My PM List,
+SC-000746,Technician QR,,,TECH-06,Deepak Nair,2025-08-14T07:09:00,,Open My PM List,
+SC-000747,Technician QR,,,TECH-10,Naveen Raj,2025-08-15T14:27:00,,Open My PM List,
+SC-000748,Technician QR,,,TECH-09,Sathish Kumar,2025-08-15T15:18:00,,Open My PM List,
+SC-000749,Technician QR,,,TECH-09,Sathish Kumar,2025-08-15T20:59:00,,Open My PM List,
+SC-000750,Machine QR,MC-008,VMC MC-01,TECH-02,Suresh Babu,2025-08-16T09:32:00,,Request Spare,CELL-02
+SC-000751,Technician QR,,,TECH-02,Suresh Babu,2025-08-16T14:32:00,,Open My PM List,
+SC-000752,Machine QR,MC-021,Assembly Stn AS-03,TECH-10,Naveen Raj,2025-08-16T15:35:00,WO-00197,Start PM Checklist,CELL-05
+SC-000753,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-03,Mohammed Rafi,2025-08-16T21:05:00,,Report Breakdown,CELL-07
+SC-000754,Machine QR,MC-016,Tempering Furnace TF-01,TECH-08,Karthik V,2025-08-16T21:32:00,,View Last PM,CELL-04
+SC-000755,Machine QR,MC-032,Hyd Press HP-02,TECH-05,Prakash R,2025-08-17T18:24:00,,Log Abnormality,CELL-08
+SC-000756,Technician QR,,,TECH-05,Prakash R,2025-08-18T15:55:00,,Open My PM List,
+SC-000757,Technician QR,,,TECH-03,Mohammed Rafi,2025-08-18T19:42:00,,Open My PM List,
+SC-000758,Machine QR,MC-023,Assy Conveyor CV-01,TECH-08,Karthik V,2025-08-19T09:58:00,,Report Breakdown,CELL-05
+SC-000759,Technician QR,,,TECH-03,Mohammed Rafi,2025-08-20T09:50:00,,Open My PM List,
+SC-000760,Machine QR,MC-014,Sealed Quench SQ-01,TECH-02,Suresh Babu,2025-08-20T12:01:00,,View Last PM,CELL-04
+SC-000761,Machine QR,MC-032,Hyd Press HP-02,TECH-04,Vignesh S,2025-08-20T12:35:00,WO-00254,Start PM Checklist,CELL-08
+SC-000762,Machine QR,MC-012,Gear Shaver GS-01,TECH-03,Mohammed Rafi,2025-08-21T12:36:00,WO-00102,Start PM Checklist,CELL-03
+SC-000763,Technician QR,,,TECH-10,Naveen Raj,2025-08-21T20:35:00,,Open My PM List,
+SC-000764,Machine QR,MC-015,Sealed Quench SQ-02,TECH-07,Ramesh Chandran,2025-08-21T20:55:00,,Log Abnormality,CELL-04
+SC-000765,Machine QR,MC-001,CNC Lathe TL-01,TECH-01,Arun Kumar,2025-08-22T08:22:00,,View Last PM,CELL-01
+SC-000766,Machine QR,MC-022,Leak Test Rig LT-01,TECH-10,Naveen Raj,2025-08-22T12:50:00,WO-00198,Start PM Checklist,CELL-05
+SC-000767,Technician QR,,,TECH-09,Sathish Kumar,2025-08-22T13:44:00,,Open My PM List,
+SC-000768,Machine QR,MC-006,CNC Lathe TL-04,TECH-06,Deepak Nair,2025-08-22T14:09:00,,Request Spare,CELL-02
+SC-000769,Machine QR,MC-005,Chip Conveyor CC-01,TECH-10,Naveen Raj,2025-08-22T16:01:00,,View Last PM,CELL-01
+SC-000770,Machine QR,MC-002,CNC Lathe TL-02,TECH-09,Sathish Kumar,2025-08-22T21:08:00,,Record Spare Replaced,CELL-01
+SC-000771,Machine QR,MC-032,Hyd Press HP-02,TECH-09,Sathish Kumar,2025-08-23T07:56:00,,Log Abnormality,CELL-08
+SC-000772,Technician QR,,,TECH-07,Ramesh Chandran,2025-08-23T08:22:00,,Open My PM List,
+SC-000773,Technician QR,,,TECH-08,Karthik V,2025-08-23T11:10:00,,Open My PM List,
+SC-000774,Technician QR,,,TECH-05,Prakash R,2025-08-23T14:42:00,,Open My PM List,
+SC-000775,Machine QR,MC-013,Deburring Unit DB-01,TECH-08,Karthik V,2025-08-24T09:09:00,,Log Abnormality,CELL-03
+SC-000776,Technician QR,,,TECH-08,Karthik V,2025-08-24T22:12:00,,Open My PM List,
+SC-000777,Machine QR,MC-023,Assy Conveyor CV-01,TECH-10,Naveen Raj,2025-08-25T12:08:00,WO-00199,Start PM Checklist,CELL-05
+SC-000778,Technician QR,,,TECH-09,Sathish Kumar,2025-08-25T21:16:00,,Open My PM List,
+SC-000779,Technician QR,,,TECH-05,Prakash R,2025-08-26T17:22:00,,Open My PM List,
+SC-000780,Machine QR,MC-013,Deburring Unit DB-01,TECH-02,Suresh Babu,2025-08-26T17:49:00,WO-00103,Start PM Checklist,CELL-03
+SC-000781,Machine QR,MC-005,Chip Conveyor CC-01,TECH-01,Arun Kumar,2025-08-26T18:57:00,WO-00020,Start PM Checklist,CELL-01
+SC-000782,Technician QR,,,TECH-01,Arun Kumar,2025-08-26T21:40:00,,Open My PM List,
+SC-000783,Machine QR,MC-029,Positioner PZ-01,TECH-03,Mohammed Rafi,2025-08-27T12:45:00,,View Last PM,CELL-07
+SC-000784,Technician QR,,,TECH-10,Naveen Raj,2025-08-27T16:26:00,,Open My PM List,
+SC-000785,Machine QR,MC-033,Press Feeder PF-01,TECH-08,Karthik V,2025-08-27T17:27:00,,Report Breakdown,CELL-08
+SC-000786,Technician QR,,,TECH-06,Deepak Nair,2025-08-28T10:51:00,,Open My PM List,
+SC-000787,Machine QR,MC-019,Assembly Stn AS-01,TECH-02,Suresh Babu,2025-08-28T16:07:00,,View Last PM,CELL-05
+SC-000788,Machine QR,MC-001,CNC Lathe TL-01,TECH-05,Prakash R,2025-08-28T18:32:00,,View Last PM,CELL-01
+SC-000789,Technician QR,,,TECH-05,Prakash R,2025-08-28T19:01:00,,Open My PM List,
+SC-000790,Technician QR,,,TECH-04,Vignesh S,2025-08-28T21:29:00,,Open My PM List,
+SC-000791,Machine QR,MC-004,Bar Feeder BF-01,TECH-06,Deepak Nair,2025-08-29T09:00:00,,Report Breakdown,CELL-01
+SC-000792,Machine QR,MC-026,Paint Chiller CH-02,TECH-03,Mohammed Rafi,2025-08-29T09:21:00,,View Last PM,CELL-06
+SC-000793,Machine QR,MC-001,CNC Lathe TL-01,TECH-04,Vignesh S,2025-08-29T14:11:00,,View Last PM,CELL-01
+SC-000794,Technician QR,,,TECH-04,Vignesh S,2025-08-30T06:08:00,,Open My PM List,
+SC-000795,Technician QR,,,TECH-10,Naveen Raj,2025-08-30T10:12:00,,Open My PM List,
+SC-000796,Technician QR,,,TECH-02,Suresh Babu,2025-08-30T17:19:00,,Open My PM List,
+SC-000797,Machine QR,MC-031,Hyd Press HP-01,TECH-04,Vignesh S,2025-08-30T18:27:00,,View Last PM,CELL-08
+SC-000798,Technician QR,,,TECH-02,Suresh Babu,2025-08-31T08:47:00,,Open My PM List,
+SC-000799,Technician QR,,,TECH-07,Ramesh Chandran,2025-08-31T10:29:00,,Open My PM List,
+SC-000800,Machine QR,MC-006,CNC Lathe TL-04,TECH-07,Ramesh Chandran,2025-08-31T12:09:00,,View Last PM,CELL-02
+SC-000801,Machine QR,MC-024,Paint Booth PB-01,TECH-02,Suresh Babu,2025-09-01T08:11:00,,Log Abnormality,CELL-06
+SC-000802,Technician QR,,,TECH-06,Deepak Nair,2025-09-01T08:41:00,,Open My PM List,
+SC-000803,Machine QR,MC-001,CNC Lathe TL-01,TECH-05,Prakash R,2025-09-01T16:57:00,,Report Breakdown,CELL-01
+SC-000804,Machine QR,MC-025,Curing Oven CO-01,TECH-06,Deepak Nair,2025-09-01T21:27:00,,Report Breakdown,CELL-06
+SC-000805,Technician QR,,,TECH-08,Karthik V,2025-09-03T16:51:00,,Open My PM List,
+SC-000806,Machine QR,MC-008,VMC MC-01,TECH-08,Karthik V,2025-09-03T19:58:00,,Request Spare,CELL-02
+SC-000807,Technician QR,,,TECH-04,Vignesh S,2025-09-04T09:04:00,,Open My PM List,
+SC-000808,Machine QR,MC-004,Bar Feeder BF-01,TECH-06,Deepak Nair,2025-09-05T10:18:00,,Report Breakdown,CELL-01
+SC-000809,Machine QR,MC-006,CNC Lathe TL-04,TECH-08,Karthik V,2025-09-05T20:41:00,,Report Breakdown,CELL-02
+SC-000810,Technician QR,,,TECH-06,Deepak Nair,2025-09-05T22:28:00,,Open My PM List,
+SC-000811,Technician QR,,,TECH-07,Ramesh Chandran,2025-09-06T11:54:00,,Open My PM List,
+SC-000812,Machine QR,MC-006,CNC Lathe TL-04,TECH-09,Sathish Kumar,2025-09-06T15:29:00,,Log Abnormality,CELL-02
+SC-000813,Machine QR,MC-004,Bar Feeder BF-01,TECH-02,Suresh Babu,2025-09-06T17:26:00,WO-00019,Start PM Checklist,CELL-01
+SC-000814,Machine QR,MC-006,CNC Lathe TL-04,TECH-07,Ramesh Chandran,2025-09-06T21:42:00,,Request Spare,CELL-02
+SC-000815,Technician QR,,,TECH-07,Ramesh Chandran,2025-09-07T15:13:00,,Open My PM List,
+SC-000816,Machine QR,MC-030,Weld Compressor AC-02,TECH-05,Prakash R,2025-09-07T18:39:00,,Request Spare,CELL-07
+SC-000817,Technician QR,,,TECH-02,Suresh Babu,2025-09-07T18:45:00,,Open My PM List,
+SC-000818,Technician QR,,,TECH-01,Arun Kumar,2025-09-07T21:55:00,,Open My PM List,
+SC-000819,Technician QR,,,TECH-02,Suresh Babu,2025-09-08T09:41:00,,Open My PM List,
+SC-000820,Technician QR,,,TECH-03,Mohammed Rafi,2025-09-08T20:25:00,,Open My PM List,
+SC-000821,Technician QR,,,TECH-04,Vignesh S,2025-09-09T09:55:00,,Open My PM List,
+SC-000822,Machine QR,MC-029,Positioner PZ-01,TECH-07,Ramesh Chandran,2025-09-09T12:56:00,,View Last PM,CELL-07
+SC-000823,Technician QR,,,TECH-05,Prakash R,2025-09-09T20:30:00,,Open My PM List,
+SC-000824,Technician QR,,,TECH-05,Prakash R,2025-09-09T20:44:00,,Open My PM List,
+SC-000825,Machine QR,MC-007,CNC Lathe TL-05,TECH-02,Suresh Babu,2025-09-10T11:50:00,WO-00069,Start PM Checklist,CELL-02
+SC-000826,Technician QR,,,TECH-04,Vignesh S,2025-09-11T19:58:00,,Open My PM List,
+SC-000827,Technician QR,,,TECH-08,Karthik V,2025-09-12T11:12:00,,Open My PM List,
+SC-000828,Machine QR,MC-022,Leak Test Rig LT-01,TECH-04,Vignesh S,2025-09-12T12:34:00,,View Last PM,CELL-05
+SC-000829,Technician QR,,,TECH-01,Arun Kumar,2025-09-13T19:55:00,,Open My PM List,
+SC-000830,Machine QR,MC-031,Hyd Press HP-01,TECH-05,Prakash R,2025-09-13T22:10:00,,View Last PM,CELL-08
+SC-000831,Machine QR,MC-002,CNC Lathe TL-02,TECH-07,Ramesh Chandran,2025-09-14T11:26:00,,View Last PM,CELL-01
+SC-000832,Machine QR,MC-016,Tempering Furnace TF-01,TECH-01,Arun Kumar,2025-09-14T16:33:00,,Request Spare,CELL-04
+SC-000833,Technician QR,,,TECH-06,Deepak Nair,2025-09-14T22:52:00,,Open My PM List,
+SC-000834,Technician QR,,,TECH-04,Vignesh S,2025-09-15T07:19:00,,Open My PM List,
+SC-000835,Machine QR,MC-007,CNC Lathe TL-05,TECH-01,Arun Kumar,2025-09-15T20:33:00,,View Last PM,CELL-02
+SC-000836,Technician QR,,,TECH-10,Naveen Raj,2025-09-15T20:45:00,,Open My PM List,
+SC-000837,Machine QR,MC-008,VMC MC-01,TECH-04,Vignesh S,2025-09-16T09:18:00,,View Last PM,CELL-02
+SC-000838,Machine QR,MC-008,VMC MC-01,TECH-04,Vignesh S,2025-09-16T15:29:00,,View Last PM,CELL-02
+SC-000839,Technician QR,,,TECH-04,Vignesh S,2025-09-17T11:42:00,,Open My PM List,
+SC-000840,Technician QR,,,TECH-02,Suresh Babu,2025-09-17T15:27:00,,Open My PM List,
+SC-000841,Technician QR,,,TECH-09,Sathish Kumar,2025-09-17T16:57:00,,Open My PM List,
+SC-000842,Machine QR,MC-029,Positioner PZ-01,TECH-07,Ramesh Chandran,2025-09-17T21:53:00,,Log Abnormality,CELL-07
+SC-000843,Technician QR,,,TECH-06,Deepak Nair,2025-09-18T09:11:00,,Open My PM List,
+SC-000844,Technician QR,,,TECH-09,Sathish Kumar,2025-09-19T14:29:00,,Open My PM List,
+SC-000845,Technician QR,,,TECH-08,Karthik V,2025-09-19T17:07:00,,Open My PM List,
+SC-000846,Machine QR,MC-021,Assembly Stn AS-03,TECH-03,Mohammed Rafi,2025-09-19T19:15:00,,Report Breakdown,CELL-05
+SC-000847,Technician QR,,,TECH-04,Vignesh S,2025-09-19T20:01:00,,Open My PM List,
+SC-000848,Machine QR,MC-005,Chip Conveyor CC-01,TECH-01,Arun Kumar,2025-09-19T20:24:00,,Report Breakdown,CELL-01
+SC-000849,Machine QR,MC-013,Deburring Unit DB-01,TECH-02,Suresh Babu,2025-09-20T06:47:00,,View Last PM,CELL-03
+SC-000850,Machine QR,MC-008,VMC MC-01,TECH-01,Arun Kumar,2025-09-20T11:38:00,WO-00070,Start PM Checklist,CELL-02
+SC-000851,Technician QR,,,TECH-10,Naveen Raj,2025-09-21T08:47:00,,Open My PM List,
+SC-000852,Machine QR,MC-007,CNC Lathe TL-05,TECH-10,Naveen Raj,2025-09-21T09:52:00,,View Last PM,CELL-02
+SC-000853,Machine QR,MC-009,VMC MC-02,TECH-03,Mohammed Rafi,2025-09-22T16:54:00,,Log Abnormality,CELL-02
+SC-000854,Technician QR,,,TECH-01,Arun Kumar,2025-09-23T06:56:00,,Open My PM List,
+SC-000855,Machine QR,MC-031,Hyd Press HP-01,TECH-01,Arun Kumar,2025-09-23T09:47:00,,Log Abnormality,CELL-08
+SC-000856,Machine QR,MC-009,VMC MC-02,TECH-06,Deepak Nair,2025-09-23T17:47:00,,Request Spare,CELL-02
+SC-000857,Technician QR,,,TECH-09,Sathish Kumar,2025-09-24T06:14:00,,Open My PM List,
+SC-000858,Technician QR,,,TECH-08,Karthik V,2025-09-24T09:03:00,,Open My PM List,
+SC-000859,Technician QR,,,TECH-04,Vignesh S,2025-09-24T10:10:00,,Open My PM List,
+SC-000860,Technician QR,,,TECH-09,Sathish Kumar,2025-09-25T07:15:00,,Open My PM List,
+SC-000861,Technician QR,,,TECH-04,Vignesh S,2025-09-26T13:51:00,,Open My PM List,
+SC-000862,Machine QR,MC-029,Positioner PZ-01,TECH-03,Mohammed Rafi,2025-09-26T14:20:00,,Log Abnormality,CELL-07
+SC-000863,Machine QR,MC-009,VMC MC-02,TECH-03,Mohammed Rafi,2025-09-26T16:02:00,WO-00071,Start PM Checklist,CELL-02
+SC-000864,Machine QR,MC-030,Weld Compressor AC-02,TECH-05,Prakash R,2025-09-26T17:06:00,,View Last PM,CELL-07
+SC-000865,Technician QR,,,TECH-03,Mohammed Rafi,2025-09-26T22:30:00,,Open My PM List,
+SC-000866,Technician QR,,,TECH-04,Vignesh S,2025-09-27T14:35:00,,Open My PM List,
+SC-000867,Technician QR,,,TECH-01,Arun Kumar,2025-09-28T18:19:00,,Open My PM List,
+SC-000868,Machine QR,MC-003,CNC Lathe TL-03,TECH-08,Karthik V,2025-09-29T13:38:00,,Report Breakdown,CELL-01
+SC-000869,Technician QR,,,TECH-03,Mohammed Rafi,2025-09-29T21:46:00,,Open My PM List,
+SC-000870,Technician QR,,,TECH-03,Mohammed Rafi,2025-09-29T22:30:00,,Open My PM List,
+SC-000871,Technician QR,,,TECH-08,Karthik V,2025-09-30T15:40:00,,Open My PM List,
+SC-000872,Technician QR,,,TECH-02,Suresh Babu,2025-09-30T19:52:00,,Open My PM List,
+SC-000873,Technician QR,,,TECH-01,Arun Kumar,2025-09-30T20:44:00,,Open My PM List,
+SC-000874,Technician QR,,,TECH-03,Mohammed Rafi,2025-10-01T11:12:00,,Open My PM List,
+SC-000875,Technician QR,,,TECH-03,Mohammed Rafi,2025-10-01T17:37:00,,Open My PM List,
+SC-000876,Technician QR,,,TECH-04,Vignesh S,2025-10-02T10:18:00,,Open My PM List,
+SC-000877,Machine QR,MC-021,Assembly Stn AS-03,TECH-09,Sathish Kumar,2025-10-02T12:39:00,,View Last PM,CELL-05
+SC-000878,Technician QR,,,TECH-04,Vignesh S,2025-10-03T20:45:00,,Open My PM List,
+SC-000879,Technician QR,,,TECH-03,Mohammed Rafi,2025-10-04T09:44:00,,Open My PM List,
+SC-000880,Technician QR,,,TECH-04,Vignesh S,2025-10-05T08:45:00,,Open My PM List,
+SC-000881,Machine QR,MC-006,CNC Lathe TL-04,TECH-03,Mohammed Rafi,2025-10-05T10:11:00,WO-00068,Start PM Checklist,CELL-02
+SC-000882,Machine QR,MC-016,Tempering Furnace TF-01,TECH-01,Arun Kumar,2025-10-05T11:02:00,,View Last PM,CELL-04
+SC-000883,Machine QR,MC-021,Assembly Stn AS-03,TECH-04,Vignesh S,2025-10-05T12:03:00,,Request Spare,CELL-05
+SC-000884,Technician QR,,,TECH-06,Deepak Nair,2025-10-05T17:52:00,,Open My PM List,
+SC-000885,Machine QR,MC-009,VMC MC-02,TECH-03,Mohammed Rafi,2025-10-06T19:40:00,,Report Breakdown,CELL-02
+SC-000886,Technician QR,,,TECH-01,Arun Kumar,2025-10-06T22:30:00,,Open My PM List,
+SC-000887,Technician QR,,,TECH-09,Sathish Kumar,2025-10-07T07:07:00,,Open My PM List,
+SC-000888,Technician QR,,,TECH-03,Mohammed Rafi,2025-10-07T10:25:00,,Open My PM List,
+SC-000889,Technician QR,,,TECH-09,Sathish Kumar,2025-10-07T12:53:00,,Open My PM List,
+SC-000890,Technician QR,,,TECH-09,Sathish Kumar,2025-10-08T22:05:00,,Open My PM List,
+SC-000891,Machine QR,MC-030,Weld Compressor AC-02,TECH-03,Mohammed Rafi,2025-10-09T15:53:00,,View Last PM,CELL-07
+SC-000892,Technician QR,,,TECH-10,Naveen Raj,2025-10-09T19:14:00,,Open My PM List,
+SC-000893,Technician QR,,,TECH-08,Karthik V,2025-10-09T22:47:00,,Open My PM List,
+SC-000894,Technician QR,,,TECH-06,Deepak Nair,2025-10-10T13:42:00,,Open My PM List,
+SC-000895,Machine QR,MC-022,Leak Test Rig LT-01,TECH-04,Vignesh S,2025-10-10T17:42:00,,View Last PM,CELL-05
+SC-000896,Technician QR,,,TECH-06,Deepak Nair,2025-10-10T20:19:00,,Open My PM List,
+SC-000897,Machine QR,MC-020,Assembly Stn AS-02,TECH-06,Deepak Nair,2025-10-11T06:52:00,,View Last PM,CELL-05
+SC-000898,Technician QR,,,TECH-01,Arun Kumar,2025-10-11T09:54:00,,Open My PM List,
+SC-000899,Technician QR,,,TECH-02,Suresh Babu,2025-10-11T17:57:00,,Open My PM List,
+SC-000900,Machine QR,MC-025,Curing Oven CO-01,TECH-02,Suresh Babu,2025-10-12T10:03:00,,Record Spare Replaced,CELL-06
+SC-000901,Machine QR,MC-031,Hyd Press HP-01,TECH-07,Ramesh Chandran,2025-10-12T18:10:00,,View Last PM,CELL-08
+SC-000902,Technician QR,,,TECH-07,Ramesh Chandran,2025-10-12T21:40:00,,Open My PM List,
+SC-000903,Technician QR,,,TECH-10,Naveen Raj,2025-10-13T16:27:00,,Open My PM List,
+SC-000904,Machine QR,MC-023,Assy Conveyor CV-01,TECH-10,Naveen Raj,2025-10-14T10:09:00,,Report Breakdown,CELL-05
+SC-000905,Technician QR,,,TECH-03,Mohammed Rafi,2025-10-15T07:24:00,,Open My PM List,
+SC-000906,Technician QR,,,TECH-08,Karthik V,2025-10-15T15:21:00,,Open My PM List,
+SC-000907,Technician QR,,,TECH-10,Naveen Raj,2025-10-15T22:44:00,,Open My PM List,
+SC-000908,Machine QR,MC-010,Gear Hobber GH-01,TECH-09,Sathish Kumar,2025-10-16T08:31:00,,View Last PM,CELL-03
+SC-000909,Technician QR,,,TECH-04,Vignesh S,2025-10-16T12:14:00,,Open My PM List,
+SC-000910,Machine QR,MC-008,VMC MC-01,TECH-04,Vignesh S,2025-10-16T19:48:00,,View Last PM,CELL-02
+SC-000911,Technician QR,,,TECH-04,Vignesh S,2025-10-17T12:47:00,,Open My PM List,
+SC-000912,Machine QR,MC-010,Gear Hobber GH-01,TECH-07,Ramesh Chandran,2025-10-18T11:03:00,,Log Abnormality,CELL-03
+SC-000913,Technician QR,,,TECH-05,Prakash R,2025-10-18T11:36:00,,Open My PM List,
+SC-000914,Machine QR,MC-017,Quench Oil Chiller CH-01,TECH-07,Ramesh Chandran,2025-10-18T13:00:00,,Record Spare Replaced,CELL-04
+SC-000915,Technician QR,,,TECH-06,Deepak Nair,2025-10-18T20:27:00,,Open My PM List,
+SC-000916,Technician QR,,,TECH-06,Deepak Nair,2025-10-19T11:29:00,,Open My PM List,
+SC-000917,Technician QR,,,TECH-03,Mohammed Rafi,2025-10-19T16:46:00,,Open My PM List,
+SC-000918,Machine QR,MC-015,Sealed Quench SQ-02,TECH-02,Suresh Babu,2025-10-20T15:26:00,,Request Spare,CELL-04
+SC-000919,Technician QR,,,TECH-09,Sathish Kumar,2025-10-20T16:49:00,,Open My PM List,
+SC-000920,Machine QR,MC-004,Bar Feeder BF-01,TECH-08,Karthik V,2025-10-21T11:36:00,,View Last PM,CELL-01
+SC-000921,Machine QR,MC-009,VMC MC-02,TECH-10,Naveen Raj,2025-10-21T19:28:00,,View Last PM,CELL-02
+SC-000922,Technician QR,,,TECH-08,Karthik V,2025-10-22T13:01:00,,Open My PM List,
+SC-000923,Machine QR,MC-017,Quench Oil Chiller CH-01,TECH-04,Vignesh S,2025-10-22T15:45:00,,View Last PM,CELL-04
+SC-000924,Machine QR,MC-016,Tempering Furnace TF-01,TECH-05,Prakash R,2025-10-22T20:40:00,,View Last PM,CELL-04
+SC-000925,Machine QR,MC-024,Paint Booth PB-01,TECH-05,Prakash R,2025-10-22T21:01:00,,Request Spare,CELL-06
+SC-000926,Technician QR,,,TECH-05,Prakash R,2025-10-22T22:34:00,,Open My PM List,
+SC-000927,Machine QR,MC-017,Quench Oil Chiller CH-01,TECH-05,Prakash R,2025-10-23T12:45:00,,Log Abnormality,CELL-04
+SC-000928,Machine QR,MC-017,Quench Oil Chiller CH-01,TECH-09,Sathish Kumar,2025-10-23T18:37:00,,View Last PM,CELL-04
+SC-000929,Machine QR,MC-002,CNC Lathe TL-02,TECH-05,Prakash R,2025-10-23T22:52:00,,Request Spare,CELL-01
+SC-000930,Machine QR,MC-013,Deburring Unit DB-01,TECH-05,Prakash R,2025-10-24T08:19:00,,Log Abnormality,CELL-03
+SC-000931,Machine QR,MC-022,Leak Test Rig LT-01,TECH-08,Karthik V,2025-10-24T12:34:00,,Log Abnormality,CELL-05
+SC-000932,Technician QR,,,TECH-08,Karthik V,2025-10-25T06:37:00,,Open My PM List,
+SC-000933,Technician QR,,,TECH-07,Ramesh Chandran,2025-10-25T07:59:00,,Open My PM List,
+SC-000934,Machine QR,MC-005,Chip Conveyor CC-01,TECH-02,Suresh Babu,2025-10-25T18:44:00,,View Last PM,CELL-01
+SC-000935,Machine QR,MC-008,VMC MC-01,TECH-07,Ramesh Chandran,2025-10-25T21:11:00,,Request Spare,CELL-02
+SC-000936,Machine QR,MC-026,Paint Chiller CH-02,TECH-03,Mohammed Rafi,2025-10-26T06:35:00,,View Last PM,CELL-06
+SC-000937,Technician QR,,,TECH-09,Sathish Kumar,2025-10-27T09:07:00,,Open My PM List,
+SC-000938,Technician QR,,,TECH-08,Karthik V,2025-10-27T09:34:00,,Open My PM List,
+SC-000939,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-10,Naveen Raj,2025-10-27T10:06:00,,View Last PM,CELL-07
+SC-000940,Machine QR,MC-015,Sealed Quench SQ-02,TECH-04,Vignesh S,2025-10-28T13:46:00,,Request Spare,CELL-04
+SC-000941,Technician QR,,,TECH-01,Arun Kumar,2025-10-29T09:27:00,,Open My PM List,
+SC-000942,Technician QR,,,TECH-09,Sathish Kumar,2025-10-29T11:25:00,,Open My PM List,
+SC-000943,Technician QR,,,TECH-01,Arun Kumar,2025-10-29T13:01:00,,Open My PM List,
+SC-000944,Technician QR,,,TECH-08,Karthik V,2025-10-30T09:45:00,,Open My PM List,
+SC-000945,Technician QR,,,TECH-05,Prakash R,2025-10-31T17:01:00,,Open My PM List,
+SC-000946,Machine QR,MC-005,Chip Conveyor CC-01,TECH-01,Arun Kumar,2025-10-31T20:02:00,,View Last PM,CELL-01
+SC-000947,Technician QR,,,TECH-10,Naveen Raj,2025-11-01T06:39:00,,Open My PM List,
+SC-000948,Machine QR,MC-027,Robot Weld Cell RW-01,TECH-10,Naveen Raj,2025-11-01T22:22:00,,View Last PM,CELL-07
+SC-000949,Technician QR,,,TECH-10,Naveen Raj,2025-11-02T18:16:00,,Open My PM List,
+SC-000950,Technician QR,,,TECH-04,Vignesh S,2025-11-02T19:25:00,,Open My PM List,
+SC-000951,Technician QR,,,TECH-09,Sathish Kumar,2025-11-03T06:08:00,,Open My PM List,
+SC-000952,Machine QR,MC-022,Leak Test Rig LT-01,TECH-06,Deepak Nair,2025-11-03T06:33:00,,Log Abnormality,CELL-05
+SC-000953,Machine QR,MC-032,Hyd Press HP-02,TECH-07,Ramesh Chandran,2025-11-03T07:51:00,,View Last PM,CELL-08
+SC-000954,Technician QR,,,TECH-05,Prakash R,2025-11-03T09:22:00,,Open My PM List,
+SC-000955,Machine QR,MC-031,Hyd Press HP-01,TECH-03,Mohammed Rafi,2025-11-03T12:13:00,,Request Spare,CELL-08
+SC-000956,Technician QR,,,TECH-07,Ramesh Chandran,2025-11-05T21:44:00,,Open My PM List,
+SC-000957,Machine QR,MC-014,Sealed Quench SQ-01,TECH-02,Suresh Babu,2025-11-06T08:18:00,WO-00140,Start PM Checklist,CELL-04
+SC-000958,Technician QR,,,TECH-08,Karthik V,2025-11-07T07:33:00,,Open My PM List,
+SC-000959,Technician QR,,,TECH-09,Sathish Kumar,2025-11-07T11:09:00,,Open My PM List,
+SC-000960,Machine QR,MC-001,CNC Lathe TL-01,TECH-01,Arun Kumar,2025-11-08T10:32:00,WO-00021,Start PM Checklist,CELL-01
+SC-000961,Technician QR,,,TECH-03,Mohammed Rafi,2025-11-08T11:24:00,,Open My PM List,
+SC-000962,Technician QR,,,TECH-05,Prakash R,2025-11-08T16:20:00,,Open My PM List,
+SC-000963,Machine QR,MC-011,Gear Hobber GH-02,TECH-03,Mohammed Rafi,2025-11-09T11:16:00,,Request Spare,CELL-03
+SC-000964,Technician QR,,,TECH-07,Ramesh Chandran,2025-11-09T16:24:00,,Open My PM List,
+SC-000965,Machine QR,MC-002,CNC Lathe TL-02,TECH-03,Mohammed Rafi,2025-11-10T09:01:00,WO-00022,Start PM Checklist,CELL-01
+SC-000966,Technician QR,,,TECH-06,Deepak Nair,2025-11-10T11:07:00,,Open My PM List,
+SC-000967,Technician QR,,,TECH-07,Ramesh Chandran,2025-11-10T15:18:00,,Open My PM List,
+SC-000968,Technician QR,,,TECH-03,Mohammed Rafi,2025-11-10T15:24:00,,Open My PM List,
+SC-000969,Machine QR,MC-025,Curing Oven CO-01,TECH-04,Vignesh S,2025-11-11T13:18:00,,Log Abnormality,CELL-06
+SC-000970,Technician QR,,,TECH-09,Sathish Kumar,2025-11-11T15:16:00,,Open My PM List,
+SC-000971,Technician QR,,,TECH-01,Arun Kumar,2025-11-11T21:15:00,,Open My PM List,
+SC-000972,Technician QR,,,TECH-07,Ramesh Chandran,2025-11-12T10:01:00,,Open My PM List,
+SC-000973,Technician QR,,,TECH-03,Mohammed Rafi,2025-11-12T15:01:00,,Open My PM List,
+SC-000974,Technician QR,,,TECH-06,Deepak Nair,2025-11-12T19:38:00,,Open My PM List,
+SC-000975,Technician QR,,,TECH-08,Karthik V,2025-11-13T07:07:00,,Open My PM List,
+SC-000976,Machine QR,MC-015,Sealed Quench SQ-02,TECH-06,Deepak Nair,2025-11-13T10:49:00,WO-00141,Start PM Checklist,CELL-04
+SC-000977,Technician QR,,,TECH-01,Arun Kumar,2025-11-14T14:05:00,,Open My PM List,
+SC-000978,Machine QR,MC-016,Tempering Furnace TF-01,TECH-02,Suresh Babu,2025-11-14T14:44:00,,View Last PM,CELL-04
+SC-000979,Machine QR,MC-032,Hyd Press HP-02,TECH-06,Deepak Nair,2025-11-14T21:14:00,,View Last PM,CELL-08
+SC-000980,Technician QR,,,TECH-04,Vignesh S,2025-11-15T11:16:00,,Open My PM List,
+SC-000981,Technician QR,,,TECH-02,Suresh Babu,2025-11-15T14:57:00,,Open My PM List,
+SC-000982,Machine QR,MC-008,VMC MC-01,TECH-08,Karthik V,2025-11-16T07:34:00,,View Last PM,CELL-02
+SC-000983,Technician QR,,,TECH-03,Mohammed Rafi,2025-11-16T15:59:00,,Open My PM List,
+SC-000984,Technician QR,,,TECH-09,Sathish Kumar,2025-11-16T21:18:00,,Open My PM List,
+SC-000985,Technician QR,,,TECH-03,Mohammed Rafi,2025-11-17T09:41:00,,Open My PM List,
+SC-000986,Machine QR,MC-029,Positioner PZ-01,TECH-02,Suresh Babu,2025-11-17T11:45:00,,View Last PM,CELL-07
+SC-000987,Technician QR,,,TECH-09,Sathish Kumar,2025-11-17T12:41:00,,Open My PM List,
+SC-000988,Machine QR,MC-016,Tempering Furnace TF-01,TECH-05,Prakash R,2025-11-17T15:53:00,WO-00142,Start PM Checklist,CELL-04
+SC-000989,Machine QR,MC-004,Bar Feeder BF-01,TECH-07,Ramesh Chandran,2025-11-17T20:20:00,,View Last PM,CELL-01
+SC-000990,Technician QR,,,TECH-08,Karthik V,2025-11-18T06:10:00,,Open My PM List,
+SC-000991,Machine QR,MC-003,CNC Lathe TL-03,TECH-02,Suresh Babu,2025-11-18T07:57:00,WO-00023,Start PM Checklist,CELL-01
+SC-000992,Machine QR,MC-006,CNC Lathe TL-04,TECH-04,Vignesh S,2025-11-18T09:07:00,,View Last PM,CELL-02
+SC-000993,Machine QR,MC-004,Bar Feeder BF-01,TECH-01,Arun Kumar,2025-11-18T14:03:00,WO-00024,Start PM Checklist,CELL-01
+SC-000994,Machine QR,MC-008,VMC MC-01,TECH-02,Suresh Babu,2025-11-18T16:01:00,,Log Abnormality,CELL-02
+SC-000995,Technician QR,,,TECH-04,Vignesh S,2025-11-18T20:50:00,,Open My PM List,
+SC-000996,Technician QR,,,TECH-03,Mohammed Rafi,2025-11-18T22:42:00,,Open My PM List,
+SC-000997,Machine QR,MC-030,Weld Compressor AC-02,TECH-04,Vignesh S,2025-11-19T06:09:00,,Report Breakdown,CELL-07
+SC-000998,Machine QR,MC-007,CNC Lathe TL-05,TECH-04,Vignesh S,2025-11-19T18:25:00,,View Last PM,CELL-02
+SC-000999,Machine QR,MC-019,Assembly Stn AS-01,TECH-07,Ramesh Chandran,2025-11-19T22:45:00,,Request Spare,CELL-05
+SC-001000,Machine QR,MC-017,Quench Oil Chiller CH-01,TECH-02,Suresh Babu,2025-11-20T08:55:00,WO-00143,Start PM Checklist,CELL-04
+SC-001001,Machine QR,MC-020,Assembly Stn AS-02,TECH-06,Deepak Nair,2025-11-20T17:25:00,,View Last PM,CELL-05
+SC-001002,Machine QR,MC-015,Sealed Quench SQ-02,TECH-01,Arun Kumar,2025-11-21T09:24:00,,Record Spare Replaced,CELL-04
+SC-001003,Technician QR,,,TECH-05,Prakash R,2025-11-21T21:28:00,,Open My PM List,
+SC-001004,Machine QR,MC-008,VMC MC-01,TECH-10,Naveen Raj,2025-11-21T21:40:00,,Request Spare,CELL-02
+SC-001005,Technician QR,,,TECH-04,Vignesh S,2025-11-22T12:11:00,,Open My PM List,
+SC-001006,Machine QR,MC-031,Hyd Press HP-01,TECH-10,Naveen Raj,2025-11-22T14:53:00,,Log Abnormality,CELL-08
+SC-001007,Technician QR,,,TECH-06,Deepak Nair,2025-11-23T07:24:00,,Open My PM List,
+SC-001008,Machine QR,MC-005,Chip Conveyor CC-01,TECH-03,Mohammed Rafi,2025-11-23T14:39:00,WO-00025,Start PM Checklist,CELL-01
+SC-001009,Technician QR,,,TECH-07,Ramesh Chandran,2025-11-24T13:59:00,,Open My PM List,
+SC-001010,Machine QR,MC-025,Curing Oven CO-01,TECH-03,Mohammed Rafi,2025-11-25T10:37:00,,Report Breakdown,CELL-06
+SC-001011,Machine QR,MC-016,Tempering Furnace TF-01,TECH-02,Suresh Babu,2025-11-26T07:36:00,,Record Spare Replaced,CELL-04
+SC-001012,Machine QR,MC-018,HT Compressor AC-01,TECH-06,Deepak Nair,2025-11-26T12:10:00,WO-00144,Start PM Checklist,CELL-04
+SC-001013,Machine QR,MC-008,VMC MC-01,TECH-06,Deepak Nair,2025-11-26T14:22:00,,Log Abnormality,CELL-02
+SC-001014,Machine QR,MC-021,Assembly Stn AS-03,TECH-04,Vignesh S,2025-11-26T18:09:00,,Report Breakdown,CELL-05
+SC-001015,Technician QR,,,TECH-07,Ramesh Chandran,2025-11-26T18:37:00,,Open My PM List,
+SC-001016,Machine QR,MC-015,Sealed Quench SQ-02,TECH-08,Karthik V,2025-11-27T12:10:00,,Request Spare,CELL-04
+SC-001017,Technician QR,,,TECH-01,Arun Kumar,2025-11-27T12:48:00,,Open My PM List,
+SC-001018,Technician QR,,,TECH-01,Arun Kumar,2025-11-27T21:46:00,,Open My PM List,
+SC-001019,Technician QR,,,TECH-10,Naveen Raj,2025-11-28T10:20:00,,Open My PM List,
+SC-001020,Machine QR,MC-019,Assembly Stn AS-01,TECH-04,Vignesh S,2025-11-30T06:47:00,,Log Abnormality,CELL-05
+SC-001021,Machine QR,MC-012,Gear Shaver GS-01,TECH-02,Suresh Babu,2025-12-01T11:43:00,,Request Spare,CELL-03
+SC-001022,Technician QR,,,TECH-09,Sathish Kumar,2025-12-02T08:50:00,,Open My PM List,
+SC-001023,Technician QR,,,TECH-06,Deepak Nair,2025-12-02T19:23:00,,Open My PM List,
+SC-001024,Machine QR,MC-027,Robot Weld Cell RW-01,TECH-04,Vignesh S,2025-12-03T12:46:00,WO-00237,Start PM Checklist,CELL-07
+SC-001025,Machine QR,MC-015,Sealed Quench SQ-02,TECH-03,Mohammed Rafi,2025-12-03T16:54:00,,Report Breakdown,CELL-04
+SC-001026,Technician QR,,,TECH-08,Karthik V,2025-12-04T07:59:00,,Open My PM List,
+SC-001027,Technician QR,,,TECH-10,Naveen Raj,2025-12-04T09:48:00,,Open My PM List,
+SC-001028,Machine QR,MC-007,CNC Lathe TL-05,TECH-05,Prakash R,2025-12-04T15:11:00,,Log Abnormality,CELL-02
+SC-001029,Machine QR,MC-025,Curing Oven CO-01,TECH-01,Arun Kumar,2025-12-05T14:05:00,,Record Spare Replaced,CELL-06
+SC-001030,Technician QR,,,TECH-05,Prakash R,2025-12-06T20:16:00,,Open My PM List,
+SC-001031,Technician QR,,,TECH-05,Prakash R,2025-12-06T21:08:00,,Open My PM List,
+SC-001032,Technician QR,,,TECH-07,Ramesh Chandran,2025-12-07T09:38:00,,Open My PM List,
+SC-001033,Technician QR,,,TECH-10,Naveen Raj,2025-12-07T12:32:00,,Open My PM List,
+SC-001034,Technician QR,,,TECH-08,Karthik V,2025-12-07T14:38:00,,Open My PM List,
+SC-001035,Machine QR,MC-030,Weld Compressor AC-02,TECH-08,Karthik V,2025-12-07T14:48:00,,Request Spare,CELL-07
+SC-001036,Technician QR,,,TECH-05,Prakash R,2025-12-08T06:43:00,,Open My PM List,
+SC-001037,Technician QR,,,TECH-04,Vignesh S,2025-12-09T11:44:00,,Open My PM List,
+SC-001038,Technician QR,,,TECH-03,Mohammed Rafi,2025-12-10T16:51:00,,Open My PM List,
+SC-001039,Technician QR,,,TECH-07,Ramesh Chandran,2025-12-10T18:02:00,,Open My PM List,
+SC-001040,Machine QR,MC-010,Gear Hobber GH-01,TECH-04,Vignesh S,2025-12-11T11:00:00,,View Last PM,CELL-03
+SC-001041,Technician QR,,,TECH-01,Arun Kumar,2025-12-12T14:40:00,,Open My PM List,
+SC-001042,Technician QR,,,TECH-08,Karthik V,2025-12-13T19:19:00,,Open My PM List,
+SC-001043,Technician QR,,,TECH-02,Suresh Babu,2025-12-14T15:13:00,,Open My PM List,
+SC-001044,Machine QR,MC-011,Gear Hobber GH-02,TECH-02,Suresh Babu,2025-12-14T16:40:00,,Log Abnormality,CELL-03
+SC-001045,Technician QR,,,TECH-05,Prakash R,2025-12-14T18:45:00,,Open My PM List,
+SC-001046,Technician QR,,,TECH-10,Naveen Raj,2025-12-14T21:29:00,,Open My PM List,
+SC-001047,Technician QR,,,TECH-01,Arun Kumar,2025-12-16T07:04:00,,Open My PM List,
+SC-001048,Technician QR,,,TECH-09,Sathish Kumar,2025-12-17T16:17:00,,Open My PM List,
+SC-001049,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-10,Naveen Raj,2025-12-18T10:46:00,,Report Breakdown,CELL-07
+SC-001050,Machine QR,MC-029,Positioner PZ-01,TECH-08,Karthik V,2025-12-19T14:07:00,WO-00239,Start PM Checklist,CELL-07
+SC-001051,Technician QR,,,TECH-01,Arun Kumar,2025-12-20T10:37:00,,Open My PM List,
+SC-001052,Technician QR,,,TECH-08,Karthik V,2025-12-20T10:48:00,,Open My PM List,
+SC-001053,Machine QR,MC-018,HT Compressor AC-01,TECH-06,Deepak Nair,2025-12-20T16:13:00,,Report Breakdown,CELL-04
+SC-001054,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-08,Karthik V,2025-12-20T18:06:00,,Log Abnormality,CELL-07
+SC-001055,Machine QR,MC-014,Sealed Quench SQ-01,TECH-10,Naveen Raj,2025-12-20T20:05:00,,Request Spare,CELL-04
+SC-001056,Technician QR,,,TECH-08,Karthik V,2025-12-21T14:21:00,,Open My PM List,
+SC-001057,Technician QR,,,TECH-03,Mohammed Rafi,2025-12-21T20:46:00,,Open My PM List,
+SC-001058,Machine QR,MC-016,Tempering Furnace TF-01,TECH-04,Vignesh S,2025-12-22T11:48:00,,Record Spare Replaced,CELL-04
+SC-001059,Technician QR,,,TECH-10,Naveen Raj,2025-12-22T22:36:00,,Open My PM List,
+SC-001060,Technician QR,,,TECH-08,Karthik V,2025-12-23T09:24:00,,Open My PM List,
+SC-001061,Machine QR,MC-027,Robot Weld Cell RW-01,TECH-04,Vignesh S,2025-12-23T13:03:00,,Log Abnormality,CELL-07
+SC-001062,Machine QR,MC-030,Weld Compressor AC-02,TECH-04,Vignesh S,2025-12-23T13:15:00,WO-00240,Start PM Checklist,CELL-07
+SC-001063,Technician QR,,,TECH-03,Mohammed Rafi,2025-12-23T18:50:00,,Open My PM List,
+SC-001064,Technician QR,,,TECH-08,Karthik V,2025-12-23T21:14:00,,Open My PM List,
+SC-001065,Machine QR,MC-017,Quench Oil Chiller CH-01,TECH-05,Prakash R,2025-12-24T19:32:00,,View Last PM,CELL-04
+SC-001066,Technician QR,,,TECH-02,Suresh Babu,2025-12-24T19:39:00,,Open My PM List,
+SC-001067,Machine QR,MC-008,VMC MC-01,TECH-01,Arun Kumar,2025-12-25T20:11:00,,View Last PM,CELL-02
+SC-001068,Technician QR,,,TECH-02,Suresh Babu,2025-12-25T20:46:00,,Open My PM List,
+SC-001069,Technician QR,,,TECH-06,Deepak Nair,2025-12-26T11:30:00,,Open My PM List,
+SC-001070,Technician QR,,,TECH-01,Arun Kumar,2025-12-28T11:25:00,,Open My PM List,
+SC-001071,Machine QR,MC-024,Paint Booth PB-01,TECH-05,Prakash R,2025-12-28T12:37:00,,View Last PM,CELL-06
+SC-001072,Technician QR,,,TECH-01,Arun Kumar,2025-12-28T13:05:00,,Open My PM List,
+SC-001073,Technician QR,,,TECH-04,Vignesh S,2025-12-29T09:57:00,,Open My PM List,
+SC-001074,Machine QR,MC-003,CNC Lathe TL-03,TECH-01,Arun Kumar,2025-12-29T12:09:00,,View Last PM,CELL-01
+SC-001075,Technician QR,,,TECH-02,Suresh Babu,2025-12-29T12:20:00,,Open My PM List,
+SC-001076,Machine QR,MC-014,Sealed Quench SQ-01,TECH-09,Sathish Kumar,2025-12-30T08:27:00,,Log Abnormality,CELL-04
+SC-001077,Technician QR,,,TECH-07,Ramesh Chandran,2025-12-31T06:18:00,,Open My PM List,
+SC-001078,Technician QR,,,TECH-06,Deepak Nair,2025-12-31T16:34:00,,Open My PM List,
+SC-001079,Technician QR,,,TECH-10,Naveen Raj,2025-12-31T17:30:00,,Open My PM List,
+SC-001080,Machine QR,MC-031,Hyd Press HP-01,TECH-09,Sathish Kumar,2026-01-01T20:46:00,,Request Spare,CELL-08
+SC-001081,Technician QR,,,TECH-10,Naveen Raj,2026-01-02T07:49:00,,Open My PM List,
+SC-001082,Technician QR,,,TECH-02,Suresh Babu,2026-01-03T12:19:00,,Open My PM List,
+SC-001083,Technician QR,,,TECH-02,Suresh Babu,2026-01-03T15:31:00,,Open My PM List,
+SC-001084,Technician QR,,,TECH-05,Prakash R,2026-01-03T15:42:00,,Open My PM List,
+SC-001085,Technician QR,,,TECH-08,Karthik V,2026-01-04T07:38:00,,Open My PM List,
+SC-001086,Technician QR,,,TECH-09,Sathish Kumar,2026-01-04T15:47:00,,Open My PM List,
+SC-001087,Technician QR,,,TECH-06,Deepak Nair,2026-01-04T20:20:00,,Open My PM List,
+SC-001088,Technician QR,,,TECH-09,Sathish Kumar,2026-01-07T07:45:00,,Open My PM List,
+SC-001089,Technician QR,,,TECH-09,Sathish Kumar,2026-01-07T12:23:00,,Open My PM List,
+SC-001090,Technician QR,,,TECH-10,Naveen Raj,2026-01-07T17:45:00,,Open My PM List,
+SC-001091,Machine QR,MC-027,Robot Weld Cell RW-01,TECH-03,Mohammed Rafi,2026-01-07T19:26:00,,Record Spare Replaced,CELL-07
+SC-001092,Technician QR,,,TECH-04,Vignesh S,2026-01-07T20:11:00,,Open My PM List,
+SC-001093,Technician QR,,,TECH-08,Karthik V,2026-01-07T20:23:00,,Open My PM List,
+SC-001094,Machine QR,MC-019,Assembly Stn AS-01,TECH-09,Sathish Kumar,2026-01-07T22:10:00,,Log Abnormality,CELL-05
+SC-001095,Machine QR,MC-020,Assembly Stn AS-02,TECH-07,Ramesh Chandran,2026-01-08T10:56:00,WO-00201,Start PM Checklist,CELL-05
+SC-001096,Machine QR,MC-020,Assembly Stn AS-02,TECH-07,Ramesh Chandran,2026-01-08T11:17:00,,Record Spare Replaced,CELL-05
+SC-001097,Technician QR,,,TECH-09,Sathish Kumar,2026-01-08T18:08:00,,Open My PM List,
+SC-001098,Machine QR,MC-019,Assembly Stn AS-01,TECH-07,Ramesh Chandran,2026-01-08T18:30:00,WO-00200,Start PM Checklist,CELL-05
+SC-001099,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-03,Mohammed Rafi,2026-01-09T08:12:00,,Log Abnormality,CELL-07
+SC-001100,Technician QR,,,TECH-10,Naveen Raj,2026-01-09T10:34:00,,Open My PM List,
+SC-001101,Machine QR,MC-015,Sealed Quench SQ-02,TECH-05,Prakash R,2026-01-09T17:52:00,WO-00146,Start PM Checklist,CELL-04
+SC-001102,Technician QR,,,TECH-04,Vignesh S,2026-01-10T06:45:00,,Open My PM List,
+SC-001103,Technician QR,,,TECH-02,Suresh Babu,2026-01-10T11:40:00,,Open My PM List,
+SC-001104,Machine QR,MC-014,Sealed Quench SQ-01,TECH-01,Arun Kumar,2026-01-10T11:54:00,,Report Breakdown,CELL-04
+SC-001105,Technician QR,,,TECH-05,Prakash R,2026-01-10T12:47:00,,Open My PM List,
+SC-001106,Technician QR,,,TECH-09,Sathish Kumar,2026-01-10T17:27:00,,Open My PM List,
+SC-001107,Machine QR,MC-033,Press Feeder PF-01,TECH-01,Arun Kumar,2026-01-10T21:17:00,,Log Abnormality,CELL-08
+SC-001108,Technician QR,,,TECH-05,Prakash R,2026-01-10T22:06:00,,Open My PM List,
+SC-001109,Technician QR,,,TECH-08,Karthik V,2026-01-11T13:15:00,,Open My PM List,
+SC-001110,Technician QR,,,TECH-09,Sathish Kumar,2026-01-11T20:17:00,,Open My PM List,
+SC-001111,Machine QR,MC-016,Tempering Furnace TF-01,TECH-10,Naveen Raj,2026-01-13T18:33:00,,View Last PM,CELL-04
+SC-001112,Technician QR,,,TECH-06,Deepak Nair,2026-01-14T08:39:00,,Open My PM List,
+SC-001113,Machine QR,MC-016,Tempering Furnace TF-01,TECH-02,Suresh Babu,2026-01-14T14:29:00,WO-00147,Start PM Checklist,CELL-04
+SC-001114,Machine QR,MC-001,CNC Lathe TL-01,TECH-01,Arun Kumar,2026-01-14T14:43:00,,Record Spare Replaced,CELL-01
+SC-001115,Technician QR,,,TECH-07,Ramesh Chandran,2026-01-15T12:16:00,,Open My PM List,
+SC-001116,Technician QR,,,TECH-06,Deepak Nair,2026-01-15T20:45:00,,Open My PM List,
+SC-001117,Technician QR,,,TECH-02,Suresh Babu,2026-01-16T09:56:00,,Open My PM List,
+SC-001118,Machine QR,MC-021,Assembly Stn AS-03,TECH-07,Ramesh Chandran,2026-01-16T11:22:00,WO-00202,Start PM Checklist,CELL-05
+SC-001119,Technician QR,,,TECH-09,Sathish Kumar,2026-01-17T19:03:00,,Open My PM List,
+SC-001120,Machine QR,MC-026,Paint Chiller CH-02,TECH-05,Prakash R,2026-01-18T22:52:00,,Request Spare,CELL-06
+SC-001121,Technician QR,,,TECH-01,Arun Kumar,2026-01-19T11:01:00,,Open My PM List,
+SC-001122,Technician QR,,,TECH-08,Karthik V,2026-01-20T19:17:00,,Open My PM List,
+SC-001123,Machine QR,MC-019,Assembly Stn AS-01,TECH-03,Mohammed Rafi,2026-01-20T21:00:00,,View Last PM,CELL-05
+SC-001124,Machine QR,MC-031,Hyd Press HP-01,TECH-08,Karthik V,2026-01-21T08:23:00,,Log Abnormality,CELL-08
+SC-001125,Technician QR,,,TECH-08,Karthik V,2026-01-21T11:20:00,,Open My PM List,
+SC-001126,Technician QR,,,TECH-10,Naveen Raj,2026-01-21T11:40:00,,Open My PM List,
+SC-001127,Technician QR,,,TECH-07,Ramesh Chandran,2026-01-22T12:24:00,,Open My PM List,
+SC-001128,Machine QR,MC-022,Leak Test Rig LT-01,TECH-08,Karthik V,2026-01-22T16:57:00,,View Last PM,CELL-05
+SC-001129,Machine QR,MC-025,Curing Oven CO-01,TECH-08,Karthik V,2026-01-23T13:04:00,,Log Abnormality,CELL-06
+SC-001130,Machine QR,MC-017,Quench Oil Chiller CH-01,TECH-06,Deepak Nair,2026-01-23T14:40:00,WO-00148,Start PM Checklist,CELL-04
+SC-001131,Machine QR,MC-021,Assembly Stn AS-03,TECH-05,Prakash R,2026-01-23T21:17:00,,Record Spare Replaced,CELL-05
+SC-001132,Technician QR,,,TECH-04,Vignesh S,2026-01-24T09:36:00,,Open My PM List,
+SC-001133,Technician QR,,,TECH-10,Naveen Raj,2026-01-24T16:32:00,,Open My PM List,
+SC-001134,Technician QR,,,TECH-04,Vignesh S,2026-01-25T08:51:00,,Open My PM List,
+SC-001135,Technician QR,,,TECH-09,Sathish Kumar,2026-01-25T09:23:00,,Open My PM List,
+SC-001136,Technician QR,,,TECH-08,Karthik V,2026-01-25T11:43:00,,Open My PM List,
+SC-001137,Technician QR,,,TECH-08,Karthik V,2026-01-25T14:06:00,,Open My PM List,
+SC-001138,Technician QR,,,TECH-09,Sathish Kumar,2026-01-25T14:13:00,,Open My PM List,
+SC-001139,Technician QR,,,TECH-04,Vignesh S,2026-01-25T16:02:00,,Open My PM List,
+SC-001140,Machine QR,MC-005,Chip Conveyor CC-01,TECH-07,Ramesh Chandran,2026-01-25T18:56:00,,View Last PM,CELL-01
+SC-001141,Machine QR,MC-023,Assy Conveyor CV-01,TECH-04,Vignesh S,2026-01-26T06:23:00,,Request Spare,CELL-05
+SC-001142,Technician QR,,,TECH-03,Mohammed Rafi,2026-01-26T09:31:00,,Open My PM List,
+SC-001143,Machine QR,MC-027,Robot Weld Cell RW-01,TECH-08,Karthik V,2026-01-26T20:54:00,,Report Breakdown,CELL-07
+SC-001144,Machine QR,MC-018,HT Compressor AC-01,TECH-05,Prakash R,2026-01-27T07:03:00,WO-00149,Start PM Checklist,CELL-04
+SC-001145,Technician QR,,,TECH-08,Karthik V,2026-01-27T18:03:00,,Open My PM List,
+SC-001146,Technician QR,,,TECH-06,Deepak Nair,2026-01-27T18:26:00,,Open My PM List,
+SC-001147,Technician QR,,,TECH-01,Arun Kumar,2026-01-28T13:15:00,,Open My PM List,
+SC-001148,Machine QR,MC-023,Assy Conveyor CV-01,TECH-07,Ramesh Chandran,2026-01-28T15:17:00,WO-00204,Start PM Checklist,CELL-05
+SC-001149,Technician QR,,,TECH-04,Vignesh S,2026-01-28T21:32:00,,Open My PM List,
+SC-001150,Technician QR,,,TECH-03,Mohammed Rafi,2026-01-29T15:11:00,,Open My PM List,
+SC-001151,Technician QR,,,TECH-02,Suresh Babu,2026-01-29T22:48:00,,Open My PM List,
+SC-001152,Technician QR,,,TECH-07,Ramesh Chandran,2026-01-30T09:59:00,,Open My PM List,
+SC-001153,Technician QR,,,TECH-09,Sathish Kumar,2026-01-30T13:13:00,,Open My PM List,
+SC-001154,Technician QR,,,TECH-04,Vignesh S,2026-01-30T18:11:00,,Open My PM List,
+SC-001155,Machine QR,MC-009,VMC MC-02,TECH-05,Prakash R,2026-01-30T19:52:00,,Log Abnormality,CELL-02
+SC-001156,Technician QR,,,TECH-02,Suresh Babu,2026-02-01T07:51:00,,Open My PM List,
+SC-001157,Technician QR,,,TECH-02,Suresh Babu,2026-02-01T10:53:00,,Open My PM List,
+SC-001158,Machine QR,MC-022,Leak Test Rig LT-01,TECH-07,Ramesh Chandran,2026-02-01T13:47:00,WO-00203,Start PM Checklist,CELL-05
+SC-001159,Machine QR,MC-033,Press Feeder PF-01,TECH-03,Mohammed Rafi,2026-02-01T17:34:00,,Record Spare Replaced,CELL-08
+SC-001160,Technician QR,,,TECH-08,Karthik V,2026-02-02T09:16:00,,Open My PM List,
+SC-001161,Technician QR,,,TECH-04,Vignesh S,2026-02-03T15:10:00,,Open My PM List,
+SC-001162,Technician QR,,,TECH-03,Mohammed Rafi,2026-02-04T11:19:00,,Open My PM List,
+SC-001163,Machine QR,MC-010,Gear Hobber GH-01,TECH-03,Mohammed Rafi,2026-02-04T11:43:00,WO-00104,Start PM Checklist,CELL-03
+SC-001164,Technician QR,,,TECH-04,Vignesh S,2026-02-05T09:34:00,,Open My PM List,
+SC-001165,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-08,Karthik V,2026-02-06T09:44:00,,Log Abnormality,CELL-07
+SC-001166,Technician QR,,,TECH-09,Sathish Kumar,2026-02-06T11:53:00,,Open My PM List,
+SC-001167,Machine QR,MC-023,Assy Conveyor CV-01,TECH-02,Suresh Babu,2026-02-06T12:18:00,,View Last PM,CELL-05
+SC-001168,Technician QR,,,TECH-06,Deepak Nair,2026-02-06T14:16:00,,Open My PM List,
+SC-001169,Technician QR,,,TECH-10,Naveen Raj,2026-02-06T22:26:00,,Open My PM List,
+SC-001170,Machine QR,MC-009,VMC MC-02,TECH-08,Karthik V,2026-02-07T11:32:00,,Record Spare Replaced,CELL-02
+SC-001171,Machine QR,MC-024,Paint Booth PB-01,TECH-07,Ramesh Chandran,2026-02-07T12:42:00,WO-00223,Start PM Checklist,CELL-06
+SC-001172,Machine QR,MC-012,Gear Shaver GS-01,TECH-05,Prakash R,2026-02-07T18:06:00,,Log Abnormality,CELL-03
+SC-001173,Machine QR,MC-010,Gear Hobber GH-01,TECH-07,Ramesh Chandran,2026-02-08T08:18:00,,View Last PM,CELL-03
+SC-001174,Machine QR,MC-014,Sealed Quench SQ-01,TECH-06,Deepak Nair,2026-02-08T11:47:00,WO-00145,Start PM Checklist,CELL-04
+SC-001175,Machine QR,MC-002,CNC Lathe TL-02,TECH-02,Suresh Babu,2026-02-08T13:26:00,WO-00027,Start PM Checklist,CELL-01
+SC-001176,Technician QR,,,TECH-02,Suresh Babu,2026-02-08T21:07:00,,Open My PM List,
+SC-001177,Technician QR,,,TECH-10,Naveen Raj,2026-02-09T10:14:00,,Open My PM List,
+SC-001178,Machine QR,MC-012,Gear Shaver GS-01,TECH-01,Arun Kumar,2026-02-09T11:53:00,,View Last PM,CELL-03
+SC-001179,Technician QR,,,TECH-05,Prakash R,2026-02-10T15:58:00,,Open My PM List,
+SC-001180,Machine QR,MC-011,Gear Hobber GH-02,TECH-02,Suresh Babu,2026-02-11T11:20:00,WO-00105,Start PM Checklist,CELL-03
+SC-001181,Machine QR,MC-007,CNC Lathe TL-05,TECH-03,Mohammed Rafi,2026-02-11T12:20:00,WO-00073,Start PM Checklist,CELL-02
+SC-001182,Technician QR,,,TECH-10,Naveen Raj,2026-02-11T13:53:00,,Open My PM List,
+SC-001183,Machine QR,MC-011,Gear Hobber GH-02,TECH-07,Ramesh Chandran,2026-02-11T14:49:00,,Record Spare Replaced,CELL-03
+SC-001184,Machine QR,MC-013,Deburring Unit DB-01,TECH-08,Karthik V,2026-02-12T09:04:00,,Record Spare Replaced,CELL-03
+SC-001185,Technician QR,,,TECH-09,Sathish Kumar,2026-02-12T11:29:00,,Open My PM List,
+SC-001186,Technician QR,,,TECH-01,Arun Kumar,2026-02-12T14:18:00,,Open My PM List,
+SC-001187,Machine QR,MC-026,Paint Chiller CH-02,TECH-10,Naveen Raj,2026-02-12T18:53:00,,View Last PM,CELL-06
+SC-001188,Machine QR,MC-022,Leak Test Rig LT-01,TECH-02,Suresh Babu,2026-02-13T13:56:00,,View Last PM,CELL-05
+SC-001189,Machine QR,MC-023,Assy Conveyor CV-01,TECH-02,Suresh Babu,2026-02-13T15:51:00,,Log Abnormality,CELL-05
+SC-001190,Machine QR,MC-013,Deburring Unit DB-01,TECH-09,Sathish Kumar,2026-02-13T18:44:00,,View Last PM,CELL-03
+SC-001191,Machine QR,MC-012,Gear Shaver GS-01,TECH-05,Prakash R,2026-02-13T19:28:00,,Log Abnormality,CELL-03
+SC-001192,Machine QR,MC-025,Curing Oven CO-01,TECH-07,Ramesh Chandran,2026-02-14T18:40:00,WO-00224,Start PM Checklist,CELL-06
+SC-001193,Machine QR,MC-010,Gear Hobber GH-01,TECH-01,Arun Kumar,2026-02-15T06:55:00,,Report Breakdown,CELL-03
+SC-001194,Technician QR,,,TECH-07,Ramesh Chandran,2026-02-16T06:39:00,,Open My PM List,
+SC-001195,Machine QR,MC-012,Gear Shaver GS-01,TECH-10,Naveen Raj,2026-02-16T10:14:00,,View Last PM,CELL-03
+SC-001196,Technician QR,,,TECH-08,Karthik V,2026-02-17T07:13:00,,Open My PM List,
+SC-001197,Machine QR,MC-003,CNC Lathe TL-03,TECH-01,Arun Kumar,2026-02-17T07:22:00,WO-00028,Start PM Checklist,CELL-01
+SC-001198,Technician QR,,,TECH-01,Arun Kumar,2026-02-17T08:19:00,,Open My PM List,
+SC-001199,Machine QR,MC-008,VMC MC-01,TECH-02,Suresh Babu,2026-02-17T12:07:00,WO-00074,Start PM Checklist,CELL-02
+SC-001200,Machine QR,MC-020,Assembly Stn AS-02,TECH-09,Sathish Kumar,2026-02-17T12:40:00,,Record Spare Replaced,CELL-05
+SC-001201,Machine QR,MC-012,Gear Shaver GS-01,TECH-01,Arun Kumar,2026-02-17T14:51:00,WO-00106,Start PM Checklist,CELL-03
+SC-001202,Technician QR,,,TECH-08,Karthik V,2026-02-17T18:02:00,,Open My PM List,
+SC-001203,Technician QR,,,TECH-06,Deepak Nair,2026-02-17T18:28:00,,Open My PM List,
+SC-001204,Technician QR,,,TECH-09,Sathish Kumar,2026-02-19T06:28:00,,Open My PM List,
+SC-001205,Machine QR,MC-030,Weld Compressor AC-02,TECH-03,Mohammed Rafi,2026-02-20T12:36:00,,Report Breakdown,CELL-07
+SC-001206,Machine QR,MC-002,CNC Lathe TL-02,TECH-03,Mohammed Rafi,2026-02-20T13:10:00,,Report Breakdown,CELL-01
+SC-001207,Machine QR,MC-004,Bar Feeder BF-01,TECH-03,Mohammed Rafi,2026-02-20T14:01:00,WO-00029,Start PM Checklist,CELL-01
+SC-001208,Technician QR,,,TECH-05,Prakash R,2026-02-20T15:21:00,,Open My PM List,
+SC-001209,Technician QR,,,TECH-07,Ramesh Chandran,2026-02-21T08:48:00,,Open My PM List,
+SC-001210,Machine QR,MC-026,Paint Chiller CH-02,TECH-09,Sathish Kumar,2026-02-21T08:52:00,,Log Abnormality,CELL-06
+SC-001211,Machine QR,MC-014,Sealed Quench SQ-01,TECH-01,Arun Kumar,2026-02-21T11:36:00,,View Last PM,CELL-04
+SC-001212,Technician QR,,,TECH-06,Deepak Nair,2026-02-22T09:19:00,,Open My PM List,
+SC-001213,Machine QR,MC-030,Weld Compressor AC-02,TECH-08,Karthik V,2026-02-22T17:51:00,,Report Breakdown,CELL-07
+SC-001214,Technician QR,,,TECH-03,Mohammed Rafi,2026-02-22T22:05:00,,Open My PM List,
+SC-001215,Technician QR,,,TECH-04,Vignesh S,2026-02-23T06:09:00,,Open My PM List,
+SC-001216,Technician QR,,,TECH-02,Suresh Babu,2026-02-23T08:11:00,,Open My PM List,
+SC-001217,Machine QR,MC-026,Paint Chiller CH-02,TECH-07,Ramesh Chandran,2026-02-23T14:01:00,WO-00225,Start PM Checklist,CELL-06
+SC-001218,Machine QR,MC-021,Assembly Stn AS-03,TECH-01,Arun Kumar,2026-02-24T07:19:00,,View Last PM,CELL-05
+SC-001219,Machine QR,MC-013,Deburring Unit DB-01,TECH-03,Mohammed Rafi,2026-02-24T10:55:00,WO-00107,Start PM Checklist,CELL-03
+SC-001220,Machine QR,MC-008,VMC MC-01,TECH-10,Naveen Raj,2026-02-24T11:00:00,,Report Breakdown,CELL-02
+SC-001221,Machine QR,MC-005,Chip Conveyor CC-01,TECH-02,Suresh Babu,2026-02-25T13:37:00,WO-00030,Start PM Checklist,CELL-01
+SC-001222,Technician QR,,,TECH-08,Karthik V,2026-02-25T14:49:00,,Open My PM List,
+SC-001223,Machine QR,MC-008,VMC MC-01,TECH-06,Deepak Nair,2026-02-25T19:50:00,,View Last PM,CELL-02
+SC-001224,Technician QR,,,TECH-04,Vignesh S,2026-02-25T20:00:00,,Open My PM List,
+SC-001225,Technician QR,,,TECH-06,Deepak Nair,2026-02-26T06:12:00,,Open My PM List,
+SC-001226,Technician QR,,,TECH-07,Ramesh Chandran,2026-02-26T10:30:00,,Open My PM List,
+SC-001227,Technician QR,,,TECH-10,Naveen Raj,2026-02-26T11:01:00,,Open My PM List,
+SC-001228,Machine QR,MC-002,CNC Lathe TL-02,TECH-08,Karthik V,2026-02-26T13:16:00,,Log Abnormality,CELL-01
+SC-001229,Technician QR,,,TECH-05,Prakash R,2026-02-26T20:29:00,,Open My PM List,
+SC-001230,Technician QR,,,TECH-06,Deepak Nair,2026-02-27T06:55:00,,Open My PM List,
+SC-001231,Technician QR,,,TECH-06,Deepak Nair,2026-02-27T10:02:00,,Open My PM List,
+SC-001232,Technician QR,,,TECH-05,Prakash R,2026-02-27T11:49:00,,Open My PM List,
+SC-001233,Technician QR,,,TECH-10,Naveen Raj,2026-02-27T13:23:00,,Open My PM List,
+SC-001234,Technician QR,,,TECH-05,Prakash R,2026-02-27T14:08:00,,Open My PM List,
+SC-001235,Technician QR,,,TECH-04,Vignesh S,2026-02-28T06:08:00,,Open My PM List,
+SC-001236,Technician QR,,,TECH-06,Deepak Nair,2026-02-28T18:52:00,,Open My PM List,
+SC-001237,Technician QR,,,TECH-06,Deepak Nair,2026-02-28T19:56:00,,Open My PM List,
+SC-001238,Machine QR,MC-026,Paint Chiller CH-02,TECH-10,Naveen Raj,2026-03-01T14:33:00,,Log Abnormality,CELL-06
+SC-001239,Technician QR,,,TECH-05,Prakash R,2026-03-02T17:29:00,,Open My PM List,
+SC-001240,Machine QR,MC-015,Sealed Quench SQ-02,TECH-02,Suresh Babu,2026-03-02T17:53:00,,View Last PM,CELL-04
+SC-001241,Technician QR,,,TECH-02,Suresh Babu,2026-03-03T10:22:00,,Open My PM List,
+SC-001242,Technician QR,,,TECH-03,Mohammed Rafi,2026-03-03T22:09:00,,Open My PM List,
+SC-001243,Machine QR,MC-021,Assembly Stn AS-03,TECH-01,Arun Kumar,2026-03-04T18:41:00,,View Last PM,CELL-05
+SC-001244,Technician QR,,,TECH-02,Suresh Babu,2026-03-05T12:40:00,,Open My PM List,
+SC-001245,Machine QR,MC-008,VMC MC-01,TECH-04,Vignesh S,2026-03-06T07:34:00,,View Last PM,CELL-02
+SC-001246,Technician QR,,,TECH-07,Ramesh Chandran,2026-03-06T11:39:00,,Open My PM List,
+SC-001247,Machine QR,MC-006,CNC Lathe TL-04,TECH-01,Arun Kumar,2026-03-06T16:02:00,WO-00072,Start PM Checklist,CELL-02
+SC-001248,Machine QR,MC-016,Tempering Furnace TF-01,TECH-06,Deepak Nair,2026-03-07T08:10:00,,View Last PM,CELL-04
+SC-001249,Machine QR,MC-011,Gear Hobber GH-02,TECH-01,Arun Kumar,2026-03-07T09:11:00,,View Last PM,CELL-03
+SC-001250,Machine QR,MC-021,Assembly Stn AS-03,TECH-05,Prakash R,2026-03-08T11:04:00,,View Last PM,CELL-05
+SC-001251,Technician QR,,,TECH-09,Sathish Kumar,2026-03-08T12:55:00,,Open My PM List,
+SC-001252,Technician QR,,,TECH-04,Vignesh S,2026-03-08T15:58:00,,Open My PM List,
+SC-001253,Technician QR,,,TECH-06,Deepak Nair,2026-03-08T17:33:00,,Open My PM List,
+SC-001254,Machine QR,MC-026,Paint Chiller CH-02,TECH-02,Suresh Babu,2026-03-09T06:43:00,,View Last PM,CELL-06
+SC-001255,Machine QR,MC-030,Weld Compressor AC-02,TECH-08,Karthik V,2026-03-09T09:30:00,,Log Abnormality,CELL-07
+SC-001256,Machine QR,MC-001,CNC Lathe TL-01,TECH-03,Mohammed Rafi,2026-03-09T17:15:00,WO-00026,Start PM Checklist,CELL-01
+SC-001257,Technician QR,,,TECH-10,Naveen Raj,2026-03-09T21:48:00,,Open My PM List,
+SC-001258,Technician QR,,,TECH-06,Deepak Nair,2026-03-10T14:43:00,,Open My PM List,
+SC-001259,Machine QR,MC-011,Gear Hobber GH-02,TECH-01,Arun Kumar,2026-03-10T19:32:00,,View Last PM,CELL-03
+SC-001260,Technician QR,,,TECH-02,Suresh Babu,2026-03-11T12:28:00,,Open My PM List,
+SC-001261,Technician QR,,,TECH-09,Sathish Kumar,2026-03-11T17:10:00,,Open My PM List,
+SC-001262,Machine QR,MC-006,CNC Lathe TL-04,TECH-10,Naveen Raj,2026-03-12T07:05:00,,Log Abnormality,CELL-02
+SC-001263,Machine QR,MC-020,Assembly Stn AS-02,TECH-04,Vignesh S,2026-03-12T21:27:00,,Request Spare,CELL-05
+SC-001264,Machine QR,MC-020,Assembly Stn AS-02,TECH-04,Vignesh S,2026-03-13T13:27:00,,View Last PM,CELL-05
+SC-001265,Machine QR,MC-020,Assembly Stn AS-02,TECH-04,Vignesh S,2026-03-13T17:26:00,,Report Breakdown,CELL-05
+SC-001266,Technician QR,,,TECH-08,Karthik V,2026-03-14T11:04:00,,Open My PM List,
+SC-001267,Machine QR,MC-029,Positioner PZ-01,TECH-05,Prakash R,2026-03-14T16:30:00,,View Last PM,CELL-07
+SC-001268,Technician QR,,,TECH-03,Mohammed Rafi,2026-03-14T18:43:00,,Open My PM List,
+SC-001269,Technician QR,,,TECH-01,Arun Kumar,2026-03-14T22:10:00,,Open My PM List,
+SC-001270,Machine QR,MC-022,Leak Test Rig LT-01,TECH-02,Suresh Babu,2026-03-15T20:56:00,,Request Spare,CELL-05
+SC-001271,Technician QR,,,TECH-07,Ramesh Chandran,2026-03-16T12:15:00,,Open My PM List,
+SC-001272,Machine QR,MC-029,Positioner PZ-01,TECH-03,Mohammed Rafi,2026-03-16T17:47:00,,Report Breakdown,CELL-07
+SC-001273,Technician QR,,,TECH-05,Prakash R,2026-03-17T12:35:00,,Open My PM List,
+SC-001274,Machine QR,MC-029,Positioner PZ-01,TECH-03,Mohammed Rafi,2026-03-17T15:00:00,,Record Spare Replaced,CELL-07
+SC-001275,Technician QR,,,TECH-05,Prakash R,2026-03-17T17:47:00,,Open My PM List,
+SC-001276,Machine QR,MC-010,Gear Hobber GH-01,TECH-09,Sathish Kumar,2026-03-17T22:46:00,,Log Abnormality,CELL-03
+SC-001277,Technician QR,,,TECH-08,Karthik V,2026-03-18T17:06:00,,Open My PM List,
+SC-001278,Technician QR,,,TECH-01,Arun Kumar,2026-03-19T13:06:00,,Open My PM List,
+SC-001279,Machine QR,MC-001,CNC Lathe TL-01,TECH-09,Sathish Kumar,2026-03-19T14:59:00,,View Last PM,CELL-01
+SC-001280,Machine QR,MC-031,Hyd Press HP-01,TECH-10,Naveen Raj,2026-03-19T15:37:00,,View Last PM,CELL-08
+SC-001281,Technician QR,,,TECH-01,Arun Kumar,2026-03-19T19:30:00,,Open My PM List,
+SC-001282,Technician QR,,,TECH-08,Karthik V,2026-03-21T11:25:00,,Open My PM List,
+SC-001283,Machine QR,MC-024,Paint Booth PB-01,TECH-05,Prakash R,2026-03-21T20:48:00,,Report Breakdown,CELL-06
+SC-001284,Machine QR,MC-033,Press Feeder PF-01,TECH-03,Mohammed Rafi,2026-03-22T10:24:00,,Log Abnormality,CELL-08
+SC-001285,Technician QR,,,TECH-09,Sathish Kumar,2026-03-22T10:44:00,,Open My PM List,
+SC-001286,Technician QR,,,TECH-10,Naveen Raj,2026-03-22T18:36:00,,Open My PM List,
+SC-001287,Technician QR,,,TECH-05,Prakash R,2026-03-23T10:09:00,,Open My PM List,
+SC-001288,Machine QR,MC-001,CNC Lathe TL-01,TECH-02,Suresh Babu,2026-03-23T15:24:00,,View Last PM,CELL-01
+SC-001289,Machine QR,MC-007,CNC Lathe TL-05,TECH-06,Deepak Nair,2026-03-24T16:52:00,,View Last PM,CELL-02
+SC-001290,Technician QR,,,TECH-04,Vignesh S,2026-03-24T17:00:00,,Open My PM List,
+SC-001291,Technician QR,,,TECH-10,Naveen Raj,2026-03-25T09:46:00,,Open My PM List,
+SC-001292,Technician QR,,,TECH-07,Ramesh Chandran,2026-03-25T15:32:00,,Open My PM List,
+SC-001293,Machine QR,MC-005,Chip Conveyor CC-01,TECH-10,Naveen Raj,2026-03-25T21:06:00,,Request Spare,CELL-01
+SC-001294,Technician QR,,,TECH-08,Karthik V,2026-03-26T20:54:00,,Open My PM List,
+SC-001295,Technician QR,,,TECH-08,Karthik V,2026-03-26T21:52:00,,Open My PM List,
+SC-001296,Technician QR,,,TECH-06,Deepak Nair,2026-03-27T07:20:00,,Open My PM List,
+SC-001297,Technician QR,,,TECH-03,Mohammed Rafi,2026-03-27T15:36:00,,Open My PM List,
+SC-001298,Technician QR,,,TECH-04,Vignesh S,2026-03-27T19:20:00,,Open My PM List,
+SC-001299,Technician QR,,,TECH-02,Suresh Babu,2026-03-28T06:21:00,,Open My PM List,
+SC-001300,Machine QR,MC-029,Positioner PZ-01,TECH-06,Deepak Nair,2026-03-29T08:51:00,,Log Abnormality,CELL-07
+SC-001301,Technician QR,,,TECH-05,Prakash R,2026-03-30T06:16:00,,Open My PM List,
+SC-001302,Technician QR,,,TECH-09,Sathish Kumar,2026-03-30T14:05:00,,Open My PM List,
+SC-001303,Technician QR,,,TECH-09,Sathish Kumar,2026-03-30T21:40:00,,Open My PM List,
+SC-001304,Machine QR,MC-030,Weld Compressor AC-02,TECH-10,Naveen Raj,2026-03-31T15:09:00,,Log Abnormality,CELL-07
+SC-001305,Machine QR,MC-025,Curing Oven CO-01,TECH-06,Deepak Nair,2026-03-31T15:14:00,,Record Spare Replaced,CELL-06
+SC-001306,Technician QR,,,TECH-05,Prakash R,2026-04-01T16:34:00,,Open My PM List,
+SC-001307,Machine QR,MC-031,Hyd Press HP-01,TECH-04,Vignesh S,2026-04-01T16:36:00,,View Last PM,CELL-08
+SC-001308,Machine QR,MC-018,HT Compressor AC-01,TECH-02,Suresh Babu,2026-04-02T16:08:00,,View Last PM,CELL-04
+SC-001309,Machine QR,MC-008,VMC MC-01,TECH-07,Ramesh Chandran,2026-04-04T06:44:00,,Record Spare Replaced,CELL-02
+SC-001310,Machine QR,MC-018,HT Compressor AC-01,TECH-10,Naveen Raj,2026-04-04T06:50:00,,Record Spare Replaced,CELL-04
+SC-001311,Technician QR,,,TECH-05,Prakash R,2026-04-04T19:35:00,,Open My PM List,
+SC-001312,Machine QR,MC-027,Robot Weld Cell RW-01,TECH-01,Arun Kumar,2026-04-05T13:01:00,,View Last PM,CELL-07
+SC-001313,Technician QR,,,TECH-03,Mohammed Rafi,2026-04-05T13:39:00,,Open My PM List,
+SC-001314,Technician QR,,,TECH-06,Deepak Nair,2026-04-05T13:50:00,,Open My PM List,
+SC-001315,Machine QR,MC-006,CNC Lathe TL-04,TECH-02,Suresh Babu,2026-04-05T14:25:00,,View Last PM,CELL-02
+SC-001316,Technician QR,,,TECH-08,Karthik V,2026-04-05T14:48:00,,Open My PM List,
+SC-001317,Machine QR,MC-021,Assembly Stn AS-03,TECH-07,Ramesh Chandran,2026-04-05T16:16:00,,View Last PM,CELL-05
+SC-001318,Machine QR,MC-008,VMC MC-01,TECH-05,Prakash R,2026-04-05T20:12:00,,Log Abnormality,CELL-02
+SC-001319,Machine QR,MC-030,Weld Compressor AC-02,TECH-01,Arun Kumar,2026-04-05T21:27:00,,View Last PM,CELL-07
+SC-001320,Machine QR,MC-014,Sealed Quench SQ-01,TECH-05,Prakash R,2026-04-06T07:28:00,WO-00150,Start PM Checklist,CELL-04
+SC-001321,Technician QR,,,TECH-06,Deepak Nair,2026-04-06T13:52:00,,Open My PM List,
+SC-001322,Technician QR,,,TECH-03,Mohammed Rafi,2026-04-06T15:33:00,,Open My PM List,
+SC-001323,Technician QR,,,TECH-07,Ramesh Chandran,2026-04-06T21:06:00,,Open My PM List,
+SC-001324,Technician QR,,,TECH-07,Ramesh Chandran,2026-04-07T10:30:00,,Open My PM List,
+SC-001325,Technician QR,,,TECH-01,Arun Kumar,2026-04-07T10:33:00,,Open My PM List,
+SC-001326,Machine QR,MC-031,Hyd Press HP-01,TECH-09,Sathish Kumar,2026-04-07T15:30:00,,View Last PM,CELL-08
+SC-001327,Machine QR,MC-026,Paint Chiller CH-02,TECH-01,Arun Kumar,2026-04-08T09:55:00,,Report Breakdown,CELL-06
+SC-001328,Machine QR,MC-024,Paint Booth PB-01,TECH-10,Naveen Raj,2026-04-08T10:19:00,,Record Spare Replaced,CELL-06
+SC-001329,Technician QR,,,TECH-10,Naveen Raj,2026-04-08T10:42:00,,Open My PM List,
+SC-001330,Machine QR,MC-003,CNC Lathe TL-03,TECH-03,Mohammed Rafi,2026-04-08T16:36:00,,Log Abnormality,CELL-01
+SC-001331,Technician QR,,,TECH-06,Deepak Nair,2026-04-08T20:56:00,,Open My PM List,
+SC-001332,Machine QR,MC-009,VMC MC-02,TECH-09,Sathish Kumar,2026-04-09T20:48:00,,Report Breakdown,CELL-02
+SC-001333,Technician QR,,,TECH-04,Vignesh S,2026-04-09T22:05:00,,Open My PM List,
+SC-001334,Machine QR,MC-032,Hyd Press HP-02,TECH-04,Vignesh S,2026-04-11T10:19:00,,Log Abnormality,CELL-08
+SC-001335,Technician QR,,,TECH-06,Deepak Nair,2026-04-11T15:00:00,,Open My PM List,
+SC-001336,Technician QR,,,TECH-06,Deepak Nair,2026-04-12T20:48:00,,Open My PM List,
+SC-001337,Machine QR,MC-014,Sealed Quench SQ-01,TECH-10,Naveen Raj,2026-04-13T12:37:00,,View Last PM,CELL-04
+SC-001338,Machine QR,MC-017,Quench Oil Chiller CH-01,TECH-07,Ramesh Chandran,2026-04-14T15:20:00,,Record Spare Replaced,CELL-04
+SC-001339,Machine QR,MC-016,Tempering Furnace TF-01,TECH-06,Deepak Nair,2026-04-15T12:43:00,WO-00152,Start PM Checklist,CELL-04
+SC-001340,Technician QR,,,TECH-02,Suresh Babu,2026-04-15T22:19:00,,Open My PM List,
+SC-001341,Technician QR,,,TECH-03,Mohammed Rafi,2026-04-16T08:26:00,,Open My PM List,
+SC-001342,Technician QR,,,TECH-07,Ramesh Chandran,2026-04-16T14:55:00,,Open My PM List,
+SC-001343,Machine QR,MC-007,CNC Lathe TL-05,TECH-10,Naveen Raj,2026-04-17T09:02:00,,Log Abnormality,CELL-02
+SC-001344,Machine QR,MC-018,HT Compressor AC-01,TECH-05,Prakash R,2026-04-18T07:36:00,,View Last PM,CELL-04
+SC-001345,Technician QR,,,TECH-09,Sathish Kumar,2026-04-18T10:14:00,,Open My PM List,
+SC-001346,Machine QR,MC-030,Weld Compressor AC-02,TECH-09,Sathish Kumar,2026-04-18T22:07:00,,Log Abnormality,CELL-07
+SC-001347,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-07,Ramesh Chandran,2026-04-19T11:25:00,,Record Spare Replaced,CELL-07
+SC-001348,Technician QR,,,TECH-08,Karthik V,2026-04-19T13:04:00,,Open My PM List,
+SC-001349,Machine QR,MC-003,CNC Lathe TL-03,TECH-04,Vignesh S,2026-04-20T19:35:00,,Log Abnormality,CELL-01
+SC-001350,Machine QR,MC-002,CNC Lathe TL-02,TECH-03,Mohammed Rafi,2026-04-21T17:32:00,,View Last PM,CELL-01
+SC-001351,Technician QR,,,TECH-01,Arun Kumar,2026-04-21T20:11:00,,Open My PM List,
+SC-001352,Machine QR,MC-018,HT Compressor AC-01,TECH-09,Sathish Kumar,2026-04-21T21:13:00,,Log Abnormality,CELL-04
+SC-001353,Machine QR,MC-026,Paint Chiller CH-02,TECH-07,Ramesh Chandran,2026-04-22T06:29:00,,Request Spare,CELL-06
+SC-001354,Machine QR,MC-029,Positioner PZ-01,TECH-08,Karthik V,2026-04-22T09:02:00,,View Last PM,CELL-07
+SC-001355,Technician QR,,,TECH-10,Naveen Raj,2026-04-22T13:49:00,,Open My PM List,
+SC-001356,Machine QR,MC-025,Curing Oven CO-01,TECH-04,Vignesh S,2026-04-22T18:39:00,,View Last PM,CELL-06
+SC-001357,Machine QR,MC-017,Quench Oil Chiller CH-01,TECH-05,Prakash R,2026-04-22T18:54:00,WO-00153,Start PM Checklist,CELL-04
+SC-001358,Technician QR,,,TECH-07,Ramesh Chandran,2026-04-22T19:44:00,,Open My PM List,
+SC-001359,Machine QR,MC-006,CNC Lathe TL-04,TECH-09,Sathish Kumar,2026-04-23T15:23:00,,Record Spare Replaced,CELL-02
+SC-001360,Machine QR,MC-001,CNC Lathe TL-01,TECH-08,Karthik V,2026-04-23T17:59:00,,View Last PM,CELL-01
+SC-001361,Technician QR,,,TECH-10,Naveen Raj,2026-04-24T09:25:00,,Open My PM List,
+SC-001362,Technician QR,,,TECH-08,Karthik V,2026-04-24T18:01:00,,Open My PM List,
+SC-001363,Technician QR,,,TECH-05,Prakash R,2026-04-24T18:41:00,,Open My PM List,
+SC-001364,Machine QR,MC-009,VMC MC-02,TECH-10,Naveen Raj,2026-04-24T21:02:00,,View Last PM,CELL-02
+SC-001365,Machine QR,MC-021,Assembly Stn AS-03,TECH-01,Arun Kumar,2026-04-25T10:36:00,,View Last PM,CELL-05
+SC-001366,Machine QR,MC-021,Assembly Stn AS-03,TECH-01,Arun Kumar,2026-04-25T16:44:00,,View Last PM,CELL-05
+SC-001367,Technician QR,,,TECH-09,Sathish Kumar,2026-04-27T06:28:00,,Open My PM List,
+SC-001368,Machine QR,MC-002,CNC Lathe TL-02,TECH-09,Sathish Kumar,2026-04-27T11:01:00,,View Last PM,CELL-01
+SC-001369,Technician QR,,,TECH-02,Suresh Babu,2026-04-27T15:08:00,,Open My PM List,
+SC-001370,Machine QR,MC-030,Weld Compressor AC-02,TECH-10,Naveen Raj,2026-04-27T18:00:00,,Log Abnormality,CELL-07
+SC-001371,Technician QR,,,TECH-03,Mohammed Rafi,2026-04-27T19:16:00,,Open My PM List,
+SC-001372,Technician QR,,,TECH-08,Karthik V,2026-04-28T16:05:00,,Open My PM List,
+SC-001373,Machine QR,MC-018,HT Compressor AC-01,TECH-02,Suresh Babu,2026-04-29T12:19:00,WO-00154,Start PM Checklist,CELL-04
+SC-001374,Technician QR,,,TECH-05,Prakash R,2026-04-29T16:57:00,,Open My PM List,
+SC-001375,Machine QR,MC-033,Press Feeder PF-01,TECH-10,Naveen Raj,2026-04-29T18:53:00,,Request Spare,CELL-08
+SC-001376,Technician QR,,,TECH-02,Suresh Babu,2026-04-30T13:23:00,,Open My PM List,
+SC-001377,Technician QR,,,TECH-08,Karthik V,2026-04-30T14:41:00,,Open My PM List,
+SC-001378,Machine QR,MC-004,Bar Feeder BF-01,TECH-09,Sathish Kumar,2026-04-30T16:37:00,,Report Breakdown,CELL-01
+SC-001379,Technician QR,,,TECH-08,Karthik V,2026-04-30T17:22:00,,Open My PM List,
+SC-001380,Machine QR,MC-003,CNC Lathe TL-03,TECH-06,Deepak Nair,2026-04-30T17:30:00,,Record Spare Replaced,CELL-01
+SC-001381,Technician QR,,,TECH-07,Ramesh Chandran,2026-05-01T12:36:00,,Open My PM List,
+SC-001382,Machine QR,MC-017,Quench Oil Chiller CH-01,TECH-05,Prakash R,2026-05-02T08:07:00,,View Last PM,CELL-04
+SC-001383,Technician QR,,,TECH-02,Suresh Babu,2026-05-02T11:57:00,,Open My PM List,
+SC-001384,Machine QR,MC-013,Deburring Unit DB-01,TECH-10,Naveen Raj,2026-05-02T17:08:00,,Request Spare,CELL-03
+SC-001385,Machine QR,MC-001,CNC Lathe TL-01,TECH-02,Suresh Babu,2026-05-04T11:48:00,WO-00031,Start PM Checklist,CELL-01
+SC-001386,Machine QR,MC-021,Assembly Stn AS-03,TECH-07,Ramesh Chandran,2026-05-04T14:33:00,,Log Abnormality,CELL-05
+SC-001387,Machine QR,MC-015,Sealed Quench SQ-02,TECH-02,Suresh Babu,2026-05-04T18:05:00,WO-00151,Start PM Checklist,CELL-04
+SC-001388,Machine QR,MC-025,Curing Oven CO-01,TECH-08,Karthik V,2026-05-05T11:07:00,,View Last PM,CELL-06
+SC-001389,Technician QR,,,TECH-05,Prakash R,2026-05-05T20:27:00,,Open My PM List,
+SC-001390,Machine QR,MC-031,Hyd Press HP-01,TECH-05,Prakash R,2026-05-05T22:46:00,,Log Abnormality,CELL-08
+SC-001391,Machine QR,MC-020,Assembly Stn AS-02,TECH-02,Suresh Babu,2026-05-06T06:43:00,,Report Breakdown,CELL-05
+SC-001392,Technician QR,,,TECH-08,Karthik V,2026-05-06T11:31:00,,Open My PM List,
+SC-001393,Technician QR,,,TECH-02,Suresh Babu,2026-05-06T13:02:00,,Open My PM List,
+SC-001394,Technician QR,,,TECH-09,Sathish Kumar,2026-05-06T20:01:00,,Open My PM List,
+SC-001395,Technician QR,,,TECH-07,Ramesh Chandran,2026-05-06T20:49:00,,Open My PM List,
+SC-001396,Machine QR,MC-030,Weld Compressor AC-02,TECH-02,Suresh Babu,2026-05-07T09:52:00,,Log Abnormality,CELL-07
+SC-001397,Machine QR,MC-003,CNC Lathe TL-03,TECH-01,Arun Kumar,2026-05-07T15:04:00,,View Last PM,CELL-01
+SC-001398,Technician QR,,,TECH-05,Prakash R,2026-05-07T21:08:00,,Open My PM List,
+SC-001399,Machine QR,MC-030,Weld Compressor AC-02,TECH-02,Suresh Babu,2026-05-09T11:46:00,,View Last PM,CELL-07
+SC-001400,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-01,Arun Kumar,2026-05-09T13:07:00,,View Last PM,CELL-07
+SC-001401,Technician QR,,,TECH-10,Naveen Raj,2026-05-09T15:21:00,,Open My PM List,
+SC-001402,Machine QR,MC-013,Deburring Unit DB-01,TECH-02,Suresh Babu,2026-05-10T06:38:00,,Log Abnormality,CELL-03
+SC-001403,Technician QR,,,TECH-10,Naveen Raj,2026-05-10T09:36:00,,Open My PM List,
+SC-001404,Technician QR,,,TECH-09,Sathish Kumar,2026-05-10T20:14:00,,Open My PM List,
+SC-001405,Technician QR,,,TECH-05,Prakash R,2026-05-11T08:15:00,,Open My PM List,
+SC-001406,Machine QR,MC-008,VMC MC-01,TECH-03,Mohammed Rafi,2026-05-11T15:16:00,,Request Spare,CELL-02
+SC-001407,Machine QR,MC-006,CNC Lathe TL-04,TECH-07,Ramesh Chandran,2026-05-12T06:10:00,,Record Spare Replaced,CELL-02
+SC-001408,Technician QR,,,TECH-09,Sathish Kumar,2026-05-12T20:51:00,,Open My PM List,
+SC-001409,Machine QR,MC-033,Press Feeder PF-01,TECH-03,Mohammed Rafi,2026-05-13T09:55:00,,View Last PM,CELL-08
+SC-001410,Machine QR,MC-003,CNC Lathe TL-03,TECH-03,Mohammed Rafi,2026-05-13T10:53:00,WO-00033,Start PM Checklist,CELL-01
+SC-001411,Technician QR,,,TECH-10,Naveen Raj,2026-05-13T13:14:00,,Open My PM List,
+SC-001412,Technician QR,,,TECH-01,Arun Kumar,2026-05-14T07:31:00,,Open My PM List,
+SC-001413,Machine QR,MC-027,Robot Weld Cell RW-01,TECH-08,Karthik V,2026-05-14T09:40:00,,Report Breakdown,CELL-07
+SC-001414,Technician QR,,,TECH-02,Suresh Babu,2026-05-14T10:54:00,,Open My PM List,
+SC-001415,Technician QR,,,TECH-07,Ramesh Chandran,2026-05-14T15:39:00,,Open My PM List,
+SC-001416,Technician QR,,,TECH-10,Naveen Raj,2026-05-16T10:51:00,,Open My PM List,
+SC-001417,Machine QR,MC-026,Paint Chiller CH-02,TECH-08,Karthik V,2026-05-17T06:26:00,,View Last PM,CELL-06
+SC-001418,Technician QR,,,TECH-05,Prakash R,2026-05-17T08:40:00,,Open My PM List,
+SC-001419,Machine QR,MC-033,Press Feeder PF-01,TECH-09,Sathish Kumar,2026-05-17T10:01:00,,Log Abnormality,CELL-08
+SC-001420,Machine QR,MC-007,CNC Lathe TL-05,TECH-05,Prakash R,2026-05-18T16:28:00,,Report Breakdown,CELL-02
+SC-001421,Technician QR,,,TECH-06,Deepak Nair,2026-05-19T15:58:00,,Open My PM List,
+SC-001422,Technician QR,,,TECH-04,Vignesh S,2026-05-19T20:11:00,,Open My PM List,
+SC-001423,Technician QR,,,TECH-10,Naveen Raj,2026-05-19T22:05:00,,Open My PM List,
+SC-001424,Machine QR,MC-004,Bar Feeder BF-01,TECH-02,Suresh Babu,2026-05-20T14:44:00,WO-00034,Start PM Checklist,CELL-01
+SC-001425,Machine QR,MC-026,Paint Chiller CH-02,TECH-03,Mohammed Rafi,2026-05-21T16:48:00,,Request Spare,CELL-06
+SC-001426,Machine QR,MC-001,CNC Lathe TL-01,TECH-02,Suresh Babu,2026-05-21T19:33:00,,View Last PM,CELL-01
+SC-001427,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-03,Mohammed Rafi,2026-05-22T22:28:00,,Log Abnormality,CELL-07
+SC-001428,Technician QR,,,TECH-02,Suresh Babu,2026-05-23T18:18:00,,Open My PM List,
+SC-001429,Technician QR,,,TECH-03,Mohammed Rafi,2026-05-24T13:29:00,,Open My PM List,
+SC-001430,Technician QR,,,TECH-08,Karthik V,2026-05-24T22:16:00,,Open My PM List,
+SC-001431,Machine QR,MC-020,Assembly Stn AS-02,TECH-03,Mohammed Rafi,2026-05-25T09:43:00,,Report Breakdown,CELL-05
+SC-001432,Technician QR,,,TECH-07,Ramesh Chandran,2026-05-25T13:26:00,,Open My PM List,
+SC-001433,Machine QR,MC-005,Chip Conveyor CC-01,TECH-01,Arun Kumar,2026-05-26T09:19:00,WO-00035,Start PM Checklist,CELL-01
+SC-001434,Technician QR,,,TECH-04,Vignesh S,2026-05-26T19:04:00,,Open My PM List,
+SC-001435,Technician QR,,,TECH-05,Prakash R,2026-05-27T12:46:00,,Open My PM List,
+SC-001436,Machine QR,MC-013,Deburring Unit DB-01,TECH-01,Arun Kumar,2026-05-27T19:01:00,,Record Spare Replaced,CELL-03
+SC-001437,Machine QR,MC-032,Hyd Press HP-02,TECH-06,Deepak Nair,2026-05-28T13:59:00,,Log Abnormality,CELL-08
+SC-001438,Technician QR,,,TECH-08,Karthik V,2026-05-29T16:22:00,,Open My PM List,
+SC-001439,Machine QR,MC-027,Robot Weld Cell RW-01,TECH-02,Suresh Babu,2026-05-29T17:52:00,,View Last PM,CELL-07
+SC-001440,Technician QR,,,TECH-08,Karthik V,2026-05-30T09:58:00,,Open My PM List,
+SC-001441,Machine QR,MC-007,CNC Lathe TL-05,TECH-02,Suresh Babu,2026-05-31T08:41:00,,View Last PM,CELL-02
+SC-001442,Machine QR,MC-011,Gear Hobber GH-02,TECH-09,Sathish Kumar,2026-05-31T14:54:00,,Log Abnormality,CELL-03
+SC-001443,Machine QR,MC-015,Sealed Quench SQ-02,TECH-04,Vignesh S,2026-05-31T17:00:00,,View Last PM,CELL-04
+SC-001444,Technician QR,,,TECH-09,Sathish Kumar,2026-05-31T20:39:00,,Open My PM List,
+SC-001445,Technician QR,,,TECH-04,Vignesh S,2026-06-01T06:40:00,,Open My PM List,
+SC-001446,Technician QR,,,TECH-05,Prakash R,2026-06-01T10:17:00,,Open My PM List,
+SC-001447,Machine QR,MC-022,Leak Test Rig LT-01,TECH-06,Deepak Nair,2026-06-02T12:27:00,,Request Spare,CELL-05
+SC-001448,Technician QR,,,TECH-03,Mohammed Rafi,2026-06-03T09:08:00,,Open My PM List,
+SC-001449,Machine QR,MC-009,VMC MC-02,TECH-05,Prakash R,2026-06-03T20:33:00,,View Last PM,CELL-02
+SC-001450,Machine QR,MC-013,Deburring Unit DB-01,TECH-09,Sathish Kumar,2026-06-03T22:57:00,,View Last PM,CELL-03
+SC-001451,Technician QR,,,TECH-06,Deepak Nair,2026-06-04T12:47:00,,Open My PM List,
+SC-001452,Machine QR,MC-015,Sealed Quench SQ-02,TECH-03,Mohammed Rafi,2026-06-04T14:17:00,,Report Breakdown,CELL-04
+SC-001453,Technician QR,,,TECH-08,Karthik V,2026-06-04T21:12:00,,Open My PM List,
+SC-001454,Machine QR,MC-019,Assembly Stn AS-01,TECH-06,Deepak Nair,2026-06-05T13:42:00,,Log Abnormality,CELL-05
+SC-001455,Technician QR,,,TECH-10,Naveen Raj,2026-06-05T16:14:00,,Open My PM List,
+SC-001456,Technician QR,,,TECH-09,Sathish Kumar,2026-06-05T22:11:00,,Open My PM List,
+SC-001457,Machine QR,MC-023,Assy Conveyor CV-01,TECH-05,Prakash R,2026-06-05T22:32:00,,Report Breakdown,CELL-05
+SC-001458,Machine QR,MC-027,Robot Weld Cell RW-01,TECH-02,Suresh Babu,2026-06-06T07:27:00,,Request Spare,CELL-07
+SC-001459,Technician QR,,,TECH-02,Suresh Babu,2026-06-06T19:26:00,,Open My PM List,
+SC-001460,Machine QR,MC-006,CNC Lathe TL-04,TECH-02,Suresh Babu,2026-06-07T07:13:00,WO-00076,Start PM Checklist,CELL-02
+SC-001461,Technician QR,,,TECH-05,Prakash R,2026-06-07T11:15:00,,Open My PM List,
+SC-001462,Technician QR,,,TECH-10,Naveen Raj,2026-06-08T14:57:00,,Open My PM List,
+SC-001463,Machine QR,MC-031,Hyd Press HP-01,TECH-06,Deepak Nair,2026-06-08T18:24:00,,View Last PM,CELL-08
+SC-001464,Machine QR,MC-030,Weld Compressor AC-02,TECH-02,Suresh Babu,2026-06-09T13:56:00,,View Last PM,CELL-07
+SC-001465,Technician QR,,,TECH-10,Naveen Raj,2026-06-09T21:35:00,,Open My PM List,
+SC-001466,Machine QR,MC-013,Deburring Unit DB-01,TECH-10,Naveen Raj,2026-06-10T10:20:00,,Log Abnormality,CELL-03
+SC-001467,Machine QR,MC-020,Assembly Stn AS-02,TECH-10,Naveen Raj,2026-06-10T12:28:00,WO-00206,Start PM Checklist,CELL-05
+SC-001468,Machine QR,MC-007,CNC Lathe TL-05,TECH-01,Arun Kumar,2026-06-10T15:26:00,WO-00077,Start PM Checklist,CELL-02
+SC-001469,Machine QR,MC-006,CNC Lathe TL-04,TECH-08,Karthik V,2026-06-10T17:58:00,,Request Spare,CELL-02
+SC-001470,Machine QR,MC-014,Sealed Quench SQ-01,TECH-02,Suresh Babu,2026-06-10T21:03:00,,View Last PM,CELL-04
+SC-001471,Technician QR,,,TECH-02,Suresh Babu,2026-06-11T08:32:00,,Open My PM List,
+SC-001472,Technician QR,,,TECH-06,Deepak Nair,2026-06-11T10:20:00,,Open My PM List,
+SC-001473,Technician QR,,,TECH-10,Naveen Raj,2026-06-12T12:05:00,,Open My PM List,
+SC-001474,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-04,Vignesh S,2026-06-13T12:10:00,,View Last PM,CELL-07
+SC-001475,Technician QR,,,TECH-04,Vignesh S,2026-06-13T16:10:00,,Open My PM List,
+SC-001476,Technician QR,,,TECH-09,Sathish Kumar,2026-06-14T06:41:00,,Open My PM List,
+SC-001477,Technician QR,,,TECH-01,Arun Kumar,2026-06-14T17:28:00,,Open My PM List,
+SC-001478,Technician QR,,,TECH-08,Karthik V,2026-06-15T07:22:00,,Open My PM List,
+SC-001479,Technician QR,,,TECH-03,Mohammed Rafi,2026-06-15T10:32:00,,Open My PM List,
+SC-001480,Machine QR,MC-016,Tempering Furnace TF-01,TECH-04,Vignesh S,2026-06-15T17:23:00,,View Last PM,CELL-04
+SC-001481,Machine QR,MC-026,Paint Chiller CH-02,TECH-04,Vignesh S,2026-06-15T18:55:00,,Report Breakdown,CELL-06
+SC-001482,Technician QR,,,TECH-04,Vignesh S,2026-06-15T19:52:00,,Open My PM List,
+SC-001483,Technician QR,,,TECH-01,Arun Kumar,2026-06-15T20:48:00,,Open My PM List,
+SC-001484,Machine QR,MC-021,Assembly Stn AS-03,TECH-10,Naveen Raj,2026-06-16T07:04:00,WO-00207,Start PM Checklist,CELL-05
+SC-001485,Machine QR,MC-031,Hyd Press HP-01,TECH-06,Deepak Nair,2026-06-16T10:45:00,,Report Breakdown,CELL-08
+SC-001486,Machine QR,MC-008,VMC MC-01,TECH-03,Mohammed Rafi,2026-06-16T14:15:00,WO-00078,Start PM Checklist,CELL-02
+SC-001487,Technician QR,,,TECH-07,Ramesh Chandran,2026-06-17T08:08:00,,Open My PM List,
+SC-001488,Technician QR,,,TECH-06,Deepak Nair,2026-06-17T13:17:00,,Open My PM List,
+SC-001489,Technician QR,,,TECH-07,Ramesh Chandran,2026-06-17T19:16:00,,Open My PM List,
+SC-001490,Machine QR,MC-002,CNC Lathe TL-02,TECH-08,Karthik V,2026-06-18T09:53:00,,Request Spare,CELL-01
+SC-001491,Technician QR,,,TECH-08,Karthik V,2026-06-18T13:38:00,,Open My PM List,
+SC-001492,Machine QR,MC-013,Deburring Unit DB-01,TECH-06,Deepak Nair,2026-06-19T12:42:00,,Report Breakdown,CELL-03
+SC-001493,Machine QR,MC-029,Positioner PZ-01,TECH-09,Sathish Kumar,2026-06-19T17:43:00,WO-00243,Start PM Checklist,CELL-07
+SC-001494,Technician QR,,,TECH-06,Deepak Nair,2026-06-20T11:18:00,,Open My PM List,
+SC-001495,Machine QR,MC-022,Leak Test Rig LT-01,TECH-10,Naveen Raj,2026-06-20T16:43:00,WO-00208,Start PM Checklist,CELL-05
+SC-001496,Machine QR,MC-023,Assy Conveyor CV-01,TECH-01,Arun Kumar,2026-06-20T19:30:00,,Log Abnormality,CELL-05
+SC-001497,Technician QR,,,TECH-07,Ramesh Chandran,2026-06-20T21:24:00,,Open My PM List,
+SC-001498,Technician QR,,,TECH-08,Karthik V,2026-06-21T11:34:00,,Open My PM List,
+SC-001499,Technician QR,,,TECH-09,Sathish Kumar,2026-06-21T14:35:00,,Open My PM List,
+SC-001500,Technician QR,,,TECH-09,Sathish Kumar,2026-06-22T16:15:00,,Open My PM List,
+SC-001501,Machine QR,MC-009,VMC MC-02,TECH-02,Suresh Babu,2026-06-23T07:18:00,WO-00079,Start PM Checklist,CELL-02
+SC-001502,Machine QR,MC-012,Gear Shaver GS-01,TECH-10,Naveen Raj,2026-06-23T10:47:00,,View Last PM,CELL-03
+SC-001503,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-02,Suresh Babu,2026-06-23T10:56:00,,Record Spare Replaced,CELL-07
+SC-001504,Technician QR,,,TECH-01,Arun Kumar,2026-06-23T12:52:00,,Open My PM List,
+SC-001505,Machine QR,MC-023,Assy Conveyor CV-01,TECH-10,Naveen Raj,2026-06-23T16:02:00,WO-00209,Start PM Checklist,CELL-05
+SC-001506,Machine QR,MC-032,Hyd Press HP-02,TECH-09,Sathish Kumar,2026-06-24T09:48:00,,Log Abnormality,CELL-08
+SC-001507,Technician QR,,,TECH-03,Mohammed Rafi,2026-06-24T17:04:00,,Open My PM List,
+SC-001508,Machine QR,MC-030,Weld Compressor AC-02,TECH-08,Karthik V,2026-06-26T12:48:00,WO-00244,Start PM Checklist,CELL-07
+SC-001509,Technician QR,,,TECH-02,Suresh Babu,2026-06-26T14:07:00,,Open My PM List,
+SC-001510,Machine QR,MC-025,Curing Oven CO-01,TECH-06,Deepak Nair,2026-06-26T19:30:00,,View Last PM,CELL-06
+SC-001511,Technician QR,,,TECH-07,Ramesh Chandran,2026-06-27T16:16:00,,Open My PM List,
+SC-001512,Machine QR,MC-031,Hyd Press HP-01,TECH-09,Sathish Kumar,2026-06-27T19:41:00,,View Last PM,CELL-08
+SC-001513,Machine QR,MC-018,HT Compressor AC-01,TECH-06,Deepak Nair,2026-06-27T20:35:00,,View Last PM,CELL-04
+SC-001514,Technician QR,,,TECH-02,Suresh Babu,2026-06-28T14:54:00,,Open My PM List,
+SC-001515,Machine QR,MC-003,CNC Lathe TL-03,TECH-03,Mohammed Rafi,2026-06-28T15:37:00,,Report Breakdown,CELL-01
+SC-001516,Technician QR,,,TECH-08,Karthik V,2026-06-28T15:51:00,,Open My PM List,
+SC-001517,Machine QR,MC-006,CNC Lathe TL-04,TECH-03,Mohammed Rafi,2026-06-28T17:31:00,,View Last PM,CELL-02
+SC-001518,Technician QR,,,TECH-06,Deepak Nair,2026-06-29T10:13:00,,Open My PM List,
+SC-001519,Technician QR,,,TECH-06,Deepak Nair,2026-06-29T21:51:00,,Open My PM List,
+SC-001520,Technician QR,,,TECH-07,Ramesh Chandran,2026-07-01T09:35:00,,Open My PM List,
+SC-001521,Machine QR,MC-010,Gear Hobber GH-01,TECH-04,Vignesh S,2026-07-01T22:52:00,,Request Spare,CELL-03
+SC-001522,Technician QR,,,TECH-02,Suresh Babu,2026-07-02T16:17:00,,Open My PM List,
+SC-001523,Machine QR,MC-011,Gear Hobber GH-02,TECH-02,Suresh Babu,2026-07-02T17:30:00,,View Last PM,CELL-03
+SC-001524,Technician QR,,,TECH-02,Suresh Babu,2026-07-02T20:40:00,,Open My PM List,
+SC-001525,Machine QR,MC-029,Positioner PZ-01,TECH-05,Prakash R,2026-07-03T19:04:00,,View Last PM,CELL-07
+SC-001526,Machine QR,MC-030,Weld Compressor AC-02,TECH-02,Suresh Babu,2026-07-04T07:17:00,,Request Spare,CELL-07
+SC-001527,Technician QR,,,TECH-06,Deepak Nair,2026-07-04T08:19:00,,Open My PM List,
+SC-001528,Machine QR,MC-024,Paint Booth PB-01,TECH-02,Suresh Babu,2026-07-04T08:30:00,,Request Spare,CELL-06
+SC-001529,Machine QR,MC-012,Gear Shaver GS-01,TECH-02,Suresh Babu,2026-07-04T19:21:00,,Record Spare Replaced,CELL-03
+SC-001530,Machine QR,MC-018,HT Compressor AC-01,TECH-06,Deepak Nair,2026-07-05T13:43:00,,Log Abnormality,CELL-04
+SC-001531,Machine QR,MC-008,VMC MC-01,TECH-08,Karthik V,2026-07-05T15:00:00,,Report Breakdown,CELL-02
+SC-001532,Technician QR,,,TECH-10,Naveen Raj,2026-07-05T20:39:00,,Open My PM List,
+SC-001533,Machine QR,MC-033,Press Feeder PF-01,TECH-04,Vignesh S,2026-07-05T22:09:00,,Log Abnormality,CELL-08
+SC-001534,Technician QR,,,TECH-02,Suresh Babu,2026-07-06T10:32:00,,Open My PM List,
+SC-001535,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-04,Vignesh S,2026-07-06T11:31:00,WO-00242,Start PM Checklist,CELL-07
+SC-001536,Machine QR,MC-013,Deburring Unit DB-01,TECH-03,Mohammed Rafi,2026-07-06T12:08:00,,View Last PM,CELL-03
+SC-001537,Machine QR,MC-008,VMC MC-01,TECH-04,Vignesh S,2026-07-06T13:48:00,,Log Abnormality,CELL-02
+SC-001538,Technician QR,,,TECH-08,Karthik V,2026-07-06T18:49:00,,Open My PM List,
+SC-001539,Machine QR,MC-016,Tempering Furnace TF-01,TECH-06,Deepak Nair,2026-07-06T19:38:00,,Log Abnormality,CELL-04
+SC-001540,Technician QR,,,TECH-09,Sathish Kumar,2026-07-06T19:47:00,,Open My PM List,
+SC-001541,Machine QR,MC-019,Assembly Stn AS-01,TECH-10,Naveen Raj,2026-07-07T12:06:00,WO-00205,Start PM Checklist,CELL-05
+SC-001542,Machine QR,MC-023,Assy Conveyor CV-01,TECH-07,Ramesh Chandran,2026-07-07T21:24:00,,View Last PM,CELL-05
+SC-001543,Technician QR,,,TECH-09,Sathish Kumar,2026-07-07T21:42:00,,Open My PM List,
+SC-001544,Machine QR,MC-001,CNC Lathe TL-01,TECH-05,Prakash R,2026-07-08T10:22:00,,Request Spare,CELL-01
+SC-001545,Machine QR,MC-010,Gear Hobber GH-01,TECH-01,Arun Kumar,2026-07-08T18:43:00,WO-00108,Start PM Checklist,CELL-03
+SC-001546,Technician QR,,,TECH-04,Vignesh S,2026-07-09T17:36:00,,Open My PM List,
+SC-001547,Machine QR,MC-007,CNC Lathe TL-05,TECH-07,Ramesh Chandran,2026-07-09T19:12:00,,View Last PM,CELL-02
+SC-001548,Technician QR,,,TECH-06,Deepak Nair,2026-07-10T06:03:00,,Open My PM List,
+SC-001549,Technician QR,,,TECH-08,Karthik V,2026-07-10T22:03:00,,Open My PM List,
+SC-001550,Technician QR,,,TECH-06,Deepak Nair,2026-07-10T22:57:00,,Open My PM List,
+SC-001551,Machine QR,MC-015,Sealed Quench SQ-02,TECH-01,Arun Kumar,2026-07-11T10:06:00,,Record Spare Replaced,CELL-04
+SC-001552,Machine QR,MC-015,Sealed Quench SQ-02,TECH-06,Deepak Nair,2026-07-11T18:43:00,WO-00156,Start PM Checklist,CELL-04
+SC-001553,Technician QR,,,TECH-07,Ramesh Chandran,2026-07-12T18:48:00,,Open My PM List,
+SC-001554,Machine QR,MC-032,Hyd Press HP-02,TECH-05,Prakash R,2026-07-12T19:07:00,,View Last PM,CELL-08
+SC-001555,Technician QR,,,TECH-06,Deepak Nair,2026-07-13T10:54:00,,Open My PM List,
+SC-001556,Machine QR,MC-031,Hyd Press HP-01,TECH-01,Arun Kumar,2026-07-13T16:05:00,,Record Spare Replaced,CELL-08
+SC-001557,Technician QR,,,TECH-06,Deepak Nair,2026-07-14T15:59:00,,Open My PM List,
+SC-001558,Machine QR,MC-006,CNC Lathe TL-04,TECH-10,Naveen Raj,2026-07-15T10:11:00,,Report Breakdown,CELL-02
+SC-001559,Machine QR,MC-026,Paint Chiller CH-02,TECH-04,Vignesh S,2026-07-15T11:17:00,,Request Spare,CELL-06
+SC-001560,Machine QR,MC-024,Paint Booth PB-01,TECH-01,Arun Kumar,2026-07-15T12:12:00,,View Last PM,CELL-06
+SC-001561,Technician QR,,,TECH-05,Prakash R,2026-07-15T16:22:00,,Open My PM List,
+SC-001562,Machine QR,MC-011,Gear Hobber GH-02,TECH-03,Mohammed Rafi,2026-07-15T17:04:00,WO-00109,Start PM Checklist,CELL-03
+SC-001563,Technician QR,,,TECH-10,Naveen Raj,2026-07-17T22:49:00,,Open My PM List,
+SC-001564,Technician QR,,,TECH-08,Karthik V,2026-07-18T08:20:00,,Open My PM List,
+SC-001565,Machine QR,MC-019,Assembly Stn AS-01,TECH-09,Sathish Kumar,2026-07-18T10:07:00,,View Last PM,CELL-05
+SC-001566,Technician QR,,,TECH-08,Karthik V,2026-07-18T13:35:00,,Open My PM List,
+SC-001567,Machine QR,MC-028,Robot Weld Cell RW-02,TECH-07,Ramesh Chandran,2026-07-19T13:13:00,,Record Spare Replaced,CELL-07
+SC-001568,Technician QR,,,TECH-07,Ramesh Chandran,2026-07-19T17:25:00,,Open My PM List,
+SC-001569,Technician QR,,,TECH-07,Ramesh Chandran,2026-07-19T17:41:00,,Open My PM List,
+SC-001570,Technician QR,,,TECH-08,Karthik V,2026-07-20T07:38:00,,Open My PM List,
+SC-001571,Technician QR,,,TECH-06,Deepak Nair,2026-07-20T10:38:00,,Open My PM List,
+SC-001572,Machine QR,MC-026,Paint Chiller CH-02,TECH-05,Prakash R,2026-07-20T12:59:00,,View Last PM,CELL-06
+SC-001573,Technician QR,,,TECH-06,Deepak Nair,2026-07-20T19:06:00,,Open My PM List,
+SC-001574,Technician QR,,,TECH-02,Suresh Babu,2026-07-20T19:31:00,,Open My PM List,
+SC-001575,Technician QR,,,TECH-03,Mohammed Rafi,2026-07-20T19:44:00,,Open My PM List,
+SC-001576,Machine QR,MC-012,Gear Shaver GS-01,TECH-02,Suresh Babu,2026-07-21T08:15:00,WO-00110,Start PM Checklist,CELL-03
+SC-001577,Machine QR,MC-017,Quench Oil Chiller CH-01,TECH-02,Suresh Babu,2026-07-21T15:53:00,WO-00158,Start PM Checklist,CELL-04
+SC-001578,Technician QR,,,TECH-03,Mohammed Rafi,2026-07-22T18:09:00,,Open My PM List,
+SC-001579,Technician QR,,,TECH-03,Mohammed Rafi,2026-07-23T13:44:00,,Open My PM List,
+SC-001580,Machine QR,MC-004,Bar Feeder BF-01,TECH-10,Naveen Raj,2026-07-23T14:15:00,,View Last PM,CELL-01
+SC-001581,Technician QR,,,TECH-09,Sathish Kumar,2026-07-23T21:30:00,,Open My PM List,
+SC-001582,Technician QR,,,TECH-08,Karthik V,2026-07-24T10:58:00,,Open My PM List,
+SC-001583,Technician QR,,,TECH-08,Karthik V,2026-07-24T14:26:00,,Open My PM List,
+SC-001584,Machine QR,MC-027,Robot Weld Cell RW-01,TECH-01,Arun Kumar,2026-07-26T06:09:00,,Request Spare,CELL-07
+SC-001585,Technician QR,,,TECH-05,Prakash R,2026-07-27T17:59:00,,Open My PM List,
+SC-001586,Machine QR,MC-033,Press Feeder PF-01,TECH-03,Mohammed Rafi,2026-07-27T21:50:00,,View Last PM,CELL-08
+SC-001587,Technician QR,,,TECH-07,Ramesh Chandran,2026-07-27T22:55:00,,Open My PM List,
+SC-001588,Technician QR,,,TECH-02,Suresh Babu,2026-07-28T12:36:00,,Open My PM List,
+SC-001589,Machine QR,MC-011,Gear Hobber GH-02,TECH-03,Mohammed Rafi,2026-07-29T17:09:00,,View Last PM,CELL-03
+SC-001590,Technician QR,,,TECH-03,Mohammed Rafi,2026-07-29T21:13:00,,Open My PM List,
+SC-001591,Technician QR,,,TECH-06,Deepak Nair,2026-07-30T10:45:00,,Open My PM List,
+SC-001592,Machine QR,MC-018,HT Compressor AC-01,TECH-06,Deepak Nair,2026-07-30T13:09:00,WO-00159,Start PM Checklist,CELL-04
+SC-001593,Machine QR,MC-031,Hyd Press HP-01,TECH-07,Ramesh Chandran,2026-07-30T13:58:00,,Request Spare,CELL-08
+SC-001594,Technician QR,,,TECH-07,Ramesh Chandran,2026-07-30T20:54:00,,Open My PM List,
+SC-001595,Technician QR,,,TECH-03,Mohammed Rafi,2026-07-31T07:57:00,,Open My PM List,
+SC-001596,Technician QR,,,TECH-04,Vignesh S,2026-07-31T12:37:00,,Open My PM List,
+SC-001597,Technician QR,,,TECH-02,Suresh Babu,2026-08-02T07:49:00,,Open My PM List,
+SC-001598,Technician QR,,,TECH-01,Arun Kumar,2026-08-02T12:34:00,,Open My PM List,
+SC-001599,Technician QR,,,TECH-05,Prakash R,2026-08-02T13:56:00,,Open My PM List,
+SC-001600,Machine QR,MC-016,Tempering Furnace TF-01,TECH-05,Prakash R,2026-08-02T14:12:00,WO-00157,Start PM Checklist,CELL-04
+SC-001601,Technician QR,,,TECH-08,Karthik V,2026-08-02T17:13:00,,Open My PM List,
+SC-001602,Machine QR,MC-013,Deburring Unit DB-01,TECH-01,Arun Kumar,2026-08-03T15:26:00,WO-00111,Start PM Checklist,CELL-03
+SC-001603,Technician QR,,,TECH-10,Naveen Raj,2026-08-03T18:49:00,,Open My PM List,
+SC-001604,Technician QR,,,TECH-08,Karthik V,2026-08-04T12:24:00,,Open My PM List,
+SC-001605,Technician QR,,,TECH-10,Naveen Raj,2026-08-05T10:07:00,,Open My PM List,
+SC-001606,Machine QR,MC-014,Sealed Quench SQ-01,TECH-07,Ramesh Chandran,2026-08-05T14:16:00,,Log Abnormality,CELL-04
+SC-001607,Technician QR,,,TECH-09,Sathish Kumar,2026-08-05T15:17:00,,Open My PM List,
+SC-001608,Technician QR,,,TECH-07,Ramesh Chandran,2026-08-06T11:47:00,,Open My PM List,
+SC-001609,Technician QR,,,TECH-03,Mohammed Rafi,2026-08-06T20:35:00,,Open My PM List,
+SC-001610,Machine QR,MC-007,CNC Lathe TL-05,TECH-03,Mohammed Rafi,2026-08-07T18:41:00,,Request Spare,CELL-02
+SC-001611,Technician QR,,,TECH-07,Ramesh Chandran,2026-08-08T06:47:00,,Open My PM List,
+SC-001612,Machine QR,MC-031,Hyd Press HP-01,TECH-07,Ramesh Chandran,2026-08-08T19:54:00,,View Last PM,CELL-08
+SC-001613,Technician QR,,,TECH-01,Arun Kumar,2026-08-08T22:06:00,,Open My PM List,
+SC-001614,Technician QR,,,TECH-07,Ramesh Chandran,2026-08-09T06:14:00,,Open My PM List,
+SC-001615,Technician QR,,,TECH-05,Prakash R,2026-08-09T12:13:00,,Open My PM List,
+SC-001616,Machine QR,MC-019,Assembly Stn AS-01,TECH-10,Naveen Raj,2026-08-10T06:58:00,,Report Breakdown,CELL-05
+SC-001617,Technician QR,,,TECH-04,Vignesh S,2026-08-11T12:46:00,,Open My PM List,
+SC-001618,Technician QR,,,TECH-10,Naveen Raj,2026-08-11T16:53:00,,Open My PM List,
+SC-001619,Machine QR,MC-022,Leak Test Rig LT-01,TECH-03,Mohammed Rafi,2026-08-12T06:38:00,,Report Breakdown,CELL-05
+SC-001620,Technician QR,,,TECH-06,Deepak Nair,2026-08-12T09:12:00,,Open My PM List,
+SC-001621,Technician QR,,,TECH-08,Karthik V,2026-08-12T14:46:00,,Open My PM List,
+SC-001622,Technician QR,,,TECH-10,Naveen Raj,2026-08-13T07:59:00,,Open My PM List,
+SC-001623,Technician QR,,,TECH-02,Suresh Babu,2026-08-13T17:57:00,,Open My PM List,
+SC-001624,Technician QR,,,TECH-07,Ramesh Chandran,2026-08-14T08:21:00,,Open My PM List,
+SC-001625,Technician QR,,,TECH-10,Naveen Raj,2026-08-14T10:21:00,,Open My PM List,
+SC-001626,Machine QR,MC-021,Assembly Stn AS-03,TECH-03,Mohammed Rafi,2026-08-14T20:59:00,,View Last PM,CELL-05
+SC-001627,Technician QR,,,TECH-02,Suresh Babu,2026-08-15T09:45:00,,Open My PM List,
+SC-001628,Machine QR,MC-008,VMC MC-01,TECH-01,Arun Kumar,2026-08-15T10:15:00,,Request Spare,CELL-02
+SC-001629,Technician QR,,,TECH-03,Mohammed Rafi,2026-08-15T11:33:00,,Open My PM List,
+SC-001630,Machine QR,MC-009,VMC MC-02,TECH-10,Naveen Raj,2026-08-16T09:24:00,,View Last PM,CELL-02
+SC-001631,Technician QR,,,TECH-07,Ramesh Chandran,2026-08-16T11:20:00,,Open My PM List,
+SC-001632,Machine QR,MC-005,Chip Conveyor CC-01,TECH-10,Naveen Raj,2026-08-16T19:09:00,,Request Spare,CELL-01
+SC-001633,Machine QR,MC-024,Paint Booth PB-01,TECH-02,Suresh Babu,2026-08-17T09:05:00,,View Last PM,CELL-06
+SC-001634,Technician QR,,,TECH-06,Deepak Nair,2026-08-17T09:33:00,,Open My PM List,
+SC-001635,Technician QR,,,TECH-06,Deepak Nair,2026-08-17T21:30:00,,Open My PM List,
+SC-001636,Technician QR,,,TECH-08,Karthik V,2026-08-17T21:41:00,,Open My PM List,
+SC-001637,Machine QR,MC-003,CNC Lathe TL-03,TECH-05,Prakash R,2026-08-18T09:45:00,,Record Spare Replaced,CELL-01
+SC-001638,Technician QR,,,TECH-03,Mohammed Rafi,2026-08-18T12:40:00,,Open My PM List,
+SC-001639,Technician QR,,,TECH-10,Naveen Raj,2026-08-18T13:26:00,,Open My PM List,
+SC-001640,Machine QR,MC-032,Hyd Press HP-02,TECH-07,Ramesh Chandran,2026-08-18T22:59:00,,Log Abnormality,CELL-08
+SC-001641,Machine QR,MC-032,Hyd Press HP-02,TECH-04,Vignesh S,2026-08-19T14:33:00,WO-00257,Start PM Checklist,CELL-08
+SC-001642,Technician QR,,,TECH-02,Suresh Babu,2026-08-21T07:43:00,,Open My PM List,
+SC-001643,Machine QR,MC-026,Paint Chiller CH-02,TECH-06,Deepak Nair,2026-08-21T13:32:00,,View Last PM,CELL-06
+SC-001644,Machine QR,MC-013,Deburring Unit DB-01,TECH-07,Ramesh Chandran,2026-08-21T17:15:00,,Record Spare Replaced,CELL-03
+SC-001645,Technician QR,,,TECH-03,Mohammed Rafi,2026-08-21T17:43:00,,Open My PM List,
+SC-001646,Machine QR,MC-014,Sealed Quench SQ-01,TECH-04,Vignesh S,2026-08-21T18:07:00,,Request Spare,CELL-04
+SC-001647,Technician QR,,,TECH-02,Suresh Babu,2026-08-23T15:44:00,,Open My PM List,
+SC-001648,Technician QR,,,TECH-03,Mohammed Rafi,2026-08-23T17:49:00,,Open My PM List,
+SC-001649,Technician QR,,,TECH-07,Ramesh Chandran,2026-08-23T18:03:00,,Open My PM List,
+SC-001650,Machine QR,MC-033,Press Feeder PF-01,TECH-09,Sathish Kumar,2026-08-24T09:25:00,WO-00258,Start PM Checklist,CELL-08
+SC-001651,Technician QR,,,TECH-05,Prakash R,2026-08-24T13:42:00,,Open My PM List,
+SC-001652,Machine QR,MC-013,Deburring Unit DB-01,TECH-06,Deepak Nair,2026-08-25T06:40:00,,View Last PM,CELL-03
+SC-001653,Technician QR,,,TECH-07,Ramesh Chandran,2026-08-25T07:52:00,,Open My PM List,
+SC-001654,Technician QR,,,TECH-05,Prakash R,2026-08-25T16:48:00,,Open My PM List,
+SC-001655,Technician QR,,,TECH-04,Vignesh S,2026-08-25T19:04:00,,Open My PM List,
+SC-001656,Machine QR,MC-030,Weld Compressor AC-02,TECH-07,Ramesh Chandran,2026-08-26T07:54:00,,Record Spare Replaced,CELL-07
+SC-001657,Machine QR,MC-005,Chip Conveyor CC-01,TECH-03,Mohammed Rafi,2026-08-26T10:20:00,,View Last PM,CELL-01
+SC-001658,Technician QR,,,TECH-03,Mohammed Rafi,2026-08-26T13:13:00,,Open My PM List,
+SC-001659,Technician QR,,,TECH-03,Mohammed Rafi,2026-08-27T22:00:00,,Open My PM List,

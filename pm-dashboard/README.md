@@ -17,6 +17,7 @@ a 12-month calendar backstop for cells that never get there.
 | The Claude Code prompt that rebuilds all of this | **[`CLAUDE_CODE_PROMPT.md`](CLAUDE_CODE_PROMPT.md)** |
 | To understand the 4000-hour rule | [`docs/03-pm-scheduling-engine.md`](docs/03-pm-scheduling-engine.md) |
 | The files to put in SharePoint | [`sharepoint-templates/`](sharepoint-templates/) |
+| To open the .pbip and connect it | [`docs/11-opening-the-pbip.md`](docs/11-opening-the-pbip.md) |
 | To build it, in order | [`docs/09-deployment-checklist.md`](docs/09-deployment-checklist.md) |
 | What I assumed, and what to decide | [`docs/10-open-decisions.md`](docs/10-open-decisions.md) |
 
@@ -33,13 +34,14 @@ pm-dashboard/
 │   ├── build_sharepoint_templates.py → sharepoint-templates/*.xlsx
 │   ├── generate_qr_codes.py     → qr/
 │   ├── build_pbip.py            → powerbi/  (TMDL model + PBIR report)
+│   ├── validate_pbip.py         692 checks before Desktop ever opens it
 │   ├── pbi_model_spec.py        tables, types, relationships
 │   ├── pbi_measures.py          94 DAX measures
 │   └── build_measure_docs.py    → docs/08-dax-measure-library.md
 ├── data/dummy/                  16 CSVs, ~6,700 rows
 ├── sharepoint-templates/        18 workbooks, ready to upload
 ├── qr/                          43 QR codes + print sheets
-└── powerbi/                     PM_Dashboard.pbip
+└── powerbi/                     PM_Dashboard.pbip + data/ + SETUP.md
 ```
 
 ## Build it
@@ -52,11 +54,13 @@ python3 scripts/build_sharepoint_templates.py   # 18 Excel templates
 python3 scripts/generate_qr_codes.py            # QR codes + print sheets
 python3 scripts/build_measure_docs.py           # measure documentation
 python3 scripts/build_pbip.py                   # the Power BI project
+python3 scripts/validate_pbip.py                # 692 consistency checks
 ```
 
-Then copy `data/dummy/` to `C:\PMDashboard\data\dummy` (or point the
-`LocalDataFolder` parameter wherever you put it) and open
-`powerbi/PM_Dashboard.pbip` in Power BI Desktop.
+Then unzip or copy `powerbi/` to **`C:\PM_Dashboard`** and open
+`PM_Dashboard.pbip` in Power BI Desktop. The CSVs ship inside the project at
+`data/`, and the `LocalDataFolder` parameter already points there — refresh works
+with no edits. Full detail in [`docs/11-opening-the-pbip.md`](docs/11-opening-the-pbip.md).
 
 If that project will not open on your Desktop version, save a blank `.pbip` from
 Desktop and run:
@@ -83,7 +87,7 @@ parameter:
 | Parameter | Development | Production |
 |-----------|-------------|------------|
 | `SourceMode` | `Local` | `SharePoint` |
-| `LocalDataFolder` | `C:\PMDashboard\data\dummy` | ignored |
+| `LocalDataFolder` | `C:\PM_Dashboard\data` | ignored |
 | `SharePointSiteUrl` | ignored | `https://<tenant>.sharepoint.com/sites/PMSystem` |
 
 Everything else — tables, relationships, all 94 measures, all 10 pages — is
