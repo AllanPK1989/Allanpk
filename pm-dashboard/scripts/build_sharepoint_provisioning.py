@@ -9,6 +9,8 @@ against. It is ordinary PowerShell rather than a binary package on purpose: it
 fails one visible line at a time, and a line you do not like can be commented
 out, which is not true of an import that either takes or does not.
 """
+import contextlib
+import io
 import os
 import sys
 
@@ -16,7 +18,12 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 
-import build_sharepoint_templates as S
+# Borrow the LISTS spec without writing workbooks or printing the generator's
+# own progress, which would otherwise claim templates were written when they
+# were not.
+os.environ["PM_TEMPLATES_SPEC_ONLY"] = "1"
+with contextlib.redirect_stdout(io.StringIO()):
+    import build_sharepoint_templates as S
 
 OUT = os.path.join(ROOT, "sharepoint-templates", "Provision_PM_Lists.ps1")
 

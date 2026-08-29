@@ -166,6 +166,11 @@ def data_sheet(wb: Workbook, sheet_name: str, table_name: str,
 
 
 def save(wb: Workbook, subdir: str, filename: str) -> None:
+    # This module does its work at import time, so anything that imports it for
+    # the LISTS spec alone would otherwise rewrite all 18 workbooks and churn
+    # them in git on every build. Importers set this to borrow the spec quietly.
+    if os.environ.get("PM_TEMPLATES_SPEC_ONLY"):
+        return
     d = os.path.join(OUT, subdir)
     os.makedirs(d, exist_ok=True)
     if "Sheet" in wb.sheetnames:
