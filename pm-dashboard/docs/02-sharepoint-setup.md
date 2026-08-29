@@ -8,6 +8,12 @@ this order; each step depends on the one before.
 A **Team site** (group-connected) called `PMSystem`, at
 `https://<tenant>.sharepoint.com/sites/PMSystem`.
 
+> **No rights to create a site?** You do not need one. Everything here works
+> inside a site you already have, with the files under a single folder and the
+> lists alongside the site's existing ones. Read **14 · Using an Existing
+> SharePoint Site** first, then come back and follow this document from §3 —
+> it lists the three parameters and two flow parameters that change.
+
 Members:
 
 | Group | Who | Rights |
@@ -37,8 +43,13 @@ Shared Documents/
 
 Upload from `sharepoint-templates/` in this repo, keeping the folder numbers.
 
-> The `_History` subfolder matters. `fnStdHoursFolder` scans `02 Standard Hours`
-> and explicitly skips `_History`, so the back-load file does not get counted twice.
+> The `_History` subfolder matters. `fnStdHoursFolder` reads one level of
+> `02 Standard Hours` only, so the back-load file parked in `_History` does not
+> get counted twice.
+
+If these folders sit inside a parent folder rather than at the library root, put
+that parent's name in the `SharePointFolderPath` parameter and change nothing
+else. See document 14.
 
 ## 3 · Create the eight lists
 

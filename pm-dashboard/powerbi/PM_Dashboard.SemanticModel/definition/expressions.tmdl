@@ -1,6 +1,6 @@
 /// Local reads the dummy CSVs. SharePoint reads the real lists and workbooks. This is the only switch you change at go-live.
 expression SourceMode = "Local" meta [IsParameterQuery=true, List={"Local", "SharePoint"}, DefaultValue="Local", Type="Text", IsParameterQueryRequired=true]
-	lineageTag: e95b5ffd-93d5-42bb-bc7a-5a7daddbb7f9
+	lineageTag: ece19d1d-ae73-4a50-8ad9-aba01d8f8728
 	queryGroup: Parameters
 
 	annotation PBI_ResultType = Text
@@ -8,15 +8,31 @@ expression SourceMode = "Local" meta [IsParameterQuery=true, List={"Local", "Sha
 
 /// Folder holding the CSVs. Only used when SourceMode = Local. Unzip the project to C:\PM_Dashboard and this default is already correct.
 expression LocalDataFolder = "C:\PM_Dashboard\data" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
-	lineageTag: 1e1362fc-2598-4732-80fe-caf4382d0cce
+	lineageTag: 53446159-cc7f-479b-924f-5cba72b95ff9
 	queryGroup: Parameters
 
 	annotation PBI_ResultType = Text
 
 
-/// Root URL of the SharePoint site. Only used when SourceMode = SharePoint.
+/// Root URL of the SharePoint SITE - not the folder, and not the full document library path. Only used when SourceMode = SharePoint.
 expression SharePointSiteUrl = "https://contoso.sharepoint.com/sites/PMSystem" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
-	lineageTag: 0ad55923-2c6b-46b5-8490-074709edb056
+	lineageTag: 196397a8-28da-420b-8646-09e7348ee6f5
+	queryGroup: Parameters
+
+	annotation PBI_ResultType = Text
+
+
+/// Display name of the document library holding the PM folders. 'Documents' on an English tenant; a wrong name errors with the list of libraries actually there.
+expression SharePointLibrary = "Documents" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: d68b2480-ee7d-4c63-a600-5dafc9046176
+	queryGroup: Parameters
+
+	annotation PBI_ResultType = Text
+
+
+/// Folder inside that library that contains 01 Master Data and 02 Standard Hours. Leave blank when the PM system owns the site; set it to e.g. 'PM System' when the folders sit inside a site shared with other work.
+expression SharePointFolderPath = "" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=false]
+	lineageTag: bfdfed8c-6008-4696-95db-131de97c07bc
 	queryGroup: Parameters
 
 	annotation PBI_ResultType = Text
@@ -34,7 +50,38 @@ expression fnLocalCsv = ```
 		in
 		    NullBlanks
 		```
-	lineageTag: 5dd866f7-9d1a-4686-b14f-37a85ef6ef8e
+	lineageTag: 1f05c194-d15a-4851-ad51-dff6ed575407
+	queryGroup: Functions
+
+	annotation PBI_ResultType = Function
+
+
+/// Walks the library and folder path and returns that folder's contents.
+expression fnSpFolder = ```
+		(folderPath as text) as table =>
+		let
+		    // SharePoint.Contents navigates lazily, one folder at a time. SharePoint.Files
+		    // would enumerate every file in every library on the site - fine on a dedicated
+		    // PM site, painfully slow on a shared departmental one.
+		    Root = SharePoint.Contents(SharePointSiteUrl, [ApiVersion = 15]),
+		    LibRow = Table.SelectRows(Root, each [Name] = SharePointLibrary),
+		    Lib =
+		        if Table.RowCount(LibRow) = 0
+		        then error "Document library not found: '" & SharePointLibrary
+		                 & "'. Libraries on this site: " & Text.Combine(Root[Name], ", ")
+		        else LibRow{0}[Content],
+		    // Empty segments let the path be blank (library root) or start/end with a slash.
+		    Segments = List.Select(List.Transform(Text.Split(folderPath, "/"), Text.Trim),
+		                           each _ <> ""),
+		    Folder = List.Accumulate(Segments, Lib, (state, seg) =>
+		        let Row = Table.SelectRows(state, each [Name] = seg)
+		        in  if Table.RowCount(Row) = 0
+		            then error "Folder not found: '" & seg & "' while walking '" & folderPath & "'"
+		            else Row{0}[Content])
+		in
+		    Folder
+		```
+	lineageTag: 3cf5639f-bfd5-4146-8488-d01305a8ea8e
 	queryGroup: Functions
 
 	annotation PBI_ResultType = Function
@@ -66,7 +113,7 @@ expression fnSpList = ```
 		in
 		    Items
 		```
-	lineageTag: 6835f145-4d47-4c7b-839f-3927f69439cd
+	lineageTag: a39814b2-44b2-4be4-97aa-059f72c33c05
 	queryGroup: Functions
 
 	annotation PBI_ResultType = Function
@@ -76,17 +123,22 @@ expression fnSpList = ```
 expression fnSpExcel = ```
 		(relativePath as text, tableName as text) as table =>
 		let
-		    Files = SharePoint.Files(SharePointSiteUrl, [ApiVersion = 15]),
-		    Wanted = Table.SelectRows(Files, each Text.EndsWith([Folder Path] & [Name], relativePath)),
-		    Content = if Table.RowCount(Wanted) = 0
-		              then error "File not found in SharePoint: " & relativePath
-		              else Wanted{0}[Content],
+		    Parts = Text.Split(relativePath, "/"),
+		    FileName = List.Last(Parts),
+		    SubPath = Text.Combine(List.RemoveLastN(Parts, 1), "/"),
+		    Base = if Text.Trim(SharePointFolderPath) = "" then SubPath
+		           else SharePointFolderPath & "/" & SubPath,
+		    Folder = fnSpFolder(Base),
+		    Row = Table.SelectRows(Folder, each [Name] = FileName),
+		    Content = if Table.RowCount(Row) = 0
+		              then error "File not found in SharePoint: " & Base & "/" & FileName
+		              else Row{0}[Content],
 		    Book = Excel.Workbook(Content, true, true),
 		    Data = Book{[Item = tableName, Kind = "Table"]}[Data]
 		in
 		    Data
 		```
-	lineageTag: b93f3a85-00a9-4ba9-a67f-8bf6b8ea2ae2
+	lineageTag: f057eabb-d8b2-480f-bff9-a0c77e698260
 	queryGroup: Functions
 
 	annotation PBI_ResultType = Function
@@ -96,12 +148,13 @@ expression fnSpExcel = ```
 expression fnStdHoursFolder = ```
 		() as table =>
 		let
-		    Files = SharePoint.Files(SharePointSiteUrl, [ApiVersion = 15]),
+		    Base = if Text.Trim(SharePointFolderPath) = "" then "02 Standard Hours"
+		           else SharePointFolderPath & "/02 Standard Hours",
+		    // One level only, so the _History subfolder is skipped without a filter.
+		    Folder = fnSpFolder(Base),
 		    Monthly = Table.SelectRows(
-		        Files,
-		        each Text.Contains([Folder Path], "/02 Standard Hours/")
-		            and not Text.Contains([Folder Path], "/_History/")
-		            and Text.StartsWith([Name], "Cell_Standard_Hours_")
+		        Folder,
+		        each Text.StartsWith([Name], "Cell_Standard_Hours_")
 		            and Text.EndsWith(Text.Lower([Name]), ".xlsx")
 		            and not Text.Contains(Text.Upper([Name]), "TEMPLATE")
 		    ),
@@ -115,7 +168,7 @@ expression fnStdHoursFolder = ```
 		in
 		    NoBlank
 		```
-	lineageTag: aaabd6b0-fb43-4d04-abf4-7c3454d132bb
+	lineageTag: e1ac3311-10a4-4295-8f70-dcde144829ae
 	queryGroup: Functions
 
 	annotation PBI_ResultType = Function
@@ -148,7 +201,7 @@ expression fnSource = ```
 		in
 		    Result
 		```
-	lineageTag: 2f3cf0e2-fcda-45d3-bd66-7dfd7fea379d
+	lineageTag: 14404009-6418-49ec-ae25-f7873ca29d65
 	queryGroup: Functions
 
 	annotation PBI_ResultType = Function

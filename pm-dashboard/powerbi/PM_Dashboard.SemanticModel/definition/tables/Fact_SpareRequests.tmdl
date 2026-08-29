@@ -1,10 +1,10 @@
 /// Spare part requests raised from the machine QR.
 table Fact_SpareRequests
-	lineageTag: 007d23e3-920c-4683-9d63-992df8d80c4a
+	lineageTag: cfade7ed-cebe-4466-a811-dc848fa17b1e
 
 	column RequestID
 		dataType: string
-		lineageTag: d7ad8d09-55d7-4ed0-b3ac-c680c924db6f
+		lineageTag: 38a971b3-347f-45bc-b9c9-9688d296b065
 		summarizeBy: none
 		sourceColumn: RequestID
 
@@ -12,7 +12,7 @@ table Fact_SpareRequests
 
 	column SourceType
 		dataType: string
-		lineageTag: 1c65bed5-03de-4f02-b586-f1946d9465bf
+		lineageTag: e9d8ce0a-560c-45d4-b4a6-2301514cf4ba
 		summarizeBy: none
 		sourceColumn: SourceType
 
@@ -20,7 +20,7 @@ table Fact_SpareRequests
 
 	column SourceID
 		dataType: string
-		lineageTag: 81c65814-4114-40d7-b6d5-dbfe249c73e4
+		lineageTag: a09ab853-7bed-4b77-ba7c-1d43ec555006
 		summarizeBy: none
 		sourceColumn: SourceID
 
@@ -28,7 +28,7 @@ table Fact_SpareRequests
 
 	column MachineID
 		dataType: string
-		lineageTag: 15740b26-a546-41d0-9c6f-b348e5e3b400
+		lineageTag: 9de07fa5-3c76-434f-a107-f9389d9dab02
 		summarizeBy: none
 		sourceColumn: MachineID
 
@@ -36,7 +36,7 @@ table Fact_SpareRequests
 
 	column MachineName
 		dataType: string
-		lineageTag: 73adcfab-133a-472d-be30-dfb566ba7470
+		lineageTag: 10e6cff9-672e-470d-8af4-1b41ad5a2a21
 		summarizeBy: none
 		sourceColumn: MachineName
 
@@ -44,7 +44,7 @@ table Fact_SpareRequests
 
 	column CellID
 		dataType: string
-		lineageTag: 9900173f-6886-4e58-aee2-d46bae2e3ef3
+		lineageTag: 16bb8029-f89b-406e-9995-dc5b949b3cf8
 		summarizeBy: none
 		sourceColumn: CellID
 
@@ -52,7 +52,7 @@ table Fact_SpareRequests
 
 	column PartNo
 		dataType: string
-		lineageTag: e857f5cf-8d32-4080-a3b0-8e759b2b3885
+		lineageTag: 3ad45825-ad1d-4259-bb50-868540fbdffa
 		summarizeBy: none
 		sourceColumn: PartNo
 
@@ -60,7 +60,7 @@ table Fact_SpareRequests
 
 	column PartName
 		dataType: string
-		lineageTag: 7d3836de-f227-4e3d-873e-50c357544413
+		lineageTag: f8364c09-6c1e-4f96-b322-19a6000f66f5
 		summarizeBy: none
 		sourceColumn: PartName
 
@@ -68,7 +68,7 @@ table Fact_SpareRequests
 
 	column Category
 		dataType: string
-		lineageTag: b5de193e-0432-4b4b-a9ac-04c7186b12cc
+		lineageTag: 71b84e94-e317-41a6-90c1-b494fac83306
 		summarizeBy: none
 		sourceColumn: Category
 
@@ -76,7 +76,7 @@ table Fact_SpareRequests
 
 	column UOM
 		dataType: string
-		lineageTag: 32d95b4a-2cad-4c58-944d-ebdcc249846b
+		lineageTag: 349d7a6a-b124-4d77-9cef-6f2a0e8503ee
 		summarizeBy: none
 		sourceColumn: UOM
 
@@ -85,7 +85,7 @@ table Fact_SpareRequests
 	column QtyRequested
 		dataType: int64
 		formatString: #,0
-		lineageTag: f76c9ae4-e746-4076-8e54-556a88822848
+		lineageTag: d7838cf5-9768-4480-b801-15574ae6597d
 		summarizeBy: none
 		sourceColumn: QtyRequested
 
@@ -94,7 +94,7 @@ table Fact_SpareRequests
 	column UnitCostINR
 		dataType: double
 		formatString: "₹"#,0.00;("₹"#,0.00);"₹"#,0.00
-		lineageTag: 9fac5dbf-9ee2-4a89-8e99-152e9815e43d
+		lineageTag: a789f330-c2c0-42e1-8cce-33c527fa69c1
 		summarizeBy: none
 		sourceColumn: UnitCostINR
 
@@ -103,7 +103,7 @@ table Fact_SpareRequests
 	column TotalCostINR
 		dataType: double
 		formatString: "₹"#,0.00;("₹"#,0.00);"₹"#,0.00
-		lineageTag: c820b568-22fd-4e07-b648-2dd78750c3b6
+		lineageTag: 60813fd9-7150-4103-85eb-c5f157909b2f
 		summarizeBy: none
 		sourceColumn: TotalCostINR
 
@@ -111,7 +111,7 @@ table Fact_SpareRequests
 
 	column RequestedByTechID
 		dataType: string
-		lineageTag: 3551c50c-4777-4e12-9734-b48a02f16504
+		lineageTag: d67d3215-4f5f-4e7c-9bec-8e311b5194c2
 		summarizeBy: none
 		sourceColumn: RequestedByTechID
 
@@ -119,7 +119,7 @@ table Fact_SpareRequests
 
 	column RequestedByName
 		dataType: string
-		lineageTag: 11dbbb4d-443b-45c7-a6fb-aa87fb2a925b
+		lineageTag: 200ad408-0bfd-409b-b814-5fc2327c9bcc
 		summarizeBy: none
 		sourceColumn: RequestedByName
 
@@ -128,7 +128,7 @@ table Fact_SpareRequests
 	column RequestDate
 		dataType: dateTime
 		formatString: yyyy-mm-dd
-		lineageTag: 4354a020-f3ae-42f1-90c3-8e0d6d6f88af
+		lineageTag: ee16290b-18d5-472e-a735-6753127b8ab7
 		summarizeBy: none
 		sourceColumn: RequestDate
 
@@ -138,7 +138,7 @@ table Fact_SpareRequests
 
 	column Urgency
 		dataType: string
-		lineageTag: 49d49bd5-c23a-4dbe-a7df-6ef2c667b58a
+		lineageTag: 2efbe907-6e54-43f9-95a4-bb7ba712dc75
 		summarizeBy: none
 		sourceColumn: Urgency
 
@@ -146,7 +146,7 @@ table Fact_SpareRequests
 
 	column Status
 		dataType: string
-		lineageTag: 55f58496-53f9-46d3-8381-d1dc83f12ecb
+		lineageTag: 0aff9d0a-5845-403d-8fe9-0d45baed6ff7
 		summarizeBy: none
 		sourceColumn: Status
 
@@ -155,7 +155,7 @@ table Fact_SpareRequests
 	column ApprovedDate
 		dataType: dateTime
 		formatString: yyyy-mm-dd
-		lineageTag: 2eb24531-7fc4-4201-98f2-c8ba288ec8b7
+		lineageTag: bf075927-5ae9-4b7b-a9b2-bc6b44a84d42
 		summarizeBy: none
 		sourceColumn: ApprovedDate
 
@@ -165,7 +165,7 @@ table Fact_SpareRequests
 
 	column ApprovedBy
 		dataType: string
-		lineageTag: a7806118-4a16-4f88-88c4-7096f9149c54
+		lineageTag: b8ff81ed-2548-40a7-b899-f666a2817ad8
 		summarizeBy: none
 		sourceColumn: ApprovedBy
 
@@ -174,7 +174,7 @@ table Fact_SpareRequests
 	column IssuedDate
 		dataType: dateTime
 		formatString: yyyy-mm-dd
-		lineageTag: c2dfdd38-44aa-45f9-8e2d-b42564287a6f
+		lineageTag: d4581fa7-f49c-4539-94f0-ab5209288458
 		summarizeBy: none
 		sourceColumn: IssuedDate
 
@@ -185,7 +185,7 @@ table Fact_SpareRequests
 	column LeadTimeDays
 		dataType: int64
 		formatString: #,0
-		lineageTag: 727e9f34-eee0-48aa-8217-89a8dc3e8787
+		lineageTag: 34574cfe-fe05-479c-8aeb-a899dc53fd2e
 		summarizeBy: none
 		sourceColumn: LeadTimeDays
 
@@ -193,7 +193,7 @@ table Fact_SpareRequests
 
 	column StoreBin
 		dataType: string
-		lineageTag: 7bc5a7a3-0197-4598-a8a0-3845497b7297
+		lineageTag: ef0bc67c-4d52-4852-81f4-85301c0a352c
 		summarizeBy: none
 		sourceColumn: StoreBin
 
@@ -201,7 +201,7 @@ table Fact_SpareRequests
 
 	column RejectionReason
 		dataType: string
-		lineageTag: e27acd1f-910a-4ee1-88ed-b22a2845a767
+		lineageTag: c179226d-6ec0-43d7-8e94-0d953ee1d5f8
 		summarizeBy: none
 		sourceColumn: RejectionReason
 

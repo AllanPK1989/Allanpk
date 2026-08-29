@@ -42,7 +42,10 @@ show people while the rest is being built.
 
 ### Get these before you start
 
-- [ ] A SharePoint site you can create lists on, or an admin who will make one
+- [ ] A SharePoint site you can create lists on. A **new** site is cleanest, but an
+      existing one works — see `14-existing-sharepoint-site.md` before you start,
+      because two of its decisions (list naming, permission inheritance) are
+      awkward to change later
 - [ ] Power Apps and Power Automate available on your account (standard connectors
       are included with Microsoft 365 — confirm with whoever owns your tenant)
 - [ ] Power BI Desktop installed, and a workspace to publish to
@@ -76,10 +79,16 @@ Open `05_Deployment/Deployment_Worksheet.xlsx` and fill in sheet 4.
 A **Team site** called `PMSystem`. Technicians go in as **Visitors**, not Members —
 they write through the app, and you do not want them editing lists directly.
 
+**Using an existing site instead?** Create one folder in its document library
+(`PM System`) and put the structure below underneath it. The eight lists still land
+at site level — SharePoint has no way to nest a list in a folder — so check for
+name collisions and decide about permission inheritance now, not later.
+`14-existing-sharepoint-site.md` covers both, plus the five values that change.
+
 ### 1.2 Create the folders
 
-In **Shared Documents**, exactly these names — the Power Query folder scan depends
-on them:
+In **Shared Documents** — or in your `PM System` folder — exactly these names.
+The Power Query folder walk depends on them:
 
 ```
 00 Reference/          01 Master Data/        02 Standard Hours/
@@ -249,8 +258,11 @@ get something to show while the rest is being built.
 7. Sanity check: a card with `[PM Compliance %]` and one with `[Std Hours]` should
    both show a number.
 
-**Switching to live data later is two parameters:** `SourceMode` to `SharePoint`
-and `SharePointSiteUrl` to your site. Nothing else in the model changes.
+**Switching to live data later is parameters only.** `SourceMode` to `SharePoint`
+and `SharePointSiteUrl` to your site — plus, if the PM folders sit inside a site
+you share with other work, `SharePointFolderPath` to that folder's name and
+`SharePointLibrary` to the library's display name. Nothing else in the model
+changes: no query is rewritten and no relationship moves.
 
 ---
 

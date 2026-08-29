@@ -296,14 +296,44 @@ in
     Items
 """
 
+    fn_spfolder = """
+(folderPath as text) as table =>
+let
+    // SharePoint.Contents navigates lazily, one folder at a time. SharePoint.Files
+    // would enumerate every file in every library on the site - fine on a dedicated
+    // PM site, painfully slow on a shared departmental one.
+    Root = SharePoint.Contents(SharePointSiteUrl, [ApiVersion = 15]),
+    LibRow = Table.SelectRows(Root, each [Name] = SharePointLibrary),
+    Lib =
+        if Table.RowCount(LibRow) = 0
+        then error "Document library not found: '" & SharePointLibrary
+                 & "'. Libraries on this site: " & Text.Combine(Root[Name], ", ")
+        else LibRow{0}[Content],
+    // Empty segments let the path be blank (library root) or start/end with a slash.
+    Segments = List.Select(List.Transform(Text.Split(folderPath, "/"), Text.Trim),
+                           each _ <> ""),
+    Folder = List.Accumulate(Segments, Lib, (state, seg) =>
+        let Row = Table.SelectRows(state, each [Name] = seg)
+        in  if Table.RowCount(Row) = 0
+            then error "Folder not found: '" & seg & "' while walking '" & folderPath & "'"
+            else Row{0}[Content])
+in
+    Folder
+"""
+
     fn_spexcel = """
 (relativePath as text, tableName as text) as table =>
 let
-    Files = SharePoint.Files(SharePointSiteUrl, [ApiVersion = 15]),
-    Wanted = Table.SelectRows(Files, each Text.EndsWith([Folder Path] & [Name], relativePath)),
-    Content = if Table.RowCount(Wanted) = 0
-              then error "File not found in SharePoint: " & relativePath
-              else Wanted{0}[Content],
+    Parts = Text.Split(relativePath, "/"),
+    FileName = List.Last(Parts),
+    SubPath = Text.Combine(List.RemoveLastN(Parts, 1), "/"),
+    Base = if Text.Trim(SharePointFolderPath) = "" then SubPath
+           else SharePointFolderPath & "/" & SubPath,
+    Folder = fnSpFolder(Base),
+    Row = Table.SelectRows(Folder, each [Name] = FileName),
+    Content = if Table.RowCount(Row) = 0
+              then error "File not found in SharePoint: " & Base & "/" & FileName
+              else Row{0}[Content],
     Book = Excel.Workbook(Content, true, true),
     Data = Book{[Item = tableName, Kind = "Table"]}[Data]
 in
@@ -313,12 +343,13 @@ in
     fn_stdhours = """
 () as table =>
 let
-    Files = SharePoint.Files(SharePointSiteUrl, [ApiVersion = 15]),
+    Base = if Text.Trim(SharePointFolderPath) = "" then "02 Standard Hours"
+           else SharePointFolderPath & "/02 Standard Hours",
+    // One level only, so the _History subfolder is skipped without a filter.
+    Folder = fnSpFolder(Base),
     Monthly = Table.SelectRows(
-        Files,
-        each Text.Contains([Folder Path], "/02 Standard Hours/")
-            and not Text.Contains([Folder Path], "/_History/")
-            and Text.StartsWith([Name], "Cell_Standard_Hours_")
+        Folder,
+        each Text.StartsWith([Name], "Cell_Standard_Hours_")
             and Text.EndsWith(Text.Lower([Name]), ".xlsx")
             and not Text.Contains(Text.Upper([Name]), "TEMPLATE")
     ),
@@ -355,10 +386,13 @@ in
     Result
 """
 
-    def param(name, value, ptype, desc, allowed=None):
-        meta = f'IsParameterQuery=true, Type="{ptype}", IsParameterQueryRequired=true'
+    def param(name, value, ptype, desc, allowed=None, required=True):
+        # A blank default must not be flagged required, or Desktop refuses to load
+        # the model until somebody types something into it.
+        req = "true" if required else "false"
+        meta = f'IsParameterQuery=true, Type="{ptype}", IsParameterQueryRequired={req}'
         if allowed:
-            meta = f'IsParameterQuery=true, List={{{allowed}}}, DefaultValue="{value}", Type="{ptype}", IsParameterQueryRequired=true'
+            meta = f'IsParameterQuery=true, List={{{allowed}}}, DefaultValue="{value}", Type="{ptype}", IsParameterQueryRequired={req}'
         return "\n".join([
             f"/// {desc}",
             f'expression {name} = "{value}" meta [{meta}]',
@@ -388,9 +422,19 @@ in
          "Folder holding the CSVs. Only used when SourceMode = Local."),
         ("SharePointSiteUrl", "parameter",
          '"https://contoso.sharepoint.com/sites/PMSystem"',
-         "Root URL of the SharePoint site. Only used when SourceMode = SharePoint."),
+         "Root URL of the SharePoint SITE - not the folder, and not the full document "
+         "library path. Only used when SourceMode = SharePoint."),
+        ("SharePointLibrary", "parameter", '"Documents"',
+         "Display name of the document library holding the PM folders. 'Documents' on an "
+         "English tenant; a wrong name errors with the list of libraries actually there."),
+        ("SharePointFolderPath", "parameter", '""',
+         "Folder inside that library that contains 01 Master Data and 02 Standard Hours. "
+         "Leave blank when the PM system owns the site; set it to e.g. 'PM System' when "
+         "the folders sit inside a site shared with other work."),
         ("fnLocalCsv", "function", fn_local,
          "Reads one sample CSV and promotes headers."),
+        ("fnSpFolder", "function", fn_spfolder,
+         "Walks the library and folder path and returns that folder's contents."),
         ("fnSpList", "function", fn_splist,
          "Reads one SharePoint list by its display name."),
         ("fnSpExcel", "function", fn_spexcel,
@@ -415,8 +459,20 @@ in
         "Unzip the project to C:\\PM_Dashboard and this default is already correct."))
     out.append(param(
         "SharePointSiteUrl", "https://contoso.sharepoint.com/sites/PMSystem", "Text",
-        "Root URL of the SharePoint site. Only used when SourceMode = SharePoint."))
+        "Root URL of the SharePoint SITE - not the folder, and not the full document "
+        "library path. Only used when SourceMode = SharePoint."))
+    out.append(param(
+        "SharePointLibrary", "Documents", "Text",
+        "Display name of the document library holding the PM folders. 'Documents' on an "
+        "English tenant; a wrong name errors with the list of libraries actually there."))
+    out.append(param(
+        "SharePointFolderPath", "", "Text",
+        "Folder inside that library that contains 01 Master Data and 02 Standard Hours. "
+        "Leave blank when the PM system owns the site; set it to e.g. 'PM System' when the "
+        "folders sit inside a site shared with other work.", required=False))
     out.append(func("fnLocalCsv", fn_local, "Reads one dummy CSV and promotes headers."))
+    out.append(func("fnSpFolder", fn_spfolder,
+                    "Walks the library and folder path and returns that folder's contents."))
     out.append(func("fnSpList", fn_splist, "Reads one SharePoint list by its display name."))
     out.append(func("fnSpExcel", fn_spexcel,
                     "Reads one named Excel table out of a workbook in the document library."))
@@ -453,8 +509,9 @@ def emit_model() -> str:
         T * 2 + "returnErrorValuesAsNull",
         "",
         "annotation PBI_QueryOrder = " + json.dumps(
-            ["SourceMode", "LocalDataFolder", "SharePointSiteUrl", "fnLocalCsv",
-             "fnSpList", "fnSpExcel", "fnStdHoursFolder", "fnSource"] + order),
+            ["SourceMode", "LocalDataFolder", "SharePointSiteUrl", "SharePointLibrary",
+             "SharePointFolderPath", "fnLocalCsv", "fnSpFolder", "fnSpList", "fnSpExcel",
+             "fnStdHoursFolder", "fnSource"] + order),
         "",
         "annotation __PBI_TimeIntelligenceEnabled = 0",
         "",

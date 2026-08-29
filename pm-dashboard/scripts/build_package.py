@@ -198,7 +198,10 @@ def build_worksheet() -> None:
         return ws
 
     sheet("1 Tenant & App", ["Item", "Where to find it", "Value (fill in)"], [
-        ["SharePoint site URL", "Open the PMSystem site, copy the address bar up to /sites/PMSystem", ""],
+        ["SharePoint site URL", "Open the site, copy the address bar up to /sites/<SiteName>. The SITE only - not the library, not the folder", ""],
+        ["Dedicated or shared site?", "Dedicated = the PM system owns this site. Shared = it also holds other teams' work (see doc 14)", ""],
+        ["Document library display name", "Site contents > the library's name as shown, usually Documents. Goes in the SharePointLibrary parameter", ""],
+        ["PM folder inside that library", "Blank on a dedicated site. On a shared site, the folder holding 01 Master Data, e.g. PM System. Goes in SharePointFolderPath", ""],
         ["Power Apps environment ID", "Power Apps > your app > Details > Web link, the GUID after /e/", ""],
         ["Power Apps app ID", "Same Web link, the GUID after /a/", ""],
         ["Tenant ID", "Same Web link, the tenantId query parameter", ""],
@@ -208,17 +211,19 @@ def build_worksheet() -> None:
         ["Photo library path", "Shared Documents/04 Photos", ""],
     ], [30, 62, 46], {3})
 
-    sheet("2 SharePoint Lists", ["List name", "Created?", "Indexed columns set?",
-                                 "Versioning on?", "Item-level permissions", "Notes"], [
-        ["PM_WorkOrders", "", "", "", "Read all, edit own", ""],
-        ["PM_ChecklistResults", "", "", "", "Default", ""],
-        ["Breakdown_Reports", "", "", "", "Default", ""],
-        ["SparePart_Requests", "", "", "", "Default", ""],
-        ["SparePart_Replacements", "", "", "", "Default", ""],
-        ["Abnormality_Log", "", "", "", "Default", ""],
-        ["PM_Hour_Ledger", "", "", "", "Read only for technicians", ""],
-        ["QR_Scan_Log", "", "", "", "Read only for technicians", ""],
-    ], [26, 12, 22, 16, 26, 40], {2, 3, 4, 6})
+    sheet("2 SharePoint Lists", ["List name", "Name free on site?", "Created?",
+                                 "Indexed columns set?", "Versioning on?",
+                                 "Inheritance broken?", "Item-level permissions",
+                                 "Notes"], [
+        ["PM_WorkOrders", "", "", "", "", "", "Read all, edit own", ""],
+        ["PM_ChecklistResults", "", "", "", "", "", "Default", ""],
+        ["Breakdown_Reports", "", "", "", "", "", "Default", ""],
+        ["SparePart_Requests", "", "", "", "", "", "Default", ""],
+        ["SparePart_Replacements", "", "", "", "", "", "Default", ""],
+        ["Abnormality_Log", "", "", "", "", "", "Default", ""],
+        ["PM_Hour_Ledger", "", "", "", "", "", "Read only for technicians", ""],
+        ["QR_Scan_Log", "", "", "", "", "", "Read only for technicians", ""],
+    ], [26, 18, 12, 22, 16, 20, 26, 40], {2, 3, 4, 5, 6, 8})
 
     sheet("3 Flows", ["Flow", "Purpose", "Built?", "Tested?", "Owner", "Notes"], [
         ["Validate Standard Hours Upload", "Reject a bad monthly file before it reaches the ledger", "", "", "", ""],

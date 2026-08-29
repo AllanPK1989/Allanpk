@@ -38,9 +38,21 @@ Type **Text**. Current value: `"C:\PM_Dashboard\data"`
 
 ### `SharePointSiteUrl` — parameter
 
-Root URL of the SharePoint site. Only used when SourceMode = SharePoint.
+Root URL of the SharePoint SITE - not the folder, and not the full document library path. Only used when SourceMode = SharePoint.
 
 Type **Text**. Current value: `"https://contoso.sharepoint.com/sites/PMSystem"`
+
+### `SharePointLibrary` — parameter
+
+Display name of the document library holding the PM folders. 'Documents' on an English tenant; a wrong name errors with the list of libraries actually there.
+
+Type **Text**. Current value: `"Documents"`
+
+### `SharePointFolderPath` — parameter
+
+Folder inside that library that contains 01 Master Data and 02 Standard Hours. Leave blank when the PM system owns the site; set it to e.g. 'PM System' when the folders sit inside a site shared with other work.
+
+Type **Text**. Current value: `""`
 
 ### `fnLocalCsv` — function
 
@@ -56,6 +68,35 @@ let
     NullBlanks = Table.TransformColumns(Promoted, {}, each if _ = "" then null else _)
 in
     NullBlanks
+```
+
+### `fnSpFolder` — function
+
+Walks the library and folder path and returns that folder's contents.
+
+```m
+(folderPath as text) as table =>
+let
+    // SharePoint.Contents navigates lazily, one folder at a time. SharePoint.Files
+    // would enumerate every file in every library on the site - fine on a dedicated
+    // PM site, painfully slow on a shared departmental one.
+    Root = SharePoint.Contents(SharePointSiteUrl, [ApiVersion = 15]),
+    LibRow = Table.SelectRows(Root, each [Name] = SharePointLibrary),
+    Lib =
+        if Table.RowCount(LibRow) = 0
+        then error "Document library not found: '" & SharePointLibrary
+                 & "'. Libraries on this site: " & Text.Combine(Root[Name], ", ")
+        else LibRow{0}[Content],
+    // Empty segments let the path be blank (library root) or start/end with a slash.
+    Segments = List.Select(List.Transform(Text.Split(folderPath, "/"), Text.Trim),
+                           each _ <> ""),
+    Folder = List.Accumulate(Segments, Lib, (state, seg) =>
+        let Row = Table.SelectRows(state, each [Name] = seg)
+        in  if Table.RowCount(Row) = 0
+            then error "Folder not found: '" & seg & "' while walking '" & folderPath & "'"
+            else Row{0}[Content])
+in
+    Folder
 ```
 
 ### `fnSpList` — function
@@ -95,11 +136,16 @@ Reads one named Excel table out of a workbook in the document library.
 ```m
 (relativePath as text, tableName as text) as table =>
 let
-    Files = SharePoint.Files(SharePointSiteUrl, [ApiVersion = 15]),
-    Wanted = Table.SelectRows(Files, each Text.EndsWith([Folder Path] & [Name], relativePath)),
-    Content = if Table.RowCount(Wanted) = 0
-              then error "File not found in SharePoint: " & relativePath
-              else Wanted{0}[Content],
+    Parts = Text.Split(relativePath, "/"),
+    FileName = List.Last(Parts),
+    SubPath = Text.Combine(List.RemoveLastN(Parts, 1), "/"),
+    Base = if Text.Trim(SharePointFolderPath) = "" then SubPath
+           else SharePointFolderPath & "/" & SubPath,
+    Folder = fnSpFolder(Base),
+    Row = Table.SelectRows(Folder, each [Name] = FileName),
+    Content = if Table.RowCount(Row) = 0
+              then error "File not found in SharePoint: " & Base & "/" & FileName
+              else Row{0}[Content],
     Book = Excel.Workbook(Content, true, true),
     Data = Book{[Item = tableName, Kind = "Table"]}[Data]
 in
@@ -113,12 +159,13 @@ Combines every monthly standard-hours upload in the 02 Standard Hours folder. Ad
 ```m
 () as table =>
 let
-    Files = SharePoint.Files(SharePointSiteUrl, [ApiVersion = 15]),
+    Base = if Text.Trim(SharePointFolderPath) = "" then "02 Standard Hours"
+           else SharePointFolderPath & "/02 Standard Hours",
+    // One level only, so the _History subfolder is skipped without a filter.
+    Folder = fnSpFolder(Base),
     Monthly = Table.SelectRows(
-        Files,
-        each Text.Contains([Folder Path], "/02 Standard Hours/")
-            and not Text.Contains([Folder Path], "/_History/")
-            and Text.StartsWith([Name], "Cell_Standard_Hours_")
+        Folder,
+        each Text.StartsWith([Name], "Cell_Standard_Hours_")
             and Text.EndsWith(Text.Lower([Name]), ".xlsx")
             and not Text.Contains(Text.Upper([Name]), "TEMPLATE")
     ),

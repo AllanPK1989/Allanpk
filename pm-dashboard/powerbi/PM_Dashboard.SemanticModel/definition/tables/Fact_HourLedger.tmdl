@@ -1,10 +1,10 @@
 /// Cell hour counter month by month: opening, added, closing, trigger, carry-over.
 table Fact_HourLedger
-	lineageTag: ae47a9df-0fd8-4e9a-a9a8-5c14afddc4b7
+	lineageTag: e78f053e-ed60-48e9-a1af-841bce704081
 
 	column MonthKey
 		dataType: string
-		lineageTag: 1af09cf5-527c-48da-b0d1-bcecd527ec7b
+		lineageTag: 5da07c15-7759-403f-843d-7b344fc2c112
 		summarizeBy: none
 		sourceColumn: MonthKey
 
@@ -12,7 +12,7 @@ table Fact_HourLedger
 
 	column CellID
 		dataType: string
-		lineageTag: 95f9053a-a25a-4e49-92e3-f23b89f7668c
+		lineageTag: bdfe50c8-fc12-4130-a4b0-b04fbe1fcc10
 		summarizeBy: none
 		sourceColumn: CellID
 
@@ -20,7 +20,7 @@ table Fact_HourLedger
 
 	column CellName
 		dataType: string
-		lineageTag: 88e1130e-ace5-4d1d-81f7-98d3508ffb4c
+		lineageTag: 21b07f23-d863-4f6b-b574-9d06d827b0a2
 		summarizeBy: none
 		sourceColumn: CellName
 
@@ -29,7 +29,7 @@ table Fact_HourLedger
 	column OpeningStdHrs
 		dataType: double
 		formatString: #,0.0
-		lineageTag: abbdfbe4-1992-4ad6-8c79-56698042b2c7
+		lineageTag: acae74bd-774a-41e9-9641-63fdbc2bebc2
 		summarizeBy: none
 		sourceColumn: OpeningStdHrs
 
@@ -38,7 +38,7 @@ table Fact_HourLedger
 	column StdHoursAdded
 		dataType: double
 		formatString: #,0.0
-		lineageTag: 1f5baa4a-cbe1-4368-9c04-f29fb43a2b0a
+		lineageTag: 864cda64-5b1c-497c-850b-9e803ade834a
 		summarizeBy: none
 		sourceColumn: StdHoursAdded
 
@@ -47,7 +47,7 @@ table Fact_HourLedger
 	column ClosingStdHrs
 		dataType: double
 		formatString: #,0.0
-		lineageTag: 5c09f7a0-7b06-4c4a-a5be-9503ae55820b
+		lineageTag: 23b7cbda-ec39-49c6-b35b-00b4ef2906f3
 		summarizeBy: none
 		sourceColumn: ClosingStdHrs
 
@@ -56,7 +56,7 @@ table Fact_HourLedger
 	column PMIntervalStdHrs
 		dataType: int64
 		formatString: #,0
-		lineageTag: 8a5523dd-035c-47a9-bc4d-63259f75b1b4
+		lineageTag: f5f4353c-0a62-409f-a857-1cd811501696
 		summarizeBy: none
 		sourceColumn: PMIntervalStdHrs
 
@@ -64,7 +64,7 @@ table Fact_HourLedger
 
 	column PMTriggered
 		dataType: string
-		lineageTag: 039614c0-6aa3-491a-82c9-128b79828c9e
+		lineageTag: 48a71bc3-5b1f-49ae-ba0e-2adaa0ed4500
 		summarizeBy: none
 		sourceColumn: PMTriggered
 
@@ -72,7 +72,7 @@ table Fact_HourLedger
 
 	column TriggerType
 		dataType: string
-		lineageTag: 563e297f-1695-4e05-9382-439d1639729c
+		lineageTag: e693a326-13d7-4b55-b6bd-d7ce5241bf12
 		summarizeBy: none
 		sourceColumn: TriggerType
 
@@ -81,7 +81,7 @@ table Fact_HourLedger
 	column CarryOverAfterPM
 		dataType: double
 		formatString: #,0.0
-		lineageTag: a19f3072-4ead-4b1f-802e-93bc6b509904
+		lineageTag: f77580f3-813f-4ddf-b83d-5893faee9b32
 		summarizeBy: none
 		sourceColumn: CarryOverAfterPM
 
@@ -90,7 +90,7 @@ table Fact_HourLedger
 	column MonthsSinceLastPM
 		dataType: int64
 		formatString: #,0
-		lineageTag: 229b206a-f0c0-4325-a8b6-364fa1fd77c3
+		lineageTag: f753f0c9-2c75-4396-8726-9464b78d5980
 		summarizeBy: none
 		sourceColumn: MonthsSinceLastPM
 
@@ -98,7 +98,7 @@ table Fact_HourLedger
 
 	column Scenario
 		dataType: string
-		lineageTag: 0ca500be-85c2-48ba-8be0-24f8440a6064
+		lineageTag: 68ccc77f-989a-46a8-b37f-40bcca5e03f9
 		summarizeBy: none
 		sourceColumn: Scenario
 
@@ -107,7 +107,7 @@ table Fact_HourLedger
 	column MonthStartDate
 		dataType: dateTime
 		formatString: yyyy-mm-dd
-		lineageTag: cfd286d9-c8b5-4c7a-b3fb-8741fde7ddd9
+		lineageTag: 8a144fb5-fc49-42d1-a88a-7754136c6373
 		summarizeBy: none
 		sourceColumn: MonthStartDate
 
@@ -118,7 +118,7 @@ table Fact_HourLedger
 	column PctOfThreshold
 		dataType: double
 		formatString: #,0.0
-		lineageTag: 47f1b03d-092e-416e-8967-048ed9d23541
+		lineageTag: ebb76999-4c95-42a7-be2e-63992495e765
 		summarizeBy: none
 		sourceColumn: PctOfThreshold
 
