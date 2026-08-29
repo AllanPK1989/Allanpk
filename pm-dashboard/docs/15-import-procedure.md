@@ -191,44 +191,42 @@ almost everything:
 | Message | Cause | Fix |
 |---------|-------|-----|
 | `Culture and Collation properties of the Model object may be changed only before any other object has been created` | An older copy of the script set the model's culture. The engine allows that only on a model containing nothing at all, and a file with auto date/time on already holds a `DateTableTemplate`. | Use the current `PM_Model.tmdl`. |
-| `Power BI Data Source Version is only allowed to change from V1 to a higher version, Current version is '2'` | An older copy replaced the model object with `model Model`, which resets every property it does not restate. The data source version reset to its V1 default — a downgrade from 2. | Use the current `PM_Model.tmdl`. |
+| `Power BI Data Source Version is only allowed to change from V1 to a higher version, Current version is '2'` | The script did not restate the property, so `createOrReplace` reset it to its V1 default — a downgrade. | Use the current `PM_Model.tmdl`, which restates it. If the message names a version other than 2, see below. |
 | Unexpected indentation, or an object where a property was expected | The paste lost its tabs. TMDL is indentation-sensitive and some editors convert tabs to spaces. | Copy from Notepad, not from Word, a browser, or an email. |
-| Something about `ref model Model` on line 3 | Your Desktop build does not accept `ref` for the model in a script. | See the fallback below. |
+| The same data source version error, but naming `'3'` | Your model is at V3 where the script assumes V2. | Change line 4 to `powerBI_V3`. See below. |
 
 Applying twice is safe. `createOrReplace` replaces each object it names, so if a
 first attempt stopped half way, fix the cause and paste the whole script again.
 
-### Why the script says `ref model Model`
+### The model properties, and why line 4 restates one
 
-Line 3 is `ref model Model`, not `model Model`, and the difference matters.
-`model Model` would **replace the model object**, which silently resets every
-property the script does not restate back to its default. Deleting a property
-from the script therefore does not stop it being written — it makes it default,
-and some of those defaults are illegal on a model that already exists. Both
-errors in the table above are that one mistake. `ref` references the model
-instead, and touches none of its properties.
+`createOrReplace` replaces the model **object**, which resets every property the
+script does not restate back to its default. Deleting a property from the script
+therefore does not stop it being written — it makes it default. Line 4 exists for
+exactly one property whose default is wrong:
 
-**Fallback**, if your Desktop build rejects `ref` on line 3: change line 3 to
-`model Model` and add these two lines directly beneath it, indented with two
-tabs.
+| Property | Default | Why the script does what it does |
+|----------|---------|----------------------------------|
+| `defaultPowerBIDataSourceVersion` | V1 | A real model is at V2 or V3, and the engine refuses the downgrade to V1. So the script **restates it at the model's current value**, making the assignment a no-op. |
+| `culture`, `collation` | matches | Cannot be assigned at all once the model holds any object. Their defaults match what the model already has, so letting them reset changes nothing. The script must **not** set them. |
+| everything else | matches | Left to reset harmlessly. |
+
+**If line 4's value does not match your model.** The script says `powerBI_V2`
+because that is what Desktop reported. If your file is at V3 you will get the
+same error again, naming `'3'`. Change line 4 to:
 
 ```
-	model Model
 		defaultPowerBIDataSourceVersion: powerBI_V3
-		sourceQueryCulture: en-US
 ```
 
-Add no others — in particular **not** `culture` or `collation`, which cannot be
-set on a model that already contains an object. If that in turn complains about
-a property you have not listed, add it with the value the message says is
-current, and tell me which one it was.
+Two tabs of indentation, and whatever value the error message says is current.
+To check before pasting rather than after: open TMDL view on the blank file and
+read the first few lines — Desktop shows the model's own properties there.
 
-> **Why not just open a .pbix?** Because a Power BI file written by a different
-> Desktop version than yours may refuse to open, and you would be back to
-> reporting an error at me instead of building. A TMDL script is text: your own
-> Desktop builds the model, so it is your version by construction.
+If a **different** property name appears in an error, the same rule applies: add
+it under `model Model` at the value the message says is current. Anything except
+`culture` and `collation`, which must stay out.
 
----
 
 ## 4 · Power App
 

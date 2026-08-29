@@ -93,10 +93,8 @@ def main() -> None:
     check(roots == ["createOrReplace"],
           f"expected exactly one root 'createOrReplace', found {roots[:4]}")
     level1 = [c for _, d, c in rows if d == 1]
-    check(level1 == ["ref model Model"],
-          f"expected exactly one 'ref model Model' at depth 1, found {level1[:4]}. "
-          f"A bare 'model Model' REPLACES the model object and resets every "
-          f"property not restated to its default, which the engine rejects.")
+    check(level1 == ["model Model"],
+          f"expected exactly one 'model Model' at depth 1, found {level1[:4]}")
 
     # --- 5. object inventory ---------------------------------------------
     l2 = [c for _, d, c in rows if d == 2]
@@ -151,22 +149,27 @@ def main() -> None:
           f"measures drift from the PBIP: "
           f"{len(script_measures ^ pbip_measures)} names differ")
 
-    # --- 8. no model property is set, at all ------------------------------
-    # Two separate applies died on model properties: culture (illegal once the
-    # model holds any object) and defaultPowerBIDataSourceVersion (reset to its
-    # V1 default, a downgrade from 2). Rather than enumerate the ones known to
-    # bite, forbid the whole class - a model child must be an object, never a
-    # `name: value` property assignment.
-    OBJECT_KEYWORDS = ("queryGroup ", "expression ", "table ", "relationship ",
-                       "annotation ", "ref ", "///")
-    for n, d, c in rows:
-        if d != 2:
-            continue
-        is_object = c.startswith(OBJECT_KEYWORDS)
-        looks_like_property = re.match(r"^[A-Za-z_][\w]*\s*:", c)
-        check(is_object or not looks_like_property,
-              f"line {n} sets a model property: {c[:60]!r}. The script references "
-              f"the model rather than replacing it, so it must set none.")
+    # --- 8. exactly the model properties that must be restated ------------
+    # createOrReplace resets any model property the script does not restate to
+    # its default. Most defaults match what a real model already holds, so the
+    # reset is a no-op. defaultPowerBIDataSourceVersion is the exception: its
+    # default is V1, and the engine refuses that downgrade. Culture and collation
+    # are the opposite case - they cannot be assigned at all once the model holds
+    # an object, so they must stay absent.
+    props = {c.split(":")[0].strip(): (n, c) for n, d, c in rows
+             if d == 2 and re.match(r"^[A-Za-z_]\w*\s*:", c)}
+    check("defaultPowerBIDataSourceVersion" in props,
+          "the script must restate defaultPowerBIDataSourceVersion, or "
+          "createOrReplace resets it to V1 and the apply fails")
+    if "defaultPowerBIDataSourceVersion" in props:
+        _, line = props["defaultPowerBIDataSourceVersion"]
+        check(line.endswith("powerBI_V2"),
+              f"data source version must be restated at the model's current "
+              f"value, not raised: {line!r}")
+    for banned in ("culture", "collation"):
+        check(banned not in props,
+              f"the script sets model {banned}, which the engine rejects once "
+              f"the model contains any object")
 
     # --- 9. relationship endpoints resolve -------------------------------
     cols: dict[str, set[str]] = {}

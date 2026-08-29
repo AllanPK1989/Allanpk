@@ -39,25 +39,32 @@ def model_header() -> list[str]:
     return [
         "createOrReplace",
         "",
-        # `ref` references the existing model instead of replacing it. This must
-        # NOT be a bare `model Model`, which replaces the model object itself and
-        # resets every property not restated here back to its default. Two
-        # separate failures came out of that:
+        T + "model Model",
+        # Setting this to the value the model ALREADY holds is the point. Three
+        # applies failed here, and the sequence is what taught the rule:
         #
-        #   Culture and Collation properties of the Model object may be changed
-        #   only before any other object has been created.
+        #   model Model + culture + powerBI_V3
+        #     -> "Culture and Collation properties of the Model object may be
+        #         changed only before any other object has been created."
+        #   model Model, properties deleted
+        #     -> "Power BI Data Source Version is only allowed to change from V1
+        #         to a higher version, Current version is '2'"
+        #   ref model Model, properties deleted
+        #     -> the same data source version error
         #
-        #   Power BI Data Source Version is only allowed to change from V1 to a
-        #   higher version, Current version is '2'
+        # The second showed that deleting a property does not stop it being
+        # written, it makes it DEFAULT: createOrReplace replaces the model object
+        # and resets everything not restated. The default is V1, a downgrade from
+        # 2, so it fails. The third showed `ref` does not exempt the model from
+        # that. So the only thing that works is to restate the property at its
+        # current value, making the assignment a no-op.
         #
-        # The second is the instructive one. Deleting the properties did not stop
-        # them being written - it made them default. Culture's default happened to
-        # match, so no change was attempted and no error was raised; the data
-        # source version's default is V1, which is a downgrade from 2, so it
-        # failed. Any model property is a hazard here, and none of them need
-        # setting: a new Desktop file already holds the values this model wants.
-        # `ref` touches none of them.
-        T + "ref model Model",
+        # V2 is what Desktop reported. Culture is still omitted, and that is
+        # sound rather than lucky: after the property was removed the culture
+        # error stopped, which proves the default matches this model's value, so
+        # resetting it changes nothing. Collation the same. Only the data source
+        # version has a default that differs from what a real model carries.
+        T * 2 + "defaultPowerBIDataSourceVersion: powerBI_V2",
         "",
         # Declared before anything references them; an expression carrying
         # queryGroup: Parameters fails to apply if the group is not here.
