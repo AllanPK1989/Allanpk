@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PM QR Code Generator</title>
+<style>
+:root{
+  --ground:#F1F4F5; --surface:#fff; --surface-2:#E8EDEF; --ink:#12262F; --ink-2:#3D5765;
+  --ink-3:#6A8391; --rule:#CBD7DD; --accent:#1B6E8C; --accent-soft:#E2EDF1;
+  --good:#2F7F66; --warn:#A9701F; --crit:#AE4732;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);
+  font:15px/1.6 "Segoe UI",system-ui,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+header{background:var(--ink);color:#E6EEF1;padding:26px 0}
+header h1{margin:0;font-size:1.5rem;letter-spacing:-.02em}
+header p{margin:6px 0 0;color:#93AEBA;font-size:.92rem;max-width:80ch}
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:4px;
+  padding:22px 24px;margin:22px 0}
+.panel h2{margin:0 0 4px;font-size:1.05rem;letter-spacing:-.01em}
+.panel .hint{margin:0 0 16px;color:var(--ink-2);font-size:.88rem;max-width:88ch}
+.step{display:inline-block;background:var(--accent-soft);color:var(--accent);
+  font:600 .68rem/1 ui-monospace,monospace;letter-spacing:.1em;
+  padding:5px 8px;border-radius:3px;margin-right:9px;vertical-align:2px}
+label{display:block;font-weight:600;font-size:.8rem;margin:0 0 5px;color:var(--ink-2)}
+input[type=text],textarea{width:100%;padding:9px 11px;border:1px solid var(--rule);
+  border-radius:3px;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;
+  background:var(--surface);color:var(--ink)}
+input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.preview{margin-top:14px;padding:10px 12px;background:var(--surface-2);border-radius:3px;
+  font:12px/1.7 ui-monospace,monospace;color:var(--ink-2);word-break:break-all}
+.preview b{color:var(--accent)}
+button{font:600 .9rem/1 "Segoe UI",sans-serif;padding:11px 20px;border-radius:3px;
+  border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+button.ghost{background:var(--surface);color:var(--accent)}
+button:hover{filter:brightness(1.08)}
+button:disabled{opacity:.45;cursor:not-allowed;filter:none}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px}
+.status{font-size:.86rem;color:var(--ink-2)}
+.status.ok{color:var(--good);font-weight:600}
+.status.err{color:var(--crit);font-weight:600}
+details summary{cursor:pointer;font-weight:600;font-size:.88rem;color:var(--accent);margin-bottom:10px}
+/* ---- printable sheets ---- */
+#sheets{margin:22px 0 60px}
+.sheet{background:#fff;border:1px solid var(--rule);border-radius:4px;padding:10mm;margin-bottom:18px}
+.sheet h3{margin:0 0 2mm;font-size:1rem}
+.sheet .meta{margin:0 0 6mm;font-size:.8rem;color:var(--ink-3)}
+.labels{display:grid;grid-template-columns:repeat(2,1fr);gap:6mm}
+.badges{display:grid;grid-template-columns:repeat(3,1fr);gap:6mm}
+.card{border:1.5px solid var(--ink);border-radius:3mm;padding:5mm;
+  page-break-inside:avoid;break-inside:avoid;background:#fff}
+.card .hd{display:flex;justify-content:space-between;gap:3mm;align-items:flex-start;
+  border-bottom:1.5px solid var(--ink);padding-bottom:2.5mm;margin-bottom:3mm}
+.card .nm{font-size:13pt;font-weight:700;line-height:1.15}
+.card .sub{font-size:8pt;color:var(--ink-3);line-height:1.5}
+.card .id{font-size:17pt;font-weight:800;color:var(--accent);letter-spacing:.5px;text-align:right}
+.card .bd{display:flex;gap:4mm;align-items:center}
+.qr{width:34mm;height:34mm;flex:0 0 34mm}
+.qr svg{width:100%;height:100%;display:block}
+.acts{font-size:8pt;line-height:1.7}
+.acts b{display:block;font-size:7.5pt;text-transform:uppercase;letter-spacing:.8px;
+  color:var(--accent);margin-bottom:1.5mm}
+.acts ul{margin:0;padding-left:4mm}
+.ft{margin-top:3mm;padding-top:2mm;border-top:1px dashed var(--rule);
+  font-size:7pt;color:var(--ink-3);display:flex;justify-content:space-between;gap:3mm}
+.pill{display:inline-block;padding:.8mm 2.5mm;border-radius:10mm;font-size:7.5pt;font-weight:700;
+  background:var(--surface-2);color:var(--accent)}
+.crit-A{background:#FBE3E0;color:#B4451F}.crit-B{background:#FDF0DC;color:#8A5A16}
+.crit-C{background:#E4EDF2;color:#1B6E8C}
+.badge{text-align:center}
+.badge .qr{width:42mm;height:42mm;margin:0 auto 3mm}
+@page{size:A4;margin:10mm}
+@media print{
+  body{background:#fff}
+  header,.panel,#toolbar,.noprint{display:none!important}
+  .wrap{max-width:none;padding:0}
+  #sheets{margin:0}
+  .sheet{border:0;padding:0;margin:0}
+  .sheet+.sheet{page-break-before:always}
+}
+</style></head><body>
+
+<header><div class="wrap">
+  <h1>PM QR Code Generator</h1>
+  <p>Regenerates every machine and technician QR code for the PM system. Runs entirely
+     in this page &mdash; nothing to install, no network connection used, no data leaves the browser.
+     Works offline: keep this single file and open it in Edge or Chrome whenever codes need reprinting.</p>
+</div></header>
+
+<div class="wrap">
+
+<div class="panel">
+  <h2><span class="step">STEP 1</span>Power Apps link</h2>
+  <p class="hint">Publish the PM Field App, open <b>Details</b> on the app in Power Apps, and copy the
+     <b>Web link</b>. Paste it below and the three IDs are read out of it automatically &mdash;
+     or type them in yourself. These IDs change if the app is republished to a
+     <em>different environment</em>, and every label must then be reprinted.</p>
+  <label for="weblink">Paste the app Web link (easiest)</label>
+  <input type="text" id="weblink" spellcheck="false"
+         placeholder="https://apps.powerapps.com/play/e/.../a/...?tenantId=...">
+  <div class="grid3" style="margin-top:16px">
+    <div><label for="env">Environment ID</label><input type="text" id="env" spellcheck="false"></div>
+    <div><label for="app">App ID</label><input type="text" id="app" spellcheck="false"></div>
+    <div><label for="ten">Tenant ID</label><input type="text" id="ten" spellcheck="false"></div>
+  </div>
+  <div class="preview" id="linkPreview"></div>
+</div>
+
+<div class="panel">
+  <h2><span class="step">STEP 2</span>Your machines and technicians</h2>
+  <p class="hint">Pre-filled with the sample plant so you can try it immediately. To use your own,
+     open <b>Machine_Master.xlsx</b> and <b>Technician_Master.xlsx</b>, select the data rows
+     including the header, copy, and paste over the contents below. Column order does not matter;
+     the headers are matched by name.</p>
+  <details>
+    <summary>Machine list &mdash; <span id="mCount"></span></summary>
+    <label for="mData">Needs at least MachineID and MachineName. Also uses CellName, Location,
+      Criticality, Make, Model, SerialNo, ChecklistID, PMStdMinutes.</label>
+    <textarea id="mData" rows="8" spellcheck="false"></textarea>
+  </details>
+  <details style="margin-top:14px">
+    <summary>Technician list &mdash; <span id="tCount"></span></summary>
+    <label for="tData">Needs at least TechID and TechName. Also uses Shift, SkillGroup, PrimaryArea.</label>
+    <textarea id="tData" rows="6" spellcheck="false"></textarea>
+  </details>
+  <div class="row">
+    <button id="gen">Generate all QR codes</button>
+    <button class="ghost" id="print" disabled>Print / save as PDF</button>
+    <span class="status" id="status">Enter the app link above, then generate.</span>
+  </div>
+</div>
+
+</div>
+
+<div class="wrap" id="sheets"></div>
+
+<script>
+/* ---------------------------------------------------------------------------
+   Minimal QR Code encoder - byte mode, error correction level H.
+   No dependencies, no network. Written so the label sheets can be regenerated
+   on a locked-down machine with nothing but a browser.
+
+   Implements ISO/IEC 18004 for versions 1-40. A full Power Apps deep link
+   needs version 14, so there is plenty of headroom.
+--------------------------------------------------------------------------- */
+(function (root) {
+  "use strict";
+
+  /* Reed-Solomon block structure for level H, versions 1-40.
+     Each entry is a flat list of [blockCount, totalCodewords, dataCodewords]. */
+  var RS_BLOCKS_H = [[1, 26, 9], [1, 44, 16], [2, 35, 13], [4, 25, 9], [2, 33, 11, 2, 34, 12], [4, 43, 15], [4, 39, 13, 1, 40, 14], [4, 40, 14, 2, 41, 15], [4, 36, 12, 4, 37, 13], [6, 43, 15, 2, 44, 16], [3, 36, 12, 8, 37, 13], [7, 42, 14, 4, 43, 15], [12, 33, 11, 4, 34, 12], [11, 36, 12, 5, 37, 13], [11, 36, 12, 7, 37, 13], [3, 45, 15, 13, 46, 16], [2, 42, 14, 17, 43, 15], [2, 42, 14, 19, 43, 15], [9, 39, 13, 16, 40, 14], [15, 43, 15, 10, 44, 16], [19, 46, 16, 6, 47, 17], [34, 37, 13], [16, 45, 15, 14, 46, 16], [30, 46, 16, 2, 47, 17], [22, 45, 15, 13, 46, 16], [33, 46, 16, 4, 47, 17], [12, 45, 15, 28, 46, 16], [11, 45, 15, 31, 46, 16], [19, 45, 15, 26, 46, 16], [23, 45, 15, 25, 46, 16], [23, 45, 15, 28, 46, 16], [19, 45, 15, 35, 46, 16], [11, 45, 15, 46, 46, 16], [59, 46, 16, 1, 47, 17], [22, 45, 15, 41, 46, 16], [2, 45, 15, 64, 46, 16], [24, 45, 15, 46, 46, 16], [42, 45, 15, 32, 46, 16], [10, 45, 15, 67, 46, 16], [20, 45, 15, 61, 46, 16]];
+
+  /* Alignment pattern centre coordinates, versions 1-40. */
+  var ALIGN = [[], [6, 18], [6, 22], [6, 26], [6, 30], [6, 34], [6, 22, 38], [6, 24, 42], [6, 26, 46], [6, 28, 50], [6, 30, 54], [6, 32, 58], [6, 34, 62], [6, 26, 46, 66], [6, 26, 48, 70], [6, 26, 50, 74], [6, 30, 54, 78], [6, 30, 56, 82], [6, 30, 58, 86], [6, 34, 62, 90], [6, 28, 50, 72, 94], [6, 26, 50, 74, 98], [6, 30, 54, 78, 102], [6, 28, 54, 80, 106], [6, 32, 58, 84, 110], [6, 30, 58, 86, 114], [6, 34, 62, 90, 118], [6, 26, 50, 74, 98, 122], [6, 30, 54, 78, 102, 126], [6, 26, 52, 78, 104, 130], [6, 30, 56, 82, 108, 134], [6, 34, 60, 86, 112, 138], [6, 30, 58, 86, 114, 142], [6, 34, 62, 90, 118, 146], [6, 30, 54, 78, 102, 126, 150], [6, 24, 50, 76, 102, 128, 154], [6, 28, 54, 80, 106, 132, 158], [6, 32, 58, 84, 110, 136, 162], [6, 26, 54, 82, 110, 138, 166], [6, 30, 58, 86, 114, 142, 170]];
+
+  var G15 = 0x537, G18 = 0x1f25, G15_MASK = 0x5412;
+  var EC_LEVEL_BITS_H = 2;            /* level H is 0b10 */
+
+  /* ---- Galois field GF(256), primitive polynomial 0x11d ---- */
+  var EXP = new Array(512), LOG = new Array(256);
+  (function () {
+    var x = 1;
+    for (var i = 0; i < 255; i++) { EXP[i] = x; LOG[x] = i; x <<= 1; if (x & 0x100) x ^= 0x11d; }
+    for (var j = 255; j < 512; j++) EXP[j] = EXP[j - 255];
+  })();
+
+  function gfMul(a, b) { return (a === 0 || b === 0) ? 0 : EXP[LOG[a] + LOG[b]]; }
+
+  function genPoly(n) {
+    var poly = [1];
+    for (var i = 0; i < n; i++) {
+      var next = new Array(poly.length + 1).fill(0);
+      for (var j = 0; j < poly.length; j++) {
+        next[j] ^= gfMul(poly[j], 1);
+        next[j + 1] ^= gfMul(poly[j], EXP[i]);
+      }
+      poly = next;
+    }
+    return poly;
+  }
+
+  function rsEncode(data, ecCount) {
+    var gen = genPoly(ecCount);
+    var rem = data.concat(new Array(ecCount).fill(0));
+    for (var i = 0; i < data.length; i++) {
+      var coef = rem[i];
+      if (coef !== 0) for (var j = 1; j < gen.length; j++) rem[i + j] ^= gfMul(gen[j], coef);
+    }
+    return rem.slice(data.length);
+  }
+
+  /* ---- BCH for format and version information ---- */
+  function bchDigit(d) { var n = 0; while (d !== 0) { n++; d >>>= 1; } return n; }
+
+  function bchFormat(data) {
+    var d = data << 10;
+    while (bchDigit(d) - bchDigit(G15) >= 0) d ^= (G15 << (bchDigit(d) - bchDigit(G15)));
+    return ((data << 10) | d) ^ G15_MASK;
+  }
+
+  function bchVersion(data) {
+    var d = data << 12;
+    while (bchDigit(d) - bchDigit(G18) >= 0) d ^= (G18 << (bchDigit(d) - bchDigit(G18)));
+    return (data << 12) | d;
+  }
+
+  /* ---- UTF-8 ---- */
+  function utf8Bytes(str) {
+    var out = [];
+    for (var i = 0; i < str.length; i++) {
+      var c = str.charCodeAt(i);
+      if (c < 0x80) out.push(c);
+      else if (c < 0x800) { out.push(0xc0 | (c >> 6), 0x80 | (c & 0x3f)); }
+      else if (c < 0xd800 || c >= 0xe000) {
+        out.push(0xe0 | (c >> 12), 0x80 | ((c >> 6) & 0x3f), 0x80 | (c & 0x3f));
+      } else {                                   /* surrogate pair */
+        i++;
+        var cp = 0x10000 + (((c & 0x3ff) << 10) | (str.charCodeAt(i) & 0x3ff));
+        out.push(0xf0 | (cp >> 18), 0x80 | ((cp >> 12) & 0x3f),
+                 0x80 | ((cp >> 6) & 0x3f), 0x80 | (cp & 0x3f));
+      }
+    }
+    return out;
+  }
+
+  function blocksFor(version) {
+    var spec = RS_BLOCKS_H[version - 1], out = [];
+    for (var i = 0; i < spec.length; i += 3)
+      for (var k = 0; k < spec[i]; k++) out.push({ total: spec[i + 1], data: spec[i + 2] });
+    return out;
+  }
+
+  function dataCapacity(version) {
+    return blocksFor(version).reduce(function (s, b) { return s + b.data; }, 0);
+  }
+
+  function chooseVersion(byteLen) {
+    for (var v = 1; v <= RS_BLOCKS_H.length; v++) {
+      var cc = v <= 9 ? 8 : 16;
+      if (Math.ceil((4 + cc + 8 * byteLen) / 8) <= dataCapacity(v)) return v;
+    }
+    throw new Error("Payload is " + byteLen + " bytes; the largest QR code at error "
+      + "correction level H holds " + (dataCapacity(RS_BLOCKS_H.length) - 3) + ".");
+  }
+
+  /* ---- final codeword stream: data + ECC, interleaved ---- */
+  function buildCodewords(bytes, version) {
+    var cc = version <= 9 ? 8 : 16;
+    var bits = [];
+    function put(num, len) { for (var i = len - 1; i >= 0; i--) bits.push((num >>> i) & 1); }
+
+    put(4, 4);                       /* byte mode */
+    put(bytes.length, cc);
+    for (var i = 0; i < bytes.length; i++) put(bytes[i], 8);
+
+    var capacityBits = dataCapacity(version) * 8;
+    for (var t = 0; t < 4 && bits.length < capacityBits; t++) bits.push(0);
+    while (bits.length % 8 !== 0) bits.push(0);
+
+    var words = [];
+    for (var b = 0; b < bits.length; b += 8) {
+      var v = 0;
+      for (var k = 0; k < 8; k++) v = (v << 1) | bits[b + k];
+      words.push(v);
+    }
+    var pad = [0xec, 0x11], p = 0;
+    while (words.length < dataCapacity(version)) words.push(pad[p++ % 2]);
+
+    var blocks = blocksFor(version), off = 0, maxD = 0, maxE = 0;
+    blocks.forEach(function (blk) {
+      blk.dataWords = words.slice(off, off + blk.data);
+      off += blk.data;
+      blk.ecWords = rsEncode(blk.dataWords, blk.total - blk.data);
+      maxD = Math.max(maxD, blk.dataWords.length);
+      maxE = Math.max(maxE, blk.ecWords.length);
+    });
+
+    var out = [];
+    for (var d = 0; d < maxD; d++)
+      blocks.forEach(function (blk) { if (d < blk.dataWords.length) out.push(blk.dataWords[d]); });
+    for (var e = 0; e < maxE; e++)
+      blocks.forEach(function (blk) { if (e < blk.ecWords.length) out.push(blk.ecWords[e]); });
+    return out;
+  }
+
+  /* ---- mask functions ---- */
+  function maskFn(pattern, i, j) {
+    switch (pattern) {
+      case 0: return (i + j) % 2 === 0;
+      case 1: return i % 2 === 0;
+      case 2: return j % 3 === 0;
+      case 3: return (i + j) % 3 === 0;
+      case 4: return (Math.floor(i / 2) + Math.floor(j / 3)) % 2 === 0;
+      case 5: return ((i * j) % 2) + ((i * j) % 3) === 0;
+      case 6: return (((i * j) % 2) + ((i * j) % 3)) % 2 === 0;
+      case 7: return (((i + j) % 2) + ((i * j) % 3)) % 2 === 0;
+    }
+    throw new Error("bad mask " + pattern);
+  }
+
+  /* `test` blanks the format, version and dark modules. Mask selection is
+     scored on a test matrix, matching the reference implementation and the
+     original ISO sample code; the chosen mask is then rendered for real. */
+  function buildMatrix(version, codewords, mask, test) {
+    var size = version * 4 + 17;
+    var m = [];
+    for (var r = 0; r < size; r++) m.push(new Array(size).fill(null));
+
+    function finder(row, col) {
+      for (var r = -1; r <= 7; r++) {
+        for (var c = -1; c <= 7; c++) {
+          if (row + r < 0 || size <= row + r || col + c < 0 || size <= col + c) continue;
+          m[row + r][col + c] =
+            (0 <= r && r <= 6 && (c === 0 || c === 6)) ||
+            (0 <= c && c <= 6 && (r === 0 || r === 6)) ||
+            (2 <= r && r <= 4 && 2 <= c && c <= 4);
+        }
+      }
+    }
+    finder(0, 0); finder(size - 7, 0); finder(0, size - 7);
+
+    /* alignment patterns first - their centres can sit on the timing line */
+    var pos = ALIGN[version - 1];
+    for (var a = 0; a < pos.length; a++) {
+      for (var b = 0; b < pos.length; b++) {
+        var row = pos[a], col = pos[b];
+        if (m[row][col] !== null) continue;
+        for (var r2 = -2; r2 <= 2; r2++)
+          for (var c2 = -2; c2 <= 2; c2++)
+            m[row + r2][col + c2] =
+              r2 === -2 || r2 === 2 || c2 === -2 || c2 === 2 || (r2 === 0 && c2 === 0);
+      }
+    }
+
+/* timing pattern fills only what alignment left free */
+    for (var i = 8; i < size - 8; i++) {
+      if (m[i][6] === null) m[i][6] = i % 2 === 0;
+      if (m[6][i] === null) m[6][i] = i % 2 === 0;
+    }
+
+    if (version >= 7) {
+      var vbits = bchVersion(version);
+      for (var k = 0; k < 18; k++) {
+        var bit = !test && ((vbits >> k) & 1) === 1;
+        m[Math.floor(k / 3)][k % 3 + size - 8 - 3] = bit;
+        m[k % 3 + size - 8 - 3][Math.floor(k / 3)] = bit;
+      }
+    }
+
+    var fbits = bchFormat((EC_LEVEL_BITS_H << 3) | mask);
+    for (var f = 0; f < 15; f++) {
+      var fb = !test && ((fbits >> f) & 1) === 1;
+      if (f < 6) m[f][8] = fb;
+      else if (f < 8) m[f + 1][8] = fb;
+      else m[size - 15 + f][8] = fb;
+
+      if (f < 8) m[8][size - f - 1] = fb;
+      else if (f < 9) m[8][15 - f - 1 + 1] = fb;
+      else m[8][15 - f - 1] = fb;
+    }
+    m[size - 8][8] = !test;                       /* dark module */
+
+    var inc = -1, row2 = size - 1, bitIndex = 7, byteIndex = 0;
+    for (var col = size - 1; col > 0; col -= 2) {
+      if (col === 6) col--;
+      for (;;) {
+        for (var c3 = 0; c3 < 2; c3++) {
+          if (m[row2][col - c3] === null) {
+            var dark = false;
+            if (byteIndex < codewords.length)
+              dark = ((codewords[byteIndex] >>> bitIndex) & 1) === 1;
+            if (maskFn(mask, row2, col - c3)) dark = !dark;
+            m[row2][col - c3] = dark;
+            bitIndex--;
+            if (bitIndex === -1) { byteIndex++; bitIndex = 7; }
+          }
+        }
+        row2 += inc;
+        if (row2 < 0 || size <= row2) { row2 -= inc; inc = -inc; break; }
+      }
+    }
+    return m;
+  }
+
+  /* ---- mask penalty, ISO/IEC 18004 rules 1-4 ----
+     Rule 1: runs of 5+ same-colour modules in a row or column score (n - 2).
+     Rule 2: each uniform 2x2 block scores 3.
+     Rule 3: the 1:1:3:1:1 finder-like pattern with a 4-module light margin
+             (10111010000 or 00001011101) scores 40.
+     Rule 4: every 5% the dark ratio departs from 50% scores 10, floored. */
+  function penalty(m) {
+    var n = m.length, score = 0, r, c;
+
+    /* rule 1 - horizontal runs then vertical runs */
+    for (r = 0; r < n; r++) {
+      var prev = m[r][0], run = 0;
+      for (c = 0; c < n; c++) {
+        if (m[r][c] === prev) run++;
+        else { if (run >= 5) score += run - 2; run = 1; prev = m[r][c]; }
+      }
+      if (run >= 5) score += run - 2;
+    }
+    for (c = 0; c < n; c++) {
+      var prevC = m[0][c], runC = 0;
+      for (r = 0; r < n; r++) {
+        if (m[r][c] === prevC) runC++;
+        else { if (runC >= 5) score += runC - 2; runC = 1; prevC = m[r][c]; }
+      }
+      if (runC >= 5) score += runC - 2;
+    }
+
+    /* rule 2 */
+    for (r = 0; r < n - 1; r++) {
+      for (c = 0; c < n - 1; c++) {
+        var a = m[r][c];
+        if (a === m[r][c + 1] && a === m[r + 1][c] && a === m[r + 1][c + 1]) score += 3;
+      }
+    }
+
+    /* rule 3 */
+    for (r = 0; r < n; r++) {
+      var t = m[r];
+      for (c = 0; c + 10 < n; c++) {
+        if (!t[c + 1] && t[c + 4] && !t[c + 5] && t[c + 6] && !t[c + 9] &&
+            ((t[c] && t[c + 2] && t[c + 3] && !t[c + 7] && !t[c + 8] && !t[c + 10]) ||
+             (!t[c] && !t[c + 2] && !t[c + 3] && t[c + 7] && t[c + 8] && t[c + 10])))
+          score += 40;
+      }
+    }
+    for (c = 0; c < n; c++) {
+      for (r = 0; r + 10 < n; r++) {
+        if (!m[r + 1][c] && m[r + 4][c] && !m[r + 5][c] && m[r + 6][c] && !m[r + 9][c] &&
+            ((m[r][c] && m[r + 2][c] && m[r + 3][c] && !m[r + 7][c] && !m[r + 8][c] && !m[r + 10][c]) ||
+             (!m[r][c] && !m[r + 2][c] && !m[r + 3][c] && m[r + 7][c] && m[r + 8][c] && m[r + 10][c])))
+          score += 40;
+      }
+    }
+
+    /* rule 4 */
+    var dark = 0;
+    for (r = 0; r < n; r++) for (c = 0; c < n; c++) if (m[r][c]) dark++;
+    score += Math.floor(Math.abs((dark / (n * n)) * 100 - 50) / 5) * 10;
+
+    return score;
+  }
+
+  /* ---- public API ---- */
+  function encode(text, forcedMask) {
+    var bytes = utf8Bytes(text);
+    var version = chooseVersion(bytes.length);
+    var codewords = buildCodewords(bytes, version);
+
+    if (forcedMask !== undefined && forcedMask !== null)
+      return { version: version, mask: forcedMask,
+               modules: buildMatrix(version, codewords, forcedMask, false) };
+
+    var bestScore = Infinity, bestMask = 0;
+    for (var k = 0; k < 8; k++) {
+      var s = penalty(buildMatrix(version, codewords, k, true));
+      if (s < bestScore) { bestScore = s; bestMask = k; }
+    }
+    return {
+      version: version,
+      mask: bestMask,
+      modules: buildMatrix(version, codewords, bestMask, false)
+    };
+  }
+
+  /* SVG at 1 module = 1 unit, so the caller scales with width/height */
+  function toSvg(text, border, dark, light) {
+    var q = encode(text);
+    var n = q.modules.length, b = border === undefined ? 4 : border, dim = n + b * 2;
+    var path = [];
+    for (var r = 0; r < n; r++) {
+      for (var c = 0; c < n; c++) {
+        if (q.modules[r][c]) path.push("M" + (c + b) + "," + (r + b) + "h1v1h-1z");
+      }
+    }
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + dim + ' ' + dim +
+      '" shape-rendering="crispEdges" role="img">' +
+      '<rect width="' + dim + '" height="' + dim + '" fill="' + (light || "#ffffff") + '"/>' +
+      '<path d="' + path.join("") + '" fill="' + (dark || "#000000") + '"/></svg>';
+  }
+
+  root.QR = {
+    encode: encode, toSvg: toSvg, version: "1.0",
+    /* exposed so the build can verify against a reference implementation */
+    _test: { chooseVersion: chooseVersion, buildCodewords: buildCodewords,
+             utf8Bytes: utf8Bytes, blocksFor: blocksFor, dataCapacity: dataCapacity,
+             rsEncode: rsEncode, penalty: penalty }
+  };
+})(typeof module !== "undefined" && module.exports ? module.exports : window);
+
+</script>
+<script>
+(function () {
+  "use strict";
+  var MACHINES = [{"MachineID": "MC-001", "MachineName": "CNC Lathe TL-01", "CellID": "CELL-01", "Location": "CELL-01 / Bay 1", "Criticality": "A", "Make": "Doosan", "Model": "Puma 2600SY", "SerialNo": "SN20160001", "ChecklistID": "CL-CNC-TURN", "PMStdMinutes": "150", "CellName": "CNC Turning Line A"}, {"MachineID": "MC-002", "MachineName": "CNC Lathe TL-02", "CellID": "CELL-01", "Location": "CELL-01 / Bay 2", "Criticality": "A", "Make": "Doosan", "Model": "Puma 2600SY", "SerialNo": "SN20170002", "ChecklistID": "CL-CNC-TURN", "PMStdMinutes": "150", "CellName": "CNC Turning Line A"}, {"MachineID": "MC-003", "MachineName": "CNC Lathe TL-03", "CellID": "CELL-01", "Location": "CELL-01 / Bay 3", "Criticality": "A", "Make": "Mazak", "Model": "QTN 250MY", "SerialNo": "SN20180003", "ChecklistID": "CL-CNC-TURN", "PMStdMinutes": "150", "CellName": "CNC Turning Line A"}, {"MachineID": "MC-004", "MachineName": "Bar Feeder BF-01", "CellID": "CELL-01", "Location": "CELL-01 / Bay 4", "Criticality": "C", "Make": "LNS", "Model": "Quick6", "SerialNo": "SN20190004", "ChecklistID": "CL-UTIL", "PMStdMinutes": "80", "CellName": "CNC Turning Line A"}, {"MachineID": "MC-005", "MachineName": "Chip Conveyor CC-01", "CellID": "CELL-01", "Location": "CELL-01 / Bay 1", "Criticality": "C", "Make": "Hennig", "Model": "HC-400", "SerialNo": "SN20200005", "ChecklistID": "CL-UTIL", "PMStdMinutes": "80", "CellName": "CNC Turning Line A"}, {"MachineID": "MC-006", "MachineName": "CNC Lathe TL-04", "CellID": "CELL-02", "Location": "CELL-02 / Bay 2", "Criticality": "A", "Make": "Haas", "Model": "ST-30", "SerialNo": "SN20210006", "ChecklistID": "CL-CNC-TURN", "PMStdMinutes": "150", "CellName": "CNC Turning Line B"}, {"MachineID": "MC-007", "MachineName": "CNC Lathe TL-05", "CellID": "CELL-02", "Location": "CELL-02 / Bay 3", "Criticality": "B", "Make": "Haas", "Model": "ST-30", "SerialNo": "SN20220007", "ChecklistID": "CL-CNC-TURN", "PMStdMinutes": "150", "CellName": "CNC Turning Line B"}, {"MachineID": "MC-008", "MachineName": "VMC MC-01", "CellID": "CELL-02", "Location": "CELL-02 / Bay 4", "Criticality": "A", "Make": "Makino", "Model": "PS95", "SerialNo": "SN20230008", "ChecklistID": "CL-CNC-MILL", "PMStdMinutes": "165", "CellName": "CNC Turning Line B"}, {"MachineID": "MC-009", "MachineName": "VMC MC-02", "CellID": "CELL-02", "Location": "CELL-02 / Bay 1", "Criticality": "B", "Make": "Makino", "Model": "PS95", "SerialNo": "SN20150009", "ChecklistID": "CL-CNC-MILL", "PMStdMinutes": "165", "CellName": "CNC Turning Line B"}, {"MachineID": "MC-010", "MachineName": "Gear Hobber GH-01", "CellID": "CELL-03", "Location": "CELL-03 / Bay 2", "Criticality": "A", "Make": "Liebherr", "Model": "LC180", "SerialNo": "SN20160010", "ChecklistID": "CL-GEAR", "PMStdMinutes": "180", "CellName": "Gear Cutting Cell"}, {"MachineID": "MC-011", "MachineName": "Gear Hobber GH-02", "CellID": "CELL-03", "Location": "CELL-03 / Bay 3", "Criticality": "A", "Make": "Mitsubishi", "Model": "GE15A", "SerialNo": "SN20170011", "ChecklistID": "CL-GEAR", "PMStdMinutes": "180", "CellName": "Gear Cutting Cell"}, {"MachineID": "MC-012", "MachineName": "Gear Shaver GS-01", "CellID": "CELL-03", "Location": "CELL-03 / Bay 4", "Criticality": "B", "Make": "Gleason", "Model": "Genesis 160", "SerialNo": "SN20180012", "ChecklistID": "CL-GEAR", "PMStdMinutes": "150", "CellName": "Gear Cutting Cell"}, {"MachineID": "MC-013", "MachineName": "Deburring Unit DB-01", "CellID": "CELL-03", "Location": "CELL-03 / Bay 1", "Criticality": "C", "Make": "Rosler", "Model": "R320", "SerialNo": "SN20190013", "ChecklistID": "CL-UTIL", "PMStdMinutes": "80", "CellName": "Gear Cutting Cell"}, {"MachineID": "MC-014", "MachineName": "Sealed Quench SQ-01", "CellID": "CELL-04", "Location": "CELL-04 / Bay 2", "Criticality": "A", "Make": "Ipsen", "Model": "T-6", "SerialNo": "SN20200014", "ChecklistID": "CL-FURNACE", "PMStdMinutes": "240", "CellName": "Heat Treatment"}, {"MachineID": "MC-015", "MachineName": "Sealed Quench SQ-02", "CellID": "CELL-04", "Location": "CELL-04 / Bay 3", "Criticality": "A", "Make": "Ipsen", "Model": "T-6", "SerialNo": "SN20210015", "ChecklistID": "CL-FURNACE", "PMStdMinutes": "240", "CellName": "Heat Treatment"}, {"MachineID": "MC-016", "MachineName": "Tempering Furnace TF-01", "CellID": "CELL-04", "Location": "CELL-04 / Bay 4", "Criticality": "A", "Make": "Aichelin", "Model": "TF-900", "SerialNo": "SN20220016", "ChecklistID": "CL-FURNACE", "PMStdMinutes": "180", "CellName": "Heat Treatment"}, {"MachineID": "MC-017", "MachineName": "Quench Oil Chiller CH-01", "CellID": "CELL-04", "Location": "CELL-04 / Bay 1", "Criticality": "B", "Make": "Voltas", "Model": "VC-60TR", "SerialNo": "SN20230017", "ChecklistID": "CL-UTIL", "PMStdMinutes": "130", "CellName": "Heat Treatment"}, {"MachineID": "MC-018", "MachineName": "HT Compressor AC-01", "CellID": "CELL-04", "Location": "CELL-04 / Bay 2", "Criticality": "A", "Make": "Atlas Copco", "Model": "GA55", "SerialNo": "SN20150018", "ChecklistID": "CL-UTIL", "PMStdMinutes": "120", "CellName": "Heat Treatment"}, {"MachineID": "MC-019", "MachineName": "Assembly Stn AS-01", "CellID": "CELL-05", "Location": "CELL-05 / Bay 3", "Criticality": "B", "Make": "In-house", "Model": "ASSY-1", "SerialNo": "SN20160019", "ChecklistID": "CL-ASSY", "PMStdMinutes": "90", "CellName": "Assembly Line 1"}, {"MachineID": "MC-020", "MachineName": "Assembly Stn AS-02", "CellID": "CELL-05", "Location": "CELL-05 / Bay 4", "Criticality": "B", "Make": "In-house", "Model": "ASSY-1", "SerialNo": "SN20170020", "ChecklistID": "CL-ASSY", "PMStdMinutes": "90", "CellName": "Assembly Line 1"}, {"MachineID": "MC-021", "MachineName": "Assembly Stn AS-03", "CellID": "CELL-05", "Location": "CELL-05 / Bay 1", "Criticality": "B", "Make": "In-house", "Model": "ASSY-2", "SerialNo": "SN20180021", "ChecklistID": "CL-ASSY", "PMStdMinutes": "90", "CellName": "Assembly Line 1"}, {"MachineID": "MC-022", "MachineName": "Leak Test Rig LT-01", "CellID": "CELL-05", "Location": "CELL-05 / Bay 2", "Criticality": "A", "Make": "ATEQ", "Model": "F620", "SerialNo": "SN20190022", "ChecklistID": "CL-ASSY", "PMStdMinutes": "110", "CellName": "Assembly Line 1"}, {"MachineID": "MC-023", "MachineName": "Assy Conveyor CV-01", "CellID": "CELL-05", "Location": "CELL-05 / Bay 3", "Criticality": "C", "Make": "Interroll", "Model": "IR-2000", "SerialNo": "SN20200023", "ChecklistID": "CL-UTIL", "PMStdMinutes": "80", "CellName": "Assembly Line 1"}, {"MachineID": "MC-024", "MachineName": "Paint Booth PB-01", "CellID": "CELL-06", "Location": "CELL-06 / Bay 4", "Criticality": "A", "Make": "Nordson", "Model": "NB-4", "SerialNo": "SN20210024", "ChecklistID": "CL-PAINT", "PMStdMinutes": "200", "CellName": "Paint & Finishing"}, {"MachineID": "MC-025", "MachineName": "Curing Oven CO-01", "CellID": "CELL-06", "Location": "CELL-06 / Bay 1", "Criticality": "B", "Make": "Eisenmann", "Model": "CO-12", "SerialNo": "SN20220025", "ChecklistID": "CL-PAINT", "PMStdMinutes": "160", "CellName": "Paint & Finishing"}, {"MachineID": "MC-026", "MachineName": "Paint Chiller CH-02", "CellID": "CELL-06", "Location": "CELL-06 / Bay 2", "Criticality": "C", "Make": "Blue Star", "Model": "BS-30TR", "SerialNo": "SN20230026", "ChecklistID": "CL-UTIL", "PMStdMinutes": "130", "CellName": "Paint & Finishing"}, {"MachineID": "MC-027", "MachineName": "Robot Weld Cell RW-01", "CellID": "CELL-07", "Location": "CELL-07 / Bay 3", "Criticality": "A", "Make": "Fanuc", "Model": "ARC Mate 120", "SerialNo": "SN20150027", "ChecklistID": "CL-WELD", "PMStdMinutes": "190", "CellName": "Robotic Welding Bay"}, {"MachineID": "MC-028", "MachineName": "Robot Weld Cell RW-02", "CellID": "CELL-07", "Location": "CELL-07 / Bay 4", "Criticality": "A", "Make": "Fanuc", "Model": "ARC Mate 120", "SerialNo": "SN20160028", "ChecklistID": "CL-WELD", "PMStdMinutes": "190", "CellName": "Robotic Welding Bay"}, {"MachineID": "MC-029", "MachineName": "Positioner PZ-01", "CellID": "CELL-07", "Location": "CELL-07 / Bay 1", "Criticality": "C", "Make": "Fanuc", "Model": "2AX-500", "SerialNo": "SN20170029", "ChecklistID": "CL-UTIL", "PMStdMinutes": "80", "CellName": "Robotic Welding Bay"}, {"MachineID": "MC-030", "MachineName": "Weld Compressor AC-02", "CellID": "CELL-07", "Location": "CELL-07 / Bay 2", "Criticality": "B", "Make": "Elgi", "Model": "EG37", "SerialNo": "SN20180030", "ChecklistID": "CL-UTIL", "PMStdMinutes": "120", "CellName": "Robotic Welding Bay"}, {"MachineID": "MC-031", "MachineName": "Hyd Press HP-01", "CellID": "CELL-08", "Location": "CELL-08 / Bay 3", "Criticality": "A", "Make": "Schuler", "Model": "MSD-250", "SerialNo": "SN20190031", "ChecklistID": "CL-PRESS", "PMStdMinutes": "175", "CellName": "Press Shop"}, {"MachineID": "MC-032", "MachineName": "Hyd Press HP-02", "CellID": "CELL-08", "Location": "CELL-08 / Bay 4", "Criticality": "B", "Make": "Schuler", "Model": "MSD-160", "SerialNo": "SN20200032", "ChecklistID": "CL-PRESS", "PMStdMinutes": "175", "CellName": "Press Shop"}, {"MachineID": "MC-033", "MachineName": "Press Feeder PF-01", "CellID": "CELL-08", "Location": "CELL-08 / Bay 1", "Criticality": "C", "Make": "Bruderer", "Model": "BSV-75", "SerialNo": "SN20210033", "ChecklistID": "CL-UTIL", "PMStdMinutes": "80", "CellName": "Press Shop"}];
+  var TECHS = [{"TechID": "TECH-01", "TechName": "Arun Kumar", "Shift": "Shift A", "SkillGroup": "Mechanical", "PrimaryArea": "Machine Shop"}, {"TechID": "TECH-02", "TechName": "Suresh Babu", "Shift": "Shift A", "SkillGroup": "Electrical", "PrimaryArea": "Machine Shop"}, {"TechID": "TECH-03", "TechName": "Mohammed Rafi", "Shift": "Shift B", "SkillGroup": "Mechanical", "PrimaryArea": "Machine Shop"}, {"TechID": "TECH-04", "TechName": "Vignesh S", "Shift": "Shift B", "SkillGroup": "Hydraulics", "PrimaryArea": "Fabrication"}, {"TechID": "TECH-05", "TechName": "Prakash R", "Shift": "Shift A", "SkillGroup": "Furnace", "PrimaryArea": "Heat Treat"}, {"TechID": "TECH-06", "TechName": "Deepak Nair", "Shift": "Shift C", "SkillGroup": "Electrical", "PrimaryArea": "Heat Treat"}, {"TechID": "TECH-07", "TechName": "Ramesh Chandran", "Shift": "Shift A", "SkillGroup": "Mechanical", "PrimaryArea": "Assembly"}, {"TechID": "TECH-08", "TechName": "Karthik V", "Shift": "Shift B", "SkillGroup": "Automation", "PrimaryArea": "Fabrication"}, {"TechID": "TECH-09", "TechName": "Sathish Kumar", "Shift": "Shift A", "SkillGroup": "Utilities", "PrimaryArea": "Finishing"}, {"TechID": "TECH-10", "TechName": "Naveen Raj", "Shift": "Shift B", "SkillGroup": "Automation", "PrimaryArea": "Assembly"}];
+
+  var $ = function (id) { return document.getElementById(id); };
+  var GUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
+
+  function toTsv(rows, cols) {
+    return [cols.join("\t")].concat(rows.map(function (r) {
+      return cols.map(function (c) { return r[c] === undefined ? "" : r[c]; }).join("\t");
+    })).join("\n");
+  }
+  var M_COLS = ["MachineID","MachineName","CellName","Location","Criticality",
+                "Make","Model","SerialNo","ChecklistID","PMStdMinutes"];
+  var T_COLS = ["TechID","TechName","Shift","SkillGroup","PrimaryArea"];
+  $("mData").value = toTsv(MACHINES, M_COLS);
+  $("tData").value = toTsv(TECHS, T_COLS);
+
+  /* Accepts tab-separated (an Excel paste) or comma-separated text. */
+  function parse(text) {
+    var lines = text.replace(/\r/g, "").split("\n").filter(function (l) { return l.trim() !== ""; });
+    if (!lines.length) return [];
+    var delim = lines[0].indexOf("\t") >= 0 ? "\t" : ",";
+    function cells(line) {
+      if (delim === "\t") return line.split("\t");
+      var out = [], cur = "", q = false;
+      for (var i = 0; i < line.length; i++) {
+        var ch = line[i];
+        if (ch === '"') { if (q && line[i+1] === '"') { cur += '"'; i++; } else q = !q; }
+        else if (ch === "," && !q) { out.push(cur); cur = ""; }
+        else cur += ch;
+      }
+      out.push(cur); return out;
+    }
+    var head = cells(lines[0]).map(function (h) { return h.trim(); });
+    return lines.slice(1).map(function (l) {
+      var c = cells(l), o = {};
+      head.forEach(function (h, i) { o[h] = (c[i] || "").trim(); });
+      return o;
+    });
+  }
+
+  function ids() {
+    return { env: $("env").value.trim(), app: $("app").value.trim(), ten: $("ten").value.trim() };
+  }
+  function payload(kind, id) {
+    var v = ids();
+    return "https://apps.powerapps.com/play/e/" + v.env + "/a/" + v.app +
+           "?tenantId=" + v.ten + "&source=qr&type=" + kind + "&id=" + id;
+  }
+
+  function refreshPreview() {
+    var v = ids(), missing = [];
+    if (!v.env) missing.push("Environment ID");
+    if (!v.app) missing.push("App ID");
+    if (!v.ten) missing.push("Tenant ID");
+    var p = $("linkPreview");
+    if (missing.length) {
+      p.innerHTML = "Still needed: <b>" + missing.join("</b>, <b>") + "</b>";
+      return false;
+    }
+    p.innerHTML = "Each machine code will contain:<br>" +
+      payload("machine", "MC-001").replace(/&/g, "&amp;")
+        .replace(/(MC-001)$/, "<b>$1</b>");
+    return true;
+  }
+
+  $("weblink").addEventListener("input", function () {
+    var found = this.value.match(GUID);
+    if (!found) return;
+    if (found[0]) $("env").value = found[0];
+    if (found[1]) $("app").value = found[1];
+    if (found[2]) $("ten").value = found[2];
+    refreshPreview();
+  });
+  ["env","app","ten"].forEach(function (k) {
+    $(k).addEventListener("input", refreshPreview);
+  });
+
+  function countLabels() {
+    $("mCount").textContent = parse($("mData").value).length + " machines";
+    $("tCount").textContent = parse($("tData").value).length + " technicians";
+  }
+  $("mData").addEventListener("input", countLabels);
+  $("tData").addEventListener("input", countLabels);
+  countLabels();
+  refreshPreview();
+
+  var ACTIONS = ["View last PM done date &amp; history", "Start / continue the PM checklist",
+                 "Report a breakdown", "Request a spare part",
+                 "Record a spare part replaced", "Log an abnormality"];
+
+  function esc(s) {
+    return String(s === undefined ? "" : s)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  function machineCard(m) {
+    var crit = (m.Criticality || "C").toUpperCase();
+    return '<div class="card"><div class="hd"><div>' +
+      '<div class="nm">' + esc(m.MachineName) + '</div>' +
+      '<div class="sub">' + esc(m.CellName || m.CellID || "") +
+        (m.Location ? " &middot; " + esc(m.Location) : "") + '</div></div>' +
+      '<div><div class="id">' + esc(m.MachineID) + '</div>' +
+      '<span class="pill crit-' + esc(crit) + '">Criticality ' + esc(crit) + '</span></div></div>' +
+      '<div class="bd"><div class="qr">' + QR.toSvg(payload("machine", m.MachineID), 2, "#12262F") + '</div>' +
+      '<div class="acts"><b>Scan with your phone camera</b><ul><li>' +
+        ACTIONS.join("</li><li>") + '</li></ul></div></div>' +
+      '<div class="ft"><span>' + esc(((m.Make || "") + " " + (m.Model || "")).trim()) +
+        (m.SerialNo ? " &middot; SN " + esc(m.SerialNo) : "") + '</span>' +
+      '<span>' + esc(m.ChecklistID || "") +
+        (m.PMStdMinutes ? " &middot; PM " + esc(m.PMStdMinutes) + " min" : "") + '</span></div></div>';
+  }
+
+  function techCard(t) {
+    return '<div class="card badge"><div class="qr">' +
+      QR.toSvg(payload("tech", t.TechID), 2, "#12262F") + '</div>' +
+      '<div class="nm">' + esc(t.TechName) + '</div>' +
+      '<div class="sub">' + esc(t.TechID) + (t.Shift ? " &middot; " + esc(t.Shift) : "") + '</div>' +
+      (t.SkillGroup ? '<div style="margin-top:2mm"><span class="pill">' +
+        esc(t.SkillGroup) + '</span></div>' : "") +
+      '<div class="ft" style="justify-content:center">Scan to open MY PM LIST</div></div>';
+  }
+
+  function chunk(a, n) {
+    var out = [];
+    for (var i = 0; i < a.length; i += n) out.push(a.slice(i, i + n));
+    return out;
+  }
+
+  $("gen").addEventListener("click", function () {
+    var st = $("status");
+    if (!refreshPreview()) { st.className = "status err";
+      st.textContent = "Fill in all three IDs first."; return; }
+    var machines = parse($("mData").value).filter(function (m) { return m.MachineID; });
+    var techs = parse($("tData").value).filter(function (t) { return t.TechID; });
+    if (!machines.length && !techs.length) { st.className = "status err";
+      st.textContent = "No rows found. Check the pasted data has a header row."; return; }
+
+    st.className = "status"; st.textContent = "Generating…";
+    setTimeout(function () {
+      var t0 = performance.now(), html = "", n = 0;
+      try {
+        chunk(machines, 4).forEach(function (page, i) {
+          html += '<div class="sheet"><h3>Machine QR Labels</h3>' +
+            '<p class="meta">Sheet ' + (i + 1) + ' of ' + Math.ceil(machines.length / 4) +
+            ' &middot; print A4 at 100% on polyester or laminated label stock</p>' +
+            '<div class="labels">' + page.map(machineCard).join("") + '</div></div>';
+          n += page.length;
+        });
+        chunk(techs, 9).forEach(function (page, i) {
+          html += '<div class="sheet"><h3>Technician QR Badges</h3>' +
+            '<p class="meta">Sheet ' + (i + 1) + ' of ' + Math.ceil(techs.length / 9) +
+            ' &middot; cut and insert into the standard ID card holder, QR facing out</p>' +
+            '<div class="badges">' + page.map(techCard).join("") + '</div></div>';
+          n += page.length;
+        });
+      } catch (e) {
+        st.className = "status err"; st.textContent = "Failed: " + e.message; return;
+      }
+      $("sheets").innerHTML = html;
+      $("print").disabled = false;
+      st.className = "status ok";
+      st.textContent = n + " codes generated in " +
+        Math.round(performance.now() - t0) + " ms — scroll down, then print.";
+    }, 20);
+  });
+
+  $("print").addEventListener("click", function () { window.print(); });
+})();
+</script>
+</body></html>

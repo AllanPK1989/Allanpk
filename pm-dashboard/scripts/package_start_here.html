@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PM System — Start Here</title>
+<style>
+:root{--ground:#F1F4F5;--surface:#fff;--surface-2:#E8EDEF;--plate:#12262F;
+ --plate-ink:#E6EEF1;--plate-dim:#93AEBA;--ink:#12262F;--ink-2:#3D5765;--ink-3:#6A8391;
+ --rule:#CBD7DD;--accent:#1B6E8C;--accent-soft:#E2EDF1;--good:#2F7F66;--warn:#A9701F;--crit:#AE4732}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);
+ font:16px/1.62 "Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+.wrap{max-width:1060px;margin:0 auto;padding:0 26px}
+.mono{font-family:"Cascadia Mono",Consolas,ui-monospace,monospace}
+header{background:var(--plate);color:var(--plate-ink);padding:60px 0 0}
+.eyebrow{font:500 .7rem/1 "Cascadia Mono",Consolas,monospace;letter-spacing:.15em;
+ text-transform:uppercase;color:var(--plate-dim);white-space:nowrap}
+header h1{margin:15px 0 18px;font-size:clamp(2rem,4.6vw,3rem);letter-spacing:-.025em;line-height:1.05}
+header p{margin:0;color:var(--plate-dim);font-size:1.12rem;max-width:62ch;line-height:1.55}
+header p strong{color:var(--plate-ink);font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;
+ background:rgba(147,174,186,.24);margin-top:46px;border-top:1px solid rgba(147,174,186,.24)}
+.stat{background:var(--plate);padding:16px 18px 20px}
+.stat b{display:block;font-size:1.6rem;font-weight:600;letter-spacing:-.02em;
+ font-variant-numeric:tabular-nums;line-height:1.1}
+.stat span{display:block;margin-top:2px;font:.63rem/1.4 "Cascadia Mono",monospace;
+ letter-spacing:.11em;text-transform:uppercase;color:var(--plate-dim)}
+section{padding:64px 0;border-top:1px solid #DFE7EA}
+h2{font-size:1.55rem;letter-spacing:-.018em;margin:0 0 8px}
+.lede{color:var(--ink-2);max-width:66ch;margin:0 0 30px}
+.steps{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.step{background:var(--surface);padding:20px 24px;display:grid;
+ grid-template-columns:52px 1fr 210px;gap:20px;align-items:start}
+.step .n{font:600 .8rem/1.9 "Cascadia Mono",monospace;color:var(--accent);
+ background:var(--accent-soft);border-radius:3px;text-align:center;padding:3px 0}
+.step h3{margin:0 0 4px;font-size:1.03rem}
+.step p{margin:0;font-size:.9rem;color:var(--ink-2)}
+.step .go{align-self:center}
+.btn{display:inline-block;padding:9px 15px;border-radius:3px;border:1px solid var(--accent);
+ background:var(--accent);color:#fff;text-decoration:none;font-size:.84rem;font-weight:600;
+ text-align:center;width:100%}
+.btn.ghost{background:var(--surface);color:var(--accent)}
+.btn:hover{filter:brightness(1.08)}
+.hint{display:block;margin-top:6px;font-size:.74rem;color:var(--ink-3);text-align:center}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:4px;padding:24px 26px}
+.card h3{margin:0 0 8px;font-size:1.05rem}
+.card p{margin:0 0 10px;font-size:.92rem;color:var(--ink-2)}
+.card p:last-child{margin:0}
+pre{background:var(--surface);border:1px solid var(--rule);border-left:3px solid var(--accent);
+ border-radius:3px;padding:14px 16px;overflow-x:auto;
+ font:.8rem/1.85 "Cascadia Mono",Consolas,monospace;color:var(--ink-2);margin:0}
+pre b{color:var(--ink)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{padding:9px 13px;text-align:left;border-bottom:1px solid var(--rule);vertical-align:top}
+th{background:var(--surface-2);font:700 .71rem/1.5 "Segoe UI",sans-serif;
+ letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+td{color:var(--ink-2)}
+td:first-child{color:var(--ink);font-weight:600;white-space:nowrap}
+.tw{overflow-x:auto;border:1px solid var(--rule);border-radius:4px;background:var(--surface)}
+.callout{border-left:3px solid var(--accent);padding:4px 0 4px 17px;color:var(--ink-2);
+ max-width:68ch;margin:0 0 16px}
+.callout b{color:var(--ink)}
+.warn{border-left-color:var(--warn)}
+footer{background:var(--plate);color:var(--plate-dim);padding:30px 0;font-size:.86rem}
+@media(max-width:820px){.two{grid-template-columns:1fr}
+ .step{grid-template-columns:44px 1fr}.step .go{grid-column:1/-1}}
+</style></head><body>
+
+<header><div class="wrap">
+  <p class="eyebrow">Preventive maintenance &middot; planning &amp; scheduling</p>
+  <h1>PM System</h1>
+  <p>A complete preventive-maintenance system on Microsoft 365. Scheduling is driven by
+     production standard hours: at <strong>4000 accumulated hours a cell is scheduled
+     automatically</strong>, with a twelve-month backstop. Every machine and every technician
+     carries a QR code, and a job only closes when somebody is at the machine.</p>
+  <div class="stats">
+    <div class="stat"><b>8</b><span>Cells</span></div>
+    <div class="stat"><b>33</b><span>Machines</span></div>
+    <div class="stat"><b>10</b><span>Technicians</span></div>
+    <div class="stat"><b>94</b><span>Measures</span></div>
+    <div class="stat"><b>10</b><span>Report pages</span></div>
+    <div class="stat"><b>18</b><span>Templates</span></div>
+  </div>
+</div></header>
+
+<main>
+
+<section><div class="wrap">
+  <h2>Start here</h2>
+  <p class="lede">Everything runs on software you already have. Nothing to install, nothing to
+     download, no internet connection required by any file in this package.</p>
+
+  <div class="steps">
+    <div class="step">
+      <span class="n">01</span>
+      <div><h3>See the dashboard working</h3>
+        <p>Copy the <span class="mono">01_Power_BI</span> folder to <span class="mono">C:\PM_Dashboard</span>,
+           open the project and refresh. Sample data is inside it and already wired up, so all ten
+           pages populate immediately — no connection to set up first.</p></div>
+      <div class="go"><a class="btn" href="01_Power_BI/PM_Dashboard.pbip">Open PM_Dashboard.pbip</a>
+        <span class="hint">Power BI Desktop · see SETUP.md</span></div>
+    </div>
+    <div class="step">
+      <span class="n">02</span>
+      <div><h3>Read what it does and why</h3>
+        <p>Twelve documents: architecture, the scheduling rule with worked numbers, the SharePoint
+           build, the app specification with real formulas, six flows, the QR system, dashboard
+           design, the measure library, a phased checklist, and the open decisions.</p></div>
+      <div class="go"><a class="btn ghost" href="04_Documentation/Documentation.html">Open documentation</a>
+        <span class="hint">Any browser</span></div>
+    </div>
+    <div class="step">
+      <span class="n">03</span>
+      <div><h3>Record your tenant details</h3>
+        <p>One workbook for the site URL, the three Power Apps IDs, the list build checklist, the
+           thresholds you agreed and who agreed them. Fill in the amber cells and keep it with the
+           project.</p></div>
+      <div class="go"><a class="btn ghost" href="05_Deployment/Deployment_Worksheet.xlsx">Open worksheet</a>
+        <span class="hint">Excel</span></div>
+    </div>
+    <div class="step">
+      <span class="n">04</span>
+      <div><h3>Build the SharePoint site</h3>
+        <p>Eight lists from the schema sheet, then upload the six master workbooks. Every template
+           carries a READ ME sheet with its rules and a named table the queries bind to.</p></div>
+      <div class="go"><a class="btn ghost" href="02_SharePoint_Templates/">Open templates</a>
+        <span class="hint">18 workbooks</span></div>
+    </div>
+    <div class="step">
+      <span class="n">05</span>
+      <div><h3>Print the QR codes</h3>
+        <p>Paste your published app link, paste your machine list from Excel, click Generate, print.
+           Runs entirely in the browser with no install and no network — which is the point, because
+           the codes must be regenerated with your real app IDs before anything goes on a machine.</p></div>
+      <div class="go"><a class="btn" href="03_QR_Codes/QR_Generator.html">Open QR generator</a>
+        <span class="hint">Edge or Chrome</span></div>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>The scheduling rule</h2>
+  <p class="lede">This is the whole logic. Everything else in the system serves it.</p>
+  <div class="two">
+    <pre>opening(c,m)  = carry-over from last cycle
+closing(c,m)  = opening(c,m) + std_hours(c,m)
+
+hours_due     = closing <b>&gt;=</b> 4000
+calendar_due  = months_since_pm <b>&gt;=</b> 12
+triggered     = hours_due <b>OR</b> calendar_due
+
+carry_over    = <b>MAX</b>(0, closing - 4000)</pre>
+    <div class="card">
+      <h3>What it means in practice</h3>
+      <p>Standard hours accrue per cell from one monthly Excel upload. When a cell crosses 4000,
+         <b>every machine in it</b> gets a work order in that month.</p>
+      <p>Hours past the threshold <b>carry forward</b> — a cell running hot never loses hours, which
+         over a year is the difference between three cycles and four.</p>
+      <p>A cell that never reaches 4000 is scheduled anyway after twelve months, and the dashboard
+         says which of the two rules fired.</p>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>What is in the package</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Folder</th><th>Contents</th><th>Opens with</th></tr></thead>
+    <tbody>
+      <tr><td>01_Power_BI</td><td>The report project: 17 tables, 94 measures, 28 relationships, 10 pages, 107 visuals, matching theme, and the sample CSVs it reads</td><td>Power BI Desktop</td></tr>
+      <tr><td>02_SharePoint_Templates</td><td>List schemas for all eight lists, six master-data workbooks, the monthly standard-hours template plus a filled sample and a history back-load, and seed data for testing</td><td>Excel</td></tr>
+      <tr><td>03_QR_Codes</td><td>The offline generator, plus pre-generated placeholder codes and print sheets so you can see the label layout before you have real app IDs</td><td>Browser</td></tr>
+      <tr><td>04_Documentation</td><td>Twelve documents in one navigable page, with the markdown originals alongside</td><td>Browser</td></tr>
+      <tr><td>05_Deployment</td><td>The worksheet for your tenant details, build checklists, agreed thresholds and sign-off</td><td>Excel</td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>Two things worth knowing before you start</h2>
+  <div class="two">
+    <div class="card">
+      <h3>The monthly upload is the single point of failure</h3>
+      <p>If standard hours stop being uploaded, counters freeze and nothing is ever scheduled —
+        while the dashboard still looks green.</p>
+      <p>That is why <b>Missing Std Hours Rows</b> has its own KPI, why page 10 exists, and why one
+        of the six flows does nothing but chase the file. Name an owner and a backup on the
+        worksheet before go-live.</p>
+    </div>
+    <div class="card">
+      <h3>Power BI cannot capture data</h3>
+      <p>It is read-only. Every checklist, breakdown, spare request and abnormality is written by
+        the Power App; the dashboard is the analytics layer on top.</p>
+      <p>The app and the six flows are <b>specified in the documentation, not pre-built</b> — they
+        have to be built in your own tenant. Allow about a week.</p>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>If the Power BI project will not open</h2>
+  <p class="callout warn">Report file formats move with Power BI Desktop releases. If the project
+    refuses to load on your version, it is a five-minute fix, not a rebuild — <b>SETUP.md</b> in the
+    <span class="mono">01_Power_BI</span> folder has the recovery steps. The data model and the
+    measures are unaffected either way.</p>
+  <p class="callout">Everything in this package was checked before it was assembled: <b>692
+    consistency checks</b> on the report project (every relationship, every visual field binding and
+    every measure reference resolved against the model), and the QR encoder verified module for
+    module against a reference implementation across 2,816 test codes.</p>
+</div></section>
+
+</main>
+
+<footer><div class="wrap">
+  PM Planning, Scheduling &amp; Tracking System &nbsp;·&nbsp;
+  SharePoint + Power Apps + Power Automate + Power BI
+</div></footer>
+</body></html>

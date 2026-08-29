@@ -1,21 +1,16 @@
-# The Claude Code Prompt
+# Build Specification
 
-Copy everything between the rules into Claude Code. It rebuilds this entire
-solution from nothing — dummy data, SharePoint templates, QR system, semantic
-model, ten dashboard pages and the full specification set.
+Functional and technical specification for the Preventive Maintenance planning,
+scheduling and tracking system: a Power BI dashboard, a QR-code-driven Power Apps
+front end, the SharePoint file templates behind them, and a full sample dataset so
+the whole thing works end to end before any real data exists.
 
-Adjust the four values in **§1 Plant profile** to match your plant before running
-it. Everything else is already decided.
+This document is the source of truth for what the system does and why. Everything
+in the repository was built to it, and everything can be rebuilt from it. Adjust
+the values in **§1 Plant profile** to match your plant; the rest is settled.
 
----
-
-Build me a complete Preventive Maintenance planning, scheduling and tracking
-system: a Power BI dashboard, a QR-code-driven Power Apps front end, the
-SharePoint file templates behind them, and a full dummy dataset so the whole thing
-works end to end before any real data exists.
-
-Work in a folder called `pm-dashboard/`. Everything must be regenerable by running
-scripts — no hand-edited output files.
+Everything is regenerable by running scripts — there are no hand-edited output
+files.
 
 ## 1 · Plant profile
 
@@ -229,7 +224,7 @@ Write for a maintenance manager who is technical but not a Power Platform
 developer. Explain the reasoning, not just the steps. Say plainly where something
 is a trade-off.
 
-## 8 · Rules for the build
+## 8 · Engineering rules
 
 - Scripts, not hand-written output. Every generated file must be reproducible.
 - The scheduling rule is defined once in `pm_core.py` and referenced everywhere
@@ -240,10 +235,12 @@ is a trade-off.
   abnormality — or the dashboard will look right and be untested.
 - Be explicit about what Power BI cannot do. It cannot capture data. Every write
   goes through Power Apps.
-- Where a real decision is being made, say so in the docs rather than hiding it in
-  code.
+- Where a real decision is being made, record it in the docs rather than hiding it
+  in code.
 
-Start by scaffolding the folders and building `pm_core.py`, then the dummy data.
-Show me the scheduling engine's output distribution before you build anything on
-top of it.
+Build order: scaffold the folders and `pm_core.py` first, then the sample data.
+Check the scheduling engine's output distribution — status mix, trigger-type mix,
+compliance rate — before building anything on top of it. If the sample data does
+not exercise the calendar backstop, a deferred work order and an open high-severity
+abnormality, the dashboard will look right and be untested.
 
