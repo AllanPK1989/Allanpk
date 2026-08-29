@@ -1,0 +1,3699 @@
+createOrReplace
+
+	model Model
+		culture: en-US
+		defaultPowerBIDataSourceVersion: powerBI_V3
+		sourceQueryCulture: en-US
+		dataAccessOptions
+			legacyRedirects
+			returnErrorValuesAsNull
+
+		queryGroup Parameters
+			annotation PBI_QueryGroupOrder = 0
+
+		queryGroup Functions
+			annotation PBI_QueryGroupOrder = 1
+
+		annotation __PBI_TimeIntelligenceEnabled = 0
+
+		annotation PBI_QueryOrder = ["SourceMode", "LocalDataFolder", "SharePointSiteUrl", "SharePointLibrary", "SharePointFolderPath", "fnLocalCsv", "fnSpFolder", "fnSpList", "fnSpExcel", "fnStdHoursFolder", "fnSource", "Dim_Date", "Dim_Cell", "Dim_Machine", "Dim_Technician", "Dim_SparePart", "Dim_Checklist", "Config", "Fact_StdHours", "Fact_HourLedger", "Fact_WorkOrders", "Fact_ChecklistResults", "Fact_Breakdowns", "Fact_SpareRequests", "Fact_SpareReplacements", "Fact_Abnormalities", "Fact_ScanLog", "_Measures"]
+
+		/// Local reads the dummy CSVs. SharePoint reads the real lists and workbooks. This is the only switch you change at go-live.
+		expression SourceMode = "Local" meta [IsParameterQuery=true, List={"Local", "SharePoint"}, DefaultValue="Local", Type="Text", IsParameterQueryRequired=true]
+			lineageTag: 0589f3c3-eddc-5fdd-9d71-18676beacb46
+			queryGroup: Parameters
+
+			annotation PBI_ResultType = Text
+
+
+		/// Folder holding the CSVs. Only used when SourceMode = Local. Unzip the project to C:\PM_Dashboard and this default is already correct.
+		expression LocalDataFolder = "C:\PM_Dashboard\data" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+			lineageTag: 32ed8a78-ed7b-58ec-8e20-c9241819792a
+			queryGroup: Parameters
+
+			annotation PBI_ResultType = Text
+
+
+		/// Root URL of the SharePoint SITE - not the folder, and not the full document library path. Only used when SourceMode = SharePoint.
+		expression SharePointSiteUrl = "https://contoso.sharepoint.com/sites/PMSystem" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+			lineageTag: c5b9cad1-e02d-5c25-8181-24cc3a6c23da
+			queryGroup: Parameters
+
+			annotation PBI_ResultType = Text
+
+
+		/// Display name of the document library holding the PM folders. 'Documents' on an English tenant; a wrong name errors with the list of libraries actually there.
+		expression SharePointLibrary = "Documents" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+			lineageTag: 41eb8d45-b9f7-56a7-9874-3da7bd9b0a5f
+			queryGroup: Parameters
+
+			annotation PBI_ResultType = Text
+
+
+		/// Folder inside that library that contains 01 Master Data and 02 Standard Hours. Leave blank when the PM system owns the site; set it to e.g. 'PM System' when the folders sit inside a site shared with other work.
+		expression SharePointFolderPath = "" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=false]
+			lineageTag: f834765b-3fc2-552b-a319-de2025ab587d
+			queryGroup: Parameters
+
+			annotation PBI_ResultType = Text
+
+
+		/// Reads one dummy CSV and promotes headers.
+		expression fnLocalCsv = ```
+				(logicalName as text) as table =>
+				let
+				    Sep = if Text.EndsWith(LocalDataFolder, "\") then "" else "\",
+				    Path = LocalDataFolder & Sep & logicalName & ".csv",
+				    Raw = Csv.Document(File.Contents(Path), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Raw, [PromoteAllScalars = true]),
+				    NullBlanks = Table.TransformColumns(Promoted, {}, each if _ = "" then null else _)
+				in
+				    NullBlanks
+				```
+			lineageTag: f63dc2c3-1333-579d-93a3-be65677456af
+			queryGroup: Functions
+
+			annotation PBI_ResultType = Function
+
+
+		/// Walks the library and folder path and returns that folder's contents.
+		expression fnSpFolder = ```
+				(folderPath as text) as table =>
+				let
+				    // SharePoint.Contents navigates lazily, one folder at a time. SharePoint.Files
+				    // would enumerate every file in every library on the site - fine on a dedicated
+				    // PM site, painfully slow on a shared departmental one.
+				    Root = SharePoint.Contents(SharePointSiteUrl, [ApiVersion = 15]),
+				    LibRow = Table.SelectRows(Root, each [Name] = SharePointLibrary),
+				    Lib =
+				        if Table.RowCount(LibRow) = 0
+				        then error "Document library not found: '" & SharePointLibrary
+				                 & "'. Libraries on this site: " & Text.Combine(Root[Name], ", ")
+				        else LibRow{0}[Content],
+				    // Empty segments let the path be blank (library root) or start/end with a slash.
+				    Segments = List.Select(List.Transform(Text.Split(folderPath, "/"), Text.Trim),
+				                           each _ <> ""),
+				    Folder = List.Accumulate(Segments, Lib, (state, seg) =>
+				        let Row = Table.SelectRows(state, each [Name] = seg)
+				        in  if Table.RowCount(Row) = 0
+				            then error "Folder not found: '" & seg & "' while walking '" & folderPath & "'"
+				            else Row{0}[Content])
+				in
+				    Folder
+				```
+			lineageTag: 6e2ad82e-459f-5209-a1c0-92d5273be70e
+			queryGroup: Functions
+
+			annotation PBI_ResultType = Function
+
+
+		/// Reads one SharePoint list by its display name.
+		expression fnSpList = ```
+				(listName as text) as table =>
+				let
+				    // ApiVersion 15 is required for non-English SharePoint sites and is safe everywhere.
+				    // Implementation 2.0 is the current connector; if a list has more than 12 Person or
+				    // Lookup columns it hits a hard join limit, in which case drop Implementation and
+				    // ViewMode to fall back to the 1.0 connector.
+				    Nav = SharePoint.Tables(
+				        SharePointSiteUrl,
+				        [ApiVersion = 15, Implementation = "2.0", ViewMode = "All"]
+				    ),
+				    // The navigation column is called Title on some tenants and Name on others.
+				    Cols = Table.ColumnNames(Nav),
+				    NameCol =
+				        if List.Contains(Cols, "Title") then "Title"
+				        else if List.Contains(Cols, "Name") then "Name"
+				        else error "SharePoint.Tables returned no Title or Name column to navigate by.",
+				    Matches = Table.SelectRows(Nav, each Record.Field(_, NameCol) = listName),
+				    Items =
+				        if Table.RowCount(Matches) = 0
+				        then error "SharePoint list not found: " & listName
+				        else Matches{0}[Items]
+				in
+				    Items
+				```
+			lineageTag: 03e8ad3e-ecee-57b6-abe3-4e2a5717072c
+			queryGroup: Functions
+
+			annotation PBI_ResultType = Function
+
+
+		/// Reads one named Excel table out of a workbook in the document library.
+		expression fnSpExcel = ```
+				(relativePath as text, tableName as text) as table =>
+				let
+				    Parts = Text.Split(relativePath, "/"),
+				    FileName = List.Last(Parts),
+				    SubPath = Text.Combine(List.RemoveLastN(Parts, 1), "/"),
+				    Base = if Text.Trim(SharePointFolderPath) = "" then SubPath
+				           else SharePointFolderPath & "/" & SubPath,
+				    Folder = fnSpFolder(Base),
+				    Row = Table.SelectRows(Folder, each [Name] = FileName),
+				    Content = if Table.RowCount(Row) = 0
+				              then error "File not found in SharePoint: " & Base & "/" & FileName
+				              else Row{0}[Content],
+				    Book = Excel.Workbook(Content, true, true),
+				    Data = Book{[Item = tableName, Kind = "Table"]}[Data]
+				in
+				    Data
+				```
+			lineageTag: e6dd99c0-68d5-5c96-a319-86a7c55f5a5f
+			queryGroup: Functions
+
+			annotation PBI_ResultType = Function
+
+
+		/// Combines every monthly standard-hours upload in the 02 Standard Hours folder. Add a file, refresh, and the new month appears - no query editing.
+		expression fnStdHoursFolder = ```
+				() as table =>
+				let
+				    Base = if Text.Trim(SharePointFolderPath) = "" then "02 Standard Hours"
+				           else SharePointFolderPath & "/02 Standard Hours",
+				    // One level only, so the _History subfolder is skipped without a filter.
+				    Folder = fnSpFolder(Base),
+				    Monthly = Table.SelectRows(
+				        Folder,
+				        each Text.StartsWith([Name], "Cell_Standard_Hours_")
+				            and Text.EndsWith(Text.Lower([Name]), ".xlsx")
+				            and not Text.Contains(Text.Upper([Name]), "TEMPLATE")
+				    ),
+				    WithData = Table.AddColumn(Monthly, "Data", each
+				        Excel.Workbook([Content], true, true){[Item = "tblStdHours", Kind = "Table"]}[Data]),
+				    Cols = {"MonthKey", "Year", "MonthNo", "CellID", "CellName", "Area",
+				            "StdHours", "UploadedBy", "UploadDate"},
+				    Expanded = Table.ExpandTableColumn(Table.SelectColumns(WithData, {"Name", "Data"}), "Data", Cols),
+				    Renamed = Table.RenameColumns(Expanded, {{"Name", "SourceFile"}}),
+				    NoBlank = Table.SelectRows(Renamed, each [MonthKey] <> null and [CellID] <> null)
+				in
+				    NoBlank
+				```
+			lineageTag: 76c18c22-8c8f-52ef-9c5f-c70caf5b3182
+			queryGroup: Functions
+
+			annotation PBI_ResultType = Function
+
+
+		/// Single entry point for every table. Routes to CSV, SharePoint list or SharePoint workbook depending on SourceMode.
+		expression fnSource = ```
+				(logicalName as text) as table =>
+				let
+				    SPLists = {"Abnormality_Log", "Breakdown_Reports", "PM_ChecklistResults", "PM_Hour_Ledger", "PM_WorkOrders", "QR_Scan_Log", "SparePart_Replacements", "SparePart_Requests"},
+				    ExcelMap = [
+				            Cell_Master = {"01 Master Data/Cell_Master.xlsx", "tblCellMaster"},
+				            Machine_Master = {"01 Master Data/Machine_Master.xlsx", "tblMachineMaster"},
+				            Technician_Master = {"01 Master Data/Technician_Master.xlsx", "tblTechnicianMaster"},
+				            PM_Checklist_Master = {"01 Master Data/PM_Checklist_Master.xlsx", "tblChecklistMaster"},
+				            SparePart_Master = {"01 Master Data/SparePart_Master.xlsx", "tblSparePartMaster"},
+				            PM_Config = {"01 Master Data/PM_Config.xlsx", "tblPMConfig"}
+				        ],
+				    Result =
+				        if SourceMode <> "SharePoint" then
+				            fnLocalCsv(logicalName)
+				        else if logicalName = "Cell_Standard_Hours" then
+				            fnStdHoursFolder()
+				        else if List.Contains(SPLists, logicalName) then
+				            fnSpList(logicalName)
+				        else if Record.HasFields(ExcelMap, logicalName) then
+				            fnSpExcel(Record.Field(ExcelMap, logicalName){0}, Record.Field(ExcelMap, logicalName){1})
+				        else
+				            error "fnSource: no binding defined for " & logicalName
+				in
+				    Result
+				```
+			lineageTag: 026e4e8a-e192-5a8d-b34a-4291799b2906
+			queryGroup: Functions
+
+			annotation PBI_ResultType = Function
+
+
+		/// Marked date table. One row per day, 2024-01-01 to 2028-12-31.
+		table Dim_Date
+			dataCategory: Time
+			lineageTag: 98bab9da-f822-59ee-842c-419c2ec4b9a5
+
+			column Date
+				dataType: dateTime
+				isKey
+				formatString: yyyy-mm-dd
+				lineageTag: 7fa59b80-7141-56a8-9f39-94cf041a3bc3
+				summarizeBy: none
+				sourceColumn: Date
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+			column Year
+				dataType: int64
+				formatString: #,0
+				lineageTag: b835e4d2-2a75-5370-90ee-24b6a206e58b
+				summarizeBy: none
+				sourceColumn: Year
+
+				annotation SummarizationSetBy = Automatic
+
+			column MonthNo
+				dataType: int64
+				formatString: #,0
+				lineageTag: dded566a-ea34-5378-babc-23039ebf2573
+				summarizeBy: none
+				sourceColumn: MonthNo
+
+				annotation SummarizationSetBy = Automatic
+
+			column MonthShort
+				dataType: string
+				lineageTag: 37274435-1677-528d-938b-70dfb1a4571c
+				summarizeBy: none
+				sourceColumn: MonthShort
+				sortByColumn: MonthNo
+
+				annotation SummarizationSetBy = Automatic
+
+			column MonthKey
+				dataType: string
+				lineageTag: 6a0bc8ef-5593-5b2a-896b-73717dd76070
+				summarizeBy: none
+				sourceColumn: MonthKey
+
+				annotation SummarizationSetBy = Automatic
+
+			column Quarter
+				dataType: int64
+				formatString: #,0
+				lineageTag: a2fb64ba-3fdc-5cdf-aa12-a2816a725d0b
+				summarizeBy: none
+				sourceColumn: Quarter
+
+				annotation SummarizationSetBy = Automatic
+
+			column Day
+				dataType: int64
+				formatString: #,0
+				lineageTag: 0fa050ee-62dc-5e65-8d53-250895ffe479
+				summarizeBy: none
+				sourceColumn: Day
+
+				annotation SummarizationSetBy = Automatic
+
+			column DayShort
+				dataType: string
+				lineageTag: b0204896-dddb-5944-b260-b60ccac06877
+				summarizeBy: none
+				sourceColumn: DayShort
+
+				annotation SummarizationSetBy = Automatic
+
+			column DayOfWeek
+				dataType: int64
+				formatString: #,0
+				lineageTag: 1d26ee44-f795-56f3-aaa6-d86e6d442b88
+				summarizeBy: none
+				sourceColumn: DayOfWeek
+
+				annotation SummarizationSetBy = Automatic
+
+			column IsWeekend
+				dataType: string
+				lineageTag: 48111772-41fd-5a4c-8b33-12bf3d5ae7e4
+				summarizeBy: none
+				sourceColumn: IsWeekend
+
+				annotation SummarizationSetBy = Automatic
+
+			column IsHoliday
+				dataType: string
+				lineageTag: a6fd3ed2-26cd-5ac6-a5a6-2ce3f5d387d8
+				summarizeBy: none
+				sourceColumn: IsHoliday
+
+				annotation SummarizationSetBy = Automatic
+
+			column FinancialYear
+				dataType: string
+				lineageTag: a0188527-fddd-5b76-b158-ef3237f6515e
+				summarizeBy: none
+				sourceColumn: FinancialYear
+
+				annotation SummarizationSetBy = Automatic
+
+			column FiscalMonthNo
+				dataType: int64
+				formatString: #,0
+				lineageTag: 8c210380-5c00-54d7-acdc-7065f9a99e7a
+				summarizeBy: none
+				sourceColumn: FiscalMonthNo
+
+				annotation SummarizationSetBy = Automatic
+
+			column MonthSort
+				dataType: string
+				lineageTag: 54a178bd-200e-5c0a-b8c8-e1b8ab8dfb79
+				summarizeBy: none
+				sourceColumn: MonthSort
+
+				annotation SummarizationSetBy = Automatic
+
+			column RelativeToToday
+				dataType: string
+				lineageTag: 3a106794-b73a-5ead-a418-871f732f8a4a
+				summarizeBy: none
+				sourceColumn: RelativeToToday
+
+				annotation SummarizationSetBy = Automatic
+
+			partition Dim_Date = m
+				mode: import
+				source = ```
+						let
+						    StartDate = #date(2024, 1, 1),
+						    EndDate = #date(2028, 12, 31),
+						    Holidays = {
+						        #date(2025,1,14), #date(2025,1,26), #date(2025,4,14), #date(2025,8,15),
+						        #date(2025,10,20), #date(2025,10,21), #date(2025,12,25),
+						        #date(2026,1,14), #date(2026,1,26), #date(2026,4,14), #date(2026,8,15),
+						        #date(2026,11,8), #date(2026,12,25),
+						        #date(2027,1,14), #date(2027,1,26), #date(2027,4,14)
+						    },
+						    Days = List.Dates(StartDate, Duration.Days(EndDate - StartDate) + 1, #duration(1,0,0,0)),
+						    Base = Table.FromList(Days, Splitter.SplitByNothing(), {"Date"}),
+						    T0 = Table.TransformColumnTypes(Base, {{"Date", type date}}),
+						    T1 = Table.AddColumn(T0, "Year", each Date.Year([Date]), Int64.Type),
+						    T2 = Table.AddColumn(T1, "MonthNo", each Date.Month([Date]), Int64.Type),
+						    T3 = Table.AddColumn(T2, "MonthShort", each Date.ToText([Date], "MMM"), type text),
+						    T4 = Table.AddColumn(T3, "MonthKey", each Date.ToText([Date], "yyyy-MM"), type text),
+						    T5 = Table.AddColumn(T4, "Quarter", each Date.QuarterOfYear([Date]), Int64.Type),
+						    T6 = Table.AddColumn(T5, "Day", each Date.Day([Date]), Int64.Type),
+						    T7 = Table.AddColumn(T6, "DayShort", each Date.ToText([Date], "ddd"), type text),
+						    T8 = Table.AddColumn(T7, "DayOfWeek", each Date.DayOfWeek([Date], Day.Monday) + 1, Int64.Type),
+						    T9 = Table.AddColumn(T8, "IsWeekend", each if Date.DayOfWeek([Date], Day.Monday) >= 5 then "Yes" else "No", type text),
+						    TA = Table.AddColumn(T9, "IsHoliday", each if List.Contains(Holidays, [Date]) then "Yes" else "No", type text),
+						    TB = Table.AddColumn(TA, "FinancialYear", each
+						            let y = if Date.Month([Date]) >= 4 then Date.Year([Date]) else Date.Year([Date]) - 1
+						            in "FY" & Text.End(Text.From(y), 2) & "-" & Text.End(Text.From(y + 1), 2), type text),
+						    TC = Table.AddColumn(TB, "FiscalMonthNo", each Number.Mod(Date.Month([Date]) - 4, 12) + 1, Int64.Type),
+						    TD = Table.AddColumn(TC, "MonthSort", each Date.Year([Date]) * 100 + Date.Month([Date]), Int64.Type),
+						    TE = Table.AddColumn(TD, "RelativeToToday", each
+						            if [Date] < Date.From(DateTime.LocalNow()) then "Past"
+						            else if [Date] = Date.From(DateTime.LocalNow()) then "Today"
+						            else "Future", type text)
+						in
+						    TE
+						```
+
+			annotation PBI_ResultType = Table
+
+		/// Production cells. Carries the PM threshold and calendar backstop.
+		table Dim_Cell
+			lineageTag: bb897dd3-4820-54f0-b2f5-aadc9e9aca38
+
+			column CellID
+				dataType: string
+				lineageTag: fe2f8c50-52a2-5d1d-ac9d-da97552ca3bb
+				summarizeBy: none
+				sourceColumn: CellID
+
+				annotation SummarizationSetBy = Automatic
+
+			column CellName
+				dataType: string
+				lineageTag: a7dd3b7a-ac00-51dd-946d-4c63ceeac2ce
+				summarizeBy: none
+				sourceColumn: CellName
+
+				annotation SummarizationSetBy = Automatic
+
+			column Area
+				dataType: string
+				lineageTag: f8491fc1-7df9-51b4-b0bc-506a8700c560
+				summarizeBy: none
+				sourceColumn: Area
+
+				annotation SummarizationSetBy = Automatic
+
+			column Plant
+				dataType: string
+				lineageTag: 14b99573-ba6d-5827-8fbe-70c9906a9cdc
+				summarizeBy: none
+				sourceColumn: Plant
+
+				annotation SummarizationSetBy = Automatic
+
+			column Criticality
+				dataType: string
+				lineageTag: 392c9d54-8612-52a3-8a97-bfa032c74307
+				summarizeBy: none
+				sourceColumn: Criticality
+
+				annotation SummarizationSetBy = Automatic
+
+			column PMIntervalStdHrs
+				dataType: int64
+				formatString: #,0
+				lineageTag: 793fa57a-fd64-527d-8765-c8c3fc0a467d
+				summarizeBy: none
+				sourceColumn: PMIntervalStdHrs
+
+				annotation SummarizationSetBy = Automatic
+
+			column CalendarBackstopMonths
+				dataType: int64
+				formatString: #,0
+				lineageTag: 9abeb8cd-6d1a-5aef-8e01-b03e586a57c0
+				summarizeBy: none
+				sourceColumn: CalendarBackstopMonths
+
+				annotation SummarizationSetBy = Automatic
+
+			column BaselineMonthlyStdHrs
+				dataType: int64
+				formatString: #,0
+				lineageTag: 5a8e6a4f-3d0c-5be3-a8b8-710d7669f27e
+				summarizeBy: none
+				sourceColumn: BaselineMonthlyStdHrs
+
+				annotation SummarizationSetBy = Automatic
+
+			column CostCenter
+				dataType: string
+				lineageTag: 482bb727-d3dd-55cf-877b-570d8b9a4ae6
+				summarizeBy: none
+				sourceColumn: CostCenter
+
+				annotation SummarizationSetBy = Automatic
+
+			column Active
+				dataType: string
+				lineageTag: 7d57dd1c-05c5-5bdc-b071-8fbbf06d4a9a
+				summarizeBy: none
+				sourceColumn: Active
+
+				annotation SummarizationSetBy = Automatic
+
+			partition Dim_Cell = m
+				mode: import
+				source = ```
+						let
+						    Source = fnSource("Cell_Master"),
+						    Typed = Table.TransformColumnTypes(Source, {{"CellID", type text}, {"CellName", type text}, {"Area", type text}, {"Plant", type text}, {"Criticality", type text}, {"PMIntervalStdHrs", Int64.Type}, {"CalendarBackstopMonths", Int64.Type}, {"BaselineMonthlyStdHrs", Int64.Type}, {"CostCenter", type text}, {"Active", type text}}, "en-US")
+						in
+						    Typed
+						```
+
+			annotation PBI_ResultType = Table
+
+		/// Machines. Every QR code resolves to a row here.
+		table Dim_Machine
+			lineageTag: cbf3d45f-599a-59a0-91ff-b7c676e63a7e
+
+			column MachineID
+				dataType: string
+				lineageTag: a17959c2-516c-5777-8e4a-67f42937e7ae
+				summarizeBy: none
+				sourceColumn: MachineID
+
+				annotation SummarizationSetBy = Automatic
+
+			column MachineName
+				dataType: string
+				lineageTag: a367c4a1-4389-5537-b5be-6f54d3a58cf4
+				summarizeBy: none
+				sourceColumn: MachineName
+
+				annotation SummarizationSetBy = Automatic
+
+			column CellID
+				dataType: string
+				lineageTag: 1f53ed95-3213-51a7-96d8-2a866365a718
+				summarizeBy: none
+				sourceColumn: CellID
+
+				annotation SummarizationSetBy = Automatic
+
+			column MachineType
+				dataType: string
+				lineageTag: 3987ab63-344e-57dd-b35b-a70550750d21
+				summarizeBy: none
+				sourceColumn: MachineType
+
+				annotation SummarizationSetBy = Automatic
+
+			column Make
+				dataType: string
+				lineageTag: 6305065f-5130-5d58-8b57-c880379e9326
+				summarizeBy: none
+				sourceColumn: Make
+
+				annotation SummarizationSetBy = Automatic
+
+			column Model
+				dataType: string
+				lineageTag: 016439dd-a281-5f1f-bafe-e152096f9680
+				summarizeBy: none
+				sourceColumn: Model
+
+				annotation SummarizationSetBy = Automatic
+
+			column SerialNo
+				dataType: string
+				lineageTag: 1965b867-2c0e-560d-9fd7-57f38edefe3b
+				summarizeBy: none
+				sourceColumn: SerialNo
+
+				annotation SummarizationSetBy = Automatic
+
+			column InstallDate
+				dataType: dateTime
+				formatString: yyyy-mm-dd
+				lineageTag: 605ec1b7-7638-5986-8828-19f4eb85cb97
+				summarizeBy: none
+				sourceColumn: InstallDate
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+			column Criticality
+				dataType: string
+				lineageTag: 94d7ee32-3e33-5bc4-89a5-05fef91e6436
+				summarizeBy: none
+				sourceColumn: Criticality
+
+				annotation SummarizationSetBy = Automatic
+
+			column Location
+				dataType: string
+				lineageTag: 95650080-674a-5b94-932c-14b7ca450d33
+				summarizeBy: none
+				sourceColumn: Location
+
+				annotation SummarizationSetBy = Automatic
+
+			column ChecklistID
+				dataType: string
+				lineageTag: 856fa921-a95c-5b53-a733-2b02d881990c
+				summarizeBy: none
+				sourceColumn: ChecklistID
+
+				annotation SummarizationSetBy = Automatic
+
+			column PMStdMinutes
+				dataType: int64
+				formatString: #,0
+				lineageTag: ff9a121d-5c3b-5442-be1d-73d7b1eaadd2
+				summarizeBy: none
+				sourceColumn: PMStdMinutes
+
+				annotation SummarizationSetBy = Automatic
+
+			column QRPayload
+				dataType: string
+				lineageTag: 1cbbe3fc-1db6-571f-bbad-98a7a4f4eb8c
+				summarizeBy: none
+				sourceColumn: QRPayload
+
+				annotation SummarizationSetBy = Automatic
+
+			column Active
+				dataType: string
+				lineageTag: 9bab0ad1-40ca-5095-bc05-21fd74c32713
+				summarizeBy: none
+				sourceColumn: Active
+
+				annotation SummarizationSetBy = Automatic
+
+			partition Dim_Machine = m
+				mode: import
+				source = ```
+						let
+						    Source = fnSource("Machine_Master"),
+						    Typed = Table.TransformColumnTypes(Source, {{"MachineID", type text}, {"MachineName", type text}, {"CellID", type text}, {"MachineType", type text}, {"Make", type text}, {"Model", type text}, {"SerialNo", type text}, {"InstallDate", type date}, {"Criticality", type text}, {"Location", type text}, {"ChecklistID", type text}, {"PMStdMinutes", Int64.Type}, {"QRPayload", type text}, {"Active", type text}}, "en-US")
+						in
+						    Typed
+						```
+
+			annotation PBI_ResultType = Table
+
+		/// Maintenance technicians. Each has a personal QR code.
+		table Dim_Technician
+			lineageTag: c6b96ca7-c08e-5d4a-8a7d-d1d538c0831c
+
+			column TechID
+				dataType: string
+				lineageTag: 340fe1ef-e125-58fe-aefa-b1104f6dcc94
+				summarizeBy: none
+				sourceColumn: TechID
+
+				annotation SummarizationSetBy = Automatic
+
+			column TechName
+				dataType: string
+				lineageTag: 3277805c-984b-5c7d-9ecc-23b0c8c712f9
+				summarizeBy: none
+				sourceColumn: TechName
+
+				annotation SummarizationSetBy = Automatic
+
+			column Email
+				dataType: string
+				lineageTag: 4dd89f32-6402-5fd7-aae4-753c056d355b
+				summarizeBy: none
+				sourceColumn: Email
+
+				annotation SummarizationSetBy = Automatic
+
+			column Shift
+				dataType: string
+				lineageTag: 4627f5cd-9eff-54ab-a1a6-6301e9e8dfea
+				summarizeBy: none
+				sourceColumn: Shift
+
+				annotation SummarizationSetBy = Automatic
+
+			column SkillGroup
+				dataType: string
+				lineageTag: 6407685e-2cf6-5c7e-9504-0be7a19fd727
+				summarizeBy: none
+				sourceColumn: SkillGroup
+
+				annotation SummarizationSetBy = Automatic
+
+			column PrimaryArea
+				dataType: string
+				lineageTag: b863ad68-136a-5402-a0c0-6df73c1a3d9a
+				summarizeBy: none
+				sourceColumn: PrimaryArea
+
+				annotation SummarizationSetBy = Automatic
+
+			column DailyCapacityMin
+				dataType: int64
+				formatString: #,0
+				lineageTag: 444a2092-467e-5293-a831-143a822cc1f9
+				summarizeBy: none
+				sourceColumn: DailyCapacityMin
+
+				annotation SummarizationSetBy = Automatic
+
+			column QRPayload
+				dataType: string
+				lineageTag: a42e9d01-1798-5e80-8db2-1509b9007e58
+				summarizeBy: none
+				sourceColumn: QRPayload
+
+				annotation SummarizationSetBy = Automatic
+
+			column Active
+				dataType: string
+				lineageTag: 13d0ccbf-b0fb-588b-9d66-d98e78caf5a9
+				summarizeBy: none
+				sourceColumn: Active
+
+				annotation SummarizationSetBy = Automatic
+
+			partition Dim_Technician = m
+				mode: import
+				source = ```
+						let
+						    Source = fnSource("Technician_Master"),
+						    Typed = Table.TransformColumnTypes(Source, {{"TechID", type text}, {"TechName", type text}, {"Email", type text}, {"Shift", type text}, {"SkillGroup", type text}, {"PrimaryArea", type text}, {"DailyCapacityMin", Int64.Type}, {"QRPayload", type text}, {"Active", type text}}, "en-US")
+						in
+						    Typed
+						```
+
+			annotation PBI_ResultType = Table
+
+		/// Spare parts catalogue with stock and minimum levels.
+		table Dim_SparePart
+			lineageTag: ff2b0d9d-c412-5c90-bf17-4d02403195d7
+
+			column PartNo
+				dataType: string
+				lineageTag: d8f8de79-6c3a-54f5-822f-d6037aa5c2e5
+				summarizeBy: none
+				sourceColumn: PartNo
+
+				annotation SummarizationSetBy = Automatic
+
+			column PartName
+				dataType: string
+				lineageTag: eb92d6e4-2360-5117-8a76-2280d2f3ecc1
+				summarizeBy: none
+				sourceColumn: PartName
+
+				annotation SummarizationSetBy = Automatic
+
+			column Category
+				dataType: string
+				lineageTag: 8c232991-1e64-5a0a-a774-98866cefaf53
+				summarizeBy: none
+				sourceColumn: Category
+
+				annotation SummarizationSetBy = Automatic
+
+			column UOM
+				dataType: string
+				lineageTag: a75d339b-4644-5988-b651-48d78bb573e8
+				summarizeBy: none
+				sourceColumn: UOM
+
+				annotation SummarizationSetBy = Automatic
+
+			column UnitCostINR
+				dataType: double
+				formatString: "₹"#,0.00;("₹"#,0.00);"₹"#,0.00
+				lineageTag: 60c0cda7-46ac-52c7-a74e-5a9b279541dc
+				summarizeBy: none
+				sourceColumn: UnitCostINR
+
+				annotation SummarizationSetBy = Automatic
+
+			column MinStock
+				dataType: int64
+				formatString: #,0
+				lineageTag: 60489701-c48d-5cd3-886f-5b3b3b0fb0b7
+				summarizeBy: none
+				sourceColumn: MinStock
+
+				annotation SummarizationSetBy = Automatic
+
+			column CurrentStock
+				dataType: int64
+				formatString: #,0
+				lineageTag: fb1c99b4-c109-5233-864a-1f5e439625b3
+				summarizeBy: none
+				sourceColumn: CurrentStock
+
+				annotation SummarizationSetBy = Automatic
+
+			column LeadTimeDays
+				dataType: int64
+				formatString: #,0
+				lineageTag: 6207bada-7333-5ce6-b22f-a0f94792872c
+				summarizeBy: none
+				sourceColumn: LeadTimeDays
+
+				annotation SummarizationSetBy = Automatic
+
+			column StoreBin
+				dataType: string
+				lineageTag: e5803c84-4770-5413-bf7d-b19dd8636d3a
+				summarizeBy: none
+				sourceColumn: StoreBin
+
+				annotation SummarizationSetBy = Automatic
+
+			column AppliesToMachineType
+				dataType: string
+				lineageTag: e0d78905-8e74-5711-a656-1002a148a4b6
+				summarizeBy: none
+				sourceColumn: AppliesToMachineType
+
+				annotation SummarizationSetBy = Automatic
+
+			partition Dim_SparePart = m
+				mode: import
+				source = ```
+						let
+						    Source = fnSource("SparePart_Master"),
+						    Typed = Table.TransformColumnTypes(Source, {{"PartNo", type text}, {"PartName", type text}, {"Category", type text}, {"UOM", type text}, {"UnitCostINR", type number}, {"MinStock", Int64.Type}, {"CurrentStock", Int64.Type}, {"LeadTimeDays", Int64.Type}, {"StoreBin", type text}, {"AppliesToMachineType", type text}}, "en-US")
+						in
+						    Typed
+						```
+
+			annotation PBI_ResultType = Table
+
+		/// PM task library, one checklist per machine family.
+		table Dim_Checklist
+			lineageTag: 0c5fcc00-64b7-5346-aa6a-52ac917e0421
+
+			column ChecklistID
+				dataType: string
+				lineageTag: 2e0ef359-ab03-592d-b63e-3da0ac53b3e8
+				summarizeBy: none
+				sourceColumn: ChecklistID
+
+				annotation SummarizationSetBy = Automatic
+
+			column TaskNo
+				dataType: int64
+				formatString: #,0
+				lineageTag: 7c2bbd03-80f9-527f-98ed-94cf12d152ba
+				summarizeBy: none
+				sourceColumn: TaskNo
+
+				annotation SummarizationSetBy = Automatic
+
+			column TaskDescription
+				dataType: string
+				lineageTag: c479a451-d4da-550b-a2c9-18342a826097
+				summarizeBy: none
+				sourceColumn: TaskDescription
+
+				annotation SummarizationSetBy = Automatic
+
+			column TaskType
+				dataType: string
+				lineageTag: f6c8d4fd-34b6-5da7-ae44-cb4c29dc2397
+				summarizeBy: none
+				sourceColumn: TaskType
+
+				annotation SummarizationSetBy = Automatic
+
+			column AcceptanceStandard
+				dataType: string
+				lineageTag: 1619111a-d00a-588d-9934-5dcca3e315a8
+				summarizeBy: none
+				sourceColumn: AcceptanceStandard
+
+				annotation SummarizationSetBy = Automatic
+
+			column Mandatory
+				dataType: string
+				lineageTag: f249f4df-f628-5c21-91e4-d90aba9324f6
+				summarizeBy: none
+				sourceColumn: Mandatory
+
+				annotation SummarizationSetBy = Automatic
+
+			column SafetyCritical
+				dataType: string
+				lineageTag: d8569cf0-953f-5550-9750-7b751e8798bf
+				summarizeBy: none
+				sourceColumn: SafetyCritical
+
+				annotation SummarizationSetBy = Automatic
+
+			column EstMinutes
+				dataType: int64
+				formatString: #,0
+				lineageTag: f0d70bb6-945e-56e2-92a7-91dda8c7b7a3
+				summarizeBy: none
+				sourceColumn: EstMinutes
+
+				annotation SummarizationSetBy = Automatic
+
+			column TaskKey
+				dataType: string
+				lineageTag: fdfe254b-6e47-5f61-81b7-4f957f803ca0
+				summarizeBy: none
+				sourceColumn: TaskKey
+
+				annotation SummarizationSetBy = Automatic
+
+			partition Dim_Checklist = m
+				mode: import
+				source = ```
+						let
+						    Source = fnSource("PM_Checklist_Master"),
+						    Typed = Table.TransformColumnTypes(Source, {{"ChecklistID", type text}, {"TaskNo", Int64.Type}, {"TaskDescription", type text}, {"TaskType", type text}, {"AcceptanceStandard", type text}, {"Mandatory", type text}, {"SafetyCritical", type text}, {"EstMinutes", Int64.Type}}, "en-US"),
+						    AddKey = Table.AddColumn(Typed, "TaskKey", each [ChecklistID] & "|" & Text.From([TaskNo]), type text)
+						in
+						    AddKey
+						```
+
+			annotation PBI_ResultType = Table
+
+		/// Key/value configuration. Read by measures via LOOKUPVALUE.
+		table Config
+			lineageTag: 328c8090-cb34-5bc7-9a23-ec5c5e1f98cd
+			isHidden
+
+			column ConfigKey
+				dataType: string
+				lineageTag: cb2b54ab-5285-5268-8980-bfa0a7d7cf87
+				summarizeBy: none
+				sourceColumn: ConfigKey
+
+				annotation SummarizationSetBy = Automatic
+
+			column ConfigValue
+				dataType: string
+				lineageTag: 71cec682-0087-528c-8dca-b2c2831b91ec
+				summarizeBy: none
+				sourceColumn: ConfigValue
+
+				annotation SummarizationSetBy = Automatic
+
+			column DataType
+				dataType: string
+				lineageTag: ba54f2f2-dbcd-5f7f-bbf8-2364063538bc
+				summarizeBy: none
+				sourceColumn: DataType
+
+				annotation SummarizationSetBy = Automatic
+
+			column Description
+				dataType: string
+				lineageTag: 11b5ed55-49ed-5fa5-a89e-46fd24d44c96
+				summarizeBy: none
+				sourceColumn: Description
+
+				annotation SummarizationSetBy = Automatic
+
+			partition Config = m
+				mode: import
+				source = ```
+						let
+						    Source = fnSource("PM_Config"),
+						    Typed = Table.TransformColumnTypes(Source, {{"ConfigKey", type text}, {"ConfigValue", type text}, {"DataType", type text}, {"Description", type text}}, "en-US")
+						in
+						    Typed
+						```
+
+			annotation PBI_ResultType = Table
+
+		/// Monthly production standard hours per cell - the input that drives scheduling.
+		table Fact_StdHours
+			lineageTag: 55dff4c8-dd92-5e62-a651-e8248548d281
+
+			column MonthKey
+				dataType: string
+				lineageTag: 09432642-e5b1-5a98-9b6f-66b1960a9eb8
+				summarizeBy: none
+				sourceColumn: MonthKey
+
+				annotation SummarizationSetBy = Automatic
+
+			column Year
+				dataType: int64
+				formatString: #,0
+				lineageTag: 01815490-2b3a-5c26-9569-883f9e592307
+				summarizeBy: none
+				sourceColumn: Year
+
+				annotation SummarizationSetBy = Automatic
+
+			column MonthNo
+				dataType: int64
+				formatString: #,0
+				lineageTag: e9f896ee-8017-55de-88d8-563b1dfd7e24
+				summarizeBy: none
+				sourceColumn: MonthNo
+
+				annotation SummarizationSetBy = Automatic
+
+			column CellID
+				dataType: string
+				lineageTag: bd644b3d-4fe0-559f-bb65-3b17bdeb599d
+				summarizeBy: none
+				sourceColumn: CellID
+
+				annotation SummarizationSetBy = Automatic
+
+			column CellName
+				dataType: string
+				lineageTag: 96c043ad-53b9-5584-be7f-3034fca5602d
+				summarizeBy: none
+				sourceColumn: CellName
+
+				annotation SummarizationSetBy = Automatic
+
+			column Area
+				dataType: string
+				lineageTag: 9cc3cd0d-1a6f-50db-9ea8-8f641237866a
+				summarizeBy: none
+				sourceColumn: Area
+
+				annotation SummarizationSetBy = Automatic
+
+			column StdHours
+				dataType: double
+				formatString: #,0.0
+				lineageTag: c65caef8-9c1c-5020-8f27-96fc7e0cd084
+				summarizeBy: none
+				sourceColumn: StdHours
+
+				annotation SummarizationSetBy = Automatic
+
+			column UploadedBy
+				dataType: string
+				lineageTag: 4bb2fbbf-abcb-55d7-9e0d-6b7c9794cc51
+				summarizeBy: none
+				sourceColumn: UploadedBy
+
+				annotation SummarizationSetBy = Automatic
+
+			column UploadDate
+				dataType: dateTime
+				formatString: yyyy-mm-dd
+				lineageTag: f7ec1300-8174-50f8-abc1-234e145041e1
+				summarizeBy: none
+				sourceColumn: UploadDate
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+			column SourceFile
+				dataType: string
+				lineageTag: a1eadf6b-0f23-5116-9734-a72aba4a5929
+				summarizeBy: none
+				sourceColumn: SourceFile
+
+				annotation SummarizationSetBy = Automatic
+
+			column MonthStartDate
+				dataType: dateTime
+				formatString: yyyy-mm-dd
+				lineageTag: afffad23-bf5c-515f-adf8-40b8b7186350
+				summarizeBy: none
+				sourceColumn: MonthStartDate
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+			partition Fact_StdHours = m
+				mode: import
+				source = ```
+						let
+						    Source = fnSource("Cell_Standard_Hours"),
+						    Typed = Table.TransformColumnTypes(Source, {{"MonthKey", type text}, {"Year", Int64.Type}, {"MonthNo", Int64.Type}, {"CellID", type text}, {"CellName", type text}, {"Area", type text}, {"StdHours", type number}, {"UploadedBy", type text}, {"UploadDate", type date}, {"SourceFile", type text}}, "en-US"),
+						    AddMonthStart = Table.AddColumn(Typed, "MonthStartDate", each Date.FromText([MonthKey] & "-01"), type date)
+						in
+						    AddMonthStart
+						```
+
+			annotation PBI_ResultType = Table
+
+		/// Cell hour counter month by month: opening, added, closing, trigger, carry-over.
+		table Fact_HourLedger
+			lineageTag: bb31c2ec-a1bb-5277-bca2-5de468fe0c91
+
+			column MonthKey
+				dataType: string
+				lineageTag: e53f28da-320f-5a76-a0ca-4aa13fef6cb1
+				summarizeBy: none
+				sourceColumn: MonthKey
+
+				annotation SummarizationSetBy = Automatic
+
+			column CellID
+				dataType: string
+				lineageTag: 8dc6cf76-d65c-5186-9dc2-38246c4ebb3d
+				summarizeBy: none
+				sourceColumn: CellID
+
+				annotation SummarizationSetBy = Automatic
+
+			column CellName
+				dataType: string
+				lineageTag: d1c4c3e4-cd77-591d-adc1-19c7937e0488
+				summarizeBy: none
+				sourceColumn: CellName
+
+				annotation SummarizationSetBy = Automatic
+
+			column OpeningStdHrs
+				dataType: double
+				formatString: #,0.0
+				lineageTag: e345a7e8-0175-5eb3-b357-b195b8e687e3
+				summarizeBy: none
+				sourceColumn: OpeningStdHrs
+
+				annotation SummarizationSetBy = Automatic
+
+			column StdHoursAdded
+				dataType: double
+				formatString: #,0.0
+				lineageTag: d9932cb4-2c4a-53e2-a2f6-a5689150472f
+				summarizeBy: none
+				sourceColumn: StdHoursAdded
+
+				annotation SummarizationSetBy = Automatic
+
+			column ClosingStdHrs
+				dataType: double
+				formatString: #,0.0
+				lineageTag: 2bf57a6d-348a-5392-86db-ebc14bd7085f
+				summarizeBy: none
+				sourceColumn: ClosingStdHrs
+
+				annotation SummarizationSetBy = Automatic
+
+			column PMIntervalStdHrs
+				dataType: int64
+				formatString: #,0
+				lineageTag: d951f5d7-9c11-50ba-9da6-021dacf6725b
+				summarizeBy: none
+				sourceColumn: PMIntervalStdHrs
+
+				annotation SummarizationSetBy = Automatic
+
+			column PMTriggered
+				dataType: string
+				lineageTag: 78975152-9eef-5a07-acb0-affd9d5d21dd
+				summarizeBy: none
+				sourceColumn: PMTriggered
+
+				annotation SummarizationSetBy = Automatic
+
+			column TriggerType
+				dataType: string
+				lineageTag: 79036ae7-8117-5056-a173-90ad2f944087
+				summarizeBy: none
+				sourceColumn: TriggerType
+
+				annotation SummarizationSetBy = Automatic
+
+			column CarryOverAfterPM
+				dataType: double
+				formatString: #,0.0
+				lineageTag: b6bf1c73-02cd-520f-9049-c17fed29e9d3
+				summarizeBy: none
+				sourceColumn: CarryOverAfterPM
+
+				annotation SummarizationSetBy = Automatic
+
+			column MonthsSinceLastPM
+				dataType: int64
+				formatString: #,0
+				lineageTag: 9c25125c-c3ed-5af7-b93a-5efabee87ec3
+				summarizeBy: none
+				sourceColumn: MonthsSinceLastPM
+
+				annotation SummarizationSetBy = Automatic
+
+			column Scenario
+				dataType: string
+				lineageTag: 6bd26727-c936-5863-a985-16181dbf50c2
+				summarizeBy: none
+				sourceColumn: Scenario
+
+				annotation SummarizationSetBy = Automatic
+
+			column MonthStartDate
+				dataType: dateTime
+				formatString: yyyy-mm-dd
+				lineageTag: 32383f4c-4d9d-5202-83e2-98d62cc8b2c3
+				summarizeBy: none
+				sourceColumn: MonthStartDate
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+			column PctOfThreshold
+				dataType: double
+				formatString: #,0.0
+				lineageTag: aa557b59-f7b7-5b80-a739-e9c81148dbe0
+				summarizeBy: none
+				sourceColumn: PctOfThreshold
+
+				annotation SummarizationSetBy = Automatic
+
+			partition Fact_HourLedger = m
+				mode: import
+				source = ```
+						let
+						    Source = fnSource("PM_Hour_Ledger"),
+						    Typed = Table.TransformColumnTypes(Source, {{"MonthKey", type text}, {"CellID", type text}, {"CellName", type text}, {"OpeningStdHrs", type number}, {"StdHoursAdded", type number}, {"ClosingStdHrs", type number}, {"PMIntervalStdHrs", Int64.Type}, {"PMTriggered", type text}, {"TriggerType", type text}, {"CarryOverAfterPM", type number}, {"MonthsSinceLastPM", Int64.Type}, {"Scenario", type text}}, "en-US"),
+						    AddMonthStart = Table.AddColumn(Typed, "MonthStartDate", each Date.FromText([MonthKey] & "-01"), type date),
+						    AddPct = Table.AddColumn(AddMonthStart, "PctOfThreshold", each if [PMIntervalStdHrs] = null or [PMIntervalStdHrs] = 0 then null else [ClosingStdHrs] / [PMIntervalStdHrs], type number)
+						in
+						    AddPct
+						```
+
+			annotation PBI_ResultType = Table
+
+		/// One row per machine per PM cycle. The core transactional table.
+		table Fact_WorkOrders
+			lineageTag: c99b782a-4a90-5d27-a137-ab8ff2dd0fde
+
+			column WOID
+				dataType: string
+				lineageTag: 140abf41-cb24-5983-9d4b-dee96d9423b8
+				summarizeBy: none
+				sourceColumn: WOID
+
+				annotation SummarizationSetBy = Automatic
+
+			column CycleID
+				dataType: string
+				lineageTag: b8ba17a4-a798-5186-b840-cb42dc575285
+				summarizeBy: none
+				sourceColumn: CycleID
+
+				annotation SummarizationSetBy = Automatic
+
+			column CellID
+				dataType: string
+				lineageTag: 0a183182-89a6-58dc-8ce4-cd2306d25bbb
+				summarizeBy: none
+				sourceColumn: CellID
+
+				annotation SummarizationSetBy = Automatic
+
+			column CellName
+				dataType: string
+				lineageTag: 148c9f49-7bd8-5444-873a-eb88d7905727
+				summarizeBy: none
+				sourceColumn: CellName
+
+				annotation SummarizationSetBy = Automatic
+
+			column Area
+				dataType: string
+				lineageTag: 210ca0c7-3e4c-51a9-af12-00c74762bd62
+				summarizeBy: none
+				sourceColumn: Area
+
+				annotation SummarizationSetBy = Automatic
+
+			column MachineID
+				dataType: string
+				lineageTag: 091df965-771d-5230-814d-c274e498b256
+				summarizeBy: none
+				sourceColumn: MachineID
+
+				annotation SummarizationSetBy = Automatic
+
+			column MachineName
+				dataType: string
+				lineageTag: fb4b0461-6fc8-56d2-9dea-ceee2dc4c556
+				summarizeBy: none
+				sourceColumn: MachineName
+
+				annotation SummarizationSetBy = Automatic
+
+			column MachineType
+				dataType: string
+				lineageTag: ff073965-3992-5558-bd43-a833fe17b1b5
+				summarizeBy: none
+				sourceColumn: MachineType
+
+				annotation SummarizationSetBy = Automatic
+
+			column Criticality
+				dataType: string
+				lineageTag: f962e9a4-1b7c-5742-b264-1dcdf7ca219d
+				summarizeBy: none
+				sourceColumn: Criticality
+
+				annotation SummarizationSetBy = Automatic
+
+			column PMType
+				dataType: string
+				lineageTag: c7812345-e60a-547b-81e9-327f0dc670f5
+				summarizeBy: none
+				sourceColumn: PMType
+
+				annotation SummarizationSetBy = Automatic
+
+			column TriggerType
+				dataType: string
+				lineageTag: fd2e3e3d-572d-56c9-a5f1-83b51279ba61
+				summarizeBy: none
+				sourceColumn: TriggerType
+
+				annotation SummarizationSetBy = Automatic
+
+			column TriggerStdHrs
+				dataType: double
+				formatString: #,0.0
+				lineageTag: 8031d615-52dd-5245-9de4-4cf416d4bf46
+				summarizeBy: none
+				sourceColumn: TriggerStdHrs
+
+				annotation SummarizationSetBy = Automatic
+
+			column PlanMonth
+				dataType: string
+				lineageTag: b3b0823b-390b-5a6f-bfb7-5f4b4ab86704
+				summarizeBy: none
+				sourceColumn: PlanMonth
+
+				annotation SummarizationSetBy = Automatic
+
+			column PlannedDate
+				dataType: dateTime
+				formatString: yyyy-mm-dd
+				lineageTag: d2b3fae2-8102-5100-b122-3deba14ff414
+				summarizeBy: none
+				sourceColumn: PlannedDate
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+			column DueDate
+				dataType: dateTime
+				formatString: yyyy-mm-dd
+				lineageTag: 06a56526-3be9-5cdf-9763-dd6d31850843
+				summarizeBy: none
+				sourceColumn: DueDate
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+			column AssignedTechID
+				dataType: string
+				lineageTag: 651615c1-950b-5134-a728-d69d7ca64660
+				summarizeBy: none
+				sourceColumn: AssignedTechID
+
+				annotation SummarizationSetBy = Automatic
+
+			column AssignedTechName
+				dataType: string
+				lineageTag: 96640647-cc8e-5b8e-be38-106c0420e3f3
+				summarizeBy: none
+				sourceColumn: AssignedTechName
+
+				annotation SummarizationSetBy = Automatic
+
+			column Shift
+				dataType: string
+				lineageTag: a697e99b-aa57-5cd4-8648-7eeb0a357ce0
+				summarizeBy: none
+				sourceColumn: Shift
+
+				annotation SummarizationSetBy = Automatic
+
+			column Status
+				dataType: string
+				lineageTag: 250178ad-d320-5de6-a2a6-46fb1c239725
+				summarizeBy: none
+				sourceColumn: Status
+
+				annotation SummarizationSetBy = Automatic
+
+			column ActualStartDate
+				dataType: dateTime
+				formatString: yyyy-mm-dd
+				lineageTag: 8d75b6a8-af02-52b8-ab6e-8e048319897a
+				summarizeBy: none
+				sourceColumn: ActualStartDate
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+			column ActualEndDate
+				dataType: dateTime
+				formatString: yyyy-mm-dd
+				lineageTag: 924d39e1-ad91-5e6b-9d62-9c02b01e6cef
+				summarizeBy: none
+				sourceColumn: ActualEndDate
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+			column DurationMin
+				dataType: int64
+				formatString: #,0
+				lineageTag: 0c4882e1-3d59-513d-a4e0-dd63e0734373
+				summarizeBy: none
+				sourceColumn: DurationMin
+
+				annotation SummarizationSetBy = Automatic
+
+			column ChecklistTotalTasks
+				dataType: int64
+				formatString: #,0
+				lineageTag: 05f4db79-9090-564e-a5b5-ea04199875bd
+				summarizeBy: none
+				sourceColumn: ChecklistTotalTasks
+
+				annotation SummarizationSetBy = Automatic
+
+			column ChecklistDoneTasks
+				dataType: int64
+				formatString: #,0
+				lineageTag: b4cce2a2-5da9-54e6-9c37-ce0e2b9cd94c
+				summarizeBy: none
+				sourceColumn: ChecklistDoneTasks
+
+				annotation SummarizationSetBy = Automatic
+
+			column ChecklistFailTasks
+				dataType: int64
+				formatString: #,0
+				lineageTag: c1c2dcdd-aaba-53c7-be3c-891ca47fdc82
+				summarizeBy: none
+				sourceColumn: ChecklistFailTasks
+
+				annotation SummarizationSetBy = Automatic
+
+			column ChecklistCompletionPct
+				dataType: double
+				formatString: #,0.0
+				lineageTag: be705951-a20b-54c3-b9e7-302b976a9318
+				summarizeBy: none
+				sourceColumn: ChecklistCompletionPct
+
+				annotation SummarizationSetBy = Automatic
+
+			column MachineQRScanned
+				dataType: string
+				lineageTag: 7543cadf-69a5-586e-8a71-761692ea025e
+				summarizeBy: none
+				sourceColumn: MachineQRScanned
+
+				annotation SummarizationSetBy = Automatic
+
+			column PMResult
+				dataType: string
+				lineageTag: 1806e9e0-b81a-539d-84c9-18e9a27e196f
+				summarizeBy: none
+				sourceColumn: PMResult
+
+				annotation SummarizationSetBy = Automatic
+
+			column OnTimeFlag
+				dataType: string
+				lineageTag: c5869255-b394-518f-a46e-cd0fa1c2c67f
+				summarizeBy: none
+				sourceColumn: OnTimeFlag
+
+				annotation SummarizationSetBy = Automatic
+
+			column StdMinutes
+				dataType: int64
+				formatString: #,0
+				lineageTag: 1c5c0525-683e-5666-b47f-b888860ba6dd
+				summarizeBy: none
+				sourceColumn: StdMinutes
+
+				annotation SummarizationSetBy = Automatic
+
+			column Remarks
+				dataType: string
+				lineageTag: 927df106-d720-5820-a86d-cc0947ef10c9
+				summarizeBy: none
+				sourceColumn: Remarks
+
+				annotation SummarizationSetBy = Automatic
+
+			partition Fact_WorkOrders = m
+				mode: import
+				source = ```
+						let
+						    Source = fnSource("PM_WorkOrders"),
+						    Typed = Table.TransformColumnTypes(Source, {{"WOID", type text}, {"CycleID", type text}, {"CellID", type text}, {"CellName", type text}, {"Area", type text}, {"MachineID", type text}, {"MachineName", type text}, {"MachineType", type text}, {"Criticality", type text}, {"PMType", type text}, {"TriggerType", type text}, {"TriggerStdHrs", type number}, {"PlanMonth", type text}, {"PlannedDate", type date}, {"DueDate", type date}, {"AssignedTechID", type text}, {"AssignedTechName", type text}, {"Shift", type text}, {"Status", type text}, {"ActualStartDate", type date}, {"ActualEndDate", type date}, {"DurationMin", Int64.Type}, {"ChecklistTotalTasks", Int64.Type}, {"ChecklistDoneTasks", Int64.Type}, {"ChecklistFailTasks", Int64.Type}, {"ChecklistCompletionPct", type number}, {"MachineQRScanned", type text}, {"PMResult", type text}, {"OnTimeFlag", type text}, {"StdMinutes", Int64.Type}, {"Remarks", type text}}, "en-US")
+						in
+						    Typed
+						```
+
+			annotation PBI_ResultType = Table
+
+		/// One row per checklist task per work order - the audit evidence.
+		table Fact_ChecklistResults
+			lineageTag: b463cd95-94bc-524b-9a9b-4028ea7e6d53
+
+			column ResultID
+				dataType: string
+				lineageTag: a7129376-5a62-5e2b-9f5b-fb857a24a44d
+				summarizeBy: none
+				sourceColumn: ResultID
+
+				annotation SummarizationSetBy = Automatic
+
+			column WOID
+				dataType: string
+				lineageTag: c690e289-9173-539b-83f2-f6f186fe428d
+				summarizeBy: none
+				sourceColumn: WOID
+
+				annotation SummarizationSetBy = Automatic
+
+			column MachineID
+				dataType: string
+				lineageTag: 54a852cd-5950-5617-9d2b-ada820bf4b1f
+				summarizeBy: none
+				sourceColumn: MachineID
+
+				annotation SummarizationSetBy = Automatic
+
+			column MachineName
+				dataType: string
+				lineageTag: 72d23aed-2784-5cb7-818b-f23dd4f4355a
+				summarizeBy: none
+				sourceColumn: MachineName
+
+				annotation SummarizationSetBy = Automatic
+
+			column ChecklistID
+				dataType: string
+				lineageTag: e8da5eed-f9f6-54d4-979a-fc3c1d4f898a
+				summarizeBy: none
+				sourceColumn: ChecklistID
+
+				annotation SummarizationSetBy = Automatic
+
+			column TaskNo
+				dataType: int64
+				formatString: #,0
+				lineageTag: 87edf590-ac01-530c-ae59-b493f82c5a16
+				summarizeBy: none
+				sourceColumn: TaskNo
+
+				annotation SummarizationSetBy = Automatic
+
+			column TaskDescription
+				dataType: string
+				lineageTag: 034aafaf-b29c-5cb3-a47b-4681d248d04a
+				summarizeBy: none
+				sourceColumn: TaskDescription
+
+				annotation SummarizationSetBy = Automatic
+
+			column TaskType
+				dataType: string
+				lineageTag: aaf9987d-21f4-57ee-a4b1-ddb6eb93dad1
+				summarizeBy: none
+				sourceColumn: TaskType
+
+				annotation SummarizationSetBy = Automatic
+
+			column AcceptanceStandard
+				dataType: string
+				lineageTag: 3a509461-f1bd-5444-8fdd-fde913d1d622
+				summarizeBy: none
+				sourceColumn: AcceptanceStandard
+
+				annotation SummarizationSetBy = Automatic
+
+			column Mandatory
+				dataType: string
+				lineageTag: 72db101a-4648-59b1-99cd-9462d87acb25
+				summarizeBy: none
+				sourceColumn: Mandatory
+
+				annotation SummarizationSetBy = Automatic
+
+			column SafetyCritical
+				dataType: string
+				lineageTag: e11356c8-1104-5dcc-ad1e-b094169ffa0c
+				summarizeBy: none
+				sourceColumn: SafetyCritical
+
+				annotation SummarizationSetBy = Automatic
+
+			column Result
+				dataType: string
+				lineageTag: 88ee944b-ee0f-5217-9d1c-97ebbe545119
+				summarizeBy: none
+				sourceColumn: Result
+
+				annotation SummarizationSetBy = Automatic
+
+			column MeasuredValue
+				dataType: double
+				formatString: #,0.0
+				lineageTag: aa6e7ff5-6152-5116-8dd3-11adb3f9d6f1
+				summarizeBy: none
+				sourceColumn: MeasuredValue
+
+				annotation SummarizationSetBy = Automatic
+
+			column Observation
+				dataType: string
+				lineageTag: 98575274-491e-5378-8520-90a283d904af
+				summarizeBy: none
+				sourceColumn: Observation
+
+				annotation SummarizationSetBy = Automatic
+
+			column TechID
+				dataType: string
+				lineageTag: ff6a3dc4-0779-585f-9dcd-115c277eaf99
+				summarizeBy: none
+				sourceColumn: TechID
+
+				annotation SummarizationSetBy = Automatic
+
+			column RecordedDate
+				dataType: dateTime
+				formatString: yyyy-mm-dd
+				lineageTag: 8f039bc4-073d-5e9f-9084-e68ebcda7923
+				summarizeBy: none
+				sourceColumn: RecordedDate
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+			column AbnormalityRaised
+				dataType: string
+				lineageTag: 01e74a2b-4f90-52ef-9747-717efc31057e
+				summarizeBy: none
+				sourceColumn: AbnormalityRaised
+
+				annotation SummarizationSetBy = Automatic
+
+			column TaskKey
+				dataType: string
+				lineageTag: 4de235a8-b9ff-5a86-ae7f-cde140cda1c0
+				summarizeBy: none
+				sourceColumn: TaskKey
+
+				annotation SummarizationSetBy = Automatic
+
+			partition Fact_ChecklistResults = m
+				mode: import
+				source = ```
+						let
+						    Source = fnSource("PM_ChecklistResults"),
+						    Typed = Table.TransformColumnTypes(Source, {{"ResultID", type text}, {"WOID", type text}, {"MachineID", type text}, {"MachineName", type text}, {"ChecklistID", type text}, {"TaskNo", Int64.Type}, {"TaskDescription", type text}, {"TaskType", type text}, {"AcceptanceStandard", type text}, {"Mandatory", type text}, {"SafetyCritical", type text}, {"Result", type text}, {"MeasuredValue", type number}, {"Observation", type text}, {"TechID", type text}, {"RecordedDate", type date}, {"AbnormalityRaised", type text}}, "en-US"),
+						    AddKey = Table.AddColumn(Typed, "TaskKey", each [ChecklistID] & "|" & Text.From([TaskNo]), type text)
+						in
+						    AddKey
+						```
+
+			annotation PBI_ResultType = Table
+
+		/// Unplanned stoppages. Feeds MTBF, MTTR and availability.
+		table Fact_Breakdowns
+			lineageTag: dfed5a6b-7419-56c0-b4f5-571e51d48080
+
+			column BreakdownID
+				dataType: string
+				lineageTag: 847fea16-04f2-501a-a34e-c1cee6494188
+				summarizeBy: none
+				sourceColumn: BreakdownID
+
+				annotation SummarizationSetBy = Automatic
+
+			column MachineID
+				dataType: string
+				lineageTag: 2179e640-6b2b-5b21-9a2b-bf7d2f3fc4af
+				summarizeBy: none
+				sourceColumn: MachineID
+
+				annotation SummarizationSetBy = Automatic
+
+			column MachineName
+				dataType: string
+				lineageTag: a178c310-47b9-5270-8eeb-4ea58aa59365
+				summarizeBy: none
+				sourceColumn: MachineName
+
+				annotation SummarizationSetBy = Automatic
+
+			column CellID
+				dataType: string
+				lineageTag: 755dd1b0-f525-5917-9812-1d3ae5459b2b
+				summarizeBy: none
+				sourceColumn: CellID
+
+				annotation SummarizationSetBy = Automatic
+
+			column CellName
+				dataType: string
+				lineageTag: 2d26f96c-27ba-5ce8-91c9-fdc95651d393
+				summarizeBy: none
+				sourceColumn: CellName
+
+				annotation SummarizationSetBy = Automatic
+
+			column Area
+				dataType: string
+				lineageTag: 233c3871-8ecc-54de-b220-4bbb6e9eb699
+				summarizeBy: none
+				sourceColumn: Area
+
+				annotation SummarizationSetBy = Automatic
+
+			column MachineType
+				dataType: string
+				lineageTag: 81ce2c22-820d-5a76-a9f4-ee6d83bf0d61
+				summarizeBy: none
+				sourceColumn: MachineType
+
+				annotation SummarizationSetBy = Automatic
+
+			column Criticality
+				dataType: string
+				lineageTag: 666cc110-af8f-5679-ac53-4335802796fc
+				summarizeBy: none
+				sourceColumn: Criticality
+
+				annotation SummarizationSetBy = Automatic
+
+			column ReportedDateTime
+				dataType: dateTime
+				formatString: yyyy-mm-dd hh:nn
+				lineageTag: 178a5a2e-727c-596b-8a57-89ea28bb2cc9
+				summarizeBy: none
+				sourceColumn: ReportedDateTime
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+			column RestoredDateTime
+				dataType: dateTime
+				formatString: yyyy-mm-dd hh:nn
+				lineageTag: 385e5386-a419-5787-8229-b051c6dd2b7f
+				summarizeBy: none
+				sourceColumn: RestoredDateTime
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+			column DowntimeMinutes
+				dataType: int64
+				formatString: #,0
+				lineageTag: ed80d564-a2e7-5bcb-92c6-18a5e1359314
+				summarizeBy: none
+				sourceColumn: DowntimeMinutes
+
+				annotation SummarizationSetBy = Automatic
+
+			column ResponseMinutes
+				dataType: int64
+				formatString: #,0
+				lineageTag: 2da13b1d-28cb-55ba-a66d-7eff28c1afb1
+				summarizeBy: none
+				sourceColumn: ResponseMinutes
+
+				annotation SummarizationSetBy = Automatic
+
+			column FailureMode
+				dataType: string
+				lineageTag: c5b2adba-6eb3-5c52-b3dc-3ed42fb589e6
+				summarizeBy: none
+				sourceColumn: FailureMode
+
+				annotation SummarizationSetBy = Automatic
+
+			column FailureCategory
+				dataType: string
+				lineageTag: e5ef38da-c2c1-52b0-ba15-fbbd358ec204
+				summarizeBy: none
+				sourceColumn: FailureCategory
+
+				annotation SummarizationSetBy = Automatic
+
+			column RootCause
+				dataType: string
+				lineageTag: f692ece2-745b-53ab-a1f4-dbd928c465b7
+				summarizeBy: none
+				sourceColumn: RootCause
+
+				annotation SummarizationSetBy = Automatic
+
+			column ActionTaken
+				dataType: string
+				lineageTag: 46e73272-4e4f-5e4d-a302-17d2aeee6b75
+				summarizeBy: none
+				sourceColumn: ActionTaken
+
+				annotation SummarizationSetBy = Automatic
+
+			column ReportedBy
+				dataType: string
+				lineageTag: 1334f98b-f2ec-5cd6-9521-8414997b3a95
+				summarizeBy: none
+				sourceColumn: ReportedBy
+
+				annotation SummarizationSetBy = Automatic
+
+			column AttendedTechID
+				dataType: string
+				lineageTag: 4f11e537-bfc6-52f7-92cd-c9eea62aa25e
+				summarizeBy: none
+				sourceColumn: AttendedTechID
+
+				annotation SummarizationSetBy = Automatic
+
+			column AttendedTechName
+				dataType: string
+				lineageTag: 6372ce63-2f3c-532b-a7cc-9ee67ed82661
+				summarizeBy: none
+				sourceColumn: AttendedTechName
+
+				annotation SummarizationSetBy = Automatic
+
+			column Status
+				dataType: string
+				lineageTag: ea001644-db03-59e1-a442-020b86085b48
+				summarizeBy: none
+				sourceColumn: Status
+
+				annotation SummarizationSetBy = Automatic
+
+			column SpareUsed
+				dataType: string
+				lineageTag: ac217d14-d5fc-5897-9ff4-ae8852896911
+				summarizeBy: none
+				sourceColumn: SpareUsed
+
+				annotation SummarizationSetBy = Automatic
+
+			column Severity
+				dataType: string
+				lineageTag: e5ff93fc-1144-587b-bed6-e51ab8844062
+				summarizeBy: none
+				sourceColumn: Severity
+
+				annotation SummarizationSetBy = Automatic
+
+			column ReportedDate
+				dataType: dateTime
+				formatString: yyyy-mm-dd
+				lineageTag: 3389b8b8-fd74-5f91-b31d-505ed3594639
+				summarizeBy: none
+				sourceColumn: ReportedDate
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+			column DowntimeHours
+				dataType: double
+				formatString: #,0.0
+				lineageTag: 8009e87f-ca36-59c8-ab4e-b07fb072ab3f
+				summarizeBy: none
+				sourceColumn: DowntimeHours
+
+				annotation SummarizationSetBy = Automatic
+
+			partition Fact_Breakdowns = m
+				mode: import
+				source = ```
+						let
+						    Source = fnSource("Breakdown_Reports"),
+						    Typed = Table.TransformColumnTypes(Source, {{"BreakdownID", type text}, {"MachineID", type text}, {"MachineName", type text}, {"CellID", type text}, {"CellName", type text}, {"Area", type text}, {"MachineType", type text}, {"Criticality", type text}, {"ReportedDateTime", type datetime}, {"RestoredDateTime", type datetime}, {"DowntimeMinutes", Int64.Type}, {"ResponseMinutes", Int64.Type}, {"FailureMode", type text}, {"FailureCategory", type text}, {"RootCause", type text}, {"ActionTaken", type text}, {"ReportedBy", type text}, {"AttendedTechID", type text}, {"AttendedTechName", type text}, {"Status", type text}, {"SpareUsed", type text}, {"Severity", type text}}, "en-US"),
+						    AddDate = Table.AddColumn(Typed, "ReportedDate", each Date.From([ReportedDateTime]), type date),
+						    AddHrs = Table.AddColumn(AddDate, "DowntimeHours", each if [DowntimeMinutes] = null then null else [DowntimeMinutes] / 60, type number)
+						in
+						    AddHrs
+						```
+
+			annotation PBI_ResultType = Table
+
+		/// Spare part requests raised from the machine QR.
+		table Fact_SpareRequests
+			lineageTag: 4af9afea-c1f7-50a3-b122-8fe466680619
+
+			column RequestID
+				dataType: string
+				lineageTag: 661eab1d-b8d6-5467-8e87-c40615b51ea2
+				summarizeBy: none
+				sourceColumn: RequestID
+
+				annotation SummarizationSetBy = Automatic
+
+			column SourceType
+				dataType: string
+				lineageTag: 77b6f3a2-6681-5fad-9f19-b63455ab273e
+				summarizeBy: none
+				sourceColumn: SourceType
+
+				annotation SummarizationSetBy = Automatic
+
+			column SourceID
+				dataType: string
+				lineageTag: d2a05fdc-c02c-5f19-955d-8d9ff61b309e
+				summarizeBy: none
+				sourceColumn: SourceID
+
+				annotation SummarizationSetBy = Automatic
+
+			column MachineID
+				dataType: string
+				lineageTag: d3545bc4-26a1-58cc-b816-9bc6939ee574
+				summarizeBy: none
+				sourceColumn: MachineID
+
+				annotation SummarizationSetBy = Automatic
+
+			column MachineName
+				dataType: string
+				lineageTag: be913812-1de6-5316-93f7-fad259b93865
+				summarizeBy: none
+				sourceColumn: MachineName
+
+				annotation SummarizationSetBy = Automatic
+
+			column CellID
+				dataType: string
+				lineageTag: fd41f710-e845-5939-bb74-e87c1b6e64fc
+				summarizeBy: none
+				sourceColumn: CellID
+
+				annotation SummarizationSetBy = Automatic
+
+			column PartNo
+				dataType: string
+				lineageTag: 069bca3b-d47f-53fd-8eaf-bd9a34d7fbae
+				summarizeBy: none
+				sourceColumn: PartNo
+
+				annotation SummarizationSetBy = Automatic
+
+			column PartName
+				dataType: string
+				lineageTag: 46d8eeec-0ce1-568b-8c37-20b0ebf47340
+				summarizeBy: none
+				sourceColumn: PartName
+
+				annotation SummarizationSetBy = Automatic
+
+			column Category
+				dataType: string
+				lineageTag: 75b627e7-4b8c-5392-addf-454d3c76c305
+				summarizeBy: none
+				sourceColumn: Category
+
+				annotation SummarizationSetBy = Automatic
+
+			column UOM
+				dataType: string
+				lineageTag: 80017ab9-36a1-540c-97a0-c42c6a083183
+				summarizeBy: none
+				sourceColumn: UOM
+
+				annotation SummarizationSetBy = Automatic
+
+			column QtyRequested
+				dataType: int64
+				formatString: #,0
+				lineageTag: f562b7c9-23d9-5b46-b7d2-e274bc09ef17
+				summarizeBy: none
+				sourceColumn: QtyRequested
+
+				annotation SummarizationSetBy = Automatic
+
+			column UnitCostINR
+				dataType: double
+				formatString: "₹"#,0.00;("₹"#,0.00);"₹"#,0.00
+				lineageTag: 23e3dbde-1a66-59a1-b2de-b98422cef38e
+				summarizeBy: none
+				sourceColumn: UnitCostINR
+
+				annotation SummarizationSetBy = Automatic
+
+			column TotalCostINR
+				dataType: double
+				formatString: "₹"#,0.00;("₹"#,0.00);"₹"#,0.00
+				lineageTag: 9e38604f-9b89-516d-8ee7-bd3f676702b9
+				summarizeBy: none
+				sourceColumn: TotalCostINR
+
+				annotation SummarizationSetBy = Automatic
+
+			column RequestedByTechID
+				dataType: string
+				lineageTag: 7d9398e4-315d-5e91-90f5-4c327c4c6094
+				summarizeBy: none
+				sourceColumn: RequestedByTechID
+
+				annotation SummarizationSetBy = Automatic
+
+			column RequestedByName
+				dataType: string
+				lineageTag: 3c80263b-8eb2-5d66-ba29-42df9338dcff
+				summarizeBy: none
+				sourceColumn: RequestedByName
+
+				annotation SummarizationSetBy = Automatic
+
+			column RequestDate
+				dataType: dateTime
+				formatString: yyyy-mm-dd
+				lineageTag: a71bc562-7578-5f3f-863b-ed53fa6c3054
+				summarizeBy: none
+				sourceColumn: RequestDate
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+			column Urgency
+				dataType: string
+				lineageTag: 100b40b6-1740-5195-b96b-0fd9c529a07d
+				summarizeBy: none
+				sourceColumn: Urgency
+
+				annotation SummarizationSetBy = Automatic
+
+			column Status
+				dataType: string
+				lineageTag: fba53290-50bb-5435-9e25-f820e4c60722
+				summarizeBy: none
+				sourceColumn: Status
+
+				annotation SummarizationSetBy = Automatic
+
+			column ApprovedDate
+				dataType: dateTime
+				formatString: yyyy-mm-dd
+				lineageTag: bcbe8601-e835-5cbb-a1e2-a4c868227de1
+				summarizeBy: none
+				sourceColumn: ApprovedDate
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+			column ApprovedBy
+				dataType: string
+				lineageTag: dcafc181-aeca-5401-affd-96df2854a66d
+				summarizeBy: none
+				sourceColumn: ApprovedBy
+
+				annotation SummarizationSetBy = Automatic
+
+			column IssuedDate
+				dataType: dateTime
+				formatString: yyyy-mm-dd
+				lineageTag: b62f6aa1-4120-5975-8dbc-10b5e2a97a21
+				summarizeBy: none
+				sourceColumn: IssuedDate
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+			column LeadTimeDays
+				dataType: int64
+				formatString: #,0
+				lineageTag: 2c70073e-8c98-5b5a-bc2d-0799d1748f72
+				summarizeBy: none
+				sourceColumn: LeadTimeDays
+
+				annotation SummarizationSetBy = Automatic
+
+			column StoreBin
+				dataType: string
+				lineageTag: 78d0c392-7fc8-513d-bd11-7978e5e240b4
+				summarizeBy: none
+				sourceColumn: StoreBin
+
+				annotation SummarizationSetBy = Automatic
+
+			column RejectionReason
+				dataType: string
+				lineageTag: dd89aba4-1e42-5dc8-b884-1fba0606a8b4
+				summarizeBy: none
+				sourceColumn: RejectionReason
+
+				annotation SummarizationSetBy = Automatic
+
+			partition Fact_SpareRequests = m
+				mode: import
+				source = ```
+						let
+						    Source = fnSource("SparePart_Requests"),
+						    Typed = Table.TransformColumnTypes(Source, {{"RequestID", type text}, {"SourceType", type text}, {"SourceID", type text}, {"MachineID", type text}, {"MachineName", type text}, {"CellID", type text}, {"PartNo", type text}, {"PartName", type text}, {"Category", type text}, {"UOM", type text}, {"QtyRequested", Int64.Type}, {"UnitCostINR", type number}, {"TotalCostINR", type number}, {"RequestedByTechID", type text}, {"RequestedByName", type text}, {"RequestDate", type date}, {"Urgency", type text}, {"Status", type text}, {"ApprovedDate", type date}, {"ApprovedBy", type text}, {"IssuedDate", type date}, {"LeadTimeDays", Int64.Type}, {"StoreBin", type text}, {"RejectionReason", type text}}, "en-US")
+						in
+						    Typed
+						```
+
+			annotation PBI_ResultType = Table
+
+		/// What was actually fitted to the machine.
+		table Fact_SpareReplacements
+			lineageTag: d5ad7a8a-d081-5811-bd16-dd776ec3f41b
+
+			column ReplacementID
+				dataType: string
+				lineageTag: 090b3f51-3db4-5e51-bec5-5f6ee4cc6c66
+				summarizeBy: none
+				sourceColumn: ReplacementID
+
+				annotation SummarizationSetBy = Automatic
+
+			column SourceType
+				dataType: string
+				lineageTag: cf3a3efa-d4f7-5b1d-af89-5634d43d6d0e
+				summarizeBy: none
+				sourceColumn: SourceType
+
+				annotation SummarizationSetBy = Automatic
+
+			column SourceID
+				dataType: string
+				lineageTag: 3b8dc126-4a02-53ab-9c34-a246af1d63a7
+				summarizeBy: none
+				sourceColumn: SourceID
+
+				annotation SummarizationSetBy = Automatic
+
+			column RequestID
+				dataType: string
+				lineageTag: 6aa21d4f-64fa-5ffa-8d4f-fe33dea2bceb
+				summarizeBy: none
+				sourceColumn: RequestID
+
+				annotation SummarizationSetBy = Automatic
+
+			column MachineID
+				dataType: string
+				lineageTag: aab0d4c1-593e-5353-ac8c-050310436ca1
+				summarizeBy: none
+				sourceColumn: MachineID
+
+				annotation SummarizationSetBy = Automatic
+
+			column MachineName
+				dataType: string
+				lineageTag: 88fad330-9506-5378-98ed-f126a953f4f2
+				summarizeBy: none
+				sourceColumn: MachineName
+
+				annotation SummarizationSetBy = Automatic
+
+			column CellID
+				dataType: string
+				lineageTag: e48678f3-6d9a-5172-85b4-2ea893ea715e
+				summarizeBy: none
+				sourceColumn: CellID
+
+				annotation SummarizationSetBy = Automatic
+
+			column MachineType
+				dataType: string
+				lineageTag: fdedf1ec-5b16-5953-94bd-25987a1334cb
+				summarizeBy: none
+				sourceColumn: MachineType
+
+				annotation SummarizationSetBy = Automatic
+
+			column PartNo
+				dataType: string
+				lineageTag: 9a3f7ea3-0c2e-52e1-b8e6-b5a3c41b1d3d
+				summarizeBy: none
+				sourceColumn: PartNo
+
+				annotation SummarizationSetBy = Automatic
+
+			column PartName
+				dataType: string
+				lineageTag: 15ea2f25-9e42-5911-bbf4-466fc51ebece
+				summarizeBy: none
+				sourceColumn: PartName
+
+				annotation SummarizationSetBy = Automatic
+
+			column Category
+				dataType: string
+				lineageTag: f14c1819-b43a-5db7-9f1a-a3b96af0e1fa
+				summarizeBy: none
+				sourceColumn: Category
+
+				annotation SummarizationSetBy = Automatic
+
+			column UOM
+				dataType: string
+				lineageTag: b8e65adf-121f-5014-89f1-35327d20dead
+				summarizeBy: none
+				sourceColumn: UOM
+
+				annotation SummarizationSetBy = Automatic
+
+			column QtyReplaced
+				dataType: int64
+				formatString: #,0
+				lineageTag: 97db667c-a90c-5c56-a81b-c9c4a98cf791
+				summarizeBy: none
+				sourceColumn: QtyReplaced
+
+				annotation SummarizationSetBy = Automatic
+
+			column UnitCostINR
+				dataType: double
+				formatString: "₹"#,0.00;("₹"#,0.00);"₹"#,0.00
+				lineageTag: 58418c31-95ee-5f95-8af8-921ddb3e2cda
+				summarizeBy: none
+				sourceColumn: UnitCostINR
+
+				annotation SummarizationSetBy = Automatic
+
+			column TotalCostINR
+				dataType: double
+				formatString: "₹"#,0.00;("₹"#,0.00);"₹"#,0.00
+				lineageTag: a501a9b7-e9a4-5f4e-873d-6ea7a52368f8
+				summarizeBy: none
+				sourceColumn: TotalCostINR
+
+				annotation SummarizationSetBy = Automatic
+
+			column ReplacedByTechID
+				dataType: string
+				lineageTag: 4051d17c-5484-5b9c-b82f-283f463b2db9
+				summarizeBy: none
+				sourceColumn: ReplacedByTechID
+
+				annotation SummarizationSetBy = Automatic
+
+			column ReplacedByName
+				dataType: string
+				lineageTag: 2242b1e7-a296-5d50-b524-44fae22fa4fa
+				summarizeBy: none
+				sourceColumn: ReplacedByName
+
+				annotation SummarizationSetBy = Automatic
+
+			column ReplacedDate
+				dataType: dateTime
+				formatString: yyyy-mm-dd
+				lineageTag: 206ffca0-7385-5144-94e2-64d2cdf80655
+				summarizeBy: none
+				sourceColumn: ReplacedDate
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+			column OldPartCondition
+				dataType: string
+				lineageTag: 186e1bf3-974d-5cdc-aa79-85b8047fee26
+				summarizeBy: none
+				sourceColumn: OldPartCondition
+
+				annotation SummarizationSetBy = Automatic
+
+			column WarrantyClaim
+				dataType: string
+				lineageTag: 5c0a3c6a-8db1-5070-8956-db6e428fac0f
+				summarizeBy: none
+				sourceColumn: WarrantyClaim
+
+				annotation SummarizationSetBy = Automatic
+
+			column Remarks
+				dataType: string
+				lineageTag: 18f249f7-741b-5201-a72d-c455bb74f396
+				summarizeBy: none
+				sourceColumn: Remarks
+
+				annotation SummarizationSetBy = Automatic
+
+			partition Fact_SpareReplacements = m
+				mode: import
+				source = ```
+						let
+						    Source = fnSource("SparePart_Replacements"),
+						    Typed = Table.TransformColumnTypes(Source, {{"ReplacementID", type text}, {"SourceType", type text}, {"SourceID", type text}, {"RequestID", type text}, {"MachineID", type text}, {"MachineName", type text}, {"CellID", type text}, {"MachineType", type text}, {"PartNo", type text}, {"PartName", type text}, {"Category", type text}, {"UOM", type text}, {"QtyReplaced", Int64.Type}, {"UnitCostINR", type number}, {"TotalCostINR", type number}, {"ReplacedByTechID", type text}, {"ReplacedByName", type text}, {"ReplacedDate", type date}, {"OldPartCondition", type text}, {"WarrantyClaim", type text}, {"Remarks", type text}}, "en-US")
+						in
+						    Typed
+						```
+
+			annotation PBI_ResultType = Table
+
+		/// Abnormalities - the early warning layer before a breakdown.
+		table Fact_Abnormalities
+			lineageTag: 42ca1f6d-eda5-58ec-841a-a6282464fb33
+
+			column AbnormalityID
+				dataType: string
+				lineageTag: 13884e9e-7216-55f9-bbc5-34c161b1806b
+				summarizeBy: none
+				sourceColumn: AbnormalityID
+
+				annotation SummarizationSetBy = Automatic
+
+			column Source
+				dataType: string
+				lineageTag: f2c40cfe-1eb9-5415-b80d-bc566e32103f
+				summarizeBy: none
+				sourceColumn: Source
+
+				annotation SummarizationSetBy = Automatic
+
+			column SourceRefID
+				dataType: string
+				lineageTag: bcea8b7f-27c0-5aa9-953e-c50a82676a8a
+				summarizeBy: none
+				sourceColumn: SourceRefID
+
+				annotation SummarizationSetBy = Automatic
+
+			column MachineID
+				dataType: string
+				lineageTag: 111fd2de-467c-5696-b786-40436f2d8982
+				summarizeBy: none
+				sourceColumn: MachineID
+
+				annotation SummarizationSetBy = Automatic
+
+			column MachineName
+				dataType: string
+				lineageTag: 4b37b0f0-1605-5105-9bf7-2a1a60b8a219
+				summarizeBy: none
+				sourceColumn: MachineName
+
+				annotation SummarizationSetBy = Automatic
+
+			column CellID
+				dataType: string
+				lineageTag: fb5c1948-c267-5d48-8369-fd50a7ba2c9d
+				summarizeBy: none
+				sourceColumn: CellID
+
+				annotation SummarizationSetBy = Automatic
+
+			column CellName
+				dataType: string
+				lineageTag: a2434c93-f702-57fc-90bc-6df97908e64e
+				summarizeBy: none
+				sourceColumn: CellName
+
+				annotation SummarizationSetBy = Automatic
+
+			column Area
+				dataType: string
+				lineageTag: 5ffebbe2-bb28-5df9-8158-90c8a1d3c05c
+				summarizeBy: none
+				sourceColumn: Area
+
+				annotation SummarizationSetBy = Automatic
+
+			column Category
+				dataType: string
+				lineageTag: a5ec2f95-b458-5ef1-9be6-ff8508a5b049
+				summarizeBy: none
+				sourceColumn: Category
+
+				annotation SummarizationSetBy = Automatic
+
+			column Severity
+				dataType: string
+				lineageTag: 0abab5ca-c492-57f8-8741-969d121b0a96
+				summarizeBy: none
+				sourceColumn: Severity
+
+				annotation SummarizationSetBy = Automatic
+
+			column Description
+				dataType: string
+				lineageTag: ce69c22d-022b-5bfb-8acb-501d2d167c8d
+				summarizeBy: none
+				sourceColumn: Description
+
+				annotation SummarizationSetBy = Automatic
+
+			column ReportedByTechID
+				dataType: string
+				lineageTag: d90b063a-b95f-5e24-9c83-3f7d15da3064
+				summarizeBy: none
+				sourceColumn: ReportedByTechID
+
+				annotation SummarizationSetBy = Automatic
+
+			column ReportedByName
+				dataType: string
+				lineageTag: d1f6a61b-b0c1-52e1-b936-406ac7a8c44f
+				summarizeBy: none
+				sourceColumn: ReportedByName
+
+				annotation SummarizationSetBy = Automatic
+
+			column ReportedDate
+				dataType: dateTime
+				formatString: yyyy-mm-dd
+				lineageTag: 7e9adab1-5488-5e4e-8a26-556a60589d08
+				summarizeBy: none
+				sourceColumn: ReportedDate
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+			column Status
+				dataType: string
+				lineageTag: 048e4360-7c9c-56a0-bf81-6175659bc6ad
+				summarizeBy: none
+				sourceColumn: Status
+
+				annotation SummarizationSetBy = Automatic
+
+			column ClosedDate
+				dataType: dateTime
+				formatString: yyyy-mm-dd
+				lineageTag: 7b04585c-7cb8-523e-a84d-4c01db7e54b5
+				summarizeBy: none
+				sourceColumn: ClosedDate
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+			column CorrectiveAction
+				dataType: string
+				lineageTag: f30c430a-5163-56c2-97bc-f5f3edc79956
+				summarizeBy: none
+				sourceColumn: CorrectiveAction
+
+				annotation SummarizationSetBy = Automatic
+
+			column OwnerFunction
+				dataType: string
+				lineageTag: 80366dbb-66ea-5353-907b-ce8bfc20411f
+				summarizeBy: none
+				sourceColumn: OwnerFunction
+
+				annotation SummarizationSetBy = Automatic
+
+			column EscalationRequired
+				dataType: string
+				lineageTag: a43808eb-ad45-5811-84fa-2e3d93c2d19f
+				summarizeBy: none
+				sourceColumn: EscalationRequired
+
+				annotation SummarizationSetBy = Automatic
+
+			column PhotoURL
+				dataType: string
+				lineageTag: ee7ebaed-fb31-5c12-97cb-ebddd7299f95
+				summarizeBy: none
+				sourceColumn: PhotoURL
+
+				annotation SummarizationSetBy = Automatic
+
+			partition Fact_Abnormalities = m
+				mode: import
+				source = ```
+						let
+						    Source = fnSource("Abnormality_Log"),
+						    Typed = Table.TransformColumnTypes(Source, {{"AbnormalityID", type text}, {"Source", type text}, {"SourceRefID", type text}, {"MachineID", type text}, {"MachineName", type text}, {"CellID", type text}, {"CellName", type text}, {"Area", type text}, {"Category", type text}, {"Severity", type text}, {"Description", type text}, {"ReportedByTechID", type text}, {"ReportedByName", type text}, {"ReportedDate", type date}, {"Status", type text}, {"ClosedDate", type date}, {"CorrectiveAction", type text}, {"OwnerFunction", type text}, {"EscalationRequired", type text}, {"PhotoURL", type text}}, "en-US")
+						in
+						    Typed
+						```
+
+			annotation PBI_ResultType = Table
+
+		/// Every QR scan. Proves attendance at the machine.
+		table Fact_ScanLog
+			lineageTag: 15851401-0422-524e-ab92-80fd87e57198
+
+			column ScanID
+				dataType: string
+				lineageTag: 98fab7f8-bfe3-5511-b863-ef26f8569953
+				summarizeBy: none
+				sourceColumn: ScanID
+
+				annotation SummarizationSetBy = Automatic
+
+			column QRType
+				dataType: string
+				lineageTag: 0cf134dd-7d11-58fe-9324-4caa0d9651e7
+				summarizeBy: none
+				sourceColumn: QRType
+
+				annotation SummarizationSetBy = Automatic
+
+			column MachineID
+				dataType: string
+				lineageTag: fb0de84b-698f-552e-8691-1353edc49f7d
+				summarizeBy: none
+				sourceColumn: MachineID
+
+				annotation SummarizationSetBy = Automatic
+
+			column MachineName
+				dataType: string
+				lineageTag: 2ab5e638-dcc7-53d2-9edd-95d582fb0344
+				summarizeBy: none
+				sourceColumn: MachineName
+
+				annotation SummarizationSetBy = Automatic
+
+			column TechID
+				dataType: string
+				lineageTag: 3b84ee95-8e05-5066-8732-c2ef4441758a
+				summarizeBy: none
+				sourceColumn: TechID
+
+				annotation SummarizationSetBy = Automatic
+
+			column TechName
+				dataType: string
+				lineageTag: 9b1b943a-42bc-5a42-bd49-14927f0a93fe
+				summarizeBy: none
+				sourceColumn: TechName
+
+				annotation SummarizationSetBy = Automatic
+
+			column ScanDateTime
+				dataType: dateTime
+				formatString: yyyy-mm-dd hh:nn
+				lineageTag: 4ff5cd56-ab23-5bc0-bb61-f3cc4555782e
+				summarizeBy: none
+				sourceColumn: ScanDateTime
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+			column LinkedWOID
+				dataType: string
+				lineageTag: c9f4b61c-27b8-574e-8a82-9e770e2e626f
+				summarizeBy: none
+				sourceColumn: LinkedWOID
+
+				annotation SummarizationSetBy = Automatic
+
+			column Action
+				dataType: string
+				lineageTag: 02e0fa4e-acbb-5dd2-adc2-7bb3dfcf8fb9
+				summarizeBy: none
+				sourceColumn: Action
+
+				annotation SummarizationSetBy = Automatic
+
+			column CellID
+				dataType: string
+				lineageTag: deb33df8-ca4b-5ea7-8875-b02e34080040
+				summarizeBy: none
+				sourceColumn: CellID
+
+				annotation SummarizationSetBy = Automatic
+
+			column ScanDate
+				dataType: dateTime
+				formatString: yyyy-mm-dd
+				lineageTag: 9d0945bd-b2b7-57c0-baec-84b331a54d7a
+				summarizeBy: none
+				sourceColumn: ScanDate
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+			partition Fact_ScanLog = m
+				mode: import
+				source = ```
+						let
+						    Source = fnSource("QR_Scan_Log"),
+						    Typed = Table.TransformColumnTypes(Source, {{"ScanID", type text}, {"QRType", type text}, {"MachineID", type text}, {"MachineName", type text}, {"TechID", type text}, {"TechName", type text}, {"ScanDateTime", type datetime}, {"LinkedWOID", type text}, {"Action", type text}, {"CellID", type text}}, "en-US"),
+						    AddDate = Table.AddColumn(Typed, "ScanDate", each Date.From([ScanDateTime]), type date)
+						in
+						    AddDate
+						```
+
+			annotation PBI_ResultType = Table
+
+		/// Every measure in the model lives here. The table itself holds no data.
+		table _Measures
+			lineageTag: f6bc2d9e-c333-5d88-88d7-28e26a172649
+
+			/// Latest calendar date in the model. Use it on every page footer.
+			measure 'Data As Of' = ```
+					CALCULATE ( MAX ( Dim_Date[Date] ), Dim_Date[RelativeToToday] IN { "Past", "Today" }, ALL ( Dim_Date ) )
+					```
+				formatString: yyyy-mm-dd
+				displayFolder: 00 Context
+				lineageTag: 4f8ee452-5bbb-577a-9641-c6faab8e5908
+
+			/// The most recent month for which Production has uploaded standard hours.
+			measure 'Latest Std Hours Month' = ```
+					VAR LastM =
+					    CALCULATE ( MAX ( Fact_StdHours[MonthStartDate] ), ALL ( Dim_Date ), ALL ( Dim_Cell ) )
+					RETURN
+					    IF ( ISBLANK ( LastM ), "No upload yet", FORMAT ( LastM, "MMM yyyy" ) )
+					```
+				displayFolder: 00 Context
+				lineageTag: 8aa18ebd-5184-5641-bc85-84722f583ee0
+
+			/// Default hour threshold read from PM_Config, so the rule can be retuned without editing the model.
+			measure 'Cfg PM Interval Std Hrs' = ```
+					VAR Raw = LOOKUPVALUE ( Config[ConfigValue], Config[ConfigKey], "DefaultPMIntervalStdHrs" )
+					RETURN
+					    IF ( ISBLANK ( Raw ), 4000, VALUE ( Raw ) )
+					```
+				formatString: #,0
+				displayFolder: 00 Context
+				lineageTag: 30ff4dea-e624-5515-8501-fb228121f49d
+
+			/// Counter percentage at which a cell starts showing as Due Soon.
+			measure 'Cfg Due Soon Pct' = ```
+					VAR Raw = LOOKUPVALUE ( Config[ConfigValue], Config[ConfigKey], "PMDueSoonThresholdPct" )
+					RETURN
+					    DIVIDE ( IF ( ISBLANK ( Raw ), 85, VALUE ( Raw ) ), 100 )
+					```
+				formatString: 0%
+				displayFolder: 00 Context
+				lineageTag: c91846d6-c78d-52a7-96a7-7e3dd836716c
+
+			/// Production standard hours earned, from the monthly upload.
+			measure 'Std Hours' = ```
+					SUM ( Fact_StdHours[StdHours] )
+					```
+				formatString: #,0
+				displayFolder: 01 Standard Hours
+				lineageTag: 144249b5-7952-525b-91dc-79231e90929d
+
+			/// Standard hours in the previous month.
+			measure 'Std Hours PM' = ```
+					CALCULATE ( [Std Hours], DATEADD ( Dim_Date[Date], -1, MONTH ) )
+					```
+				formatString: #,0
+				displayFolder: 01 Standard Hours
+				lineageTag: 1c07f4d0-985d-5315-a0d4-8d6759a54cfe
+
+			/// Month-on-month movement in standard hours.
+			measure 'Std Hours MoM %' = ```
+					DIVIDE ( [Std Hours] - [Std Hours PM], [Std Hours PM] )
+					```
+				formatString: 0.0%
+				displayFolder: 01 Standard Hours
+				lineageTag: 09879fc6-4def-51e0-8920-09f523cfe7ae
+
+			/// Rolling twelve-month standard hours.
+			measure 'Std Hours 12M' = ```
+					CALCULATE ( [Std Hours], DATESINPERIOD ( Dim_Date[Date], MAX ( Dim_Date[Date] ), -12, MONTH ) )
+					```
+				formatString: #,0
+				displayFolder: 01 Standard Hours
+				lineageTag: 540b09da-d93f-555c-99ee-1ecd62f0f40f
+
+			/// Last month for which the hour ledger holds actual (not forecast) data.
+			measure 'Latest Ledger Month' = ```
+					CALCULATE (
+					    MAX ( Fact_HourLedger[MonthStartDate] ),
+					    Fact_HourLedger[Scenario] = "Actual",
+					    ALL ( Dim_Date )
+					)
+					```
+				formatString: yyyy-mm-dd
+				displayFolder: 01 Standard Hours
+				lineageTag: c5e10b66-9334-5add-a352-95913ba86d8a
+
+			/// Where the cell's hour counter stands right now, after the latest upload.
+			measure 'Current Counter Std Hrs' = ```
+					VAR LastM = [Latest Ledger Month]
+					RETURN
+					    CALCULATE (
+					        SUM ( Fact_HourLedger[ClosingStdHrs] ),
+					        Fact_HourLedger[MonthStartDate] = LastM,
+					        Fact_HourLedger[Scenario] = "Actual",
+					        ALL ( Dim_Date )
+					    )
+					```
+				formatString: #,0
+				displayFolder: 01 Standard Hours
+				lineageTag: 06d0a020-b71d-525b-b6ca-35420e4b270a
+
+			/// The hour threshold for the cells in context. Sums correctly across a multi-cell selection.
+			measure 'PM Threshold Std Hrs' = ```
+					SUMX ( VALUES ( Dim_Cell[CellID] ), CALCULATE ( MAX ( Dim_Cell[PMIntervalStdHrs] ) ) )
+					```
+				formatString: #,0
+				displayFolder: 01 Standard Hours
+				lineageTag: 38ef2e42-83e4-5fa7-addf-5cc96df095bc
+
+			/// Standard hours still to be earned before the next PM falls due.
+			measure 'Hours to Next PM' = ```
+					MAX ( 0, [PM Threshold Std Hrs] - [Current Counter Std Hrs] )
+					```
+				formatString: #,0
+				displayFolder: 01 Standard Hours
+				lineageTag: 2171fea7-4b13-516a-8ca7-9706a58fddad
+
+			/// Counter as a percentage of the threshold. The headline gauge on the planning page.
+			measure '% to PM Threshold' = ```
+					DIVIDE ( [Current Counter Std Hrs], [PM Threshold Std Hrs] )
+					```
+				formatString: 0.0%
+				displayFolder: 01 Standard Hours
+				lineageTag: f1fea14b-5518-58ae-9db8-246aa1cb2f52
+
+			/// Conditional colour for the counter gauge: over threshold, due soon, or comfortable.
+			measure '% to PM Threshold Color' = ```
+					VAR P = [% to PM Threshold]
+					RETURN
+					    SWITCH (
+					        TRUE (),
+					        P >= 1, "#C4553B",
+					        P >= [Cfg Due Soon Pct], "#D08B2C",
+					        "#2F9E7E"
+					    )
+					```
+				displayFolder: 01 Standard Hours
+				lineageTag: e8e547aa-1aac-528a-997a-0b937f5ec507
+
+			/// Trailing three-month average standard hours. The run rate used for every projection.
+			measure 'Run Rate 3M Std Hrs' = ```
+					VAR LastM = [Latest Ledger Month]
+					VAR Total =
+					    CALCULATE (
+					        SUM ( Fact_StdHours[StdHours] ),
+					        ALL ( Dim_Date ),
+					        Fact_StdHours[MonthStartDate] <= LastM,
+					        Fact_StdHours[MonthStartDate] > EDATE ( LastM, -3 )
+					    )
+					RETURN
+					    DIVIDE ( Total, 3 )
+					```
+				formatString: #,0
+				displayFolder: 01 Standard Hours
+				lineageTag: 691847f2-4278-5f7c-a6f9-489cf6c7e6cf
+
+			/// How many months at the current run rate before the hour threshold is reached.
+			measure 'Months to PM Projected' = ```
+					VAR Rate = [Run Rate 3M Std Hrs]
+					RETURN
+					    IF ( Rate <= 0, BLANK (), ROUNDUP ( DIVIDE ( [Hours to Next PM], Rate ), 0 ) )
+					```
+				formatString: #,0
+				displayFolder: 01 Standard Hours
+				lineageTag: befd32ec-8111-5967-b7be-fe37e37909cf
+
+			/// Most recent completed PM in the current context - cell, machine or technician.
+			measure 'Last PM Date' = ```
+					CALCULATE (
+					    MAX ( Fact_WorkOrders[ActualEndDate] ),
+					    Fact_WorkOrders[Status] = "Completed",
+					    ALL ( Dim_Date )
+					)
+					```
+				formatString: yyyy-mm-dd
+				displayFolder: 01 Standard Hours
+				lineageTag: bf594160-6837-5432-94e5-1d2f998dcffc
+
+			/// Elapsed months since the last completed PM. Drives the calendar backstop.
+			measure 'Months Since Last PM' = ```
+					VAR L = [Last PM Date]
+					RETURN
+					    IF ( ISBLANK ( L ), BLANK (), DATEDIFF ( L, TODAY (), MONTH ) )
+					```
+				formatString: #,0
+				displayFolder: 01 Standard Hours
+				lineageTag: 3d8792f0-ab7d-54e4-b853-78b0f41505c7
+
+			/// Months left before the calendar backstop forces a PM regardless of hours.
+			measure 'Backstop Months Remaining' = ```
+					VAR Limit = MAX ( Dim_Cell[CalendarBackstopMonths] )
+					VAR Elapsed = [Months Since Last PM]
+					RETURN
+					    IF ( ISBLANK ( Elapsed ), BLANK (), MAX ( 0, Limit - Elapsed ) )
+					```
+				formatString: #,0
+				displayFolder: 01 Standard Hours
+				lineageTag: 27e2944b-147b-567f-8cbf-c88721e27a5f
+
+			/// The earlier of the hour projection and the calendar backstop. This is the date the plan works to.
+			measure 'Projected Next PM Date' = ```
+					VAR MonthsOut = [Months to PM Projected]
+					VAR LedgerM = [Latest Ledger Month]
+					VAR HoursDate = IF ( ISBLANK ( MonthsOut ), BLANK (), EOMONTH ( EDATE ( LedgerM, MonthsOut ), 0 ) )
+					VAR Backstop = MAX ( Dim_Cell[CalendarBackstopMonths] )
+					VAR LastPM = [Last PM Date]
+					VAR CalDate = IF ( ISBLANK ( LastPM ), BLANK (), EOMONTH ( EDATE ( LastPM, Backstop ), 0 ) )
+					RETURN
+					    SWITCH (
+					        TRUE (),
+					        ISBLANK ( HoursDate ), CalDate,
+					        ISBLANK ( CalDate ), HoursDate,
+					        MIN ( HoursDate, CalDate )
+					    )
+					```
+				formatString: yyyy-mm-dd
+				displayFolder: 01 Standard Hours
+				lineageTag: 14c9135b-2440-560b-9916-858bca06f0b8
+
+			/// Why the next PM will fire - useful when a low-utilisation cell is riding the backstop.
+			measure 'Projected Trigger Reason' = ```
+					VAR MonthsOut = [Months to PM Projected]
+					VAR LedgerM = [Latest Ledger Month]
+					VAR HoursDate = IF ( ISBLANK ( MonthsOut ), BLANK (), EOMONTH ( EDATE ( LedgerM, MonthsOut ), 0 ) )
+					VAR Backstop = MAX ( Dim_Cell[CalendarBackstopMonths] )
+					VAR LastPM = [Last PM Date]
+					VAR CalDate = IF ( ISBLANK ( LastPM ), BLANK (), EOMONTH ( EDATE ( LastPM, Backstop ), 0 ) )
+					RETURN
+					    SWITCH (
+					        TRUE (),
+					        ISBLANK ( HoursDate ) && ISBLANK ( CalDate ), "No projection",
+					        ISBLANK ( HoursDate ), "Calendar backstop",
+					        ISBLANK ( CalDate ), "Std hours",
+					        HoursDate <= CalDate, "Std hours",
+					        "Calendar backstop"
+					    )
+					```
+				displayFolder: 01 Standard Hours
+				lineageTag: da8f8b3c-fe36-5c5d-bd27-ba0b95c5b8ee
+
+			/// Cells whose counter tripped inside the selected period.
+			measure 'Cells Due In Period' = ```
+					CALCULATE (
+					    DISTINCTCOUNT ( Fact_HourLedger[CellID] ),
+					    Fact_HourLedger[PMTriggered] = "Yes"
+					)
+					```
+				formatString: #,0
+				displayFolder: 01 Standard Hours
+				lineageTag: 53972980-8109-5db8-912a-03d08384fcea
+
+			/// Forward look: how many cells fall due in the next quarter. The manpower planning number.
+			measure 'Cells Due Next 3 Months' = ```
+					VAR LastM = [Latest Ledger Month]
+					RETURN
+					    CALCULATE (
+					        DISTINCTCOUNT ( Fact_HourLedger[CellID] ),
+					        ALL ( Dim_Date ),
+					        Fact_HourLedger[PMTriggered] = "Yes",
+					        Fact_HourLedger[MonthStartDate] > LastM,
+					        Fact_HourLedger[MonthStartDate] <= EDATE ( LastM, 3 )
+					    )
+					```
+				formatString: #,0
+				displayFolder: 01 Standard Hours
+				lineageTag: aedecf92-1fba-53e8-9584-356cedadaa79
+
+			/// Total PM work orders in context.
+			measure 'PM Work Orders' = ```
+					COUNTROWS ( Fact_WorkOrders )
+					```
+				formatString: #,0
+				displayFolder: 02 PM Execution
+				lineageTag: 7844f56d-3688-5a14-aaf6-3071ce3a5889
+
+			/// Work orders finished.
+			measure 'PM Completed' = ```
+					CALCULATE ( [PM Work Orders], Fact_WorkOrders[Status] = "Completed" )
+					```
+				formatString: #,0
+				displayFolder: 02 PM Execution
+				lineageTag: 2e435f41-1045-57ee-8cc6-37713f13f464
+
+			/// Work orders raised but not yet started.
+			measure 'PM Scheduled' = ```
+					CALCULATE ( [PM Work Orders], Fact_WorkOrders[Status] = "Scheduled" )
+					```
+				formatString: #,0
+				displayFolder: 02 PM Execution
+				lineageTag: bde3d7c1-459e-5aaa-b219-42649ea1162d
+
+			/// Work orders a technician has started but not closed.
+			measure 'PM In Progress' = ```
+					CALCULATE ( [PM Work Orders], Fact_WorkOrders[Status] = "In Progress" )
+					```
+				formatString: #,0
+				displayFolder: 02 PM Execution
+				lineageTag: 4ce1c299-2deb-54a6-be20-88961a7aa79a
+
+			/// Past due date and still not complete.
+			measure 'PM Overdue' = ```
+					CALCULATE ( [PM Work Orders], Fact_WorkOrders[Status] = "Overdue" )
+					```
+				formatString: #,0
+				displayFolder: 02 PM Execution
+				lineageTag: 517ac501-7692-58c6-925f-f16be4c6820b
+
+			/// Formally pushed to a later window with approval.
+			measure 'PM Deferred' = ```
+					CALCULATE ( [PM Work Orders], Fact_WorkOrders[Status] = "Deferred" )
+					```
+				formatString: #,0
+				displayFolder: 02 PM Execution
+				lineageTag: 312e8502-905f-5ee4-a55c-cfd68a0f3a6d
+
+			/// Everything still to be done.
+			measure 'PM Open' = ```
+					CALCULATE (
+					    [PM Work Orders],
+					    Fact_WorkOrders[Status] IN { "Scheduled", "In Progress", "Overdue" }
+					)
+					```
+				formatString: #,0
+				displayFolder: 02 PM Execution
+				lineageTag: 2d198801-cd4b-5483-8a3b-347e64ad7dc0
+
+			/// Share of raised work orders that are complete.
+			measure 'PM Completion %' = ```
+					DIVIDE ( [PM Completed], [PM Work Orders] )
+					```
+				formatString: 0.0%
+				displayFolder: 02 PM Execution
+				lineageTag: 1ccd18ae-7c2e-5aff-8940-2297a8664a3c
+
+			/// Work orders whose due date has already passed - the fair denominator for compliance.
+			measure 'PM Due To Date' = ```
+					CALCULATE ( [PM Work Orders], Fact_WorkOrders[DueDate] <= TODAY () )
+					```
+				formatString: #,0
+				displayFolder: 02 PM Execution
+				lineageTag: 1f3ebd2e-1303-5858-b09c-fcaabfecaa3f
+
+			/// Completed on or before the due date.
+			measure 'PM On Time' = ```
+					CALCULATE ( [PM Work Orders], Fact_WorkOrders[OnTimeFlag] = "Yes" )
+					```
+				formatString: #,0
+				displayFolder: 02 PM Execution
+				lineageTag: 088f975a-0523-570d-9ed3-89580e5e08d6
+
+			/// The headline KPI: of everything that fell due, how much was done on time.
+			measure 'PM Compliance %' = ```
+					DIVIDE ( [PM On Time], [PM Due To Date] )
+					```
+				formatString: 0.0%
+				displayFolder: 02 PM Execution
+				lineageTag: 0761a394-773c-5e35-b2c5-eafaeb8c0111
+
+			/// Green at or above 95%, amber to 85%, red below.
+			measure 'PM Compliance % Color' = ```
+					VAR P = [PM Compliance %]
+					RETURN
+					    SWITCH ( TRUE (), ISBLANK ( P ), "#7B93A3", P >= 0.95, "#2F9E7E", P >= 0.85, "#D08B2C", "#C4553B" )
+					```
+				displayFolder: 02 PM Execution
+				lineageTag: 09f38293-e868-5d4a-bf5c-5897f2b2cfc4
+
+			/// Average days between due date and actual completion. Negative is early.
+			measure 'PM Schedule Slip Days' = ```
+					AVERAGEX (
+					    FILTER ( Fact_WorkOrders, NOT ISBLANK ( Fact_WorkOrders[ActualEndDate] ) ),
+					    DATEDIFF ( Fact_WorkOrders[DueDate], Fact_WorkOrders[ActualEndDate], DAY )
+					)
+					```
+				formatString: #,0.0
+				displayFolder: 02 PM Execution
+				lineageTag: 8ffc3d0c-eee8-5291-8137-3e84b79e04b6
+
+			/// How long overdue work has been sitting, on average.
+			measure 'Open WO Ageing Days' = ```
+					AVERAGEX (
+					    FILTER (
+					        Fact_WorkOrders,
+					        Fact_WorkOrders[Status] IN { "Scheduled", "In Progress", "Overdue" }
+					            && Fact_WorkOrders[DueDate] < TODAY ()
+					    ),
+					    DATEDIFF ( Fact_WorkOrders[DueDate], TODAY (), DAY )
+					)
+					```
+				formatString: #,0.0
+				displayFolder: 02 PM Execution
+				lineageTag: b2a53037-fe48-5310-aaf6-910a086c5c1b
+
+			/// Actual hands-on maintenance hours recorded against PM work orders.
+			measure 'PM Wrench Hours' = ```
+					DIVIDE ( SUM ( Fact_WorkOrders[DurationMin] ), 60 )
+					```
+				formatString: #,0.0
+				displayFolder: 02 PM Execution
+				lineageTag: a6a9e2af-6667-5257-8597-526152c36390
+
+			/// Planned hours from the machine master. The capacity planning figure.
+			measure 'PM Planned Hours' = ```
+					DIVIDE ( SUM ( Fact_WorkOrders[StdMinutes] ), 60 )
+					```
+				formatString: #,0.0
+				displayFolder: 02 PM Execution
+				lineageTag: 88e44cf7-0d3c-51f1-a100-2b8611384eef
+
+			/// Actual against standard time. Persistently over 130% means the standard is wrong or the job has grown.
+			measure 'PM Duration vs Std %' = ```
+					DIVIDE ( SUM ( Fact_WorkOrders[DurationMin] ), SUM ( Fact_WorkOrders[StdMinutes] ) )
+					```
+				formatString: 0.0%
+				displayFolder: 02 PM Execution
+				lineageTag: d02dbfa5-a814-51f4-b26c-9d3cefcfffb1
+
+			/// Average minutes per completed PM.
+			measure 'Avg PM Duration Min' = ```
+					AVERAGE ( Fact_WorkOrders[DurationMin] )
+					```
+				formatString: #,0
+				displayFolder: 02 PM Execution
+				lineageTag: c994280e-fabf-59ee-ac2b-7e4e734b2c37
+
+			/// Checklist lines recorded.
+			measure 'Checklist Tasks' = ```
+					COUNTROWS ( Fact_ChecklistResults )
+					```
+				formatString: #,0
+				displayFolder: 03 Checklist Quality
+				lineageTag: 97daa8bd-1170-50df-b0dd-fdba1fef7dba
+
+			/// Lines that failed their acceptance standard.
+			measure 'Checklist Tasks Not OK' = ```
+					CALCULATE ( [Checklist Tasks], Fact_ChecklistResults[Result] = "Not OK" )
+					```
+				formatString: #,0
+				displayFolder: 03 Checklist Quality
+				lineageTag: 2ce13076-83f3-53c3-8f8b-05a47d5b65f6
+
+			/// Share of checklist lines failing. A rising rate is a real reliability signal, not noise.
+			measure 'Checklist Fail Rate %' = ```
+					DIVIDE ( [Checklist Tasks Not OK], [Checklist Tasks] )
+					```
+				formatString: 0.0%
+				displayFolder: 03 Checklist Quality
+				lineageTag: 4559768b-4a1e-5df8-b8a5-c90201d160a5
+
+			/// Failed lines on safety-critical tasks. This number should be reviewed every week, without exception.
+			measure 'Safety Critical Fails' = ```
+					CALCULATE (
+					    [Checklist Tasks Not OK],
+					    Dim_Checklist[SafetyCritical] = "Yes"
+					)
+					```
+				formatString: #,0
+				displayFolder: 03 Checklist Quality
+				lineageTag: 9bcc4c84-2e83-5363-81f1-0f035965affd
+
+			/// How much of the checklist actually got answered across the work orders in context.
+			measure 'Checklist Completion %' = ```
+					DIVIDE (
+					    SUM ( Fact_WorkOrders[ChecklistDoneTasks] ),
+					    SUM ( Fact_WorkOrders[ChecklistTotalTasks] )
+					)
+					```
+				formatString: 0.0%
+				displayFolder: 03 Checklist Quality
+				lineageTag: 33080e1a-6638-52dc-a45b-0bc5eac18870
+
+			/// Completed work orders that have a machine QR scan against them.
+			measure 'QR Verified Completions' = ```
+					CALCULATE ( [PM Completed], Fact_WorkOrders[MachineQRScanned] = "Yes" )
+					```
+				formatString: #,0
+				displayFolder: 03 Checklist Quality
+				lineageTag: abc81a00-b1ef-510c-bbaa-6bd8c4c9df85
+
+			/// Proof of attendance. Should sit at 100%; anything less needs a conversation.
+			measure 'QR Verification %' = ```
+					DIVIDE ( [QR Verified Completions], [PM Completed] )
+					```
+				formatString: 0.0%
+				displayFolder: 03 Checklist Quality
+				lineageTag: cc7705ac-c7fc-5524-b311-4d1d4220a16c
+
+			/// Work orders closed without anyone scanning the machine. Investigate every one.
+			measure 'Desk Closed WOs' = ```
+					[PM Completed] - [QR Verified Completions]
+					```
+				formatString: #,0
+				displayFolder: 03 Checklist Quality
+				lineageTag: 60b87b5c-a28b-5bf5-9d56-1211e866bdf1
+
+			/// Unplanned stoppages reported.
+			measure 'Breakdowns' = ```
+					COUNTROWS ( Fact_Breakdowns )
+					```
+				formatString: #,0
+				displayFolder: 04 Reliability
+				lineageTag: a3e98100-db2d-521e-be77-cab72ffb96ef
+
+			/// Still not restored or still waiting on a spare.
+			measure 'Open Breakdowns' = ```
+					CALCULATE ( [Breakdowns], Fact_Breakdowns[Status] <> "Closed" )
+					```
+				formatString: #,0
+				displayFolder: 04 Reliability
+				lineageTag: ff923713-b4ea-56e0-a083-f78b70a349f6
+
+			/// Total unplanned downtime.
+			measure 'Downtime Hours' = ```
+					DIVIDE ( SUM ( Fact_Breakdowns[DowntimeMinutes] ), 60 )
+					```
+				formatString: #,0.0
+				displayFolder: 04 Reliability
+				lineageTag: 19524230-ab9c-5775-a763-7d7a4ef72775
+
+			/// Mean time to repair - average hours from stoppage to restoration.
+			measure 'MTTR Hours' = ```
+					DIVIDE (
+					    SUM ( Fact_Breakdowns[DowntimeMinutes] ),
+					    CALCULATE ( [Breakdowns], NOT ISBLANK ( Fact_Breakdowns[DowntimeMinutes] ) ) * 60
+					)
+					```
+				formatString: #,0.0
+				displayFolder: 04 Reliability
+				lineageTag: 3a9d6ea9-bbcb-5fb9-83d6-914df5a80371
+
+			/// Average minutes from the call to a technician arriving.
+			measure 'Avg Response Min' = ```
+					AVERAGE ( Fact_Breakdowns[ResponseMinutes] )
+					```
+				formatString: #,0
+				displayFolder: 04 Reliability
+				lineageTag: 96501828-e5ab-5a45-b747-1be01ccdcdb2
+
+			/// Cell standard hours spread evenly across the machines in the cell, so MTBF works at machine level. It is an allocation, not a meter reading - say so on the page.
+			measure 'Operating Hours Allocated' = ```
+					SUMX (
+					    VALUES ( Dim_Machine[MachineID] ),
+					    VAR TheCell = CALCULATE ( SELECTEDVALUE ( Dim_Machine[CellID] ) )
+					    VAR MachinesInCell =
+					        CALCULATE ( COUNTROWS ( Dim_Machine ), ALLEXCEPT ( Dim_Machine, Dim_Machine[CellID] ) )
+					    VAR CellHours =
+					        CALCULATE (
+					            SUM ( Fact_StdHours[StdHours] ),
+					            ALL ( Dim_Machine ),
+					            Fact_StdHours[CellID] = TheCell
+					        )
+					    RETURN
+					        DIVIDE ( CellHours, MachinesInCell )
+					)
+					```
+				formatString: #,0
+				displayFolder: 04 Reliability
+				lineageTag: 7e74d409-93ca-5f40-b086-b6fdd7d4eff4
+
+			/// Mean operating hours between failures.
+			measure 'MTBF Hours' = ```
+					DIVIDE ( [Operating Hours Allocated], [Breakdowns] )
+					```
+				formatString: #,0
+				displayFolder: 04 Reliability
+				lineageTag: 549da92d-252b-57e0-99de-7b866cd7cfa8
+
+			/// Operating hours less unplanned downtime, over operating hours.
+			measure 'Availability %' = ```
+					VAR Op = [Operating Hours Allocated]
+					RETURN
+					    IF ( Op = 0, BLANK (), DIVIDE ( Op - [Downtime Hours], Op ) )
+					```
+				formatString: 0.0%
+				displayFolder: 04 Reliability
+				lineageTag: 466bfca5-7e1e-5e68-b6ec-49b031dd5b95
+
+			/// Green at or above 97%, amber to 93%, red below.
+			measure 'Availability % Color' = ```
+					VAR A = [Availability %]
+					RETURN
+					    SWITCH ( TRUE (), ISBLANK ( A ), "#7B93A3", A >= 0.97, "#2F9E7E", A >= 0.93, "#D08B2C", "#C4553B" )
+					```
+				displayFolder: 04 Reliability
+				lineageTag: ec5281be-337a-5bc0-9e5c-852aa298f55d
+
+			/// Machine and failure-mode pairs seen more than once. Each one is a root cause that was never closed out.
+			measure 'Repeat Failure Count' = ```
+					COUNTROWS (
+					    FILTER (
+					        ADDCOLUMNS (
+					            SUMMARIZE (
+					                Fact_Breakdowns,
+					                Fact_Breakdowns[MachineID],
+					                Fact_Breakdowns[FailureMode]
+					            ),
+					            "@Cnt", CALCULATE ( COUNTROWS ( Fact_Breakdowns ) )
+					        ),
+					        [@Cnt] > 1
+					    )
+					)
+					```
+				formatString: #,0
+				displayFolder: 04 Reliability
+				lineageTag: 1f175c5c-3120-5a71-96e6-30954b8aafd9
+
+			/// Failures within a fortnight of a PM. This is the sharpest available measure of PM quality - a high number means the PM is being signed off, not done.
+			measure 'Breakdowns Within 15d of PM' = ```
+					COUNTROWS (
+					    FILTER (
+					        Fact_Breakdowns,
+					        VAR M = Fact_Breakdowns[MachineID]
+					        VAR D = Fact_Breakdowns[ReportedDate]
+					        VAR LastPM =
+					            CALCULATE (
+					                MAX ( Fact_WorkOrders[ActualEndDate] ),
+					                ALL ( Fact_WorkOrders ),
+					                Fact_WorkOrders[MachineID] = M,
+					                Fact_WorkOrders[Status] = "Completed",
+					                Fact_WorkOrders[ActualEndDate] <= D
+					            )
+					        RETURN
+					            NOT ISBLANK ( LastPM ) && DATEDIFF ( LastPM, D, DAY ) <= 15
+					    )
+					)
+					```
+				formatString: #,0
+				displayFolder: 04 Reliability
+				lineageTag: 674017b7-1d36-5e31-acce-2dea8e05b65f
+
+			/// Share of failures that follow closely on a PM.
+			measure 'PM Induced Failure %' = ```
+					DIVIDE ( [Breakdowns Within 15d of PM], [Breakdowns] )
+					```
+				formatString: 0.0%
+				displayFolder: 04 Reliability
+				lineageTag: d7cde209-35d5-53b9-9f7f-885242947bc2
+
+			/// Requests raised.
+			measure 'Spare Requests' = ```
+					COUNTROWS ( Fact_SpareRequests )
+					```
+				formatString: #,0
+				displayFolder: 05 Spare Parts
+				lineageTag: 8d473450-8133-52e8-a543-1f083908c9bd
+
+			/// Value of everything requested.
+			measure 'Spare Request Value' = ```
+					SUM ( Fact_SpareRequests[TotalCostINR] )
+					```
+				formatString: "₹"#,0;("₹"#,0);"₹"#,0
+				displayFolder: 05 Spare Parts
+				lineageTag: e6d9f551-c44d-5973-8f4d-34f152823eed
+
+			/// Value actually issued from stores.
+			measure 'Spares Issued Value' = ```
+					CALCULATE ( [Spare Request Value], Fact_SpareRequests[Status] = "Issued" )
+					```
+				formatString: "₹"#,0;("₹"#,0);"₹"#,0
+				displayFolder: 05 Spare Parts
+				lineageTag: 0fc25ded-e151-54b7-a6a8-13acb6f897cd
+
+			/// Requests waiting on somebody's decision.
+			measure 'Pending Approvals' = ```
+					CALCULATE ( [Spare Requests], Fact_SpareRequests[Status] = "Pending Approval" )
+					```
+				formatString: #,0
+				displayFolder: 05 Spare Parts
+				lineageTag: fcc20b7a-689d-5493-bab1-8dd012b4205c
+
+			/// Average days from request to approval.
+			measure 'Avg Approval TAT Days' = ```
+					AVERAGEX (
+					    FILTER ( Fact_SpareRequests, NOT ISBLANK ( Fact_SpareRequests[ApprovedDate] ) ),
+					    DATEDIFF ( Fact_SpareRequests[RequestDate], Fact_SpareRequests[ApprovedDate], DAY )
+					)
+					```
+				formatString: #,0.0
+				displayFolder: 05 Spare Parts
+				lineageTag: 5801bfb5-ae8f-5e9b-9b40-bfae2976eb8e
+
+			/// Share of requests raised as emergencies. A high figure means planning is losing to firefighting.
+			measure 'Emergency Request %' = ```
+					DIVIDE (
+					    CALCULATE ( [Spare Requests], Fact_SpareRequests[Urgency] = "Emergency" ),
+					    [Spare Requests]
+					)
+					```
+				formatString: 0.0%
+				displayFolder: 05 Spare Parts
+				lineageTag: fab6146b-5de8-5e02-98fe-ca52114a674f
+
+			/// Quantity actually fitted.
+			measure 'Spares Replaced Qty' = ```
+					SUM ( Fact_SpareReplacements[QtyReplaced] )
+					```
+				formatString: #,0
+				displayFolder: 05 Spare Parts
+				lineageTag: c87bedad-f4af-52b2-8209-c12a6a54c93e
+
+			/// Value of parts actually consumed - not the same as requested, and the gap is worth watching.
+			measure 'Spare Consumption Value' = ```
+					SUM ( Fact_SpareReplacements[TotalCostINR] )
+					```
+				formatString: "₹"#,0;("₹"#,0);"₹"#,0
+				displayFolder: 05 Spare Parts
+				lineageTag: 2377a886-587e-5fcf-9926-573a511eb25e
+
+			/// Maintenance material cost per production standard hour. The unit-cost trend to hold flat.
+			measure 'Spend per Std Hour' = ```
+					DIVIDE ( [Spare Consumption Value], [Std Hours] )
+					```
+				formatString: "₹"#,0;("₹"#,0);"₹"#,0
+				displayFolder: 05 Spare Parts
+				lineageTag: f27bfb92-c585-5fcf-afb2-fa83f363cd56
+
+			/// Catalogue lines under their reorder level as at the last stock upload.
+			measure 'Parts Below Min Stock' = ```
+					COUNTROWS ( FILTER ( Dim_SparePart, Dim_SparePart[CurrentStock] < Dim_SparePart[MinStock] ) )
+					```
+				formatString: #,0
+				displayFolder: 05 Spare Parts
+				lineageTag: 824c3102-968a-5a39-8ee6-60678053d4ca
+
+			/// Value sitting in the store.
+			measure 'Stock Value' = ```
+					SUMX ( Dim_SparePart, Dim_SparePart[CurrentStock] * Dim_SparePart[UnitCostINR] )
+					```
+				formatString: "₹"#,0;("₹"#,0);"₹"#,0
+				displayFolder: 05 Spare Parts
+				lineageTag: 1db3c14e-8dc0-5045-8f6d-3f5a72c62875
+
+			/// Abnormalities logged.
+			measure 'Abnormalities' = ```
+					COUNTROWS ( Fact_Abnormalities )
+					```
+				formatString: #,0
+				displayFolder: 06 Abnormalities
+				lineageTag: 3e5ca06e-9849-53d5-a414-5e8c41ecb7b6
+
+			/// Still open.
+			measure 'Open Abnormalities' = ```
+					CALCULATE ( [Abnormalities], Fact_Abnormalities[Status] <> "Closed" )
+					```
+				formatString: #,0
+				displayFolder: 06 Abnormalities
+				lineageTag: 8f35c8c4-76f2-5b7e-a662-3d0e85513c6f
+
+			/// Open and rated High. This is the escalation list.
+			measure 'High Severity Open' = ```
+					CALCULATE (
+					    [Abnormalities],
+					    Fact_Abnormalities[Status] <> "Closed",
+					    Fact_Abnormalities[Severity] = "High"
+					)
+					```
+				formatString: #,0
+				displayFolder: 06 Abnormalities
+				lineageTag: 7ede5214-f378-5e12-aad3-3230127a6c25
+
+			/// Share closed out.
+			measure 'Abnormality Closure %' = ```
+					DIVIDE (
+					    CALCULATE ( [Abnormalities], Fact_Abnormalities[Status] = "Closed" ),
+					    [Abnormalities]
+					)
+					```
+				formatString: 0.0%
+				displayFolder: 06 Abnormalities
+				lineageTag: c89a24bf-4e3c-5049-adec-3720845f5487
+
+			/// Average days from report to closure.
+			measure 'Avg Abnormality Closure Days' = ```
+					AVERAGEX (
+					    FILTER ( Fact_Abnormalities, NOT ISBLANK ( Fact_Abnormalities[ClosedDate] ) ),
+					    DATEDIFF ( Fact_Abnormalities[ReportedDate], Fact_Abnormalities[ClosedDate], DAY )
+					)
+					```
+				formatString: #,0.0
+				displayFolder: 06 Abnormalities
+				lineageTag: f63aefa9-8b9e-56d9-903a-b6ba8a0068e6
+
+			/// Open beyond thirty days. These are the ones that turn into breakdowns.
+			measure 'Abnormalities Open Over 30d' = ```
+					COUNTROWS (
+					    FILTER (
+					        Fact_Abnormalities,
+					        Fact_Abnormalities[Status] <> "Closed"
+					            && DATEDIFF ( Fact_Abnormalities[ReportedDate], TODAY (), DAY ) > 30
+					    )
+					)
+					```
+				formatString: #,0
+				displayFolder: 06 Abnormalities
+				lineageTag: 7bb3b064-49a2-5414-9881-f765718265bf
+
+			/// Red if anything High is open, amber if anything has aged past thirty days.
+			measure 'Open Abnormality Color' = ```
+					VAR H = [High Severity Open]
+					VAR A = [Abnormalities Open Over 30d]
+					RETURN
+					    SWITCH ( TRUE (), H > 0, "#C4553B", A > 0, "#D08B2C", "#2F9E7E" )
+					```
+				displayFolder: 06 Abnormalities
+				lineageTag: 27364850-dd41-5c0d-ab8d-9a40bc0d8d27
+
+			/// Headcount available for assignment.
+			measure 'Technicians Active' = ```
+					CALCULATE ( DISTINCTCOUNT ( Dim_Technician[TechID] ), Dim_Technician[Active] = "Yes" )
+					```
+				formatString: #,0
+				displayFolder: 07 Technician
+				lineageTag: a6f54fee-aea4-52ab-ad8b-f9519badbc25
+
+			/// Available wrench hours in the selected period, from daily capacity times working days.
+			measure 'Technician Capacity Hours' = ```
+					VAR WorkDays =
+					    CALCULATE (
+					        COUNTROWS ( Dim_Date ),
+					        Dim_Date[IsWeekend] = "No",
+					        Dim_Date[IsHoliday] = "No"
+					    )
+					VAR DailyMin =
+					    SUMX (
+					        VALUES ( Dim_Technician[TechID] ),
+					        CALCULATE ( MAX ( Dim_Technician[DailyCapacityMin] ) )
+					    )
+					RETURN
+					    DIVIDE ( DailyMin * WorkDays, 60 )
+					```
+				formatString: #,0.0
+				displayFolder: 07 Technician
+				lineageTag: a157e9a2-ba69-56ee-a00d-633ac0abaf37
+
+			/// PM hours against available hours. Anything above about 70% leaves no room for breakdowns.
+			measure 'Technician Utilisation %' = ```
+					DIVIDE ( [PM Wrench Hours], [Technician Capacity Hours] )
+					```
+				formatString: 0.0%
+				displayFolder: 07 Technician
+				lineageTag: a9472a92-fb77-5b9c-bee7-0fc002a9f3c0
+
+			/// Average work order load per person - the load balancing view.
+			measure 'WOs per Technician' = ```
+					DIVIDE ( [PM Work Orders], DISTINCTCOUNT ( Fact_WorkOrders[AssignedTechID] ) )
+					```
+				formatString: #,0.0
+				displayFolder: 07 Technician
+				lineageTag: 712a49d4-7f46-5adf-b22c-d31a76db830b
+
+			/// Total QR scans.
+			measure 'QR Scans' = ```
+					COUNTROWS ( Fact_ScanLog )
+					```
+				formatString: #,0
+				displayFolder: 07 Technician
+				lineageTag: c66b4345-9684-54e4-a026-7ba013a59121
+
+			/// Scans at a machine.
+			measure 'Machine Scans' = ```
+					CALCULATE ( [QR Scans], Fact_ScanLog[QRType] = "Machine QR" )
+					```
+				formatString: #,0
+				displayFolder: 07 Technician
+				lineageTag: df85b494-8ecf-5d6c-92a8-185f843b3c30
+
+			/// Distinct machines scanned - shop floor coverage.
+			measure 'Machines Touched' = ```
+					CALCULATE ( DISTINCTCOUNT ( Fact_ScanLog[MachineID] ), Fact_ScanLog[QRType] = "Machine QR" )
+					```
+				formatString: #,0
+				displayFolder: 07 Technician
+				lineageTag: 9ae70ac1-c16d-5e47-b8ad-7e2bbf04ea66
+
+			/// How many cell-month rows the upload should contain for the selected period.
+			measure 'Expected Std Hours Rows' = ```
+					VAR ActiveCells =
+					    CALCULATE ( DISTINCTCOUNT ( Dim_Cell[CellID] ), Dim_Cell[Active] = "Yes", ALL ( Dim_Date ) )
+					VAR FirstUpload =
+					    CALCULATE ( MIN ( Fact_StdHours[MonthStartDate] ), ALL ( Dim_Date ), ALL ( Dim_Cell ) )
+					VAR LastUpload =
+					    CALCULATE ( MAX ( Fact_StdHours[MonthStartDate] ), ALL ( Dim_Date ), ALL ( Dim_Cell ) )
+					VAR MonthsInScope =
+					    IF (
+					        ISBLANK ( FirstUpload ),
+					        0,
+					        CALCULATE (
+					            DISTINCTCOUNT ( Dim_Date[MonthKey] ),
+					            Dim_Date[Date] >= FirstUpload,
+					            Dim_Date[Date] <= EOMONTH ( LastUpload, 0 )
+					        )
+					    )
+					RETURN
+					    ActiveCells * MonthsInScope
+					```
+				formatString: #,0
+				displayFolder: 08 Data Quality
+				lineageTag: 5d4ceb1b-3a3f-534c-a02a-230c09e6b906
+
+			/// Gaps in the monthly upload. Anything above zero means a cell is not accruing hours and will never be scheduled.
+			measure 'Missing Std Hours Rows' = ```
+					MAX ( 0, [Expected Std Hours Rows] - COUNTROWS ( Fact_StdHours ) )
+					```
+				formatString: #,0
+				displayFolder: 08 Data Quality
+				lineageTag: 5834724c-f0b3-5c3b-bfae-6f3ee735296c
+
+			/// Completed work orders with no checklist evidence behind them.
+			measure 'WOs Without Checklist' = ```
+					COUNTROWS (
+					    FILTER (
+					        Fact_WorkOrders,
+					        Fact_WorkOrders[Status] = "Completed"
+					            && ISBLANK ( CALCULATE ( COUNTROWS ( Fact_ChecklistResults ) ) )
+					    )
+					)
+					```
+				formatString: #,0
+				displayFolder: 08 Data Quality
+				lineageTag: 0322a58f-2800-5878-a769-ec48bc35f2af
+
+			/// One number for the health of the inputs. It should be zero.
+			measure 'Data Quality Issues' = ```
+					[Missing Std Hours Rows] + [Desk Closed WOs] + [WOs Without Checklist]
+					```
+				formatString: #,0
+				displayFolder: 08 Data Quality
+				lineageTag: 880d52bd-d7c7-5e2a-9681-7fa48592bdcb
+
+			/// Green only at zero.
+			measure 'Data Quality Color' = ```
+					VAR I = [Data Quality Issues]
+					RETURN
+					    SWITCH ( TRUE (), I = 0, "#2F9E7E", I <= 5, "#D08B2C", "#C4553B" )
+					```
+				displayFolder: 08 Data Quality
+				lineageTag: 5d974208-c739-587a-9bd9-7b2f0b5fd9ac
+
+			/// Dynamic subtitle for the planning page.
+			measure 'Title Planning' = ```
+					"PM planning as at " & [Latest Std Hours Month]
+					    & "  |  " & [Cells Due Next 3 Months] & " cell(s) fall due in the next 3 months"
+					```
+				displayFolder: 09 Titles
+				lineageTag: e6114c7b-afb3-5621-b238-24662bdf455d
+
+			/// Dynamic subtitle for the execution page.
+			measure 'Title Compliance' = ```
+					VAR P = [PM Compliance %]
+					RETURN
+					    "PM compliance " & FORMAT ( P, "0.0%" )
+					        & "  |  " & [PM Overdue] & " overdue, " & [PM Open] & " open"
+					```
+				displayFolder: 09 Titles
+				lineageTag: 5d8e2667-c507-5c67-b519-c3e02f9f84cc
+
+			/// Header for the Machine 360 page - the same line the QR scan shows on the phone.
+			measure 'Machine Header' = ```
+					VAR M = SELECTEDVALUE ( Dim_Machine[MachineName] )
+					VAR ID = SELECTEDVALUE ( Dim_Machine[MachineID] )
+					VAR L = [Last PM Date]
+					RETURN
+					    IF (
+					        ISBLANK ( M ),
+					        "Select a machine",
+					        M & "  (" & ID & ")   |   Last PM: "
+					            & IF ( ISBLANK ( L ), "never recorded", FORMAT ( L, "dd MMM yyyy" ) )
+					    )
+					```
+				displayFolder: 09 Titles
+				lineageTag: 730f5630-4c58-5133-a965-239a749dc585
+
+			column _Placeholder
+				dataType: int64
+				isHidden
+				formatString: 0
+				lineageTag: 9c94e9a0-03eb-5649-b4da-77d601c9cc16
+				summarizeBy: none
+				isNameInferred
+				sourceColumn: [_Placeholder]
+
+				annotation SummarizationSetBy = Automatic
+
+			partition _Measures = calculated
+				mode: import
+				source = ROW("_Placeholder", 1)
+
+			annotation PBI_Id = measures_table
+
+		relationship 962d390a-ce2a-535a-a1b8-e227200a5a2f
+			fromColumn: Dim_Machine.CellID
+			toColumn: Dim_Cell.CellID
+
+		relationship a335d0da-a579-505b-8ad5-1f74880a4e60
+			fromColumn: Fact_StdHours.CellID
+			toColumn: Dim_Cell.CellID
+
+		relationship 5a56afa2-95b0-5bac-b9dc-e724c8e32267
+			fromColumn: Fact_StdHours.MonthStartDate
+			toColumn: Dim_Date.Date
+
+		relationship fb600201-46a2-5be3-8f4b-5d4e95fe22ad
+			fromColumn: Fact_HourLedger.CellID
+			toColumn: Dim_Cell.CellID
+
+		relationship 99086fc2-98cd-5522-bdaa-6676375f429c
+			fromColumn: Fact_HourLedger.MonthStartDate
+			toColumn: Dim_Date.Date
+
+		relationship e8d0c3bd-06c3-5225-baa9-9cd9e34020cc
+			fromColumn: Fact_WorkOrders.MachineID
+			toColumn: Dim_Machine.MachineID
+
+		relationship 968eb5ac-97ae-5ca7-8c21-d489c6a0b51b
+			fromColumn: Fact_WorkOrders.AssignedTechID
+			toColumn: Dim_Technician.TechID
+
+		relationship b8652c73-b177-5d08-bdda-0363b3d7779c
+			fromColumn: Fact_WorkOrders.PlannedDate
+			toColumn: Dim_Date.Date
+
+		relationship b8b21352-d847-52ad-ba47-5933ec1641a0
+			isActive: false
+			fromColumn: Fact_WorkOrders.ActualEndDate
+			toColumn: Dim_Date.Date
+
+		relationship 51ac740e-d73e-5071-9b4e-8b17dbc5c4f6
+			isActive: false
+			fromColumn: Fact_WorkOrders.DueDate
+			toColumn: Dim_Date.Date
+
+		relationship 4c0645d7-c938-58b1-9394-e483f1c843b3
+			fromColumn: Fact_ChecklistResults.WOID
+			toColumn: Fact_WorkOrders.WOID
+
+		relationship 206d955c-3c32-577f-966f-c6f85c44b862
+			fromColumn: Fact_ChecklistResults.TaskKey
+			toColumn: Dim_Checklist.TaskKey
+
+		relationship 80386f8f-6483-523d-b314-b6a8496859ca
+			fromColumn: Fact_Breakdowns.MachineID
+			toColumn: Dim_Machine.MachineID
+
+		relationship 7dc47c01-7721-576d-8fb9-f12bf43973f8
+			isActive: false
+			fromColumn: Fact_Breakdowns.AttendedTechID
+			toColumn: Dim_Technician.TechID
+
+		relationship f4327969-35c1-5cef-a690-8280f6fe75af
+			fromColumn: Fact_Breakdowns.ReportedDate
+			toColumn: Dim_Date.Date
+
+		relationship 25d0fd5d-ff74-5e64-8bf0-f1c3b5ec13df
+			fromColumn: Fact_SpareRequests.MachineID
+			toColumn: Dim_Machine.MachineID
+
+		relationship b87084f9-79a5-5cd1-9ef8-4a787ca35d94
+			fromColumn: Fact_SpareRequests.PartNo
+			toColumn: Dim_SparePart.PartNo
+
+		relationship 07421718-7138-5267-bd41-792ad756892c
+			fromColumn: Fact_SpareRequests.RequestDate
+			toColumn: Dim_Date.Date
+
+		relationship 257daf34-0c04-5d86-9e7d-449601c8a73d
+			isActive: false
+			fromColumn: Fact_SpareRequests.RequestedByTechID
+			toColumn: Dim_Technician.TechID
+
+		relationship 18a40713-6c5a-5ac4-923b-42994073b0e0
+			fromColumn: Fact_SpareReplacements.MachineID
+			toColumn: Dim_Machine.MachineID
+
+		relationship f9cabd60-8921-5c97-9b3b-be99198e99d4
+			fromColumn: Fact_SpareReplacements.PartNo
+			toColumn: Dim_SparePart.PartNo
+
+		relationship 67717616-f9f8-509e-b66f-a340b85b1d06
+			fromColumn: Fact_SpareReplacements.ReplacedDate
+			toColumn: Dim_Date.Date
+
+		relationship e2b2973b-74ed-5d00-903e-273607017fa2
+			fromColumn: Fact_Abnormalities.MachineID
+			toColumn: Dim_Machine.MachineID
+
+		relationship 2f05ae24-be5a-5d04-97d0-f6507a5fa79e
+			fromColumn: Fact_Abnormalities.ReportedByTechID
+			toColumn: Dim_Technician.TechID
+
+		relationship 2083803a-0e1d-5248-bf4d-862f292a472c
+			fromColumn: Fact_Abnormalities.ReportedDate
+			toColumn: Dim_Date.Date
+
+		relationship ee63a24d-152c-5dc6-8077-d0f5d4f3fdf4
+			fromColumn: Fact_ScanLog.MachineID
+			toColumn: Dim_Machine.MachineID
+
+		relationship dbb3c811-d176-5bd2-a37c-868b49c151bd
+			fromColumn: Fact_ScanLog.TechID
+			toColumn: Dim_Technician.TechID
+
+		relationship f579a696-31e8-5f98-9f5b-17c4ed361c6f
+			fromColumn: Fact_ScanLog.ScanDate
+			toColumn: Dim_Date.Date

@@ -290,7 +290,20 @@ def copy_tree(src, dst, **kw):
 
 
 def main() -> None:
+    # Both are deterministic, so regenerating here is free and means a stale
+    # copy can never ship. build_pbip is deliberately NOT run: its lineage tags
+    # are random, so a rebuild would churn the whole project on every package.
+    for label, script in (("TMDL model script", "build_tmdl_script.py"),
+                          ("SharePoint provisioning script",
+                           "build_sharepoint_provisioning.py")):
+        r = subprocess.run([sys.executable, os.path.join(HERE, script)],
+                           capture_output=True, text=True)
+        if r.returncode != 0:
+            sys.stdout.write(r.stdout + r.stderr)
+            sys.exit(f"  could not regenerate the {label}")
+
     for label, script in (("Power BI project", "validate_pbip.py"),
+                          ("TMDL model script", "validate_tmdl_script.py"),
                           ("flow definitions", "validate_flows.py"),
                           ("field app prototype", "test_power_app.py")):
         print(f"\n  verifying the {label} ...")
@@ -307,14 +320,19 @@ def main() -> None:
 
     # 01 Power BI
     copy_tree(os.path.join(ROOT, "powerbi"), os.path.join(PKG, "01_Power_BI"))
-    print("  01_Power_BI/  (PM_Dashboard.pbip + model + report + data + SETUP.md)")
+    print("  01_Power_BI/  (PM_Model.tmdl paste script + PM_Dashboard.pbip "
+          "+ model + report + data + SETUP.md)")
 
     # 02 SharePoint templates
     copy_tree(os.path.join(ROOT, "sharepoint-templates"),
               os.path.join(PKG, "02_SharePoint_Templates"))
     n_x = sum(len([f for f in fs if f.endswith(".xlsx")])
               for _, _, fs in os.walk(os.path.join(PKG, "02_SharePoint_Templates")))
-    print(f"  02_SharePoint_Templates/  ({n_x} workbooks)")
+    n_cols = open(os.path.join(PKG, "02_SharePoint_Templates",
+                                "Provision_PM_Lists.ps1"),
+                   encoding="utf-8-sig").read().count("\nNew-PmField -List ")
+    print(f"  02_SharePoint_Templates/  ({n_x} workbooks + provisioning script "
+          f"for 8 lists / {n_cols} columns)")
 
     # 03 QR
     qr_dst = os.path.join(PKG, "03_QR_Codes")

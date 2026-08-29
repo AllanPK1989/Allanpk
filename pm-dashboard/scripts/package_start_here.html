@@ -103,21 +103,23 @@ footer{background:var(--plate);color:var(--plate-dim);padding:30px 0;font-size:.
     </div>
     <div class="step">
       <span class="n">02</span>
-      <div><h3>See the dashboard working</h3>
-        <p>Copy the <span class="mono">01_Power_BI</span> folder to <span class="mono">C:\PM_Dashboard</span>,
-           open the project and refresh. Sample data is inside it and already wired up, so all ten
-           pages populate immediately — no connection to set up first.</p></div>
-      <div class="go"><a class="btn" href="01_Power_BI/PM_Dashboard.pbip">Open PM_Dashboard.pbip</a>
-        <span class="hint">Power BI Desktop · see SETUP.md</span></div>
+      <div><h3>Build the model in one paste</h3>
+        <p>Copy <span class="mono">01_Power_BI\data</span> to <span class="mono">C:\PM_Dashboard\data</span>,
+           open a blank Power BI file, and paste <span class="mono">PM_Model.tmdl</span> into TMDL view.
+           Apply, refresh, and you have 17 tables, 28 relationships and 94 measures on the sample
+           data. No version mismatch to trip over — your own Desktop builds it.</p></div>
+      <div class="go"><a class="btn" href="04_Documentation/Documentation.html#15-import-procedure">Import procedure</a>
+        <span class="hint">Power BI Desktop · 10 minutes</span></div>
     </div>
     <div class="step">
       <span class="n">03</span>
       <div><h3>Read what it does and why</h3>
-        <p>Eighteen documents: architecture, the scheduling rule with worked numbers, the
+        <p>Nineteen documents: architecture, the scheduling rule with worked numbers, the
            SharePoint build, the app specification with real formulas, six flows, the QR system,
            dashboard design, the measure library, a phased checklist, the open decisions, and
-           two click-by-click guides that build the model and the report by hand, and what
-           changes if you have to use an existing SharePoint site rather than a new one.</p></div>
+           two click-by-click guides that build the model and the report by hand, what
+           changes if you have to use an existing SharePoint site rather than a new one, and the
+           import procedure that ties every part together.</p></div>
       <div class="go"><a class="btn ghost" href="04_Documentation/Documentation.html">Open documentation</a>
         <span class="hint">Any browser</span></div>
     </div>
@@ -199,10 +201,10 @@ carry_over    = <b>MAX</b>(0, closing - 4000)</pre>
     <thead><tr><th>Folder</th><th>Contents</th><th>Opens with</th></tr></thead>
     <tbody>
       <tr><td>00_MASTER_BUILD_GUIDE.md</td><td>The eight-phase build order with time estimates and the template file for every step &mdash; read this first</td><td>Any text editor / browser</td></tr>
-      <tr><td>01_Power_BI</td><td>The report project: 17 tables, 94 measures, 28 relationships, 10 pages, 107 visuals, matching theme, and the sample CSVs it reads</td><td>Power BI Desktop</td></tr>
-      <tr><td>02_SharePoint_Templates</td><td>List schemas for all eight lists, six master-data workbooks, the monthly standard-hours template plus a filled sample and a history back-load, and seed data for testing</td><td>Excel</td></tr>
+      <tr><td>01_Power_BI</td><td>The TMDL paste script that builds the whole model, plus the report project: 17 tables, 94 measures, 28 relationships, 10 pages, 107 visuals, matching theme, and the sample CSVs it reads</td><td>Power BI Desktop</td></tr>
+      <tr><td>02_SharePoint_Templates</td><td>A PowerShell script that provisions all eight lists with their 157 columns, list schemas, six master-data workbooks, the monthly standard-hours template plus a filled sample and a history back-load, and seed data for testing</td><td>Excel</td></tr>
       <tr><td>03_QR_Codes</td><td>The offline generator, plus pre-generated placeholder codes and print sheets so you can see the label layout before you have real app IDs</td><td>Browser</td></tr>
-      <tr><td>04_Documentation</td><td>Eighteen documents in one navigable page, with the markdown originals alongside</td><td>Browser</td></tr>
+      <tr><td>04_Documentation</td><td>Nineteen documents in one navigable page, with the markdown originals alongside</td><td>Browser</td></tr>
       <tr><td>05_Deployment</td><td>The worksheet for your tenant details, build checklists, agreed thresholds and sign-off</td><td>Excel</td></tr>
       <tr><td>06_Flows</td><td>Six workflow definitions and the build guide generated from them</td><td>Browser / Power Automate</td></tr>
       <tr><td>07_Power_App</td><td>The working prototype and the Power Fx for every control</td><td>Browser / Power Apps Studio</td></tr>
