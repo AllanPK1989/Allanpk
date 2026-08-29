@@ -379,6 +379,30 @@ in
         L.append("")
         return "\n".join(L)
 
+    global EXPRESSION_SPECS
+    EXPRESSION_SPECS = [
+        ("SourceMode", "parameter", '"Local"  (allowed: Local, SharePoint)',
+         "Local reads the sample CSVs. SharePoint reads the real lists and workbooks. "
+         "This is the only switch you change at go-live."),
+        ("LocalDataFolder", "parameter", '"C:\\PM_Dashboard\\data"',
+         "Folder holding the CSVs. Only used when SourceMode = Local."),
+        ("SharePointSiteUrl", "parameter",
+         '"https://contoso.sharepoint.com/sites/PMSystem"',
+         "Root URL of the SharePoint site. Only used when SourceMode = SharePoint."),
+        ("fnLocalCsv", "function", fn_local,
+         "Reads one sample CSV and promotes headers."),
+        ("fnSpList", "function", fn_splist,
+         "Reads one SharePoint list by its display name."),
+        ("fnSpExcel", "function", fn_spexcel,
+         "Reads one named Excel table out of a workbook in the document library."),
+        ("fnStdHoursFolder", "function", fn_stdhours,
+         "Combines every monthly standard-hours upload in the 02 Standard Hours folder. "
+         "Add a file, refresh, and the new month appears - no query editing."),
+        ("fnSource", "function", fn_source,
+         "Single entry point for every table. Routes to CSV, SharePoint list or "
+         "SharePoint workbook depending on SourceMode."),
+    ]
+
     out = []
     out.append(param(
         "SourceMode", "Local", "Text",
@@ -483,6 +507,8 @@ def build_semantic_model(base: str) -> None:
 # ===========================================================================
 # PBIR helpers
 # ===========================================================================
+
+EXPRESSION_SPECS: list = []
 
 VIS_SCHEMA = ("https://developer.microsoft.com/json-schemas/fabric/item/report/"
               "definition/visualContainer/2.4.0/schema.json")

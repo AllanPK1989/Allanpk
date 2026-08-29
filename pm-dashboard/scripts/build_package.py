@@ -91,6 +91,13 @@ def build_docs() -> None:
                        "short": "Build Specification",
                        "html": wrap_tables(md_to_html(spec))})
 
+    # The master guide is the spine of the whole build, so it sits first.
+    master = open(os.path.join(ROOT, "MASTER_BUILD_GUIDE.md"), encoding="utf-8").read()
+    entries.insert(0, {"id": "master", "file": "MASTER_BUILD_GUIDE.md",
+                       "title": "Master Build Guide",
+                       "short": "Master Build Guide",
+                       "html": wrap_tables(md_to_html(master))})
+
     for rel, ident, short in (
             (os.path.join("flows", "BUILD_GUIDE.md"), "flows", "Flow Build Guide"),
             (os.path.join("powerapp", "POWERFX_REFERENCE.md"), "powerfx", "Power Fx Reference")):
@@ -151,7 +158,8 @@ show((location.hash||'').replace('#','')||btns[0].dataset.doc);
     os.makedirs(src_md, exist_ok=True)
     for f in files:
         shutil.copyfile(os.path.join(docs_dir, f), os.path.join(src_md, f))
-    for rel in ("BUILD_SPECIFICATION.md", os.path.join("flows", "BUILD_GUIDE.md"),
+    for rel in ("MASTER_BUILD_GUIDE.md", "BUILD_SPECIFICATION.md",
+                os.path.join("flows", "BUILD_GUIDE.md"),
                 os.path.join("powerapp", "POWERFX_REFERENCE.md")):
         shutil.copyfile(os.path.join(ROOT, rel),
                         os.path.join(src_md, os.path.basename(rel)))
@@ -335,6 +343,10 @@ def main() -> None:
     shutil.copyfile(os.path.join(HERE, "package_start_here.html"),
                     os.path.join(PKG, "00_START_HERE.html"))
     print("  00_START_HERE.html")
+
+    shutil.copyfile(os.path.join(ROOT, "MASTER_BUILD_GUIDE.md"),
+                    os.path.join(PKG, "00_MASTER_BUILD_GUIDE.md"))
+    print("  00_MASTER_BUILD_GUIDE.md")
 
     zip_base = os.path.join(DIST, "PM_System")
     if os.path.exists(zip_base + ".zip"):
