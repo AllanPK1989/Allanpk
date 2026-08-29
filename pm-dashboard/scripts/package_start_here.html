@@ -221,13 +221,21 @@ carry_over    = <b>MAX</b>(0, closing - 4000)</pre>
 
 <section><div class="wrap">
   <h2>If the Power BI project will not open</h2>
-  <p class="callout warn">Report file formats move with Power BI Desktop releases. If the project
-    refuses to load on your version, it is a five-minute fix, not a rebuild — <b>SETUP.md</b> in the
-    <span class="mono">01_Power_BI</span> folder has the recovery steps. The data model and the
-    measures are unaffected either way.</p>
-  <p class="callout">Everything here was checked before it was assembled. <b>692 consistency
+  <p class="callout warn">The <span class="mono">.pbip</span> wrapper files are versioned, and
+    Desktop validates each one against a pattern that moves between releases. Every value here is
+    taken from Power BI projects published by Microsoft, and is re-checked on every build. If your
+    Desktop still refuses the project, <b>the model and the report are fine</b> &mdash; only the
+    small wrapper files are wrong for your build, and <b>SETUP.md</b> in the
+    <span class="mono">01_Power_BI</span> folder has a five-minute fix that needs no Python: let
+    Desktop write those files, then copy the two <span class="mono">definition</span> folders in.</p>
+  <p class="callout">The report theme is imported separately &mdash; <b>View &#9656; Themes &#9656;
+    Browse for themes</b> &#9656; <span class="mono">theme\PM_Theme.json</span>. Embedding a custom
+    theme inside the project is the most version-fragile part of the format, and importing it
+    takes five seconds.</p>
+  <p class="callout">Everything here was checked before it was assembled. <b>813 consistency
     checks</b> on the report project (every relationship, visual field binding and measure
-    reference resolved against the model). <b>426 checks</b> on the flow definitions (every
+    reference resolved against the model, and every $schema matched to the pattern Desktop
+    enforces). <b>426 checks</b> on the flow definitions (every
     action reference, variable, parameter and SharePoint column), with the checker itself
     proved against seven deliberate faults. <b>14 rule checks</b> driving the field app
     prototype through the full technician journey in a real browser. And the QR encoder
