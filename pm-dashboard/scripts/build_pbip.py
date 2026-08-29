@@ -454,7 +454,12 @@ def build_semantic_model(base: str) -> None:
         "metadata": {"type": "SemanticModel", "displayName": NAME},
         "config": {"version": "2.0", "logicalId": uid()},
     })
-    wj(os.path.join(sm, "definition.pbism"), {"version": "4.2", "settings": {}})
+    wj(os.path.join(sm, "definition.pbism"), {
+        "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/"
+                   "semanticModel/definitionProperties/1.0.0/schema.json",
+        "version": "4.2",
+        "settings": {},
+    })
     w(os.path.join(sm, "definition", "database.tmdl"),
       "database\n" + T + "compatibilityLevel: 1567\n")
     w(os.path.join(sm, "definition", "model.tmdl"), emit_model())
@@ -472,13 +477,13 @@ def build_semantic_model(base: str) -> None:
 # ===========================================================================
 
 VIS_SCHEMA = ("https://developer.microsoft.com/json-schemas/fabric/item/report/"
-              "definition/visualContainer/2.0.0/schema.json")
+              "definition/visualContainer/2.4.0/schema.json")
 PAGE_SCHEMA = ("https://developer.microsoft.com/json-schemas/fabric/item/report/"
                "definition/page/2.0.0/schema.json")
 PAGES_SCHEMA = ("https://developer.microsoft.com/json-schemas/fabric/item/report/"
                 "definition/pagesMetadata/1.0.0/schema.json")
 REPORT_SCHEMA = ("https://developer.microsoft.com/json-schemas/fabric/item/report/"
-                 "definition/report/2.0.0/schema.json")
+                 "definition/report/3.0.0/schema.json")
 
 W, H = 1600, 900
 
@@ -1258,34 +1263,21 @@ def build_report(base: str, inject: bool = False) -> None:
             "config": {"version": "2.0", "logicalId": uid()},
         })
         wj(os.path.join(rp, "definition.pbir"), {
-            "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/1.0.0/schema.json",
-            "version": "1.0",
+            "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/"
+                       "report/definitionProperties/2.0.0/schema.json",
+            "version": "4.0",
             "datasetReference": {"byPath": {"path": f"../{NAME}.SemanticModel"}},
-        })
-        wj(os.path.join(defn, "version.json"), {
-            "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/versionMetadata/1.0.0/schema.json",
-            "version": "2.0.0",
         })
         wj(os.path.join(defn, "report.json"), {
             "$schema": REPORT_SCHEMA,
-            "themeCollection": {"customTheme": {"name": "PM_Theme",
-                                                "type": "RegisteredResources"}},
-            "resourcePackages": [{
-                "name": "RegisteredResources",
-                "type": "RegisteredResources",
-                "items": [{"name": "PM_Theme.json", "path": "PM_Theme.json",
-                           "type": "CustomTheme"}],
-            }],
+            "themeCollection": {"baseTheme": {"name": "CY19SU12"}},
             "settings": {
                 "useStylableVisualContainerHeader": True,
                 "defaultDropInteraction": "Filter",
                 "useNewFilterPaneExperience": True,
                 "allowChangeFilterTypes": True,
-                "hideVisualContainerHeader": False,
             },
         })
-        wj(os.path.join(rp, "StaticResources", "RegisteredResources", "PM_Theme.json"),
-           theme())
 
     # theme is always also shipped standalone, for manual import
     wj(os.path.join(base, "theme", "PM_Theme.json"), theme())
@@ -1382,7 +1374,8 @@ def main() -> None:
         print(f"\nBuilding standalone project: {base}")
         os.makedirs(base, exist_ok=True)
         wj(os.path.join(base, f"{NAME}.pbip"), {
-            "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/pbip/definitionProperties/1.0.0/schema.json",
+            "$schema": "https://developer.microsoft.com/json-schemas/fabric/pbip/"
+                       "pbipProperties/1.0.0/schema.json",
             "version": "1.0",
             "artifacts": [{"report": {"path": f"{NAME}.Report"}}],
             "settings": {"enableAutoRecovery": True},

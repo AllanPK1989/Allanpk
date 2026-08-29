@@ -1,10 +1,10 @@
 /// Maintenance technicians. Each has a personal QR code.
 table Dim_Technician
-	lineageTag: 93324d15-8bcf-4c0a-ab07-d079d06c1d9d
+	lineageTag: a171fa30-3845-4a8e-93ea-e70831f7b7b9
 
 	column TechID
 		dataType: string
-		lineageTag: b2ffd681-d57d-49cc-9cd9-eb5fb0dd0b73
+		lineageTag: 8b580753-bbfc-449e-9881-e6cddc9a998c
 		summarizeBy: none
 		sourceColumn: TechID
 
@@ -12,7 +12,7 @@ table Dim_Technician
 
 	column TechName
 		dataType: string
-		lineageTag: 1411c865-9075-44ef-882e-042009cffb7e
+		lineageTag: ce0b5539-7120-4cde-8f95-6ba4a0d465f9
 		summarizeBy: none
 		sourceColumn: TechName
 
@@ -20,7 +20,7 @@ table Dim_Technician
 
 	column Email
 		dataType: string
-		lineageTag: fd828e00-4356-4a30-a8ac-0c931b5ed7ad
+		lineageTag: 77137217-e9cc-4db0-9287-79cc2fce1e67
 		summarizeBy: none
 		sourceColumn: Email
 
@@ -28,7 +28,7 @@ table Dim_Technician
 
 	column Shift
 		dataType: string
-		lineageTag: 89e40a93-1e28-48fd-9105-feaa039943c7
+		lineageTag: bb0203b7-f23a-4643-9c38-8e6f91534827
 		summarizeBy: none
 		sourceColumn: Shift
 
@@ -36,7 +36,7 @@ table Dim_Technician
 
 	column SkillGroup
 		dataType: string
-		lineageTag: 5c8475c6-0ace-48e8-bde0-ccac192bf582
+		lineageTag: 9f8c383a-263d-4138-8d92-a8deb46c679b
 		summarizeBy: none
 		sourceColumn: SkillGroup
 
@@ -44,7 +44,7 @@ table Dim_Technician
 
 	column PrimaryArea
 		dataType: string
-		lineageTag: 770f6b2d-ba13-4ebe-b04c-8e3880d41d64
+		lineageTag: 7b497f4f-f1de-4840-a5d5-75e11b82004d
 		summarizeBy: none
 		sourceColumn: PrimaryArea
 
@@ -53,7 +53,7 @@ table Dim_Technician
 	column DailyCapacityMin
 		dataType: int64
 		formatString: #,0
-		lineageTag: a26a38ed-043d-4a23-8e2c-9f680418a3a4
+		lineageTag: 338366be-a632-4530-99b9-b1dea1d9418e
 		summarizeBy: none
 		sourceColumn: DailyCapacityMin
 
@@ -61,7 +61,7 @@ table Dim_Technician
 
 	column QRPayload
 		dataType: string
-		lineageTag: 86b1a6d8-6162-40e7-b5df-1c464e7551a1
+		lineageTag: 01b82c56-1f2c-4605-9ccf-c34e0023dc63
 		summarizeBy: none
 		sourceColumn: QRPayload
 
@@ -69,7 +69,7 @@ table Dim_Technician
 
 	column Active
 		dataType: string
-		lineageTag: c5e1b801-d6ee-4ea8-8a7f-7e89fa7028b2
+		lineageTag: 84125951-4976-4e02-b11e-f89b6dd100d0
 		summarizeBy: none
 		sourceColumn: Active
 

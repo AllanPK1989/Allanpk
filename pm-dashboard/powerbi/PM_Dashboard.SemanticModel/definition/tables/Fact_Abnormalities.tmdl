@@ -1,10 +1,10 @@
 /// Abnormalities - the early warning layer before a breakdown.
 table Fact_Abnormalities
-	lineageTag: a1c718f3-381c-499a-8e9d-f7e8c8880f23
+	lineageTag: 33af1dab-3e70-4ed6-aba7-f070f007e220
 
 	column AbnormalityID
 		dataType: string
-		lineageTag: ffc868d2-5235-4e00-b018-64e227887169
+		lineageTag: 00adb8a2-a0e5-4315-9010-9232fbb70bdb
 		summarizeBy: none
 		sourceColumn: AbnormalityID
 
@@ -12,7 +12,7 @@ table Fact_Abnormalities
 
 	column Source
 		dataType: string
-		lineageTag: 307ba891-1bf7-4310-8e34-127e729a92ec
+		lineageTag: 7a8a98ea-c56d-466d-8ccd-8b0f25f0d590
 		summarizeBy: none
 		sourceColumn: Source
 
@@ -20,7 +20,7 @@ table Fact_Abnormalities
 
 	column SourceRefID
 		dataType: string
-		lineageTag: bbbadaaf-9a56-491d-93fc-1cc781ff30dc
+		lineageTag: 50832e6f-8384-44cd-b4ba-6543d712b0e8
 		summarizeBy: none
 		sourceColumn: SourceRefID
 
@@ -28,7 +28,7 @@ table Fact_Abnormalities
 
 	column MachineID
 		dataType: string
-		lineageTag: 4ff3fbe5-e763-4e36-ae7c-8b4a71303f4e
+		lineageTag: a284eb1b-ad5a-41b5-8991-4e0fbefe4fd0
 		summarizeBy: none
 		sourceColumn: MachineID
 
@@ -36,7 +36,7 @@ table Fact_Abnormalities
 
 	column MachineName
 		dataType: string
-		lineageTag: a6ad5213-af50-4d70-bf1d-527ff7a10824
+		lineageTag: 260f2478-c417-4f9a-bce9-e02ac4df4009
 		summarizeBy: none
 		sourceColumn: MachineName
 
@@ -44,7 +44,7 @@ table Fact_Abnormalities
 
 	column CellID
 		dataType: string
-		lineageTag: 99eda3a7-b94f-40f5-8503-21bec7574e51
+		lineageTag: 968f29d9-9728-4c1f-9194-ebb254114dc7
 		summarizeBy: none
 		sourceColumn: CellID
 
@@ -52,7 +52,7 @@ table Fact_Abnormalities
 
 	column CellName
 		dataType: string
-		lineageTag: 2db9c59e-8a4a-4935-8295-c9e94dff8e7e
+		lineageTag: be3922f8-4bf2-49ed-a250-3236f5a57d1c
 		summarizeBy: none
 		sourceColumn: CellName
 
@@ -60,7 +60,7 @@ table Fact_Abnormalities
 
 	column Area
 		dataType: string
-		lineageTag: 528b01f7-61bb-439d-a62c-a1d749087eb4
+		lineageTag: 36f29385-b093-4e35-b9ea-ea0b7dd2b4b9
 		summarizeBy: none
 		sourceColumn: Area
 
@@ -68,7 +68,7 @@ table Fact_Abnormalities
 
 	column Category
 		dataType: string
-		lineageTag: 5c690086-1a05-4132-8941-40fb49015e0e
+		lineageTag: 2ca3e2f0-bee4-49a6-88af-ea092018ed43
 		summarizeBy: none
 		sourceColumn: Category
 
@@ -76,7 +76,7 @@ table Fact_Abnormalities
 
 	column Severity
 		dataType: string
-		lineageTag: f102a43b-8761-41d1-97f3-44604b97ad7a
+		lineageTag: 25563974-91b1-4c06-888e-02ff8f4019e6
 		summarizeBy: none
 		sourceColumn: Severity
 
@@ -84,7 +84,7 @@ table Fact_Abnormalities
 
 	column Description
 		dataType: string
-		lineageTag: ae1fd5a6-bd9d-401e-ae7a-742472275a73
+		lineageTag: 74ff46e9-09cb-41a6-9ad2-d5337e262d54
 		summarizeBy: none
 		sourceColumn: Description
 
@@ -92,7 +92,7 @@ table Fact_Abnormalities
 
 	column ReportedByTechID
 		dataType: string
-		lineageTag: 7bd6aa94-736d-41a1-a3a6-e0e1ceab9981
+		lineageTag: 75d7e362-4ce6-42fe-adda-57d42278c038
 		summarizeBy: none
 		sourceColumn: ReportedByTechID
 
@@ -100,7 +100,7 @@ table Fact_Abnormalities
 
 	column ReportedByName
 		dataType: string
-		lineageTag: 1c6d83cf-a07d-4e8b-9c9f-4b1e64b16654
+		lineageTag: 02715ac3-c811-4317-b59d-b55c50885003
 		summarizeBy: none
 		sourceColumn: ReportedByName
 
@@ -109,7 +109,7 @@ table Fact_Abnormalities
 	column ReportedDate
 		dataType: dateTime
 		formatString: yyyy-mm-dd
-		lineageTag: eeddceee-59fd-4e7d-9ce0-6dd896480442
+		lineageTag: 7de21ec9-1669-4532-9480-5347179e6ac5
 		summarizeBy: none
 		sourceColumn: ReportedDate
 
@@ -119,7 +119,7 @@ table Fact_Abnormalities
 
 	column Status
 		dataType: string
-		lineageTag: 59f5d010-81c2-4c83-bfd3-44c61ad8f0d7
+		lineageTag: 03536586-718b-4907-bd40-a269dbc65152
 		summarizeBy: none
 		sourceColumn: Status
 
@@ -128,7 +128,7 @@ table Fact_Abnormalities
 	column ClosedDate
 		dataType: dateTime
 		formatString: yyyy-mm-dd
-		lineageTag: 392f582e-e84b-4ea8-9336-cbd4d9103de3
+		lineageTag: 8c9910e3-54ec-4aed-b6ea-cdd6eecf4e39
 		summarizeBy: none
 		sourceColumn: ClosedDate
 
@@ -138,7 +138,7 @@ table Fact_Abnormalities
 
 	column CorrectiveAction
 		dataType: string
-		lineageTag: 1c86170d-6dca-454c-9834-32d9a2c446b1
+		lineageTag: 2b04ca84-5c7c-4f94-ad45-7246bf8e8ada
 		summarizeBy: none
 		sourceColumn: CorrectiveAction
 
@@ -146,7 +146,7 @@ table Fact_Abnormalities
 
 	column OwnerFunction
 		dataType: string
-		lineageTag: 52974625-3939-4ff7-9744-8051636dd7fa
+		lineageTag: b6d35c8f-a491-46b0-b4c9-cf6ea56cb913
 		summarizeBy: none
 		sourceColumn: OwnerFunction
 
@@ -154,7 +154,7 @@ table Fact_Abnormalities
 
 	column EscalationRequired
 		dataType: string
-		lineageTag: 5e93f8e2-9c98-4965-bfbb-d9df5ccc1ad6
+		lineageTag: 6bced96d-1ef8-4a87-a49c-e9c2db3953f7
 		summarizeBy: none
 		sourceColumn: EscalationRequired
 
@@ -162,7 +162,7 @@ table Fact_Abnormalities
 
 	column PhotoURL
 		dataType: string
-		lineageTag: b066e358-cd2a-46be-b240-088ab0ec0f81
+		lineageTag: ef93ddc5-202a-47ce-8ba2-66a389a4b4e0
 		summarizeBy: none
 		sourceColumn: PhotoURL
 

@@ -1,10 +1,10 @@
 /// Unplanned stoppages. Feeds MTBF, MTTR and availability.
 table Fact_Breakdowns
-	lineageTag: 6aa405cd-36da-49b1-af7a-3e54ee217755
+	lineageTag: 0865899a-0b36-4e38-b9f9-e056a545f0b3
 
 	column BreakdownID
 		dataType: string
-		lineageTag: 668a0b83-f63d-416c-bb3f-274173e80324
+		lineageTag: 37ab3784-108d-4123-8dd5-d6d433af4cfa
 		summarizeBy: none
 		sourceColumn: BreakdownID
 
@@ -12,7 +12,7 @@ table Fact_Breakdowns
 
 	column MachineID
 		dataType: string
-		lineageTag: c51e3aff-6c54-4443-b764-d4fd28ecaed8
+		lineageTag: 5fc61788-b0d2-46e2-a13c-a0cee9c0bd21
 		summarizeBy: none
 		sourceColumn: MachineID
 
@@ -20,7 +20,7 @@ table Fact_Breakdowns
 
 	column MachineName
 		dataType: string
-		lineageTag: 3fefae9c-c0cb-4f6d-8d37-57f3b5f87b99
+		lineageTag: baeee5ef-19c1-4fd7-b893-5d2faa082e10
 		summarizeBy: none
 		sourceColumn: MachineName
 
@@ -28,7 +28,7 @@ table Fact_Breakdowns
 
 	column CellID
 		dataType: string
-		lineageTag: 038a625c-07d8-4e44-85ba-14bb89ae64f2
+		lineageTag: 5763f7a9-eecf-4d4b-ae34-bf09c80d693c
 		summarizeBy: none
 		sourceColumn: CellID
 
@@ -36,7 +36,7 @@ table Fact_Breakdowns
 
 	column CellName
 		dataType: string
-		lineageTag: aae56d31-d7d7-4561-8fe4-60a8f9f317e1
+		lineageTag: fe92d484-b650-45b5-a57c-1d5057569a4e
 		summarizeBy: none
 		sourceColumn: CellName
 
@@ -44,7 +44,7 @@ table Fact_Breakdowns
 
 	column Area
 		dataType: string
-		lineageTag: 34ba6e95-0ba8-49b1-bd0e-e6a514e953ed
+		lineageTag: c26f2dd1-007f-44d4-8e7f-a1a90a461595
 		summarizeBy: none
 		sourceColumn: Area
 
@@ -52,7 +52,7 @@ table Fact_Breakdowns
 
 	column MachineType
 		dataType: string
-		lineageTag: f80a2a5f-268d-4653-b225-612e7be4c642
+		lineageTag: 3b22ac56-26ca-4f16-aae5-6a542c4625cf
 		summarizeBy: none
 		sourceColumn: MachineType
 
@@ -60,7 +60,7 @@ table Fact_Breakdowns
 
 	column Criticality
 		dataType: string
-		lineageTag: 15745a5b-1fd6-4faa-a775-6a42bab02e8d
+		lineageTag: 01e77581-3d2f-4691-b230-3efba1cc9bac
 		summarizeBy: none
 		sourceColumn: Criticality
 
@@ -69,7 +69,7 @@ table Fact_Breakdowns
 	column ReportedDateTime
 		dataType: dateTime
 		formatString: yyyy-mm-dd hh:nn
-		lineageTag: e5a2f77d-7e1f-4b68-8c5a-86f30c8c5ace
+		lineageTag: a370b520-080e-4f29-8f03-a9aa6acae380
 		summarizeBy: none
 		sourceColumn: ReportedDateTime
 
@@ -80,7 +80,7 @@ table Fact_Breakdowns
 	column RestoredDateTime
 		dataType: dateTime
 		formatString: yyyy-mm-dd hh:nn
-		lineageTag: 4579b0c1-e32e-4246-a6be-4af31e2e55f2
+		lineageTag: 003d4503-4fb8-41fd-8cea-74a2f4211306
 		summarizeBy: none
 		sourceColumn: RestoredDateTime
 
@@ -91,7 +91,7 @@ table Fact_Breakdowns
 	column DowntimeMinutes
 		dataType: int64
 		formatString: #,0
-		lineageTag: 9f4499b7-1c51-4661-af8b-271db273b47b
+		lineageTag: 248bbb9b-1c73-43b2-86ef-6eed6d46c6cd
 		summarizeBy: none
 		sourceColumn: DowntimeMinutes
 
@@ -100,7 +100,7 @@ table Fact_Breakdowns
 	column ResponseMinutes
 		dataType: int64
 		formatString: #,0
-		lineageTag: d03e0b74-b0a2-45df-95df-53f3f3db6e54
+		lineageTag: 8941f8e5-5836-4cc5-9ad8-9f97d95791ac
 		summarizeBy: none
 		sourceColumn: ResponseMinutes
 
@@ -108,7 +108,7 @@ table Fact_Breakdowns
 
 	column FailureMode
 		dataType: string
-		lineageTag: 10923d9b-f4f7-48bd-b4d8-68d3127a609c
+		lineageTag: 3ccb9e77-0263-41f2-8e9d-b30af9c07461
 		summarizeBy: none
 		sourceColumn: FailureMode
 
@@ -116,7 +116,7 @@ table Fact_Breakdowns
 
 	column FailureCategory
 		dataType: string
-		lineageTag: b7db1c95-62fa-459e-a94e-6b8fb5e12e6b
+		lineageTag: 182b32fe-4250-4da3-b3b6-46cdb71205f3
 		summarizeBy: none
 		sourceColumn: FailureCategory
 
@@ -124,7 +124,7 @@ table Fact_Breakdowns
 
 	column RootCause
 		dataType: string
-		lineageTag: 0ea4dc60-18d9-4abe-a584-6419b5e086c2
+		lineageTag: de32da0e-42ee-4b80-a2ce-03137bda6c69
 		summarizeBy: none
 		sourceColumn: RootCause
 
@@ -132,7 +132,7 @@ table Fact_Breakdowns
 
 	column ActionTaken
 		dataType: string
-		lineageTag: c5243be0-9b46-487a-bc36-e927cb97cfa4
+		lineageTag: b10567e1-6f54-4070-a58b-0faf2ee81241
 		summarizeBy: none
 		sourceColumn: ActionTaken
 
@@ -140,7 +140,7 @@ table Fact_Breakdowns
 
 	column ReportedBy
 		dataType: string
-		lineageTag: 84c19acf-455f-4a5b-98dc-44963668c76d
+		lineageTag: 2042c4af-a7c1-4979-94d2-69f40fc5e450
 		summarizeBy: none
 		sourceColumn: ReportedBy
 
@@ -148,7 +148,7 @@ table Fact_Breakdowns
 
 	column AttendedTechID
 		dataType: string
-		lineageTag: 58fd23d4-81f4-435e-8c0a-8214bffaf05d
+		lineageTag: 89fbadf9-1e80-40c2-9af3-890ab036388d
 		summarizeBy: none
 		sourceColumn: AttendedTechID
 
@@ -156,7 +156,7 @@ table Fact_Breakdowns
 
 	column AttendedTechName
 		dataType: string
-		lineageTag: 0f29b5e1-679c-4021-9eb7-348514ad3bee
+		lineageTag: 280ec81a-db85-4338-9b93-c201aa9ca549
 		summarizeBy: none
 		sourceColumn: AttendedTechName
 
@@ -164,7 +164,7 @@ table Fact_Breakdowns
 
 	column Status
 		dataType: string
-		lineageTag: 12497a4d-b0b3-460a-ad3a-613b7864cc51
+		lineageTag: 0f5a5c59-6910-4d7b-8e40-4d80869b2db0
 		summarizeBy: none
 		sourceColumn: Status
 
@@ -172,7 +172,7 @@ table Fact_Breakdowns
 
 	column SpareUsed
 		dataType: string
-		lineageTag: 2b886337-501b-43a8-bf31-d6674013c0ff
+		lineageTag: 8683e00d-5d18-47eb-98a6-fc974a0133bf
 		summarizeBy: none
 		sourceColumn: SpareUsed
 
@@ -180,7 +180,7 @@ table Fact_Breakdowns
 
 	column Severity
 		dataType: string
-		lineageTag: 10bdbb88-96b0-4643-8aa1-8cd0b0bc2819
+		lineageTag: d6049840-1e5f-43f0-bc1d-6703bf75695a
 		summarizeBy: none
 		sourceColumn: Severity
 
@@ -189,7 +189,7 @@ table Fact_Breakdowns
 	column ReportedDate
 		dataType: dateTime
 		formatString: yyyy-mm-dd
-		lineageTag: 30bf95ae-c4ce-4166-8b78-27458b7188ec
+		lineageTag: b79e5d89-0c1e-449f-824f-9cfd00edf689
 		summarizeBy: none
 		sourceColumn: ReportedDate
 
@@ -200,7 +200,7 @@ table Fact_Breakdowns
 	column DowntimeHours
 		dataType: double
 		formatString: #,0.0
-		lineageTag: dac6c524-79fe-4947-823a-0dac9ff97eeb
+		lineageTag: 210de564-9e05-44ac-a973-ffd35df49846
 		summarizeBy: none
 		sourceColumn: DowntimeHours
 

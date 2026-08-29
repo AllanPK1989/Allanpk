@@ -1,10 +1,10 @@
 /// Production cells. Carries the PM threshold and calendar backstop.
 table Dim_Cell
-	lineageTag: bb8d9a51-0611-4d31-beef-8cdd09be272b
+	lineageTag: 78c71da8-ec5b-42cd-9b86-b8a78154ada7
 
 	column CellID
 		dataType: string
-		lineageTag: 7587aa85-cace-45a0-88a8-a0e2e0cf9045
+		lineageTag: 3ecd6cf7-b381-4927-9061-d5042bd0d1a8
 		summarizeBy: none
 		sourceColumn: CellID
 
@@ -12,7 +12,7 @@ table Dim_Cell
 
 	column CellName
 		dataType: string
-		lineageTag: edd45fec-0553-460d-bea1-bff8ab57b62f
+		lineageTag: 6d2c1cd0-1bc4-4385-932b-c2ca931553b9
 		summarizeBy: none
 		sourceColumn: CellName
 
@@ -20,7 +20,7 @@ table Dim_Cell
 
 	column Area
 		dataType: string
-		lineageTag: f2144f8a-33b9-4688-a85d-f966e01e1501
+		lineageTag: ebca17ac-0e0f-480f-a22f-a860f3829489
 		summarizeBy: none
 		sourceColumn: Area
 
@@ -28,7 +28,7 @@ table Dim_Cell
 
 	column Plant
 		dataType: string
-		lineageTag: def54273-8736-490d-b569-e0a370800ec4
+		lineageTag: 0a9ac2ed-9096-45f0-89bc-1b4bde065aab
 		summarizeBy: none
 		sourceColumn: Plant
 
@@ -36,7 +36,7 @@ table Dim_Cell
 
 	column Criticality
 		dataType: string
-		lineageTag: db2d8daa-289c-4e56-a1a2-c2e8cca7586f
+		lineageTag: 79dc0149-dde7-4209-bf8c-c877e0cecb0f
 		summarizeBy: none
 		sourceColumn: Criticality
 
@@ -45,7 +45,7 @@ table Dim_Cell
 	column PMIntervalStdHrs
 		dataType: int64
 		formatString: #,0
-		lineageTag: e1c6507f-3a7e-44eb-8697-bc524d92e47f
+		lineageTag: f20d4352-8e4e-4bc3-9493-cd7272b65ca6
 		summarizeBy: none
 		sourceColumn: PMIntervalStdHrs
 
@@ -54,7 +54,7 @@ table Dim_Cell
 	column CalendarBackstopMonths
 		dataType: int64
 		formatString: #,0
-		lineageTag: 2e970464-3348-49cc-a48a-aaf040a4b03d
+		lineageTag: 3f92282d-4caf-47da-8229-2c497a8cef9f
 		summarizeBy: none
 		sourceColumn: CalendarBackstopMonths
 
@@ -63,7 +63,7 @@ table Dim_Cell
 	column BaselineMonthlyStdHrs
 		dataType: int64
 		formatString: #,0
-		lineageTag: 5730f4d1-1e60-4117-aa1c-d92f193eb586
+		lineageTag: ed5378a7-2d86-4f7a-8abb-2c6bcc03b30f
 		summarizeBy: none
 		sourceColumn: BaselineMonthlyStdHrs
 
@@ -71,7 +71,7 @@ table Dim_Cell
 
 	column CostCenter
 		dataType: string
-		lineageTag: 416e7cc8-03c9-49a4-9e10-1a17bf553459
+		lineageTag: 82689e94-a7ea-4a63-b44e-a6497b13be34
 		summarizeBy: none
 		sourceColumn: CostCenter
 
@@ -79,7 +79,7 @@ table Dim_Cell
 
 	column Active
 		dataType: string
-		lineageTag: 5fa2e301-fbca-4533-ae9e-2ac28e88d818
+		lineageTag: d485215f-be7c-46df-ae2d-8fece8e5b22c
 		summarizeBy: none
 		sourceColumn: Active
 

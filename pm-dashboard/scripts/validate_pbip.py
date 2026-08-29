@@ -257,11 +257,72 @@ for rel in [f"{NAME}.pbip",
             f"{NAME}.SemanticModel/definition/expressions.tmdl",
             f"{NAME}.Report/.platform",
             f"{NAME}.Report/definition.pbir",
-            f"{NAME}.Report/definition/report.json",
-            f"{NAME}.Report/definition/version.json"]:
+            f"{NAME}.Report/definition/report.json"]:
     checks += 1
     if not os.path.exists(os.path.join(BASE, rel)):
         fail(f"missing project file: {rel}")
+
+
+# ---------------------------------------------------------------------------
+# 7b · $schema of every wrapper file matches what Power BI Desktop accepts.
+#      Desktop validates these with a regex per file type and refuses to open the
+#      project if one is wrong, naming only the first offender. Values verified
+#      against published PBIP projects.
+# ---------------------------------------------------------------------------
+SCHEMA_RULES = {
+    f"{NAME}.pbip":
+        r"^https://developer\.microsoft\.com/json-schemas/fabric/pbip/"
+        r"pbipProperties/1\.\d+\.\d+/schema\.json$",
+    f"{NAME}.SemanticModel/.platform":
+        r"^https://developer\.microsoft\.com/json-schemas/fabric/gitIntegration/"
+        r"platformProperties/2\.\d+\.\d+/schema\.json$",
+    f"{NAME}.SemanticModel/definition.pbism":
+        r"^https://developer\.microsoft\.com/json-schemas/fabric/item/semanticModel/"
+        r"definitionProperties/1\.\d+\.\d+/schema\.json$",
+    f"{NAME}.Report/.platform":
+        r"^https://developer\.microsoft\.com/json-schemas/fabric/gitIntegration/"
+        r"platformProperties/2\.\d+\.\d+/schema\.json$",
+    f"{NAME}.Report/definition.pbir":
+        r"^https://developer\.microsoft\.com/json-schemas/fabric/item/report/"
+        r"definitionProperties/2\.\d+\.\d+/schema\.json$",
+    f"{NAME}.Report/definition/report.json":
+        r"^https://developer\.microsoft\.com/json-schemas/fabric/item/report/"
+        r"definition/report/3\.\d+\.\d+/schema\.json$",
+    f"{NAME}.Report/definition/pages/pages.json":
+        r"^https://developer\.microsoft\.com/json-schemas/fabric/item/report/"
+        r"definition/pagesMetadata/1\.\d+\.\d+/schema\.json$",
+}
+PAGE_SCHEMA_RE = (r"^https://developer\.microsoft\.com/json-schemas/fabric/item/report/"
+                  r"definition/page/2\.\d+\.\d+/schema\.json$")
+VIS_SCHEMA_RE = (r"^https://developer\.microsoft\.com/json-schemas/fabric/item/report/"
+                 r"definition/visualContainer/2\.\d+\.\d+/schema\.json$")
+
+for rel, pattern in SCHEMA_RULES.items():
+    checks += 1
+    fp = os.path.join(BASE, rel)
+    if not os.path.exists(fp):
+        continue
+    got = json.load(open(fp, encoding="utf-8")).get("$schema", "")
+    if not re.match(pattern, got):
+        fail(f"{rel}: $schema is '{got}', which Desktop will reject")
+
+if os.path.isdir(pages_dir):
+    for pg in sorted(page_keys_on_disk):
+        pj2 = os.path.join(pages_dir, pg, "page.json")
+        if os.path.exists(pj2):
+            checks += 1
+            got = json.load(open(pj2, encoding="utf-8")).get("$schema", "")
+            if not re.match(PAGE_SCHEMA_RE, got):
+                fail(f"{pg}/page.json: $schema is '{got}'")
+        vdir2 = os.path.join(pages_dir, pg, "visuals")
+        if os.path.isdir(vdir2):
+            for vs in sorted(os.listdir(vdir2)):
+                vf2 = os.path.join(vdir2, vs, "visual.json")
+                if os.path.exists(vf2):
+                    checks += 1
+                    got = json.load(open(vf2, encoding="utf-8")).get("$schema", "")
+                    if not re.match(VIS_SCHEMA_RE, got):
+                        fail(f"{pg}/{vs}/visual.json: $schema is '{got}'")
 
 
 # ---------------------------------------------------------------------------
@@ -350,6 +411,7 @@ print(f"  visuals        {n_vis}")
 print(f"  field refs     {n_refs} checked against the model")
 print(f"  dax refs       {n_dax} checked against the model")
 print(f"  json files     {len(json_files)} parsed")
+print(f"  $schema urls   checked against the patterns Desktop enforces")
 print(f"  m/csv columns  cross-checked for every imported table")
 print(f"  ---- {checks} checks ----")
 print()
