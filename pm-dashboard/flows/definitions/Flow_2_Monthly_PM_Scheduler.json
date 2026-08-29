@@ -1,0 +1,690 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      },
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "SharePointSiteUrl": {
+        "defaultValue": "https://contoso.sharepoint.com/sites/PMSystem",
+        "type": "String"
+      }
+    },
+    "triggers": {
+      "manual": {
+        "type": "Request",
+        "kind": "Button",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "MonthKey": {
+                "type": "string",
+                "title": "Month (YYYY-MM)",
+                "x-ms-content-hint": "TEXT"
+              },
+              "Mode": {
+                "type": "string",
+                "title": "Normal | Backload | Restate",
+                "x-ms-content-hint": "TEXT"
+              },
+              "StdHoursJson": {
+                "type": "string",
+                "title": "Standard hours rows as JSON",
+                "x-ms-content-hint": "TEXT"
+              }
+            },
+            "required": [
+              "MonthKey",
+              "Mode",
+              "StdHoursJson"
+            ]
+          }
+        }
+      }
+    },
+    "actions": {
+      "Compose_prev_month_key": {
+        "type": "Compose",
+        "inputs": "@{formatDateTime(subtractFromTime(concat(triggerBody()?['MonthKey'], '-01'), 1, 'Month'), 'yyyy-MM')}",
+        "runAfter": {}
+      },
+      "Compose_std_hours": {
+        "type": "Compose",
+        "inputs": "@json(triggerBody()?['StdHoursJson'])",
+        "runAfter": {
+          "Compose_prev_month_key": [
+            "Succeeded"
+          ]
+        },
+        "description": "Flow 1 already read and validated the Excel, so the scheduler never touches it."
+      },
+      "Init_machine_index": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "MachineIndex",
+              "type": "integer",
+              "value": 0
+            }
+          ]
+        },
+        "runAfter": {
+          "Compose_std_hours": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Init_created": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "WorkOrdersCreated",
+              "type": "integer",
+              "value": 0
+            }
+          ]
+        },
+        "runAfter": {
+          "Init_machine_index": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Get_default_interval": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "GetItems",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "@parameters('SharePointSiteUrl')",
+            "table": "PM_Config",
+            "$filter": "ConfigKey eq 'DefaultPMIntervalStdHrs'",
+            "$top": 1
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {
+          "Init_created": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_default_interval": {
+        "type": "Compose",
+        "inputs": "@if(empty(body('Get_default_interval')?['value']), 4000, int(first(body('Get_default_interval')?['value'])?['ConfigValue']))",
+        "runAfter": {
+          "Get_default_interval": [
+            "Succeeded"
+          ]
+        },
+        "description": "The 4000 lives in PM_Config so the rule can be retuned without editing a flow."
+      },
+      "Check_already_processed": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "GetItems",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "@parameters('SharePointSiteUrl')",
+            "table": "PM_Hour_Ledger",
+            "$filter": "MonthKey eq '@{triggerBody()?['MonthKey']}'",
+            "$top": 1
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {
+          "Compose_default_interval": [
+            "Succeeded"
+          ]
+        },
+        "description": "Idempotency guard: a retried run must not double-schedule a cell."
+      },
+      "Stop_if_duplicate": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "greater": [
+                "@length(body('Check_already_processed')?['value'])",
+                0
+              ]
+            },
+            {
+              "not": {
+                "equals": [
+                  "@triggerBody()?['Mode']",
+                  "Restate"
+                ]
+              }
+            }
+          ]
+        },
+        "actions": {
+          "Stop_duplicate": {
+            "type": "Terminate",
+            "inputs": {
+              "runStatus": "Cancelled",
+              "runError": {
+                "code": "AlreadyProcessed",
+                "message": "Ledger rows already exist for this month. Re-run with Mode = Restate to reprocess."
+              }
+            },
+            "runAfter": {}
+          }
+        },
+        "runAfter": {
+          "Check_already_processed": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Get_active_cells": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "GetItems",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "@parameters('SharePointSiteUrl')",
+            "table": "Cell_Master",
+            "$filter": "Active eq 'Yes'",
+            "$orderby": "CellID asc",
+            "$top": 500
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {
+          "Stop_if_duplicate": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Get_previous_ledger": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "GetItems",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "@parameters('SharePointSiteUrl')",
+            "table": "PM_Hour_Ledger",
+            "$filter": "MonthKey eq '@{outputs('Compose_prev_month_key')}' and Scenario eq 'Actual'",
+            "$top": 500
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {
+          "Get_active_cells": [
+            "Succeeded"
+          ]
+        }
+      },
+      "For_each_cell": {
+        "type": "Foreach",
+        "foreach": "@body('Get_active_cells')?['value']",
+        "actions": {
+          "Filter_previous_ledger_row": {
+            "type": "Query",
+            "inputs": {
+              "from": "@body('Get_previous_ledger')?['value']",
+              "where": "@equals(item()?['CellID'], items('For_each_cell')?['CellID'])"
+            },
+            "runAfter": {},
+            "description": "Last month's row for this cell - the carry-over lives here."
+          },
+          "Filter_std_hours_row": {
+            "type": "Query",
+            "inputs": {
+              "from": "@outputs('Compose_std_hours')",
+              "where": "@equals(item()?['CellID'], items('For_each_cell')?['CellID'])"
+            },
+            "runAfter": {
+              "Filter_previous_ledger_row": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_opening": {
+            "type": "Compose",
+            "inputs": "@if(empty(body('Filter_previous_ledger_row')), 0, float(coalesce(first(body('Filter_previous_ledger_row'))?['CarryOverAfterPM'], first(body('Filter_previous_ledger_row'))?['ClosingStdHrs'], 0)))",
+            "runAfter": {
+              "Filter_std_hours_row": [
+                "Succeeded"
+              ]
+            },
+            "description": "Carry-over from the previous cycle, else last month's closing, else zero."
+          },
+          "Compose_added": {
+            "type": "Compose",
+            "inputs": "@if(empty(body('Filter_std_hours_row')), 0, float(coalesce(first(body('Filter_std_hours_row'))?['StdHours'], 0)))",
+            "runAfter": {
+              "Compose_opening": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_closing": {
+            "type": "Compose",
+            "inputs": "@add(float(outputs('Compose_opening')), float(outputs('Compose_added')))",
+            "runAfter": {
+              "Compose_added": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Get_last_completed_PM": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "connectionName": "shared_sharepointonline",
+                "operationId": "GetItems",
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+              },
+              "parameters": {
+                "dataset": "@parameters('SharePointSiteUrl')",
+                "table": "PM_WorkOrders",
+                "$filter": "CellID eq '@{items('For_each_cell')?['CellID']}' and Status eq 'Completed'",
+                "$orderby": "ActualEndDate desc",
+                "$top": 1
+              },
+              "authentication": "@parameters('$authentication')"
+            },
+            "runAfter": {
+              "Compose_closing": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_months_since": {
+            "type": "Compose",
+            "inputs": "@if(empty(body('Get_last_completed_PM')?['value']), 999, sub(add(mul(int(formatDateTime(concat(triggerBody()?['MonthKey'], '-01'), 'yyyy')), 12), int(formatDateTime(concat(triggerBody()?['MonthKey'], '-01'), 'MM'))), add(mul(int(formatDateTime(first(body('Get_last_completed_PM')?['value'])?['ActualEndDate'], 'yyyy')), 12), int(formatDateTime(first(body('Get_last_completed_PM')?['value'])?['ActualEndDate'], 'MM')))))",
+            "runAfter": {
+              "Get_last_completed_PM": [
+                "Succeeded"
+              ]
+            },
+            "description": "999 when the cell has never had a PM, so the backstop fires."
+          },
+          "Compose_threshold": {
+            "type": "Compose",
+            "inputs": "@if(equals(coalesce(items('For_each_cell')?['PMIntervalStdHrs'], 0), 0), int(outputs('Compose_default_interval')), int(items('For_each_cell')?['PMIntervalStdHrs']))",
+            "runAfter": {
+              "Compose_months_since": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_backstop": {
+            "type": "Compose",
+            "inputs": "@if(equals(coalesce(items('For_each_cell')?['CalendarBackstopMonths'], 0), 0), 12, int(items('For_each_cell')?['CalendarBackstopMonths']))",
+            "runAfter": {
+              "Compose_threshold": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_hours_due": {
+            "type": "Compose",
+            "inputs": "@greaterOrEquals(float(outputs('Compose_closing')), float(outputs('Compose_threshold')))",
+            "runAfter": {
+              "Compose_backstop": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_calendar_due": {
+            "type": "Compose",
+            "inputs": "@greaterOrEquals(int(outputs('Compose_months_since')), int(outputs('Compose_backstop')))",
+            "runAfter": {
+              "Compose_hours_due": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_triggered": {
+            "type": "Compose",
+            "inputs": "@or(bool(outputs('Compose_hours_due')), bool(outputs('Compose_calendar_due')))",
+            "runAfter": {
+              "Compose_calendar_due": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_trigger_type": {
+            "type": "Compose",
+            "inputs": "@if(bool(outputs('Compose_hours_due')), 'Std Hours', if(bool(outputs('Compose_calendar_due')), 'Calendar Backstop', ''))",
+            "runAfter": {
+              "Compose_triggered": [
+                "Succeeded"
+              ]
+            },
+            "description": "Hours wins the label when both fire in the same month."
+          },
+          "Compose_carry_over": {
+            "type": "Compose",
+            "inputs": "@if(bool(outputs('Compose_triggered')), max(0, sub(float(outputs('Compose_closing')), float(outputs('Compose_threshold')))), float(outputs('Compose_closing')))",
+            "runAfter": {
+              "Compose_trigger_type": [
+                "Succeeded"
+              ]
+            },
+            "description": "Hours past the threshold are never lost - they open the next cycle."
+          },
+          "Create_ledger_row": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "connectionName": "shared_sharepointonline",
+                "operationId": "PostItem",
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+              },
+              "parameters": {
+                "dataset": "@parameters('SharePointSiteUrl')",
+                "table": "PM_Hour_Ledger",
+                "item/Title": "@{concat(items('For_each_cell')?['CellID'], ' ', triggerBody()?['MonthKey'])}",
+                "item/MonthKey": "@{triggerBody()?['MonthKey']}",
+                "item/CellID": "@{items('For_each_cell')?['CellID']}",
+                "item/CellName": "@{items('For_each_cell')?['CellName']}",
+                "item/OpeningStdHrs": "@{outputs('Compose_opening')}",
+                "item/StdHoursAdded": "@{outputs('Compose_added')}",
+                "item/ClosingStdHrs": "@{outputs('Compose_closing')}",
+                "item/PMIntervalStdHrs": "@{outputs('Compose_threshold')}",
+                "item/PMTriggered": "@{if(bool(outputs('Compose_triggered')), 'Yes', 'No')}",
+                "item/TriggerType": "@{outputs('Compose_trigger_type')}",
+                "item/CarryOverAfterPM": "@{outputs('Compose_carry_over')}",
+                "item/MonthsSinceLastPM": "@{outputs('Compose_months_since')}",
+                "item/Scenario": "Actual"
+              },
+              "authentication": "@parameters('$authentication')"
+            },
+            "runAfter": {
+              "Compose_carry_over": [
+                "Succeeded"
+              ]
+            },
+            "description": "A row every month, triggered or not. A gap in the ledger is a gap nobody can explain later."
+          },
+          "If_triggered": {
+            "type": "If",
+            "expression": {
+              "equals": [
+                "@bool(outputs('Compose_triggered'))",
+                true
+              ]
+            },
+            "actions": {
+              "Get_machines_in_cell": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "connectionName": "shared_sharepointonline",
+                    "operationId": "GetItems",
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                  },
+                  "parameters": {
+                    "dataset": "@parameters('SharePointSiteUrl')",
+                    "table": "Machine_Master",
+                    "$filter": "CellID eq '@{items('For_each_cell')?['CellID']}' and Active eq 'Yes'",
+                    "$orderby": "MachineID asc",
+                    "$top": 200
+                  },
+                  "authentication": "@parameters('$authentication')"
+                },
+                "runAfter": {}
+              },
+              "Get_previous_cycles": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "connectionName": "shared_sharepointonline",
+                    "operationId": "GetItems",
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                  },
+                  "parameters": {
+                    "dataset": "@parameters('SharePointSiteUrl')",
+                    "table": "PM_Hour_Ledger",
+                    "$filter": "CellID eq '@{items('For_each_cell')?['CellID']}' and PMTriggered eq 'Yes'",
+                    "$top": 500
+                  },
+                  "authentication": "@parameters('$authentication')"
+                },
+                "runAfter": {
+                  "Get_machines_in_cell": [
+                    "Succeeded"
+                  ]
+                },
+                "description": "Cycle number = how many times this cell has tripped before, plus this one."
+              },
+              "Compose_cycle_id": {
+                "type": "Compose",
+                "inputs": "@{concat(items('For_each_cell')?['CellID'], '-C', formatNumber(add(length(body('Get_previous_cycles')?['value']), 1), '00'))}",
+                "runAfter": {
+                  "Get_previous_cycles": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Get_area_technicians": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "connectionName": "shared_sharepointonline",
+                    "operationId": "GetItems",
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                  },
+                  "parameters": {
+                    "dataset": "@parameters('SharePointSiteUrl')",
+                    "table": "Technician_Master",
+                    "$filter": "PrimaryArea eq '@{items('For_each_cell')?['Area']}' and Active eq 'Yes'",
+                    "$orderby": "TechID asc",
+                    "$top": 100
+                  },
+                  "authentication": "@parameters('$authentication')"
+                },
+                "runAfter": {
+                  "Compose_cycle_id": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Get_checklist_tasks": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "connectionName": "shared_sharepointonline",
+                    "operationId": "GetItems",
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                  },
+                  "parameters": {
+                    "dataset": "@parameters('SharePointSiteUrl')",
+                    "table": "PM_Checklist_Master",
+                    "$top": 500
+                  },
+                  "authentication": "@parameters('$authentication')"
+                },
+                "runAfter": {
+                  "Get_area_technicians": [
+                    "Succeeded"
+                  ]
+                },
+                "description": "Only used for the task count stamped on the work order."
+              },
+              "Reset_machine_index": {
+                "type": "SetVariable",
+                "inputs": {
+                  "name": "MachineIndex",
+                  "value": 0
+                },
+                "runAfter": {
+                  "Get_checklist_tasks": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "For_each_machine": {
+                "type": "Foreach",
+                "foreach": "@body('Get_machines_in_cell')?['value']",
+                "actions": {
+                  "Increment_machine_index": {
+                    "type": "IncrementVariable",
+                    "inputs": {
+                      "name": "MachineIndex",
+                      "value": 1
+                    },
+                    "runAfter": {},
+                    "description": "There is no loop index in Power Automate, so keep one. This is why the loop must run with concurrency 1."
+                  },
+                  "Compose_planned_date": {
+                    "type": "Compose",
+                    "inputs": "@{formatDateTime(addDays(concat(triggerBody()?['MonthKey'], '-01'), sub(int(div(mul(int(formatDateTime(subtractFromTime(addToTime(concat(triggerBody()?['MonthKey'], '-01'), 1, 'Month'), 1, 'Day'), 'dd')), variables('MachineIndex')), add(length(body('Get_machines_in_cell')?['value']), 1))), 1)), 'yyyy-MM-dd')}",
+                    "runAfter": {
+                      "Increment_machine_index": [
+                        "Succeeded"
+                      ]
+                    },
+                    "description": "Spread the cell's machines across the month instead of dumping them all on the 1st."
+                  },
+                  "Compose_assigned_tech": {
+                    "type": "Compose",
+                    "inputs": "@if(empty(body('Get_area_technicians')?['value']), null, body('Get_area_technicians')?['value'][mod(variables('MachineIndex'), length(body('Get_area_technicians')?['value']))])",
+                    "runAfter": {
+                      "Compose_planned_date": [
+                        "Succeeded"
+                      ]
+                    },
+                    "description": "Round-robin across technicians whose PrimaryArea matches the cell."
+                  },
+                  "Create_work_order": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "connectionName": "shared_sharepointonline",
+                        "operationId": "PostItem",
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                      },
+                      "parameters": {
+                        "dataset": "@parameters('SharePointSiteUrl')",
+                        "table": "PM_WorkOrders",
+                        "item/Title": "@{items('For_each_machine')?['MachineID']}",
+                        "item/WOID": "@{concat('WO-', substring(guid(), 0, 8))}",
+                        "item/CycleID": "@{outputs('Compose_cycle_id')}",
+                        "item/CellID": "@{items('For_each_cell')?['CellID']}",
+                        "item/MachineID": "@{items('For_each_machine')?['MachineID']}",
+                        "item/MachineName": "@{items('For_each_machine')?['MachineName']}",
+                        "item/PMType": "PM-4000",
+                        "item/TriggerType": "@{outputs('Compose_trigger_type')}",
+                        "item/TriggerStdHrs": "@{outputs('Compose_closing')}",
+                        "item/PlanMonth": "@{triggerBody()?['MonthKey']}",
+                        "item/PlannedDate": "@{outputs('Compose_planned_date')}",
+                        "item/DueDate": "@{formatDateTime(subtractFromTime(addToTime(concat(triggerBody()?['MonthKey'], '-01'), 1, 'Month'), 1, 'Day'), 'yyyy-MM-dd')}",
+                        "item/AssignedTechID": "@{outputs('Compose_assigned_tech')?['TechID']}",
+                        "item/AssignedTechName": "@{outputs('Compose_assigned_tech')?['TechName']}",
+                        "item/Shift": "@{outputs('Compose_assigned_tech')?['Shift']}",
+                        "item/Status": "Scheduled",
+                        "item/ChecklistTotalTasks": "@{length(body('Get_checklist_tasks')?['value'])}",
+                        "item/StdMinutes": "@{items('For_each_machine')?['PMStdMinutes']}",
+                        "item/MachineQRScanned": "No"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    },
+                    "runAfter": {
+                      "Compose_assigned_tech": [
+                        "Succeeded"
+                      ]
+                    },
+                    "description": "One work order per machine. TriggerType and TriggerStdHrs are stamped on so months later anyone can see why this job existed."
+                  }
+                },
+                "runAfter": {
+                  "Reset_machine_index": [
+                    "Succeeded"
+                  ]
+                },
+                "runtimeConfiguration": {
+                  "concurrency": {
+                    "repetitions": 1
+                  }
+                },
+                "description": "One work order per active machine in the cell."
+              },
+              "Increment_created": {
+                "type": "IncrementVariable",
+                "inputs": {
+                  "name": "WorkOrdersCreated",
+                  "value": "@length(body('Get_machines_in_cell')?['value'])"
+                },
+                "runAfter": {
+                  "For_each_machine": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "runAfter": {
+              "Create_ledger_row": [
+                "Succeeded"
+              ]
+            },
+            "description": "The whole cell goes together: one work order per active machine."
+          }
+        },
+        "runAfter": {
+          "Get_previous_ledger": [
+            "Succeeded"
+          ]
+        },
+        "runtimeConfiguration": {
+          "concurrency": {
+            "repetitions": 1
+          }
+        },
+        "description": "Concurrency must stay at 1 - the machine index variable is shared state."
+      },
+      "Respond_summary": {
+        "type": "Response",
+        "inputs": {
+          "statusCode": 200,
+          "body": {
+            "MonthKey": "@triggerBody()?['MonthKey']",
+            "Mode": "@triggerBody()?['Mode']",
+            "CellsProcessed": "@length(body('Get_active_cells')?['value'])",
+            "WorkOrdersCreated": "@variables('WorkOrdersCreated')"
+          }
+        },
+        "runAfter": {
+          "For_each_cell": [
+            "Succeeded"
+          ]
+        }
+      }
+    },
+    "outputs": {}
+  },
+  "_name": "Monthly PM Scheduler",
+  "_notes": [
+    "THE scheduling rule lives here. Change it here and in nowhere else.",
+    "Runs as a child flow so Flow 1 can call it for a normal month and a person can call it directly for Backload and Restate.",
+    "Concurrency on both loops must be 1. The machine index is shared state.",
+    "Backload: call once per historical month, oldest first, and skip work order creation - historical PMs were done on paper.",
+    "Restate: delete ledger rows from that month forward, then replay month by month."
+  ]
+}

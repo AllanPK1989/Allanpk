@@ -1,0 +1,168 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      },
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "SharePointSiteUrl": {
+        "defaultValue": "https://contoso.sharepoint.com/sites/PMSystem",
+        "type": "String"
+      },
+      "TeamsGroupId": {
+        "defaultValue": "",
+        "type": "String"
+      },
+      "TeamsChannelId": {
+        "defaultValue": "",
+        "type": "String"
+      }
+    },
+    "triggers": {
+      "Every_night": {
+        "type": "Recurrence",
+        "recurrence": {
+          "frequency": "Day",
+          "interval": 1,
+          "schedule": {
+            "hours": [
+              "23"
+            ],
+            "minutes": [
+              30
+            ]
+          },
+          "timeZone": "India Standard Time"
+        }
+      }
+    },
+    "actions": {
+      "Get_grace_days": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "GetItems",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "@parameters('SharePointSiteUrl')",
+            "table": "PM_Config",
+            "$filter": "ConfigKey eq 'OverdueGraceDays'",
+            "$top": 1
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {}
+      },
+      "Compose_cutoff": {
+        "type": "Compose",
+        "inputs": "@{formatDateTime(subtractFromTime(utcNow(), if(empty(body('Get_grace_days')?['value']), 0, int(first(body('Get_grace_days')?['value'])?['ConfigValue'])), 'Day'), 'yyyy-MM-dd')}",
+        "runAfter": {
+          "Get_grace_days": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Get_lapsed_work_orders": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "GetItems",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "@parameters('SharePointSiteUrl')",
+            "table": "PM_WorkOrders",
+            "$filter": "(Status eq 'Scheduled' or Status eq 'In Progress') and DueDate lt '@{outputs('Compose_cutoff')}'",
+            "$top": 2000
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {
+          "Compose_cutoff": [
+            "Succeeded"
+          ]
+        }
+      },
+      "For_each_lapsed": {
+        "type": "Foreach",
+        "foreach": "@body('Get_lapsed_work_orders')?['value']",
+        "actions": {
+          "Mark_overdue": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "connectionName": "shared_sharepointonline",
+                "operationId": "PatchItem",
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+              },
+              "parameters": {
+                "dataset": "@parameters('SharePointSiteUrl')",
+                "table": "PM_WorkOrders",
+                "id": "@{items('For_each_lapsed')?['ID']}",
+                "item/Status": "Overdue"
+              },
+              "authentication": "@parameters('$authentication')"
+            },
+            "runAfter": {}
+          }
+        },
+        "runAfter": {
+          "Get_lapsed_work_orders": [
+            "Succeeded"
+          ]
+        },
+        "description": "Status is set by this sweep, never by a person. Overdue is a fact, not an opinion."
+      },
+      "Check_any_overdue": {
+        "type": "If",
+        "expression": {
+          "greater": [
+            "@length(body('Get_lapsed_work_orders')?['value'])",
+            0
+          ]
+        },
+        "actions": {
+          "Post_digest": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "connectionName": "shared_teams",
+                "operationId": "PostMessageToConversation",
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_teams"
+              },
+              "parameters": {
+                "poster": "Flow bot",
+                "location": "Channel",
+                "body/recipient/groupId": "@parameters('TeamsGroupId')",
+                "body/recipient/channelId": "@parameters('TeamsChannelId')",
+                "body/messageBody": "<p><b>@{length(body('Get_lapsed_work_orders')?['value'])} PM work order(s) are now overdue.</b><br>Oldest first on the Execution page of the dashboard.</p>"
+              },
+              "authentication": "@parameters('$authentication')"
+            },
+            "runAfter": {}
+          }
+        },
+        "runAfter": {
+          "For_each_lapsed": [
+            "Succeeded"
+          ]
+        },
+        "description": "One digest a day, not one message per work order. A channel nobody reads is worse than no channel."
+      }
+    },
+    "outputs": {}
+  },
+  "_name": "Overdue Sweep",
+  "_notes": [
+    "Runs nightly. Deferred is a decision with an approver; Overdue is a failure. Keeping them apart is what makes the compliance number arguable-with rather than argued-about."
+  ]
+}

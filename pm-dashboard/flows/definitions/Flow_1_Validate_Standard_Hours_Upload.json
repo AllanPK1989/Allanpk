@@ -1,0 +1,354 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      },
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "SharePointSiteUrl": {
+        "defaultValue": "https://contoso.sharepoint.com/sites/PMSystem",
+        "type": "String"
+      },
+      "StdHoursFolderId": {
+        "defaultValue": "/Shared Documents/02 Standard Hours",
+        "type": "String"
+      },
+      "DocumentLibraryDriveId": {
+        "defaultValue": "",
+        "type": "String"
+      },
+      "UploaderEmail": {
+        "defaultValue": "production.planning@example.com",
+        "type": "String"
+      },
+      "SchedulerFlowId": {
+        "defaultValue": "",
+        "type": "String"
+      }
+    },
+    "triggers": {
+      "When_a_file_is_created": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "OnNewFileV2",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "@parameters('SharePointSiteUrl')",
+            "folderId": "@parameters('StdHoursFolderId')",
+            "inferContentType": true
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {}
+      }
+    },
+    "actions": {
+      "Compose_file_name": {
+        "type": "Compose",
+        "inputs": "@triggerOutputs()?['body/{FilenameWithExtension}']",
+        "runAfter": {},
+        "description": "The uploaded file name, which carries the month."
+      },
+      "Compose_month_key": {
+        "type": "Compose",
+        "inputs": "@replace(replace(replace(outputs('Compose_file_name'), 'Cell_Standard_Hours_', ''), '.xlsx', ''), '_', '-')",
+        "runAfter": {
+          "Compose_file_name": [
+            "Succeeded"
+          ]
+        },
+        "description": "Cell_Standard_Hours_2026_09.xlsx -> 2026-09"
+      },
+      "Check_file_name": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "startsWith": [
+                "@outputs('Compose_file_name')",
+                "Cell_Standard_Hours_"
+              ]
+            },
+            {
+              "endsWith": [
+                "@toLower(outputs('Compose_file_name'))",
+                ".xlsx"
+              ]
+            },
+            {
+              "equals": [
+                "@length(outputs('Compose_month_key'))",
+                7
+              ]
+            },
+            {
+              "not": {
+                "contains": [
+                  "@toUpper(outputs('Compose_file_name'))",
+                  "TEMPLATE"
+                ]
+              }
+            }
+          ]
+        },
+        "actions": {
+          "Placeholder_name_ok": {
+            "type": "Compose",
+            "inputs": "Name accepted: @{outputs('Compose_month_key')}",
+            "runAfter": {}
+          }
+        },
+        "runAfter": {
+          "Compose_month_key": [
+            "Succeeded"
+          ]
+        },
+        "else": {
+          "actions": {
+            "Mail_bad_name": {
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "connectionName": "shared_office365",
+                  "operationId": "SendEmailV2",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+                },
+                "parameters": {
+                  "emailMessage/To": "@parameters('UploaderEmail')",
+                  "emailMessage/Subject": "PM system: standard hours file rejected",
+                  "emailMessage/Body": "<p>The file <b>@{outputs('Compose_file_name')}</b> was not processed. The name must be exactly Cell_Standard_Hours_YYYY_MM.xlsx (for example Cell_Standard_Hours_2026_09.xlsx). Rename it and upload again.</p>",
+                  "emailMessage/Importance": "Normal"
+                },
+                "authentication": "@parameters('$authentication')"
+              },
+              "runAfter": {}
+            },
+            "Stop_bad_name": {
+              "type": "Terminate",
+              "inputs": {
+                "runStatus": "Failed",
+                "runError": {
+                  "code": "BadFileName",
+                  "message": "File name does not match Cell_Standard_Hours_YYYY_MM.xlsx"
+                }
+              },
+              "runAfter": {
+                "Mail_bad_name": [
+                  "Succeeded"
+                ]
+              }
+            }
+          }
+        },
+        "description": "Reject anything that is not the agreed file name before it touches the ledger."
+      },
+      "List_uploaded_rows": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_excelonlinebusiness",
+            "operationId": "GetItems",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness"
+          },
+          "parameters": {
+            "source": "me",
+            "drive": "@parameters('DocumentLibraryDriveId')",
+            "file": "@triggerOutputs()?['body/{Identifier}']",
+            "table": "tblStdHours"
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {
+          "Check_file_name": [
+            "Succeeded"
+          ]
+        },
+        "description": "Reads the named table tblStdHours. A renamed sheet or table fails here."
+      },
+      "Get_active_cells": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "GetItems",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "@parameters('SharePointSiteUrl')",
+            "table": "Cell_Master",
+            "$filter": "Active eq 'Yes'",
+            "$top": 500
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {
+          "List_uploaded_rows": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Filter_rows_wrong_month": {
+        "type": "Query",
+        "inputs": {
+          "from": "@body('List_uploaded_rows')?['value']",
+          "where": "@not(equals(item()?['MonthKey'], outputs('Compose_month_key')))"
+        },
+        "runAfter": {
+          "Get_active_cells": [
+            "Succeeded"
+          ]
+        },
+        "description": "Any row whose MonthKey disagrees with the file name."
+      },
+      "Filter_rows_bad_value": {
+        "type": "Query",
+        "inputs": {
+          "from": "@body('List_uploaded_rows')?['value']",
+          "where": "@or(equals(item()?['StdHours'], null), less(float(coalesce(item()?['StdHours'], -1)), 0))"
+        },
+        "runAfter": {
+          "Filter_rows_wrong_month": [
+            "Succeeded"
+          ]
+        },
+        "description": "Blank or negative standard hours."
+      },
+      "Select_uploaded_cell_ids": {
+        "type": "Select",
+        "inputs": {
+          "from": "@body('List_uploaded_rows')?['value']",
+          "select": "@item()?['CellID']"
+        },
+        "runAfter": {
+          "Filter_rows_bad_value": [
+            "Succeeded"
+          ]
+        },
+        "description": "Flatten to a plain array of CellIDs so the next step is a simple contains()."
+      },
+      "Filter_missing_cells": {
+        "type": "Query",
+        "inputs": {
+          "from": "@body('Get_active_cells')?['value']",
+          "where": "@not(contains(body('Select_uploaded_cell_ids'), item()?['CellID']))"
+        },
+        "runAfter": {
+          "Select_uploaded_cell_ids": [
+            "Succeeded"
+          ]
+        },
+        "description": "Active cells with no row in the upload. A missing cell never accrues hours and would silently never be scheduled."
+      },
+      "Check_content": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "equals": [
+                "@length(body('Filter_rows_wrong_month'))",
+                0
+              ]
+            },
+            {
+              "equals": [
+                "@length(body('Filter_rows_bad_value'))",
+                0
+              ]
+            },
+            {
+              "equals": [
+                "@length(body('Filter_missing_cells'))",
+                0
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Compose_std_hours_payload": {
+            "type": "Compose",
+            "inputs": "@body('List_uploaded_rows')?['value']",
+            "runAfter": {},
+            "description": "Handed to the scheduler so it never has to touch Excel."
+          },
+          "Run_scheduler": {
+            "type": "Workflow",
+            "inputs": {
+              "host": {
+                "workflowReferenceName": "@parameters('SchedulerFlowId')"
+              },
+              "body": {
+                "MonthKey": "@outputs('Compose_month_key')",
+                "Mode": "Normal",
+                "StdHoursJson": "@string(outputs('Compose_std_hours_payload'))"
+              }
+            },
+            "runAfter": {
+              "Compose_std_hours_payload": [
+                "Succeeded"
+              ]
+            },
+            "description": "Calls Flow 2. Keeping the rule in one flow means it can be re-run for back-load and restatement without duplicating it."
+          }
+        },
+        "runAfter": {
+          "Filter_missing_cells": [
+            "Succeeded"
+          ]
+        },
+        "else": {
+          "actions": {
+            "Mail_validation_failed": {
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "connectionName": "shared_office365",
+                  "operationId": "SendEmailV2",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+                },
+                "parameters": {
+                  "emailMessage/To": "@parameters('UploaderEmail')",
+                  "emailMessage/Subject": "PM system: standard hours file rejected - @{outputs('Compose_month_key')}",
+                  "emailMessage/Body": "<p>The upload was not processed.<br><br>Rows with the wrong MonthKey: <b>@{length(body('Filter_rows_wrong_month'))}</b><br>Rows with blank or negative StdHours: <b>@{length(body('Filter_rows_bad_value'))}</b><br>Active cells missing from the file: <b>@{length(body('Filter_missing_cells'))}</b><br><br>Correct the file and upload it again with the same name.</p>",
+                  "emailMessage/Importance": "Normal"
+                },
+                "authentication": "@parameters('$authentication')"
+              },
+              "runAfter": {}
+            },
+            "Stop_validation_failed": {
+              "type": "Terminate",
+              "inputs": {
+                "runStatus": "Failed",
+                "runError": {
+                  "code": "ValidationFailed",
+                  "message": "Upload content failed validation - see the email for the counts"
+                }
+              },
+              "runAfter": {
+                "Mail_validation_failed": [
+                  "Succeeded"
+                ]
+              }
+            }
+          }
+        },
+        "description": "All three checks must pass. A half-processed file is worse than a rejected one."
+      }
+    },
+    "outputs": {}
+  },
+  "_name": "Validate Standard Hours Upload",
+  "_notes": [
+    "Rejects a bad file before it can reach the ledger.",
+    "The implausibility check (a value more than 3x the cell baseline) is worth adding once you have a few months of real data to set the multiplier from."
+  ]
+}

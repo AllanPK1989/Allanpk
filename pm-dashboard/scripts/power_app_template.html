@@ -1,0 +1,680 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PM Field App — working prototype</title>
+<style>
+:root{--ground:#F1F4F5;--surface:#fff;--surface-2:#E8EDEF;--ink:#12262F;--ink-2:#3D5765;
+ --ink-3:#6A8391;--rule:#CBD7DD;--accent:#1B6E8C;--accent-soft:#E2EDF1;
+ --good:#2F7F66;--good-soft:#E0EFE9;--warn:#A9701F;--warn-soft:#F6ECDA;
+ --crit:#AE4732;--crit-soft:#F6E4DF}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);
+ font:15px/1.55 "Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.mono{font-family:"Cascadia Mono",Consolas,ui-monospace,monospace}
+button{font:inherit;cursor:pointer}
+header{background:var(--ink);color:#E6EEF1;padding:20px 0}
+header .in{max-width:1360px;margin:0 auto;padding:0 24px;display:flex;
+ justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+header h1{margin:0;font-size:1.2rem;letter-spacing:-.015em}
+header p{margin:3px 0 0;font-size:.84rem;color:#93AEBA;max-width:78ch}
+.who{display:flex;align-items:center;gap:9px;font-size:.85rem;color:#93AEBA}
+.who select{font:inherit;padding:6px 9px;border-radius:3px;border:1px solid #37505C;
+ background:#1B3441;color:#E6EEF1}
+.stage{max-width:1360px;margin:0 auto;padding:26px 24px 70px;
+ display:grid;grid-template-columns:400px 1fr;gap:26px;align-items:start}
+/* ---------- phone ---------- */
+.phone{background:var(--ink);border-radius:26px;padding:12px;position:sticky;top:20px;
+ box-shadow:0 20px 50px -24px rgba(18,38,47,.55)}
+.screen{background:var(--ground);border-radius:16px;height:700px;overflow:hidden;
+ display:flex;flex-direction:column}
+.bar{background:var(--accent);color:#fff;padding:11px 15px;display:flex;
+ align-items:center;gap:10px;flex:none}
+.bar .t{font-weight:600;font-size:.95rem;flex:1;line-height:1.2}
+.bar .t small{display:block;font-weight:400;font-size:.72rem;opacity:.85}
+.bar button{background:rgba(255,255,255,.16);border:0;color:#fff;border-radius:3px;
+ padding:5px 9px;font-size:.78rem}
+.body{flex:1;overflow-y:auto;padding:15px}
+.foot{flex:none;border-top:1px solid var(--rule);background:var(--surface);
+ padding:10px 14px;display:flex;gap:8px}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:5px;
+ padding:14px;margin-bottom:11px}
+.hero{background:var(--ink);color:#E6EEF1;border-radius:5px;padding:15px;margin-bottom:12px}
+.hero .lab{font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:#8FA9B5}
+.hero .big{font-size:1.32rem;font-weight:700;margin:3px 0 2px;letter-spacing:-.01em}
+.hero .sm{font-size:.82rem;color:#A9C2D0}
+.hero+.hero{margin-top:-4px}
+.mh{font-size:1.14rem;font-weight:700;line-height:1.2}
+.ms{font-size:.8rem;color:var(--ink-3);margin-top:2px}
+.act{display:block;width:100%;text-align:left;background:var(--surface);
+ border:1px solid var(--rule);border-radius:5px;padding:12px 14px;margin-bottom:8px;
+ font-size:.92rem;font-weight:600;color:var(--ink)}
+.act small{display:block;font-weight:400;font-size:.76rem;color:var(--ink-3);margin-top:1px}
+.act:hover{border-color:var(--accent);background:var(--accent-soft)}
+.act:disabled{opacity:.45;cursor:not-allowed;background:var(--surface-2)}
+.act.pri{background:var(--accent);color:#fff;border-color:var(--accent)}
+.act.pri small{color:rgba(255,255,255,.82)}
+.row{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;
+ padding:10px 0;border-top:1px solid var(--rule)}
+.row:first-child{border-top:0}
+.pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.68rem;
+ font-weight:700;letter-spacing:.02em;white-space:nowrap}
+.p-ok{background:var(--good-soft);color:var(--good)}
+.p-warn{background:var(--warn-soft);color:var(--warn)}
+.p-crit{background:var(--crit-soft);color:var(--crit)}
+.p-mute{background:var(--surface-2);color:var(--ink-3)}
+.wo{background:var(--surface);border:1px solid var(--rule);border-left:4px solid var(--rule);
+ border-radius:5px;padding:11px 13px;margin-bottom:8px;cursor:pointer}
+.wo:hover{border-color:var(--accent);border-left-color:var(--accent)}
+.wo.late{border-left-color:var(--crit)}
+.wo.soon{border-left-color:var(--warn)}
+.wo .n{font-weight:600;font-size:.9rem}
+.wo .m{font-size:.76rem;color:var(--ink-3);margin-top:2px;display:flex;
+ justify-content:space-between;gap:8px}
+.task{background:var(--surface);border:1px solid var(--rule);border-radius:5px;
+ padding:11px 12px;margin-bottom:8px}
+.task.done{border-left:3px solid var(--good)}
+.task.bad{border-left:3px solid var(--crit);background:var(--crit-soft)}
+.task .q{font-size:.87rem;font-weight:600;line-height:1.35}
+.task .s{font-size:.73rem;color:var(--ink-3);margin:3px 0 8px}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.opt{border:1px solid var(--rule);background:var(--surface);border-radius:4px;
+ padding:5px 11px;font-size:.8rem;font-weight:600;color:var(--ink-2)}
+.opt.sel-ok{background:var(--good);border-color:var(--good);color:#fff}
+.opt.sel-no{background:var(--crit);border-color:var(--crit);color:#fff}
+.opt.sel-na{background:var(--ink-3);border-color:var(--ink-3);color:#fff}
+input[type=text],input[type=number],textarea,select{width:100%;padding:8px 10px;
+ border:1px solid var(--rule);border-radius:4px;font:inherit;font-size:.87rem;
+ background:var(--surface);color:var(--ink);margin-top:4px}
+label.f{display:block;font-size:.74rem;font-weight:700;color:var(--ink-2);
+ text-transform:uppercase;letter-spacing:.05em;margin-top:11px}
+.empty{text-align:center;color:var(--ink-3);padding:40px 16px;font-size:.9rem}
+.toast{position:absolute;left:12px;right:12px;bottom:12px;padding:11px 14px;
+ border-radius:5px;font-size:.85rem;font-weight:600;color:#fff;z-index:9}
+.t-ok{background:var(--good)}.t-warn{background:var(--warn)}.t-err{background:var(--crit)}
+.prog{height:5px;background:var(--surface-2);border-radius:3px;overflow:hidden;margin-top:7px}
+.prog i{display:block;height:100%;background:var(--accent)}
+/* ---------- side panel ---------- */
+.side{display:flex;flex-direction:column;gap:18px;min-width:0}
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:5px;
+ padding:20px 22px}
+.panel h2{margin:0 0 4px;font-size:1.06rem;letter-spacing:-.012em}
+.panel .sub{margin:0 0 16px;font-size:.86rem;color:var(--ink-2)}
+.fx{border-top:1px solid var(--rule);padding-top:14px;margin-top:14px}
+.fx:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.fx h3{margin:0 0 5px;font-size:.82rem;font-family:"Cascadia Mono",monospace;color:var(--accent)}
+.fx .why{margin:0 0 9px;font-size:.85rem;color:var(--ink-2)}
+.fx pre{margin:0;background:#12262F;color:#DCE8EC;border-radius:4px;padding:12px 14px;
+ overflow-x:auto;font:.76rem/1.65 "Cascadia Mono",Consolas,monospace}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tab{border:1px solid var(--rule);background:var(--surface);border-radius:3px;
+ padding:6px 12px;font-size:.8rem;font-weight:600;color:var(--ink-2)}
+.tab[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+.note{border-left:3px solid var(--accent);padding:3px 0 3px 14px;font-size:.88rem;
+ color:var(--ink-2);margin:0 0 12px}
+.note b{color:var(--ink)}
+table{border-collapse:collapse;width:100%;font-size:.83rem}
+th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--rule)}
+th{background:var(--surface-2);font-size:.67rem;letter-spacing:.06em;
+ text-transform:uppercase;color:var(--ink-2)}
+td{color:var(--ink-2)}td:first-child{color:var(--ink);font-weight:600}
+td.n{text-align:right;font-family:"Cascadia Mono",monospace}
+tr.fire td{background:var(--crit-soft)}
+@media(max-width:1080px){.stage{grid-template-columns:1fr}.phone{position:static;max-width:400px}}
+</style></head><body>
+
+<header><div class="in">
+  <div>
+    <h1>PM Field App — working prototype</h1>
+    <p>The same seven screens, the same rules, running on the sample data. Use it, demo it,
+       sign it off — then build it in Studio from the Power Fx shown alongside each screen.
+       Not a Power App: a runnable specification.</p>
+  </div>
+  <div class="who">
+    <span>Signed in as</span>
+    <select id="whoSel"></select>
+    <button class="tab" id="resetBtn">Reset data</button>
+  </div>
+</div></header>
+
+<div class="stage">
+  <div class="phone"><div class="screen" id="screen"></div></div>
+  <div class="side">
+    <div class="panel" id="fxPanel"></div>
+    <div class="panel" id="engPanel"></div>
+  </div>
+</div>
+
+<script>
+var DATA = /*__DATA__*/;
+var FX = /*__FX__*/;
+
+(function(){
+"use strict";
+var $ = function(id){return document.getElementById(id);};
+var KEY = "pmFieldAppState.v1";
+
+var byId = {};
+DATA.machines.forEach(function(m){ byId[m.MachineID]=m; });
+var cellById = {};
+DATA.cells.forEach(function(c){ cellById[c.CellID]=c; });
+var techById = {};
+DATA.techs.forEach(function(t){ techById[t.TechID]=t; });
+
+var S;
+function fresh(){
+  return {
+    tech: "TECH-01", screen: "scrHome", machineId: null, woId: null,
+    scanned: false, form: {},
+    wos: JSON.parse(JSON.stringify(DATA.openWOs)),
+    done: JSON.parse(JSON.stringify(DATA.doneWOs)),
+    results: {}, abnormalities: [], breakdowns: [], requests: [], replacements: [],
+    scans: [], ledger: JSON.parse(JSON.stringify(DATA.ledger)), monthsRun: []
+  };
+}
+function load(){
+  try{ var raw=localStorage.getItem(KEY); S = raw?JSON.parse(raw):fresh(); }
+  catch(e){ S = fresh(); }
+  if(!S || !S.wos) S = fresh();
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+
+/* An action raises a toast, then the click handler re-renders the screen, which
+   would wipe it. So queue it and let render() put it back on the new DOM. */
+var toastTimer=null, pendingToast=null;
+function toast(msg, kind){ pendingToast={msg:msg, kind:kind||"ok"}; }
+function flushToast(){
+  if(!pendingToast) return;
+  var el=document.createElement("div");
+  el.className="toast t-"+pendingToast.kind; el.textContent=pendingToast.msg;
+  $("screen").appendChild(el);
+  pendingToast=null;
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 4000);
+}
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function today(){ return "2026-09-15"; }
+function fmt(d){
+  if(!d) return "";
+  var p=String(d).slice(0,10).split("-");
+  var M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return p[2]+" "+M[+p[1]-1]+" "+p[0];
+}
+function days(a,b){ return Math.round((new Date(b)-new Date(a))/86400000); }
+function nowStamp(){ return "2026-09-15T09:30:00"; }
+
+/* ---------- domain helpers, mirroring the Power Fx ---------- */
+function lastPM(machineId){
+  var c = S.done.filter(function(w){return w.MachineID===machineId && w.Status==="Completed";});
+  c.sort(function(a,b){ return (b.ActualEndDate||"").localeCompare(a.ActualEndDate||""); });
+  return c[0]||null;
+}
+function openWOFor(machineId, techId){
+  return S.wos.filter(function(w){
+    return w.MachineID===machineId && w.AssignedTechID===techId &&
+      ["Scheduled","In Progress","Overdue"].indexOf(w.Status)>=0; })[0]||null;
+}
+function myList(){
+  return S.wos.filter(function(w){
+      return w.AssignedTechID===S.tech &&
+        ["Scheduled","In Progress","Overdue"].indexOf(w.Status)>=0; })
+    .sort(function(a,b){ return a.DueDate.localeCompare(b.DueDate); });
+}
+function logScan(kind, action, machineId){
+  S.scans.push({ScanID:"SC-"+S.scans.length, QRType:kind, MachineID:machineId||"",
+    TechID:S.tech, TechName:techById[S.tech].TechName, ScanDateTime:nowStamp(), Action:action});
+}
+function ensureResults(wo, machine){
+  if(S.results[wo.WOID]) return;
+  S.results[wo.WOID] = (DATA.checklists[machine.ChecklistID]||[]).map(function(t){
+    return {TaskNo:t.TaskNo, TaskDescription:t.TaskDescription, TaskType:t.TaskType,
+            AcceptanceStandard:t.AcceptanceStandard, Mandatory:t.Mandatory,
+            SafetyCritical:t.SafetyCritical, Result:"", MeasuredValue:"",
+            Observation:"", Photo:false};
+  });
+}
+
+/* ---------- screens ---------- */
+var R = {};
+
+R.scrHome = function(){
+  var t = techById[S.tech];
+  return {title:"PM Field App", sub:"Simulated QR scan", back:false, body:
+    '<div class="hero"><div class="lab">Signed in</div>'+
+      '<div class="big">'+esc(t.TechName)+'</div>'+
+      '<div class="sm">'+esc(t.TechID)+' · '+esc(t.Shift)+' · '+esc(t.PrimaryArea)+'</div></div>'+
+    '<p class="ms" style="margin:0 0 10px">On a phone these two actions are a camera scan. '+
+      'Here, pick what the camera would have read.</p>'+
+    '<button class="act pri" data-go="scanTech">Scan my technician badge'+
+      '<small>Opens my PM list — '+myList().length+' job(s) open</small></button>'+
+    '<label class="f">Scan a machine QR</label>'+
+    '<select id="machPick">'+DATA.machines.map(function(m){
+        return '<option value="'+m.MachineID+'">'+esc(m.MachineID+" · "+m.MachineName)+'</option>';}).join("")+
+    '</select>'+
+    '<button class="act pri" style="margin-top:9px" data-go="scanMachine">Scan this machine'+
+      '<small>Opens the machine hub</small></button>'+
+    '<button class="act" data-go="scrMonthEnd">Run month-end scheduling'+
+      '<small>Executes the 4000-hour rule, as Flow 2 does</small></button>'};
+};
+
+R.scrMachineHub = function(){
+  var m = byId[S.machineId], c = cellById[m.CellID];
+  var lp = lastPM(m.MachineID), ow = openWOFor(m.MachineID, S.tech);
+  var led = S.ledger[m.CellID] || {};
+  var toGo = Math.max(0, (led.PMIntervalStdHrs||4000) - (led.ClosingStdHrs||0));
+  var pct = Math.min(100, 100*(led.ClosingStdHrs||0)/(led.PMIntervalStdHrs||4000));
+  return {title:m.MachineName, sub:m.MachineID+" · "+(c?c.CellName:""), back:"scrHome", body:
+    '<div class="hero"><div class="lab">Last PM done</div>'+
+      '<div class="big">'+(lp?fmt(lp.ActualEndDate):"No PM recorded yet")+'</div>'+
+      '<div class="sm">'+(lp? days(lp.ActualEndDate,today())+" days ago · by "+esc(lp.AssignedTechName)+
+        " · "+esc(lp.PMResult) : "This machine has no completed PM in the system")+'</div></div>'+
+    '<div class="card"><div class="row" style="padding-top:0">'+
+      '<div><b style="font-size:.86rem">Next PM</b>'+
+      '<div class="ms">'+Math.round(toGo).toLocaleString()+' standard hours to go</div></div>'+
+      '<span class="pill '+(pct>=100?"p-crit":pct>=85?"p-warn":"p-ok")+'">'+Math.round(pct)+'%</span>'+
+      '</div><div class="prog"><i style="width:'+pct+'%"></i></div></div>'+
+    '<button class="act pri" data-go="startPM"'+(ow?"":" disabled")+'>Start PM checklist'+
+      '<small>'+(ow? ow.WOID+" · due "+fmt(ow.DueDate) :
+        "No open job for you on this machine")+'</small></button>'+
+    '<button class="act" data-go="scrBreakdown">Report breakdown<small>Time is stamped now, not typed</small></button>'+
+    '<button class="act" data-go="scrSpareRequest">Request spare part<small>Filtered to this machine type</small></button>'+
+    '<button class="act" data-go="scrSpareReplaced">Record spare replaced<small>What was actually fitted</small></button>'+
+    '<button class="act" data-go="scrAbnormality">Log abnormality<small>Photo mandatory</small></button>'+
+    '<button class="act" data-go="scrMachineHistory">View full history<small>PM, breakdowns, spares, abnormalities</small></button>'};
+};
+
+R.scrMyPMList = function(){
+  var list = myList(), t = techById[S.tech];
+  var mine = S.done.filter(function(w){return w.AssignedTechID===S.tech && w.PlanMonth==="2026-09";}).length;
+  var tot = mine + list.filter(function(w){return w.PlanMonth==="2026-09";}).length;
+  return {title:"My PM list", sub:t.TechName+" · "+list.length+" open", back:"scrHome", body:
+    '<div class="hero"><div class="lab">This month</div>'+
+      '<div class="big">'+mine+' of '+tot+' done</div>'+
+      '<div class="sm">Jobs leave this list when the machine is scanned and the checklist submitted</div></div>'+
+    (list.length? list.map(function(w){
+      var late = w.DueDate < today(), soon = !late && days(today(), w.DueDate)<=3;
+      return '<div class="wo'+(late?" late":soon?" soon":"")+'" data-go="openWO" data-wo="'+w.WOID+'">'+
+        '<div class="n">'+esc(w.MachineName)+'</div>'+
+        '<div class="m"><span>'+esc(w.CellName||w.CellID)+' · '+esc(w.WOID)+'</span>'+
+        '<span class="pill '+(late?"p-crit":soon?"p-warn":"p-mute")+'">'+
+        (late?"Overdue":"Due "+fmt(w.DueDate))+'</span></div></div>';}).join("")
+      : '<div class="empty">Nothing open.<br>Every job assigned to you is done.</div>')};
+};
+
+R.scrChecklist = function(){
+  var wo = S.wos.filter(function(w){return w.WOID===S.woId;})[0];
+  if(!wo) return {title:"Checklist", sub:"", back:"scrMyPMList", body:'<div class="empty">Work order closed.</div>'};
+  var m = byId[wo.MachineID];
+  ensureResults(wo, m);
+  var rs = S.results[wo.WOID];
+  var pendingMandatory = rs.filter(function(r){return r.Mandatory==="Yes" && !r.Result;}).length;
+  var answered = rs.filter(function(r){return !!r.Result;}).length;
+  return {title:"PM checklist", sub:m.MachineName+" · "+wo.WOID, back:"scrMachineHub",
+    body:'<div class="card"><div class="row" style="padding-top:0">'+
+        '<div><b style="font-size:.86rem">'+answered+' of '+rs.length+' answered</b>'+
+        '<div class="ms">'+(pendingMandatory? pendingMandatory+" mandatory task(s) still to answer"
+          : "All mandatory tasks answered")+'</div></div></div>'+
+        '<div class="prog"><i style="width:'+(100*answered/rs.length)+'%"></i></div></div>'+
+      rs.map(function(r,i){
+        var cls = r.Result==="Not OK" ? " bad" : r.Result ? " done" : "";
+        return '<div class="task'+cls+'">'+
+          '<div class="q">'+r.TaskNo+'. '+esc(r.TaskDescription)+
+            (r.SafetyCritical==="Yes"?' <span class="pill p-crit">Safety</span>':'')+
+            (r.Mandatory==="Yes"?'':' <span class="pill p-mute">Optional</span>')+'</div>'+
+          '<div class="s">Standard: '+esc(r.AcceptanceStandard)+'</div>'+
+          (r.TaskType==="Measurement"
+            ? '<input type="text" data-meas="'+i+'" placeholder="Measured value" value="'+esc(r.MeasuredValue)+'">'
+            : '')+
+          '<div class="opts" style="margin-top:6px">'+
+            ['OK','Not OK','N-A'].map(function(o){
+              var sel = r.Result===o ? (o==="OK"?" sel-ok":o==="Not OK"?" sel-no":" sel-na") : "";
+              return '<button class="opt'+sel+'" data-res="'+i+'" data-val="'+o+'">'+o+'</button>';
+            }).join("")+'</div>'+
+          (r.Result==="Not OK"
+            ? '<label class="f">What is wrong (required)</label>'+
+              '<textarea rows="2" data-obs="'+i+'">'+esc(r.Observation)+'</textarea>'+
+              '<button class="opt'+(r.Photo?" sel-ok":"")+'" style="margin-top:7px" data-photo="'+i+'">'+
+                (r.Photo?"✓ Photo attached":"Take photo (required)")+'</button>'
+            : '')+
+        '</div>';}).join(""),
+    foot:'<button class="act pri" style="margin:0" data-go="submitChecklist"'+
+      (pendingMandatory?" disabled":"")+'>Submit and close PM'+
+      (pendingMandatory?'<small>'+pendingMandatory+' mandatory task(s) outstanding</small>':'')+'</button>'};
+};
+
+function formField(label, id, kind, opts){
+  if(kind==="select") return '<label class="f">'+label+'</label><select data-f="'+id+'">'+
+    opts.map(function(o){return '<option'+(S.form[id]===o?" selected":"")+'>'+esc(o)+'</option>';}).join("")+'</select>';
+  if(kind==="area") return '<label class="f">'+label+'</label><textarea rows="3" data-f="'+id+'">'+esc(S.form[id]||"")+'</textarea>';
+  return '<label class="f">'+label+'</label><input type="'+kind+'" data-f="'+id+'" value="'+esc(S.form[id]||"")+'">';
+}
+
+R.scrBreakdown = function(){
+  var m = byId[S.machineId];
+  return {title:"Report breakdown", sub:m.MachineName, back:"scrMachineHub", body:
+    '<p class="note"><b>Reported time is stamped now</b> and cannot be edited. '+
+      'A back-datable breakdown time makes MTTR worthless.</p>'+
+    '<div class="card"><div class="ms">Machine</div><div class="mh">'+esc(m.MachineName)+'</div>'+
+      '<div class="ms">'+esc(m.MachineID)+' · reported '+fmt(today())+' 09:30</div></div>'+
+    formField("Failure mode","failureMode","select",DATA.failureModes)+
+    formField("Severity","bdSeverity","select",["High","Medium","Low"])+
+    formField("What happened","bdDesc","area"),
+    foot:'<button class="act pri" style="margin:0" data-go="submitBreakdown">Submit breakdown</button>'};
+};
+
+R.scrSpareRequest = function(){
+  var m = byId[S.machineId];
+  var parts = DATA.spares.filter(function(s){
+    return s.AppliesToMachineType===m.MachineType || s.AppliesToMachineType==="All"; });
+  var sel = parts.filter(function(p){return p.PartNo===S.form.partNo;})[0] || parts[0];
+  var qty = parseInt(S.form.qty||"1",10)||1;
+  var total = sel ? sel.UnitCostINR*qty : 0;
+  return {title:"Request spare part", sub:m.MachineName, back:"scrMachineHub", body:
+    '<label class="f">Part (filtered to this machine type)</label><select data-f="partNo">'+
+      parts.map(function(p){return '<option value="'+p.PartNo+'"'+(sel&&sel.PartNo===p.PartNo?" selected":"")+'>'+
+        esc(p.PartNo+" · "+p.PartName)+'</option>';}).join("")+'</select>'+
+    (sel? '<div class="card" style="margin-top:10px"><div class="row" style="padding-top:0">'+
+      '<div><div class="ms">In store</div><b>'+sel.CurrentStock+' '+esc(sel.UOM)+'</b></div>'+
+      '<div><div class="ms">Minimum</div><b>'+sel.MinStock+'</b></div>'+
+      '<div><div class="ms">Unit cost</div><b>₹'+Number(sel.UnitCostINR).toLocaleString()+'</b></div>'+
+      '</div></div>' : "")+
+    formField("Quantity","qty","number")+
+    formField("Urgency","urgency","select",["Planned","Urgent","Emergency"])+
+    '<div class="card" style="margin-top:11px"><div class="row" style="padding-top:0">'+
+      '<b>Total value</b><b>₹'+total.toLocaleString()+'</b></div>'+
+      (total>25000 ? '<p class="note" style="margin:8px 0 0;border-color:var(--warn)">'+
+        'Above the ₹25,000 limit — this routes to the <b>Plant Head</b>, not the Maintenance Head. '+
+        'Expect a longer wait.</p>' : "")+'</div>',
+    foot:'<button class="act pri" style="margin:0" data-go="submitRequest">Submit request</button>'};
+};
+
+R.scrSpareReplaced = function(){
+  var m = byId[S.machineId];
+  var parts = DATA.spares.filter(function(s){
+    return s.AppliesToMachineType===m.MachineType || s.AppliesToMachineType==="All"; });
+  return {title:"Record spare replaced", sub:m.MachineName, back:"scrMachineHub", body:
+    '<p class="note">Kept separate from the request on purpose. <b>Requested is not consumed</b>, '+
+      'and the gap between them is where money leaks.</p>'+
+    '<label class="f">Part fitted</label><select data-f="repPartNo">'+
+      parts.map(function(p){return '<option value="'+p.PartNo+'">'+esc(p.PartNo+" · "+p.PartName)+'</option>';}).join("")+'</select>'+
+    formField("Quantity","repQty","number")+
+    formField("Old part condition","cond","select",
+      ["Worn out","Broken","Leaking","Seized","End of life","Preventive replacement"]),
+    foot:'<button class="act pri" style="margin:0" data-go="submitReplacement">Record replacement</button>'};
+};
+
+R.scrAbnormality = function(){
+  var m = byId[S.machineId];
+  return {title:"Log abnormality", sub:m.MachineName, back:"scrMachineHub", body:
+    '<p class="note">Every one of these is <b>a breakdown that has not happened yet</b>.</p>'+
+    formField("Category","abnCat","select",DATA.abnCats)+
+    formField("Severity","abnSev","select",["High","Medium","Low"])+
+    formField("What did you see","abnDesc","area")+
+    '<button class="opt'+(S.form.abnPhoto?" sel-ok":"")+'" style="margin-top:11px" data-photo="abn">'+
+      (S.form.abnPhoto?"✓ Photo attached":"Take photo (required)")+'</button>',
+    foot:'<button class="act pri" style="margin:0" data-go="submitAbn"'+
+      (S.form.abnPhoto?"":" disabled")+'>Submit'+
+      (S.form.abnPhoto?'':'<small>A photo is required</small>')+'</button>'};
+};
+
+R.scrMachineHistory = function(){
+  var m = byId[S.machineId];
+  var pms = S.done.filter(function(w){return w.MachineID===m.MachineID;})
+    .sort(function(a,b){return (b.ActualEndDate||"").localeCompare(a.ActualEndDate||"");}).slice(0,8);
+  var abn = S.abnormalities.filter(function(a){return a.MachineID===m.MachineID;});
+  var bds = S.breakdowns.filter(function(b){return b.MachineID===m.MachineID;});
+  return {title:"History", sub:m.MachineName, back:"scrMachineHub", body:
+    '<div class="card"><b style="font-size:.86rem">PM history</b>'+
+      (pms.length? pms.map(function(w){return '<div class="row"><div><b style="font-size:.84rem">'+
+        fmt(w.ActualEndDate)+'</b><div class="ms">'+esc(w.AssignedTechName)+' · '+esc(w.WOID)+'</div></div>'+
+        '<span class="pill '+(w.PMResult==="Pass"?"p-ok":"p-warn")+'">'+esc(w.PMResult)+'</span></div>';}).join("")
+        : '<div class="ms" style="margin-top:6px">No completed PM yet</div>')+'</div>'+
+    '<div class="card"><b style="font-size:.86rem">Breakdowns logged here</b>'+
+      (bds.length? bds.map(function(b){return '<div class="row"><div><b style="font-size:.84rem">'+
+        esc(b.FailureMode)+'</b><div class="ms">'+fmt(b.ReportedDateTime)+'</div></div>'+
+        '<span class="pill p-crit">'+esc(b.Severity)+'</span></div>';}).join("")
+        : '<div class="ms" style="margin-top:6px">None in this session</div>')+'</div>'+
+    '<div class="card"><b style="font-size:.86rem">Abnormalities</b>'+
+      (abn.length? abn.map(function(a){return '<div class="row"><div><b style="font-size:.84rem">'+
+        esc(a.Category)+'</b><div class="ms">'+esc(a.Description).slice(0,70)+'</div></div>'+
+        '<span class="pill '+(a.Severity==="High"?"p-crit":"p-warn")+'">'+esc(a.Severity)+'</span></div>';}).join("")
+        : '<div class="ms" style="margin-top:6px">None in this session</div>')+'</div>'};
+};
+
+R.scrMonthEnd = function(){
+  var last = S.monthsRun.length ? S.monthsRun[S.monthsRun.length-1] : null;
+  return {title:"Month-end scheduling", sub:"What Flow 2 does", back:"scrHome", body:
+    '<p class="note">Runs the <b>4000-hour rule</b> over every cell: accrue the month\'s '+
+      'standard hours, trip any cell that crosses its threshold, carry the overshoot '+
+      'forward, and raise one work order per machine in that cell.</p>'+
+    '<button class="act pri" data-go="runMonth">Run the next month'+
+      '<small>'+(last? "Last run: "+last.month+" — press again for the next month" : "Next: 2026-10")+'</small></button>'+
+    (last? '<div class="card"><b style="font-size:.86rem">'+last.month+'</b>'+
+      '<div class="ms" style="margin-bottom:8px">'+last.tripped+' cell(s) tripped · '+
+      last.created+' work order(s) raised</div>'+
+      last.rows.map(function(r){
+        return '<div class="row"><div><b style="font-size:.84rem">'+esc(r.cell)+'</b>'+
+          '<div class="ms">'+Math.round(r.opening).toLocaleString()+' + '+
+          Math.round(r.added).toLocaleString()+' = '+Math.round(r.closing).toLocaleString()+' h'+
+          (r.forecast?' <span class="pill p-mute">run rate</span>':'')+'</div></div>'+
+          (r.triggered? '<span class="pill p-crit">'+esc(r.type)+'</span>'
+                      : '<span class="pill p-mute">'+Math.round(100*r.closing/r.threshold)+'%</span>')+
+        '</div>';}).join("")+'</div>' : "")};
+};
+
+/* ---------- the scheduling rule, same arithmetic as pm_core.py and Flow 2 ---------- */
+function runMonth(){
+  var months = ["2026-10","2026-11","2026-12","2027-01","2027-02","2027-03"];
+  var idx = S.monthsRun.length;
+  if(idx >= months.length){ toast("Sample data runs out after six months.","warn"); return; }
+  var month = months[idx], rowsOut=[], tripped=0, created=0;
+  DATA.cells.forEach(function(c){
+    var led = S.ledger[c.CellID] || {ClosingStdHrs:0, PMIntervalStdHrs:+c.PMIntervalStdHrs,
+                                     MonthsSinceLastPM:0, CarryOverAfterPM:0};
+    var opening = led.CarryOverAfterPM != null ? led.CarryOverAfterPM : led.ClosingStdHrs;
+    var uploaded = (DATA.stdHours[c.CellID]||{})[month];
+    var added = uploaded != null ? uploaded : (DATA.runRate[c.CellID] || 0);
+    var isForecast = uploaded == null;
+    var closing = opening + added;
+    var threshold = +c.PMIntervalStdHrs || 4000;
+    var backstop = +c.CalendarBackstopMonths || 12;
+    var monthsSince = (led.MonthsSinceLastPM||0) + 1;
+    var hoursDue = closing >= threshold;
+    var calDue = monthsSince >= backstop;
+    var trig = hoursDue || calDue;
+    var carry = trig ? Math.max(0, closing - threshold) : closing;
+    S.ledger[c.CellID] = {MonthKey:month, ClosingStdHrs:closing, PMIntervalStdHrs:threshold,
+      MonthsSinceLastPM: trig?0:monthsSince, CarryOverAfterPM:carry};
+    if(trig){
+      tripped++;
+      var ms = DATA.machines.filter(function(m){return m.CellID===c.CellID;});
+      var pool = DATA.techs.filter(function(t){return t.PrimaryArea===c.Area;});
+      ms.forEach(function(m,j){
+        var t = pool.length? pool[j % pool.length] : DATA.techs[0];
+        S.wos.push({WOID:"WO-"+month.replace("-","")+"-"+m.MachineID, CycleID:c.CellID+"-Cxx",
+          CellID:c.CellID, CellName:c.CellName, MachineID:m.MachineID, MachineName:m.MachineName,
+          PlanMonth:month, PlannedDate:month+"-"+String(5+(j*3)%20).padStart(2,"0"),
+          DueDate:month+"-28", AssignedTechID:t.TechID, AssignedTechName:t.TechName,
+          Status:"Scheduled", ActualEndDate:"", PMResult:"",
+          TriggerType: hoursDue?"Std Hours":"Calendar Backstop",
+          StdMinutes:m.PMStdMinutes, ChecklistTotalTasks:(DATA.checklists[m.ChecklistID]||[]).length,
+          MachineQRScanned:"No"});
+        created++;
+      });
+    }
+    rowsOut.push({cell:c.CellName, opening:opening, added:added, closing:closing,
+                  threshold:threshold, triggered:trig, forecast:isForecast,
+                  type: hoursDue?"Std Hours":(calDue?"Calendar Backstop":"")});
+  });
+  S.monthsRun.push({month:month, tripped:tripped, created:created, rows:rowsOut});
+  save();
+  toast(month+": "+tripped+" cell(s) tripped, "+created+" work orders raised", "ok");
+}
+
+/* ---------- actions ---------- */
+var A = {
+  scanTech: function(){ logScan("Technician QR","Open My PM List"); S.screen="scrMyPMList"; },
+  scanMachine: function(){
+    var sel=$("machPick"); S.machineId = sel? sel.value : DATA.machines[0].MachineID;
+    S.scanned = true; logScan("Machine QR","View Last PM", S.machineId); S.screen="scrMachineHub"; },
+  openWO: function(el){
+    var wo = S.wos.filter(function(w){return w.WOID===el.getAttribute("data-wo");})[0];
+    S.machineId = wo.MachineID; S.woId = wo.WOID; S.scanned = false; S.screen="scrMachineHub";
+    toast("Scan the machine to start the checklist","warn"); },
+  startPM: function(){
+    var wo = openWOFor(S.machineId, S.tech);
+    if(!wo){ toast("No open job for you on this machine","err"); return; }
+    if(!S.scanned){ toast("Scan the machine QR code first","warn"); return; }
+    S.woId = wo.WOID; wo.Status="In Progress"; wo.MachineQRScanned="Yes";
+    logScan("Machine QR","Start PM Checklist", S.machineId);
+    S.screen="scrChecklist"; },
+  submitChecklist: function(){
+    var wo = S.wos.filter(function(w){return w.WOID===S.woId;})[0];
+    var rs = S.results[wo.WOID];
+    var bad = rs.filter(function(r){return r.Result==="Not OK";});
+    var incomplete = bad.filter(function(r){return !r.Observation || !r.Photo;});
+    if(incomplete.length){ toast("Every Not OK needs a comment and a photo","err"); return; }
+    var m = byId[wo.MachineID];
+    bad.forEach(function(r){
+      S.abnormalities.push({AbnormalityID:"ABN-"+S.abnormalities.length, Source:"PM Checklist",
+        SourceRefID:wo.WOID, MachineID:m.MachineID, CellID:m.CellID,
+        Category:"From checklist task "+r.TaskNo,
+        Severity: r.SafetyCritical==="Yes" ? "High" : "Medium",
+        Description:"Task "+r.TaskNo+": "+r.TaskDescription+" — outside standard ("+r.AcceptanceStandard+")",
+        ReportedByTechID:S.tech, ReportedDate:today(), Status:"Open"});
+    });
+    wo.Status="Completed"; wo.ActualEndDate=today();
+    wo.PMResult = bad.length===0 ? "Pass" : bad.length<=2 ? "Pass with observation" : "Fail - follow-up raised";
+    wo.OnTimeFlag = today() <= wo.DueDate ? "Yes" : "No";
+    S.done.push(wo);
+    S.wos = S.wos.filter(function(w){return w.WOID!==wo.WOID;});
+    S.woId=null; S.screen="scrMyPMList";
+    toast("PM closed for "+m.MachineName+(bad.length? " · "+bad.length+" abnormality raised":""), "ok"); },
+  submitBreakdown: function(){
+    S.breakdowns.push({MachineID:S.machineId, ReportedDateTime:nowStamp(),
+      FailureMode:S.form.failureMode||DATA.failureModes[0],
+      Severity:S.form.bdSeverity||"Medium", Description:S.form.bdDesc||"", Status:"Open"});
+    logScan("Machine QR","Report Breakdown", S.machineId);
+    S.form={}; S.screen="scrMachineHub"; toast("Breakdown reported and timestamped","ok"); },
+  submitRequest: function(){
+    S.requests.push({MachineID:S.machineId, PartNo:S.form.partNo, Qty:S.form.qty||1,
+      Urgency:S.form.urgency||"Planned", Status:"Pending Approval"});
+    logScan("Machine QR","Request Spare", S.machineId);
+    S.form={}; S.screen="scrMachineHub"; toast("Request submitted for approval","ok"); },
+  submitReplacement: function(){
+    S.replacements.push({MachineID:S.machineId, PartNo:S.form.repPartNo,
+      Qty:S.form.repQty||1, Condition:S.form.cond});
+    logScan("Machine QR","Record Spare Replaced", S.machineId);
+    S.form={}; S.screen="scrMachineHub"; toast("Replacement recorded","ok"); },
+  submitAbn: function(){
+    if(!S.form.abnPhoto){ toast("A photo is required","err"); return; }
+    S.abnormalities.push({AbnormalityID:"ABN-"+S.abnormalities.length, Source:"QR Walk-by",
+      MachineID:S.machineId, Category:S.form.abnCat||DATA.abnCats[0],
+      Severity:S.form.abnSev||"Medium", Description:S.form.abnDesc||"", Status:"Open"});
+    logScan("Machine QR","Log Abnormality", S.machineId);
+    var sev = S.form.abnSev;
+    S.form={}; S.screen="scrMachineHub";
+    toast(sev==="High" ? "Logged — Maintenance Head notified immediately" : "Abnormality logged", "ok"); },
+  runMonth: function(){ runMonth(); }
+};
+
+/* ---------- render ---------- */
+function render(){
+  var v = (R[S.screen] || R.scrHome)();
+  $("screen").innerHTML =
+    '<div class="bar">'+(v.back?'<button data-go="back">‹</button>':'')+
+      '<div class="t">'+esc(v.title)+(v.sub?'<small>'+esc(v.sub)+'</small>':'')+'</div></div>'+
+    '<div class="body">'+v.body+'</div>'+
+    (v.foot?'<div class="foot">'+v.foot+'</div>':'');
+  $("screen").setAttribute("data-back", v.back||"");
+  flushToast();
+  renderFx();
+  renderEngine();
+  save();
+}
+
+function renderFx(){
+  var key = S.screen, block = FX[key];
+  var appFx = '<div class="fx"><h3>App.OnStart</h3><p class="why">'+esc(FX.App[0].w)+
+    '</p><pre>'+esc(FX.App[0].f)+'</pre></div>';
+  if(!block){
+    $("fxPanel").innerHTML = '<h2>Power Fx</h2>'+
+      '<p class="sub">This screen has no direct Power Apps equivalent — it stands in for '+
+      'the phone camera and for Flow 2. The app itself starts at the machine hub.</p>'+appFx;
+    return;
+  }
+  $("fxPanel").innerHTML = '<h2>'+esc(block.title)+'</h2>'+
+    '<p class="sub">'+esc(block.sub)+' — paste these into the named control property in Studio. '+
+    'Full sheet in <span class="mono">POWERFX_REFERENCE.md</span>.</p>'+
+    block.items.map(function(i){
+      return '<div class="fx"><h3>'+esc(i.c)+'.'+esc(i.p)+'</h3>'+
+        '<p class="why">'+esc(i.w)+'</p><pre>'+esc(i.f)+'</pre></div>';}).join("");
+}
+
+function renderEngine(){
+  var open = S.wos.length, done = S.done.length;
+  var scans = S.scans.length, abn = S.abnormalities.length;
+  $("engPanel").innerHTML = '<h2>What this session has written</h2>'+
+    '<p class="sub">The prototype keeps state in your browser, so you can walk the whole '+
+    'journey and see the consequences. Nothing leaves this page.</p>'+
+    '<table><thead><tr><th>List</th><th class="n">Rows</th><th>Meaning</th></tr></thead><tbody>'+
+    '<tr><td>PM_WorkOrders</td><td class="n">'+open+' open</td><td>Leaves the technician list only on submit</td></tr>'+
+    '<tr><td></td><td class="n">'+done+' done</td><td>Carries OnTimeFlag, calculated not typed</td></tr>'+
+    '<tr><td>QR_Scan_Log</td><td class="n">'+scans+'</td><td>Proof of attendance at the machine</td></tr>'+
+    '<tr><td>Abnormality_Log</td><td class="n">'+abn+'</td><td>Raised by hand and by failed checklist tasks</td></tr>'+
+    '<tr><td>Breakdown_Reports</td><td class="n">'+S.breakdowns.length+'</td><td>Reported time stamped by the app</td></tr>'+
+    '<tr><td>SparePart_Requests</td><td class="n">'+S.requests.length+'</td><td>Routed by value in Flow 5</td></tr>'+
+    '<tr><td>SparePart_Replacements</td><td class="n">'+S.replacements.length+'</td><td>What was actually fitted</td></tr>'+
+    '</tbody></table>'+
+    '<p class="note" style="margin-top:16px"><b>Try this:</b> scan your badge, open a job, '+
+    'try Start PM without scanning the machine, then scan it and submit. The job disappears '+
+    'from your list — and there is no button anywhere that could have closed it from a desk.</p>';
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click", function(e){
+  var el = e.target.closest("[data-go],[data-res],[data-photo]");
+  if(!el) return;
+  if(el.hasAttribute("data-res")){
+    var i=+el.getAttribute("data-res"), val=el.getAttribute("data-val");
+    var wo=S.wos.filter(function(w){return w.WOID===S.woId;})[0];
+    if(wo){ S.results[wo.WOID][i].Result = S.results[wo.WOID][i].Result===val ? "" : val; render(); }
+    return;
+  }
+  if(el.hasAttribute("data-photo")){
+    var k=el.getAttribute("data-photo");
+    if(k==="abn"){ S.form.abnPhoto = !S.form.abnPhoto; }
+    else { var w2=S.wos.filter(function(w){return w.WOID===S.woId;})[0];
+           if(w2) S.results[w2.WOID][+k].Photo = !S.results[w2.WOID][+k].Photo; }
+    render(); return;
+  }
+  var go = el.getAttribute("data-go");
+  if(go==="back"){ S.screen = $("screen").getAttribute("data-back") || "scrHome"; render(); return; }
+  if(A[go]){ A[go](el); render(); return; }
+  if(R[go]){ S.screen = go; render(); return; }
+});
+
+document.addEventListener("input", function(e){
+  var el=e.target;
+  if(el.hasAttribute && el.hasAttribute("data-f")){ S.form[el.getAttribute("data-f")] = el.value; save();
+    if(el.getAttribute("data-f")==="partNo"||el.getAttribute("data-f")==="qty") render(); return; }
+  if(el.hasAttribute && el.hasAttribute("data-obs")){
+    var w=S.wos.filter(function(x){return x.WOID===S.woId;})[0];
+    if(w) S.results[w.WOID][+el.getAttribute("data-obs")].Observation = el.value; save(); return; }
+  if(el.hasAttribute && el.hasAttribute("data-meas")){
+    var w2=S.wos.filter(function(x){return x.WOID===S.woId;})[0];
+    if(w2) S.results[w2.WOID][+el.getAttribute("data-meas")].MeasuredValue = el.value; save(); return; }
+});
+
+load();
+$("whoSel").innerHTML = DATA.techs.map(function(t){
+  return '<option value="'+t.TechID+'"'+(S.tech===t.TechID?" selected":"")+'>'+
+    esc(t.TechName)+' ('+t.TechID+')</option>';}).join("");
+$("whoSel").addEventListener("change", function(){
+  S.tech=this.value; S.screen="scrHome"; render(); });
+$("resetBtn").addEventListener("click", function(){
+  if(confirm("Reset all prototype data back to the sample plant?")){
+    S=fresh(); $("whoSel").value=S.tech; render(); }});
+render();
+})();
+</script>
+</body></html>

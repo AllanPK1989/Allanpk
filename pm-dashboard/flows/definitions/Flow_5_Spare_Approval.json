@@ -1,0 +1,173 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      },
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "SharePointSiteUrl": {
+        "defaultValue": "https://contoso.sharepoint.com/sites/PMSystem",
+        "type": "String"
+      },
+      "MaintenanceHeadEmail": {
+        "defaultValue": "maintenance.head@example.com",
+        "type": "String"
+      },
+      "PlantHeadEmail": {
+        "defaultValue": "plant.head@example.com",
+        "type": "String"
+      }
+    },
+    "triggers": {
+      "When_a_spare_is_requested": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "OnNewItems",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "@parameters('SharePointSiteUrl')",
+            "table": "SparePart_Requests"
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {}
+      }
+    },
+    "actions": {
+      "Get_approval_limit": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "GetItems",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "@parameters('SharePointSiteUrl')",
+            "table": "PM_Config",
+            "$filter": "ConfigKey eq 'SpareApprovalLimitINR'",
+            "$top": 1
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {}
+      },
+      "Compose_limit": {
+        "type": "Compose",
+        "inputs": "@if(empty(body('Get_approval_limit')?['value']), 25000, float(first(body('Get_approval_limit')?['value'])?['ConfigValue']))",
+        "runAfter": {
+          "Get_approval_limit": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_approver": {
+        "type": "Compose",
+        "inputs": "@if(greater(float(coalesce(triggerOutputs()?['body/TotalCostINR'], 0)), float(outputs('Compose_limit'))), parameters('PlantHeadEmail'), parameters('MaintenanceHeadEmail'))",
+        "runAfter": {
+          "Compose_limit": [
+            "Succeeded"
+          ]
+        },
+        "description": "Above the limit it goes to the Plant Head. The app warns the technician before submit so the delay is not a surprise."
+      },
+      "Start_and_wait_for_approval": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_approvals",
+            "operationId": "StartAndWaitForAnApproval",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_approvals"
+          },
+          "parameters": {
+            "approvalType": "Basic",
+            "ApprovalCreationInput/title": "Spare request @{triggerOutputs()?['body/RequestID']} - @{triggerOutputs()?['body/PartName']}",
+            "ApprovalCreationInput/assignedTo": "@outputs('Compose_approver')",
+            "ApprovalCreationInput/details": "Machine: @{triggerOutputs()?['body/MachineName']}\nPart: @{triggerOutputs()?['body/PartNo']} @{triggerOutputs()?['body/PartName']}\nQuantity: @{triggerOutputs()?['body/QtyRequested']}\nValue: INR @{triggerOutputs()?['body/TotalCostINR']}\nUrgency: @{triggerOutputs()?['body/Urgency/Value']}\nRaised from: @{triggerOutputs()?['body/SourceType']} @{triggerOutputs()?['body/SourceID']}"
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {
+          "Compose_approver": [
+            "Succeeded"
+          ]
+        },
+        "description": "The Approvals connector keeps the decision auditable, which a mailed yes/no does not."
+      },
+      "Record_outcome": {
+        "type": "If",
+        "expression": {
+          "equals": [
+            "@outputs('Start_and_wait_for_approval')?['body/outcome']",
+            "Approve"
+          ]
+        },
+        "actions": {
+          "Set_approved": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "connectionName": "shared_sharepointonline",
+                "operationId": "PatchItem",
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+              },
+              "parameters": {
+                "dataset": "@parameters('SharePointSiteUrl')",
+                "table": "SparePart_Requests",
+                "id": "@{triggerOutputs()?['body/ID']}",
+                "item/Status": "Approved",
+                "item/ApprovedDate": "@{formatDateTime(utcNow(), 'yyyy-MM-dd')}",
+                "item/ApprovedBy": "@{outputs('Compose_approver')}"
+              },
+              "authentication": "@parameters('$authentication')"
+            },
+            "runAfter": {}
+          }
+        },
+        "runAfter": {
+          "Start_and_wait_for_approval": [
+            "Succeeded"
+          ]
+        },
+        "else": {
+          "actions": {
+            "Set_rejected": {
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "PatchItem",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                },
+                "parameters": {
+                  "dataset": "@parameters('SharePointSiteUrl')",
+                  "table": "SparePart_Requests",
+                  "id": "@{triggerOutputs()?['body/ID']}",
+                  "item/Status": "Rejected",
+                  "item/RejectionReason": "@{outputs('Start_and_wait_for_approval')?['body/responses'][0]['comments']}"
+                },
+                "authentication": "@parameters('$authentication')"
+              },
+              "runAfter": {}
+            }
+          }
+        },
+        "description": "Stores sets Issued when the part physically leaves the counter. A flow must not claim that a part was handed over."
+      }
+    },
+    "outputs": {}
+  },
+  "_name": "Spare Approval",
+  "_notes": [
+    "Issued is deliberately not set by this flow. Requested, approved and consumed are three different facts and the dashboard shows the gaps between them."
+  ]
+}

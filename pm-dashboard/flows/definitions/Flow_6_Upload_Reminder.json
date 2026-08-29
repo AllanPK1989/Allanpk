@@ -1,0 +1,131 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      },
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "SharePointSiteUrl": {
+        "defaultValue": "https://contoso.sharepoint.com/sites/PMSystem",
+        "type": "String"
+      },
+      "StdHoursLibraryId": {
+        "defaultValue": "Shared Documents",
+        "type": "String"
+      },
+      "UploaderEmail": {
+        "defaultValue": "production.planning@example.com",
+        "type": "String"
+      }
+    },
+    "triggers": {
+      "On_the_5th_and_8th": {
+        "type": "Recurrence",
+        "recurrence": {
+          "frequency": "Month",
+          "interval": 1,
+          "schedule": {
+            "monthDays": [
+              5,
+              8
+            ],
+            "hours": [
+              "9"
+            ],
+            "minutes": [
+              0
+            ]
+          },
+          "timeZone": "India Standard Time"
+        }
+      }
+    },
+    "actions": {
+      "Compose_target_month": {
+        "type": "Compose",
+        "inputs": "@{formatDateTime(subtractFromTime(utcNow(), 1, 'Month'), 'yyyy_MM')}",
+        "runAfter": {},
+        "description": "Chasing last month's file."
+      },
+      "List_uploaded_files": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "GetFileItems",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "@parameters('SharePointSiteUrl')",
+            "table": "@parameters('StdHoursLibraryId')",
+            "$top": 500
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {
+          "Compose_target_month": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Filter_this_month": {
+        "type": "Query",
+        "inputs": {
+          "from": "@body('List_uploaded_files')?['value']",
+          "where": "@contains(coalesce(item()?['{Name}'], ''), concat('Cell_Standard_Hours_', outputs('Compose_target_month')))"
+        },
+        "runAfter": {
+          "List_uploaded_files": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Chase_if_missing": {
+        "type": "If",
+        "expression": {
+          "equals": [
+            "@length(body('Filter_this_month'))",
+            0
+          ]
+        },
+        "actions": {
+          "Mail_reminder": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "connectionName": "shared_office365",
+                "operationId": "SendEmailV2",
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+              },
+              "parameters": {
+                "emailMessage/To": "@parameters('UploaderEmail')",
+                "emailMessage/Subject": "Action needed: standard hours for @{outputs('Compose_target_month')} not uploaded",
+                "emailMessage/Body": "<p>The PM system has no standard-hours file for <b>@{outputs('Compose_target_month')}</b>.<br><br>Until it is uploaded, no cell accrues hours and no PM will be scheduled for any of them - while the dashboard still shows green.<br><br>Upload <b>Cell_Standard_Hours_@{outputs('Compose_target_month')}.xlsx</b> to the 02 Standard Hours folder.</p>",
+                "emailMessage/Importance": "Normal"
+              },
+              "authentication": "@parameters('$authentication')"
+            },
+            "runAfter": {}
+          }
+        },
+        "runAfter": {
+          "Filter_this_month": [
+            "Succeeded"
+          ]
+        }
+      }
+    },
+    "outputs": {}
+  },
+  "_name": "Upload Reminder",
+  "_notes": [
+    "Two lines of logic that protect the whole system. Without the upload, counters freeze and nothing is ever scheduled.",
+    "Copy the Plant Head on the 8th-of-the-month run once you have seen how often the 5th is missed."
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      },
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "SharePointSiteUrl": {
+        "defaultValue": "https://contoso.sharepoint.com/sites/PMSystem",
+        "type": "String"
+      },
+      "MaintenanceHeadEmail": {
+        "defaultValue": "maintenance.head@example.com",
+        "type": "String"
+      },
+      "TeamsGroupId": {
+        "defaultValue": "",
+        "type": "String"
+      },
+      "TeamsChannelId": {
+        "defaultValue": "",
+        "type": "String"
+      }
+    },
+    "triggers": {
+      "When_an_abnormality_is_logged": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "OnNewItems",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "@parameters('SharePointSiteUrl')",
+            "table": "Abnormality_Log"
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {},
+        "metadata": {
+          "operationMetadataId": "abn-created"
+        }
+      }
+    },
+    "actions": {
+      "Check_high_severity": {
+        "type": "If",
+        "expression": {
+          "equals": [
+            "@triggerOutputs()?['body/Severity/Value']",
+            "High"
+          ]
+        },
+        "actions": {
+          "Mail_head": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "connectionName": "shared_office365",
+                "operationId": "SendEmailV2",
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+              },
+              "parameters": {
+                "emailMessage/To": "@parameters('MaintenanceHeadEmail')",
+                "emailMessage/Subject": "HIGH severity abnormality - @{triggerOutputs()?['body/MachineName']}",
+                "emailMessage/Body": "<p><b>@{triggerOutputs()?['body/MachineName']}</b> (@{triggerOutputs()?['body/CellName']})<br>Category: @{triggerOutputs()?['body/Category/Value']}<br>Reported by: @{triggerOutputs()?['body/ReportedByName']}<br>@{triggerOutputs()?['body/Description']}<br><br>Photo is attached to the item in the Abnormality Log.</p>",
+                "emailMessage/Importance": "Normal"
+              },
+              "authentication": "@parameters('$authentication')"
+            },
+            "runAfter": {}
+          },
+          "Post_teams": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "connectionName": "shared_teams",
+                "operationId": "PostMessageToConversation",
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_teams"
+              },
+              "parameters": {
+                "poster": "Flow bot",
+                "location": "Channel",
+                "body/recipient/groupId": "@parameters('TeamsGroupId')",
+                "body/recipient/channelId": "@parameters('TeamsChannelId')",
+                "body/messageBody": "<p><b>HIGH severity abnormality</b><br>@{triggerOutputs()?['body/MachineName']} - @{triggerOutputs()?['body/Description']}</p>"
+              },
+              "authentication": "@parameters('$authentication')"
+            },
+            "runAfter": {
+              "Mail_head": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {},
+        "description": "High severity goes to a person immediately. Everything else waits for the Monday digest."
+      }
+    },
+    "outputs": {}
+  },
+  "_name": "Abnormality Escalation",
+  "_notes": [
+    "A separate weekly digest flow for items open past 30 days is worth adding once the log has volume. The ageing measure is already on the dashboard."
+  ]
+}

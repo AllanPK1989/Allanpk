@@ -17,6 +17,8 @@ a 12-month calendar backstop for cells that never get there.
 | What the system does, and why | **[`BUILD_SPECIFICATION.md`](BUILD_SPECIFICATION.md)** |
 | To understand the 4000-hour rule | [`docs/03-pm-scheduling-engine.md`](docs/03-pm-scheduling-engine.md) |
 | The files to put in SharePoint | [`sharepoint-templates/`](sharepoint-templates/) |
+| The field app, running | [`powerapp/PM_Field_App.html`](powerapp/PM_Field_App.html) |
+| The six flows, action by action | [`flows/BUILD_GUIDE.md`](flows/BUILD_GUIDE.md) |
 | To open the .pbip and connect it | [`docs/11-opening-the-pbip.md`](docs/11-opening-the-pbip.md) |
 | To build it, in order | [`docs/09-deployment-checklist.md`](docs/09-deployment-checklist.md) |
 | What I assumed, and what to decide | [`docs/10-open-decisions.md`](docs/10-open-decisions.md) |
@@ -35,13 +37,19 @@ pm-dashboard/
 │   ├── generate_qr_codes.py     → qr/
 │   ├── build_pbip.py            → powerbi/  (TMDL model + PBIR report)
 │   ├── validate_pbip.py         692 checks before Desktop ever opens it
+│   ├── build_flows.py           → flows/  (6 workflow definitions)
+│   ├── validate_flows.py        426 checks, itself proved against 7 faults
+│   ├── build_power_app.py       → powerapp/  (working prototype + Power Fx)
+│   └── test_power_app.py        drives the prototype through 14 rule checks
 │   ├── pbi_model_spec.py        tables, types, relationships
 │   ├── pbi_measures.py          94 DAX measures
 │   └── build_measure_docs.py    → docs/08-dax-measure-library.md
 ├── data/dummy/                  16 CSVs, ~6,700 rows
 ├── sharepoint-templates/        18 workbooks, ready to upload
 ├── qr/                          43 QR codes + print sheets
-└── powerbi/                     PM_Dashboard.pbip + data/ + SETUP.md
+├── powerbi/                     PM_Dashboard.pbip + data/ + SETUP.md
+├── flows/                       6 workflow definitions + build guide
+└── powerapp/                    PM_Field_App.html + POWERFX_REFERENCE.md
 ```
 
 ## Build it

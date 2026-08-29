@@ -91,6 +91,15 @@ def build_docs() -> None:
                        "short": "Build Specification",
                        "html": wrap_tables(md_to_html(spec))})
 
+    for rel, ident, short in (
+            (os.path.join("flows", "BUILD_GUIDE.md"), "flows", "Flow Build Guide"),
+            (os.path.join("powerapp", "POWERFX_REFERENCE.md"), "powerfx", "Power Fx Reference")):
+        raw = open(os.path.join(ROOT, rel), encoding="utf-8").read()
+        m = re.search(r"^#\s+(.+)$", raw, re.M)
+        entries.append({"id": ident, "file": os.path.basename(rel),
+                        "title": m.group(1) if m else short, "short": short,
+                        "html": wrap_tables(md_to_html(raw))})
+
     nav = "".join(
         f'<button data-doc="{e["id"]}"><span class="n">{i:02d}</span>{e["short"]}</button>'
         for i, e in enumerate(entries))
@@ -142,8 +151,10 @@ show((location.hash||'').replace('#','')||btns[0].dataset.doc);
     os.makedirs(src_md, exist_ok=True)
     for f in files:
         shutil.copyfile(os.path.join(docs_dir, f), os.path.join(src_md, f))
-    shutil.copyfile(os.path.join(ROOT, "BUILD_SPECIFICATION.md"),
-                    os.path.join(src_md, "BUILD_SPECIFICATION.md"))
+    for rel in ("BUILD_SPECIFICATION.md", os.path.join("flows", "BUILD_GUIDE.md"),
+                os.path.join("powerapp", "POWERFX_REFERENCE.md")):
+        shutil.copyfile(os.path.join(ROOT, rel),
+                        os.path.join(src_md, os.path.basename(rel)))
     print(f"  04_Documentation/Documentation.html  ({len(entries)} documents)")
 
 
@@ -266,13 +277,16 @@ def copy_tree(src, dst, **kw):
 
 
 def main() -> None:
-    print("\n  verifying the Power BI project ...")
-    r = subprocess.run([sys.executable, os.path.join(HERE, "validate_pbip.py")],
-                       capture_output=True, text=True)
-    if r.returncode != 0:
-        sys.stdout.write(r.stdout)
-        sys.exit("  project validation FAILED - not packaging a broken project")
-    print("    " + [l for l in r.stdout.strip().split("\n") if l.strip()][-1].strip())
+    for label, script in (("Power BI project", "validate_pbip.py"),
+                          ("flow definitions", "validate_flows.py"),
+                          ("field app prototype", "test_power_app.py")):
+        print(f"\n  verifying the {label} ...")
+        r = subprocess.run([sys.executable, os.path.join(HERE, script)],
+                           capture_output=True, text=True)
+        if r.returncode != 0:
+            sys.stdout.write(r.stdout + r.stderr)
+            sys.exit(f"  {label} validation FAILED - not packaging it")
+        print("    " + [l for l in r.stdout.strip().split("\n") if l.strip()][-1].strip())
 
     if os.path.isdir(PKG):
         shutil.rmtree(PKG)
@@ -296,6 +310,24 @@ def main() -> None:
     n_png = len(os.listdir(os.path.join(qr_dst, "machines"))) + \
         len(os.listdir(os.path.join(qr_dst, "technicians")))
     print(f"  03_QR_Codes/  (QR_Generator.html + {n_png} pre-generated codes)")
+
+    # 06 Flows
+    flows_dst = os.path.join(PKG, "06_Flows")
+    os.makedirs(flows_dst, exist_ok=True)
+    copy_tree(os.path.join(ROOT, "flows", "definitions"),
+              os.path.join(flows_dst, "definitions"))
+    shutil.copyfile(os.path.join(ROOT, "flows", "BUILD_GUIDE.md"),
+                    os.path.join(flows_dst, "BUILD_GUIDE.md"))
+    n_flows = len([f for f in os.listdir(os.path.join(flows_dst, "definitions"))
+                   if f.endswith(".json")])
+    print(f"  06_Flows/  ({n_flows} workflow definitions + build guide)")
+
+    # 07 Power App
+    app_dst = os.path.join(PKG, "07_Power_App")
+    os.makedirs(app_dst, exist_ok=True)
+    for f in ("PM_Field_App.html", "POWERFX_REFERENCE.md"):
+        shutil.copyfile(os.path.join(ROOT, "powerapp", f), os.path.join(app_dst, f))
+    print("  07_Power_App/  (working prototype + Power Fx reference)")
 
     build_docs()
     build_worksheet()

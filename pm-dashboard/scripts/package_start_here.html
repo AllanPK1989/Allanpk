@@ -80,7 +80,7 @@ footer{background:var(--plate);color:var(--plate-dim);padding:30px 0;font-size:.
     <div class="stat"><b>10</b><span>Technicians</span></div>
     <div class="stat"><b>94</b><span>Measures</span></div>
     <div class="stat"><b>10</b><span>Report pages</span></div>
-    <div class="stat"><b>18</b><span>Templates</span></div>
+    <div class="stat"><b>6</b><span>Flows</span></div>
   </div>
 </div></header>
 
@@ -129,6 +129,25 @@ footer{background:var(--plate);color:var(--plate-dim);padding:30px 0;font-size:.
     </div>
     <div class="step">
       <span class="n">05</span>
+      <div><h3>Try the field app before you build it</h3>
+        <p>A working prototype of all seven screens, running on the sample data in your
+           browser. Walk the whole journey, show it to the maintenance team, get it signed
+           off &mdash; then build it in Studio from the Power Fx shown beside each screen.</p></div>
+      <div class="go"><a class="btn" href="07_Power_App/PM_Field_App.html">Open the prototype</a>
+        <span class="hint">Edge or Chrome</span></div>
+    </div>
+    <div class="step">
+      <span class="n">06</span>
+      <div><h3>Build the six flows</h3>
+        <p>Complete workflow definitions plus a click-by-click build guide: the validation
+           gate on the upload, the scheduler that owns the 4000-hour rule, the nightly
+           overdue sweep, abnormality escalation, spare approval routing, and the reminder
+           that chases a missing upload.</p></div>
+      <div class="go"><a class="btn ghost" href="06_Flows/BUILD_GUIDE.md">Open the build guide</a>
+        <span class="hint">Also in the documentation</span></div>
+    </div>
+    <div class="step">
+      <span class="n">07</span>
       <div><h3>Print the QR codes</h3>
         <p>Paste your published app link, paste your machine list from Excel, click Generate, print.
            Runs entirely in the browser with no install and no network — which is the point, because
@@ -171,8 +190,10 @@ carry_over    = <b>MAX</b>(0, closing - 4000)</pre>
       <tr><td>01_Power_BI</td><td>The report project: 17 tables, 94 measures, 28 relationships, 10 pages, 107 visuals, matching theme, and the sample CSVs it reads</td><td>Power BI Desktop</td></tr>
       <tr><td>02_SharePoint_Templates</td><td>List schemas for all eight lists, six master-data workbooks, the monthly standard-hours template plus a filled sample and a history back-load, and seed data for testing</td><td>Excel</td></tr>
       <tr><td>03_QR_Codes</td><td>The offline generator, plus pre-generated placeholder codes and print sheets so you can see the label layout before you have real app IDs</td><td>Browser</td></tr>
-      <tr><td>04_Documentation</td><td>Twelve documents in one navigable page, with the markdown originals alongside</td><td>Browser</td></tr>
+      <tr><td>04_Documentation</td><td>Fourteen documents in one navigable page, with the markdown originals alongside</td><td>Browser</td></tr>
       <tr><td>05_Deployment</td><td>The worksheet for your tenant details, build checklists, agreed thresholds and sign-off</td><td>Excel</td></tr>
+      <tr><td>06_Flows</td><td>Six workflow definitions and the build guide generated from them</td><td>Browser / Power Automate</td></tr>
+      <tr><td>07_Power_App</td><td>The working prototype and the Power Fx for every control</td><td>Browser / Power Apps Studio</td></tr>
     </tbody>
   </table></div>
 </div></section>
@@ -204,10 +225,13 @@ carry_over    = <b>MAX</b>(0, closing - 4000)</pre>
     refuses to load on your version, it is a five-minute fix, not a rebuild — <b>SETUP.md</b> in the
     <span class="mono">01_Power_BI</span> folder has the recovery steps. The data model and the
     measures are unaffected either way.</p>
-  <p class="callout">Everything in this package was checked before it was assembled: <b>692
-    consistency checks</b> on the report project (every relationship, every visual field binding and
-    every measure reference resolved against the model), and the QR encoder verified module for
-    module against a reference implementation across 2,816 test codes.</p>
+  <p class="callout">Everything here was checked before it was assembled. <b>692 consistency
+    checks</b> on the report project (every relationship, visual field binding and measure
+    reference resolved against the model). <b>426 checks</b> on the flow definitions (every
+    action reference, variable, parameter and SharePoint column), with the checker itself
+    proved against seven deliberate faults. <b>14 rule checks</b> driving the field app
+    prototype through the full technician journey in a real browser. And the QR encoder
+    verified module for module against a reference implementation across 2,816 test codes.</p>
 </div></section>
 
 </main>
