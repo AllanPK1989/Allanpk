@@ -1,10 +1,10 @@
 /// Monthly production standard hours per cell - the input that drives scheduling.
 table Fact_StdHours
-	lineageTag: 4211c26a-64e0-4b7c-9cbf-5d88af89c756
+	lineageTag: c81ccf2c-8fa6-481e-9d21-74b09ac8fdfd
 
 	column MonthKey
 		dataType: string
-		lineageTag: 8564b6a0-0972-4954-9612-05878ed46a73
+		lineageTag: 17de7635-a375-4ea0-8b6c-4804e637f036
 		summarizeBy: none
 		sourceColumn: MonthKey
 
@@ -13,7 +13,7 @@ table Fact_StdHours
 	column Year
 		dataType: int64
 		formatString: #,0
-		lineageTag: a6d7d531-2ad7-4d68-bea1-7ab79ded1d5d
+		lineageTag: 8b58647a-7d06-4530-a7c1-c6fc1e8387da
 		summarizeBy: none
 		sourceColumn: Year
 
@@ -22,7 +22,7 @@ table Fact_StdHours
 	column MonthNo
 		dataType: int64
 		formatString: #,0
-		lineageTag: 0346587e-9f04-47d5-96fd-686f53d5ec8f
+		lineageTag: 3108c3ca-eb9d-4e5e-a254-c1d9f13cf973
 		summarizeBy: none
 		sourceColumn: MonthNo
 
@@ -30,7 +30,7 @@ table Fact_StdHours
 
 	column CellID
 		dataType: string
-		lineageTag: 7325260a-0a39-4216-a21b-07d94970c5b9
+		lineageTag: b6c6cf7c-10b0-479e-aac3-86aa8dbbe439
 		summarizeBy: none
 		sourceColumn: CellID
 
@@ -38,7 +38,7 @@ table Fact_StdHours
 
 	column CellName
 		dataType: string
-		lineageTag: 5d0006db-19f9-4599-8f41-7025c98d27a6
+		lineageTag: efdf8ec4-10f5-4173-aae9-d12500d68eb7
 		summarizeBy: none
 		sourceColumn: CellName
 
@@ -46,7 +46,7 @@ table Fact_StdHours
 
 	column Area
 		dataType: string
-		lineageTag: 2212f9e8-50cb-48a9-858a-2b61660ddd94
+		lineageTag: df57d4fe-77f8-45bb-ae0c-e08c1893d55e
 		summarizeBy: none
 		sourceColumn: Area
 
@@ -55,7 +55,7 @@ table Fact_StdHours
 	column StdHours
 		dataType: double
 		formatString: #,0.0
-		lineageTag: 863d7aba-5729-4417-8caa-3623dcc1de9f
+		lineageTag: 6ac72abf-3662-47a5-8f2d-c5407e29fa37
 		summarizeBy: none
 		sourceColumn: StdHours
 
@@ -63,7 +63,7 @@ table Fact_StdHours
 
 	column UploadedBy
 		dataType: string
-		lineageTag: 9543d623-99a5-45fe-a21a-0502574e8db1
+		lineageTag: 8bce677a-d76c-4c63-83bc-4a626d087e62
 		summarizeBy: none
 		sourceColumn: UploadedBy
 
@@ -72,7 +72,7 @@ table Fact_StdHours
 	column UploadDate
 		dataType: dateTime
 		formatString: yyyy-mm-dd
-		lineageTag: 0a65aa8d-e5a7-4c9d-b0c3-49ed46c5b72a
+		lineageTag: bddbacd8-ff57-4389-a8ba-5ef86ccf3005
 		summarizeBy: none
 		sourceColumn: UploadDate
 
@@ -82,7 +82,7 @@ table Fact_StdHours
 
 	column SourceFile
 		dataType: string
-		lineageTag: d00b91d4-5f83-4dd8-9c8b-0681308f7498
+		lineageTag: 7e09930a-a086-4d1d-8f22-7d1ce0dfcfe0
 		summarizeBy: none
 		sourceColumn: SourceFile
 
@@ -91,7 +91,7 @@ table Fact_StdHours
 	column MonthStartDate
 		dataType: dateTime
 		formatString: yyyy-mm-dd
-		lineageTag: 6143bddd-e88f-4b82-b59c-48cdbef0c4b4
+		lineageTag: 21c30ea1-3298-4901-b19e-dc36303e926d
 		summarizeBy: none
 		sourceColumn: MonthStartDate
 

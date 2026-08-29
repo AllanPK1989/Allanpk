@@ -1,13 +1,13 @@
 /// Marked date table. One row per day, 2024-01-01 to 2028-12-31.
 table Dim_Date
 	dataCategory: Time
-	lineageTag: cee49fdc-efb8-4661-abed-723b7d992c86
+	lineageTag: d80bce72-7af2-43d6-9a38-69ab7c3b9ec6
 
 	column Date
 		dataType: dateTime
 		isKey
 		formatString: yyyy-mm-dd
-		lineageTag: 22b51c57-0541-47e3-9efd-478fba30ed37
+		lineageTag: 8230654a-9152-452b-9d6f-b997e97f562a
 		summarizeBy: none
 		sourceColumn: Date
 
@@ -18,7 +18,7 @@ table Dim_Date
 	column Year
 		dataType: int64
 		formatString: #,0
-		lineageTag: 11983186-3445-41f5-bf53-de7e31782299
+		lineageTag: a67997b6-df20-4820-bbeb-86a7b9564a04
 		summarizeBy: none
 		sourceColumn: Year
 
@@ -27,7 +27,7 @@ table Dim_Date
 	column MonthNo
 		dataType: int64
 		formatString: #,0
-		lineageTag: 6b861c59-191f-4c8d-b781-5a1c484fee47
+		lineageTag: fa99dde7-0ecc-4bd7-a0c0-1cd70c4e1c18
 		summarizeBy: none
 		sourceColumn: MonthNo
 
@@ -35,7 +35,7 @@ table Dim_Date
 
 	column MonthShort
 		dataType: string
-		lineageTag: 4b64d959-b5b8-4583-95da-c764a03ed64a
+		lineageTag: 7b3b05e9-13b9-499f-8f55-74ff1f4d0469
 		summarizeBy: none
 		sourceColumn: MonthShort
 		sortByColumn: MonthNo
@@ -44,7 +44,7 @@ table Dim_Date
 
 	column MonthKey
 		dataType: string
-		lineageTag: 5ad85cad-592b-44f4-bbf1-551021e58eaa
+		lineageTag: 7d0cfe93-872a-4155-a881-3d35c076cabe
 		summarizeBy: none
 		sourceColumn: MonthKey
 
@@ -53,7 +53,7 @@ table Dim_Date
 	column Quarter
 		dataType: int64
 		formatString: #,0
-		lineageTag: 0dc85a7d-901c-4f6f-b220-2fa2d5f15067
+		lineageTag: b175916f-6bab-4330-8972-6d1320178a35
 		summarizeBy: none
 		sourceColumn: Quarter
 
@@ -62,7 +62,7 @@ table Dim_Date
 	column Day
 		dataType: int64
 		formatString: #,0
-		lineageTag: 8a15ee0a-1363-4d40-bd94-bc5eb696123b
+		lineageTag: 0df25256-d68a-4e2d-9ae2-a86e3d5d1fb2
 		summarizeBy: none
 		sourceColumn: Day
 
@@ -70,7 +70,7 @@ table Dim_Date
 
 	column DayShort
 		dataType: string
-		lineageTag: 1355c7eb-f06b-4809-ac39-aaed2a60a46b
+		lineageTag: c3d44848-da6e-4fac-8572-681ca514cd65
 		summarizeBy: none
 		sourceColumn: DayShort
 
@@ -79,7 +79,7 @@ table Dim_Date
 	column DayOfWeek
 		dataType: int64
 		formatString: #,0
-		lineageTag: 45033e3f-d94f-47e7-b785-4ec412c0b134
+		lineageTag: 2cdb38d0-3af4-44f1-858b-224992a0d544
 		summarizeBy: none
 		sourceColumn: DayOfWeek
 
@@ -87,7 +87,7 @@ table Dim_Date
 
 	column IsWeekend
 		dataType: string
-		lineageTag: 90a16f6c-f814-4922-9e7e-ac95ae389bd8
+		lineageTag: adc0a32d-3950-4596-9b2c-35db74edcacc
 		summarizeBy: none
 		sourceColumn: IsWeekend
 
@@ -95,7 +95,7 @@ table Dim_Date
 
 	column IsHoliday
 		dataType: string
-		lineageTag: 17c4d077-6263-42a9-8b5a-6be32e081a59
+		lineageTag: 7d9e37c5-fb50-4911-a9b8-4eb31f31c74d
 		summarizeBy: none
 		sourceColumn: IsHoliday
 
@@ -103,7 +103,7 @@ table Dim_Date
 
 	column FinancialYear
 		dataType: string
-		lineageTag: 3748f6fc-ed46-4a28-a163-3a10e95382fb
+		lineageTag: 8c15a7aa-893b-49e2-b9df-be5dd5489179
 		summarizeBy: none
 		sourceColumn: FinancialYear
 
@@ -112,7 +112,7 @@ table Dim_Date
 	column FiscalMonthNo
 		dataType: int64
 		formatString: #,0
-		lineageTag: 2b316b92-a063-4eb2-b716-856ed7a220dc
+		lineageTag: efc15196-74e0-4249-98ba-d020a72a4f59
 		summarizeBy: none
 		sourceColumn: FiscalMonthNo
 
@@ -120,7 +120,7 @@ table Dim_Date
 
 	column MonthSort
 		dataType: string
-		lineageTag: 347f6f06-cb5a-4ccd-b2f1-5a5132163a7d
+		lineageTag: 4513a896-2438-41ee-988c-f9ffa7503afb
 		summarizeBy: none
 		sourceColumn: MonthSort
 
@@ -128,7 +128,7 @@ table Dim_Date
 
 	column RelativeToToday
 		dataType: string
-		lineageTag: adf3f3eb-9fba-4d05-b86d-528f28142875
+		lineageTag: f90d724d-7240-4dc9-b8ba-07a3bb4b528f
 		summarizeBy: none
 		sourceColumn: RelativeToToday
 

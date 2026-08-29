@@ -1268,9 +1268,13 @@ def build_report(base: str, inject: bool = False) -> None:
             "version": "4.0",
             "datasetReference": {"byPath": {"path": f"../{NAME}.SemanticModel"}},
         })
+        # Deliberately references nothing on disk. Every resourcePackages entry
+        # and every custom themeCollection entry names a file that must exist,
+        # and getting those wrong is what "required artifact is missing" means.
+        # The theme is imported by hand instead; INSTALL.cmd keeps Desktop's own
+        # report.json, which already has its resource wiring correct.
         wj(os.path.join(defn, "report.json"), {
             "$schema": REPORT_SCHEMA,
-            "themeCollection": {"baseTheme": {"name": "CY19SU12"}},
             "settings": {
                 "useStylableVisualContainerHeader": True,
                 "defaultDropInteraction": "Filter",
@@ -1338,6 +1342,33 @@ def copy_local_data(base: str) -> None:
     if os.path.exists(src_doc):
         shutil.copyfile(src_doc, os.path.join(base, "SETUP.md"))
         print("  setup guide: powerbi/SETUP.md")
+
+    # Windows helpers. Batch files need CRLF or cmd.exe mangles multi-line blocks.
+    counts = {
+        "__NTMDL__": len([f for f in os.listdir(os.path.join(
+            base, f"{NAME}.SemanticModel", "definition", "tables")) if f.endswith(".tmdl")]),
+        "__NPAGES__": len([d for d in os.listdir(os.path.join(
+            base, f"{NAME}.Report", "definition", "pages")) if d.startswith("pg")]),
+        "__NVIS__": sum(1 for _r, _d, fs in os.walk(os.path.join(
+            base, f"{NAME}.Report", "definition", "pages")) for f in fs if f == "visual.json"),
+        "__NCSV__": len([f for f in os.listdir(dest) if f.endswith(".csv")]),
+        "__NTABLES__": len(TABLES) + 1,
+        "__NMEAS__": len(MEASURES),
+        "__NREL__": len(RELATIONSHIPS),
+    }
+    for src_name, dst_name in (("win_check.cmd", "CHECK.cmd"),
+                               ("win_install.cmd", "INSTALL.cmd")):
+        src = os.path.join(HERE, src_name)
+        if not os.path.exists(src):
+            continue
+        text = open(src, encoding="utf-8").read()
+        for k, v in counts.items():
+            text = text.replace(k, str(v))
+        assert "__N" not in text, f"{src_name} has an unsubstituted count placeholder"
+        text = text.replace("\r\n", "\n").replace("\n", "\r\n")
+        with open(os.path.join(base, dst_name), "w", encoding="utf-8", newline="") as f:
+            f.write(text)
+    print("  windows helpers: powerbi/CHECK.cmd, powerbi/INSTALL.cmd")
 
 
 def validate(base: str) -> bool:

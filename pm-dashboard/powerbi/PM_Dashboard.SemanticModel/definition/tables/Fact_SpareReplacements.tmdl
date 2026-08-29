@@ -1,10 +1,10 @@
 /// What was actually fitted to the machine.
 table Fact_SpareReplacements
-	lineageTag: 895df85b-29c7-4630-968d-45b5254096be
+	lineageTag: ae05bcbf-1b56-4da6-b553-917429255290
 
 	column ReplacementID
 		dataType: string
-		lineageTag: 87fc5a19-eaff-456a-9dbd-b4cc055ebbfd
+		lineageTag: d64516d1-8634-47e0-941f-214027289ba0
 		summarizeBy: none
 		sourceColumn: ReplacementID
 
@@ -12,7 +12,7 @@ table Fact_SpareReplacements
 
 	column SourceType
 		dataType: string
-		lineageTag: 6d4d6ab0-82c1-4c4d-9d1a-90f7eef72371
+		lineageTag: e4454947-e890-4097-bf79-0580e97888f7
 		summarizeBy: none
 		sourceColumn: SourceType
 
@@ -20,7 +20,7 @@ table Fact_SpareReplacements
 
 	column SourceID
 		dataType: string
-		lineageTag: 84518f92-357d-45cf-b786-af3c2ee9e83f
+		lineageTag: f3081296-9cfa-4144-82a1-087b33996d71
 		summarizeBy: none
 		sourceColumn: SourceID
 
@@ -28,7 +28,7 @@ table Fact_SpareReplacements
 
 	column RequestID
 		dataType: string
-		lineageTag: ac9af196-6951-4437-bc2f-25fa59652819
+		lineageTag: 2ccaca14-38e5-48ca-8290-5e3058543e58
 		summarizeBy: none
 		sourceColumn: RequestID
 
@@ -36,7 +36,7 @@ table Fact_SpareReplacements
 
 	column MachineID
 		dataType: string
-		lineageTag: ead12c98-d6b5-4fa3-81a5-62fdb5fa7606
+		lineageTag: 1177f5de-eafd-44fb-8104-c50a042347b9
 		summarizeBy: none
 		sourceColumn: MachineID
 
@@ -44,7 +44,7 @@ table Fact_SpareReplacements
 
 	column MachineName
 		dataType: string
-		lineageTag: 3868dd5a-c094-4d0e-8282-82b27c74c2bc
+		lineageTag: e20552fd-5ded-4a55-88e9-eeca49945cc1
 		summarizeBy: none
 		sourceColumn: MachineName
 
@@ -52,7 +52,7 @@ table Fact_SpareReplacements
 
 	column CellID
 		dataType: string
-		lineageTag: 871d3a69-944b-4dd9-8dc3-0dc6acee2fb1
+		lineageTag: 558f3af8-3b00-44d3-8d23-538efbc6d058
 		summarizeBy: none
 		sourceColumn: CellID
 
@@ -60,7 +60,7 @@ table Fact_SpareReplacements
 
 	column MachineType
 		dataType: string
-		lineageTag: 9763cf35-fcf8-4c4b-8e65-ec6a5456ff24
+		lineageTag: 739d6219-b50e-4064-8e53-1b5570198746
 		summarizeBy: none
 		sourceColumn: MachineType
 
@@ -68,7 +68,7 @@ table Fact_SpareReplacements
 
 	column PartNo
 		dataType: string
-		lineageTag: f2f4f4c6-dfc4-4be6-a2fd-665b9ba071f0
+		lineageTag: abd9931b-0d47-4157-8d5a-700bff44b082
 		summarizeBy: none
 		sourceColumn: PartNo
 
@@ -76,7 +76,7 @@ table Fact_SpareReplacements
 
 	column PartName
 		dataType: string
-		lineageTag: 9de26b06-a900-48df-b8f6-26a0e9303300
+		lineageTag: 19c1be0e-7d32-4867-a526-750ac08b5035
 		summarizeBy: none
 		sourceColumn: PartName
 
@@ -84,7 +84,7 @@ table Fact_SpareReplacements
 
 	column Category
 		dataType: string
-		lineageTag: 49d0b201-28af-4700-8a4a-c6a2503ad0f1
+		lineageTag: 619af952-c1dd-42f9-96b5-4cd2b69143e8
 		summarizeBy: none
 		sourceColumn: Category
 
@@ -92,7 +92,7 @@ table Fact_SpareReplacements
 
 	column UOM
 		dataType: string
-		lineageTag: 7dcb6fbd-b277-4de3-81f1-9f79ccf76dff
+		lineageTag: 6eca40a8-c63b-41b8-8f5d-61ed708765fd
 		summarizeBy: none
 		sourceColumn: UOM
 
@@ -101,7 +101,7 @@ table Fact_SpareReplacements
 	column QtyReplaced
 		dataType: int64
 		formatString: #,0
-		lineageTag: 37d4c6e5-6e0a-4536-bc5d-8137899d631a
+		lineageTag: 57490018-35b6-4c9e-aeac-c85df9ab72b8
 		summarizeBy: none
 		sourceColumn: QtyReplaced
 
@@ -110,7 +110,7 @@ table Fact_SpareReplacements
 	column UnitCostINR
 		dataType: double
 		formatString: "₹"#,0.00;("₹"#,0.00);"₹"#,0.00
-		lineageTag: d64994a3-c98a-40e1-b594-d6916bcd3f1a
+		lineageTag: ba07e140-adf5-43da-aa75-6e90bd639baf
 		summarizeBy: none
 		sourceColumn: UnitCostINR
 
@@ -119,7 +119,7 @@ table Fact_SpareReplacements
 	column TotalCostINR
 		dataType: double
 		formatString: "₹"#,0.00;("₹"#,0.00);"₹"#,0.00
-		lineageTag: 3476c147-b617-4973-bf94-18f1df246b16
+		lineageTag: 7fe15b60-5d7c-4507-9ea8-950ea1e8e5e1
 		summarizeBy: none
 		sourceColumn: TotalCostINR
 
@@ -127,7 +127,7 @@ table Fact_SpareReplacements
 
 	column ReplacedByTechID
 		dataType: string
-		lineageTag: b7d285cb-f670-4ed6-9455-1f594db79d34
+		lineageTag: 7487acea-8e46-47d5-b279-0decfaac10b4
 		summarizeBy: none
 		sourceColumn: ReplacedByTechID
 
@@ -135,7 +135,7 @@ table Fact_SpareReplacements
 
 	column ReplacedByName
 		dataType: string
-		lineageTag: 383780c1-4194-440f-93c6-e681be005227
+		lineageTag: 8303344d-cb88-42dc-a08e-f75bc974665a
 		summarizeBy: none
 		sourceColumn: ReplacedByName
 
@@ -144,7 +144,7 @@ table Fact_SpareReplacements
 	column ReplacedDate
 		dataType: dateTime
 		formatString: yyyy-mm-dd
-		lineageTag: d895fd55-45e9-44b5-b69c-7bbdd676f10b
+		lineageTag: a7f8d22b-aa03-4df9-93b3-c07449a0c8b2
 		summarizeBy: none
 		sourceColumn: ReplacedDate
 
@@ -154,7 +154,7 @@ table Fact_SpareReplacements
 
 	column OldPartCondition
 		dataType: string
-		lineageTag: 961e19e4-c3b1-4b0d-97bf-ec1ea0d44f43
+		lineageTag: 3ffc7a9e-c46d-48c9-a276-5bcaf9373383
 		summarizeBy: none
 		sourceColumn: OldPartCondition
 
@@ -162,7 +162,7 @@ table Fact_SpareReplacements
 
 	column WarrantyClaim
 		dataType: string
-		lineageTag: 81ad90fa-a70f-4f31-9c25-6652418daabf
+		lineageTag: 62ace6d4-1530-4f7b-9cb7-4930b2384ccd
 		summarizeBy: none
 		sourceColumn: WarrantyClaim
 
@@ -170,7 +170,7 @@ table Fact_SpareReplacements
 
 	column Remarks
 		dataType: string
-		lineageTag: b17cc0ea-a736-4db2-8f76-11889f7c9b6c
+		lineageTag: 74e4371c-6bd3-46fb-adb2-a9d28b3fd05a
 		summarizeBy: none
 		sourceColumn: Remarks
 

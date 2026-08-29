@@ -1,68 +1,68 @@
 # Opening the Power BI project
 
-## Fastest path — sample data, zero edits
+## First: extract the zip properly
 
-1. Copy this folder so it sits at **`C:\PM_Dashboard`**. The `data` folder must end
-   up at `C:\PM_Dashboard\data`.
-2. Double-click **`PM_Dashboard.pbip`**.
-3. **Home ▸ Refresh.**
-4. **View ▸ Themes ▸ Browse for themes** ▸ pick `theme\PM_Theme.json`.
+Right-click the zip ▸ **Extract All** ▸ choose a real folder such as `C:\PM_Dashboard`.
 
-The `LocalDataFolder` parameter already points at `C:\PM_Dashboard\data`, so nothing
-needs editing. Put the folder somewhere else and change that one parameter under
-**Home ▸ Transform data ▸ Manage parameters**.
+Do **not** double-click the `.pbip` from inside the zip. Windows extracts only the
+file you clicked into a temporary folder, so the rest of the project is not there,
+and Power BI reports:
 
-The theme is a separate import on purpose. Embedding a custom theme inside the
-project is the single most version-fragile part of the file format, and it buys
-five seconds.
+```
+ReportDefinition: Required artifact is missing in '...\PM_Dashboard.Report\definition.pbir'
+```
 
-## If Desktop refuses to open it
+That message means files are missing, not that anything is wrong with the project.
+If the path in the error contains `AppData\Local\Temp\` and `.zip.`, this is what
+happened.
 
-The `.pbip` format is versioned, and Desktop validates each wrapper file against a
-pattern that changes between releases. If you get a message naming a `$schema`
-property, **the model and the report are fine** — only the small wrapper files are
-wrong for your build. Two ways to fix it, neither needing Python.
+## Then: check and open
 
-### Option A — let Desktop write the wrapper files (5 minutes, always works)
+Two scripts sit next to the project. Neither needs anything installed.
 
-This is the reliable one. Desktop generates the version-sensitive files for *your*
-build; you keep everything that matters from here.
+**`CHECK.cmd`** — double-click it. It confirms the extraction is complete: 17 table
+files, 10 report pages, 107 visuals, 16 CSVs. If anything is missing it says so and
+tells you why.
 
-1. Open Power BI Desktop. Check **File ▸ Options and settings ▸ Options ▸ Preview
-   features** has **Power BI Project (.pbip) save option**, **Store semantic model
-   using TMDL format** and **Enhanced report format (PBIR)** all ticked. Restart if
-   you changed anything.
+**`PM_Dashboard.pbip`** — if the check passes, try opening this. Then:
+
+1. **Home ▸ Refresh** (`LocalDataFolder` already points at `C:\PM_Dashboard\data`;
+   change it under **Home ▸ Transform data ▸ Manage parameters** if you extracted
+   somewhere else).
+2. **View ▸ Themes ▸ Browse for themes** ▸ `theme\PM_Theme.json`.
+
+## If Desktop still refuses to open it — `INSTALL.cmd`
+
+The half-dozen small wrapper files in a `.pbip` are versioned, and Desktop validates
+each against rules that change between releases. Rather than guess at yours, let
+Desktop write them and keep everything that matters from here. **Double-click
+`INSTALL.cmd`** and it walks you through it:
+
+1. In Desktop, **File ▸ Options ▸ Preview features**, tick **Power BI Project (.pbip)
+   save option**, **Store semantic model using TMDL format** and **Enhanced report
+   format (PBIR)**. Restart if you changed any.
 2. **Get data ▸ Text/CSV** ▸ any file from `data\` ▸ **Load**.
-3. **File ▸ Save as ▸ Power BI project (.pbip)** ▸ save as `PM_Dashboard` into a new
-   empty folder, say `C:\PM_Dashboard_New`.
-4. **Close Power BI Desktop.** It must not be open for the next step.
-5. In File Explorer, copy these two folders from here, overwriting what Desktop made:
+3. **File ▸ Save as ▸ Power BI project** ▸ named exactly `PM_Dashboard`, into a new
+   empty folder.
+4. **Close Desktop.**
+5. Run `INSTALL.cmd` and give it that folder.
 
-   ```
-   PM_Dashboard.SemanticModel\definition\     →  C:\PM_Dashboard_New\PM_Dashboard.SemanticModel\definition\
-   PM_Dashboard.Report\definition\            →  C:\PM_Dashboard_New\PM_Dashboard.Report\definition\
-   ```
+It copies the semantic model definition, the 10 report pages, the data and the theme
+in, and leaves Desktop's own `.pbip`, `.platform`, `definition.pbir`,
+`definition.pbism` and `report.json` untouched — those are the version-sensitive
+ones. Then open the project, point `LocalDataFolder` at the `data` folder, and
+refresh.
 
-   Copy the **`definition`** folders only. Leave Desktop's own `.pbip`, `.platform`,
-   `definition.pbir` and `definition.pbism` files exactly as they are — those are the
-   ones that have to match your version.
-6. Copy `data\` and `theme\` across too.
-7. Open `C:\PM_Dashboard_New\PM_Dashboard.pbip` and refresh.
+This path cannot fail on a version mismatch, because none of the files it writes are
+version-sensitive. The TMDL model and the PBIR pages are stable formats.
 
-### Option B — regenerate, if you have Python
-
-```
-python3 scripts/build_pbip.py --inject "C:/PM_Dashboard_New/PM_Dashboard.pbip"
-python3 scripts/validate_pbip.py "C:/PM_Dashboard_New"
-```
-
-Same result as Option A, done for you.
+> If you have Python, `python3 scripts/build_pbip.py --inject "C:/PM_Dashboard/PM_Dashboard.pbip"`
+> does the same thing.
 
 ## What the wrapper files must contain
 
-For reference, in case you ever need to check them by hand. These values are taken
-from Power BI projects published by Microsoft, and `scripts/validate_pbip.py`
-enforces every one of them.
+For reference. These values are taken from Power BI projects published by Microsoft,
+and `scripts/validate_pbip.py` enforces every one of them.
 
 | File | `$schema` | Other |
 |------|-----------|-------|
@@ -77,6 +77,11 @@ enforces every one of them.
 | `…/visuals/<v>/visual.json` | `…/fabric/item/report/definition/visualContainer/2.4.0/schema.json` | |
 
 There is no `version.json` in a PBIR report — if you see one, delete it.
+
+`report.json` here deliberately declares no `resourcePackages` and no custom
+`themeCollection`. Both name files that must exist on disk, and a wrong reference is
+exactly what `Required artifact is missing` means. That is why the theme is a
+separate import, and why `INSTALL.cmd` keeps Desktop's own `report.json`.
 
 ## Switching to live SharePoint data
 
