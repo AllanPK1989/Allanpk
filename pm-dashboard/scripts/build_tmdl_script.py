@@ -36,22 +36,28 @@ def indent(block: str, levels: int) -> str:
 
 
 def model_header() -> list[str]:
-    order = ([n for n, _, _, _ in EXPR_SPECS] + [t["name"] for t in TABLES]
-             + ["_Measures"])
     return [
         "createOrReplace",
         "",
-        T + "model Model",
-        # No culture, collation, sourceQueryCulture, defaultPowerBIDataSourceVersion
-        # or dataAccessOptions here, deliberately. The engine refuses to set culture
-        # or collation once the model contains ANY object - and a "blank" Desktop
-        # file is not empty when auto date/time is on, because it carries a
-        # DateTableTemplate. Setting them failed with:
-        #   "Culture and Collation properties of the Model object may be changed
-        #    only before any other object has been created."
-        # Every one of those properties already holds the value this model wants in
-        # a new Desktop file, so dropping them costs nothing and makes the script
-        # apply to a file in any state.
+        # `ref` references the existing model instead of replacing it. This must
+        # NOT be a bare `model Model`, which replaces the model object itself and
+        # resets every property not restated here back to its default. Two
+        # separate failures came out of that:
+        #
+        #   Culture and Collation properties of the Model object may be changed
+        #   only before any other object has been created.
+        #
+        #   Power BI Data Source Version is only allowed to change from V1 to a
+        #   higher version, Current version is '2'
+        #
+        # The second is the instructive one. Deleting the properties did not stop
+        # them being written - it made them default. Culture's default happened to
+        # match, so no change was attempted and no error was raised; the data
+        # source version's default is V1, which is a downgrade from 2, so it
+        # failed. Any model property is a hazard here, and none of them need
+        # setting: a new Desktop file already holds the values this model wants.
+        # `ref` touches none of them.
+        T + "ref model Model",
         "",
         # Declared before anything references them; an expression carrying
         # queryGroup: Parameters fails to apply if the group is not here.
@@ -60,10 +66,6 @@ def model_header() -> list[str]:
         "",
         T * 2 + "queryGroup Functions",
         T * 3 + "annotation PBI_QueryGroupOrder = 1",
-        "",
-        T * 2 + "annotation __PBI_TimeIntelligenceEnabled = 0",
-        "",
-        T * 2 + "annotation PBI_QueryOrder = " + B.json.dumps(order),
         "",
     ]
 

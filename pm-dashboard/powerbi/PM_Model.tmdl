@@ -1,16 +1,12 @@
 createOrReplace
 
-	model Model
+	ref model Model
 
 		queryGroup Parameters
 			annotation PBI_QueryGroupOrder = 0
 
 		queryGroup Functions
 			annotation PBI_QueryGroupOrder = 1
-
-		annotation __PBI_TimeIntelligenceEnabled = 0
-
-		annotation PBI_QueryOrder = ["SourceMode", "LocalDataFolder", "SharePointSiteUrl", "SharePointLibrary", "SharePointFolderPath", "fnLocalCsv", "fnSpFolder", "fnSpList", "fnSpExcel", "fnStdHoursFolder", "fnSource", "Dim_Date", "Dim_Cell", "Dim_Machine", "Dim_Technician", "Dim_SparePart", "Dim_Checklist", "Config", "Fact_StdHours", "Fact_HourLedger", "Fact_WorkOrders", "Fact_ChecklistResults", "Fact_Breakdowns", "Fact_SpareRequests", "Fact_SpareReplacements", "Fact_Abnormalities", "Fact_ScanLog", "_Measures"]
 
 		/// Local reads the dummy CSVs. SharePoint reads the real lists and workbooks. This is the only switch you change at go-live.
 		expression SourceMode = "Local" meta [IsParameterQuery=true, List={"Local", "SharePoint"}, DefaultValue="Local", Type="Text", IsParameterQueryRequired=true]

@@ -93,8 +93,10 @@ def main() -> None:
     check(roots == ["createOrReplace"],
           f"expected exactly one root 'createOrReplace', found {roots[:4]}")
     level1 = [c for _, d, c in rows if d == 1]
-    check(level1 == ["model Model"],
-          f"expected exactly one 'model Model' at depth 1, found {level1[:4]}")
+    check(level1 == ["ref model Model"],
+          f"expected exactly one 'ref model Model' at depth 1, found {level1[:4]}. "
+          f"A bare 'model Model' REPLACES the model object and resets every "
+          f"property not restated to its default, which the engine rejects.")
 
     # --- 5. object inventory ---------------------------------------------
     l2 = [c for _, d, c in rows if d == 2]
@@ -149,15 +151,22 @@ def main() -> None:
           f"measures drift from the PBIP: "
           f"{len(script_measures ^ pbip_measures)} names differ")
 
-    # --- 8. no model property the engine refuses to set late --------------
-    # Culture and collation can only be set on a model with no objects in it,
-    # and a Desktop file with auto date/time on already has a DateTableTemplate.
-    # Setting either aborts the whole apply.
-    for prop in ("culture", "collation", "sourceQueryCulture"):
-        offenders = [n for n, d, c in rows if d == 2 and c.startswith(prop + ":")]
-        check(not offenders,
-              f"the script sets model {prop} on line {offenders[:1]} - the engine "
-              f"rejects that once the model contains any object")
+    # --- 8. no model property is set, at all ------------------------------
+    # Two separate applies died on model properties: culture (illegal once the
+    # model holds any object) and defaultPowerBIDataSourceVersion (reset to its
+    # V1 default, a downgrade from 2). Rather than enumerate the ones known to
+    # bite, forbid the whole class - a model child must be an object, never a
+    # `name: value` property assignment.
+    OBJECT_KEYWORDS = ("queryGroup ", "expression ", "table ", "relationship ",
+                       "annotation ", "ref ", "///")
+    for n, d, c in rows:
+        if d != 2:
+            continue
+        is_object = c.startswith(OBJECT_KEYWORDS)
+        looks_like_property = re.match(r"^[A-Za-z_][\w]*\s*:", c)
+        check(is_object or not looks_like_property,
+              f"line {n} sets a model property: {c[:60]!r}. The script references "
+              f"the model rather than replacing it, so it must set none.")
 
     # --- 9. relationship endpoints resolve -------------------------------
     cols: dict[str, set[str]] = {}

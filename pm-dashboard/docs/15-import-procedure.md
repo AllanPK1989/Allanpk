@@ -190,11 +190,38 @@ almost everything:
 
 | Message | Cause | Fix |
 |---------|-------|-----|
-| `Culture and Collation properties of the Model object may be changed only before any other object has been created` | An older copy of the script set the model's culture, which the engine only allows on a model containing nothing at all. | Use the current `PM_Model.tmdl` — it sets no culture. |
+| `Culture and Collation properties of the Model object may be changed only before any other object has been created` | An older copy of the script set the model's culture. The engine allows that only on a model containing nothing at all, and a file with auto date/time on already holds a `DateTableTemplate`. | Use the current `PM_Model.tmdl`. |
+| `Power BI Data Source Version is only allowed to change from V1 to a higher version, Current version is '2'` | An older copy replaced the model object with `model Model`, which resets every property it does not restate. The data source version reset to its V1 default — a downgrade from 2. | Use the current `PM_Model.tmdl`. |
 | Unexpected indentation, or an object where a property was expected | The paste lost its tabs. TMDL is indentation-sensitive and some editors convert tabs to spaces. | Copy from Notepad, not from Word, a browser, or an email. |
+| Something about `ref model Model` on line 3 | Your Desktop build does not accept `ref` for the model in a script. | See the fallback below. |
 
 Applying twice is safe. `createOrReplace` replaces each object it names, so if a
 first attempt stopped half way, fix the cause and paste the whole script again.
+
+### Why the script says `ref model Model`
+
+Line 3 is `ref model Model`, not `model Model`, and the difference matters.
+`model Model` would **replace the model object**, which silently resets every
+property the script does not restate back to its default. Deleting a property
+from the script therefore does not stop it being written — it makes it default,
+and some of those defaults are illegal on a model that already exists. Both
+errors in the table above are that one mistake. `ref` references the model
+instead, and touches none of its properties.
+
+**Fallback**, if your Desktop build rejects `ref` on line 3: change line 3 to
+`model Model` and add these two lines directly beneath it, indented with two
+tabs.
+
+```
+	model Model
+		defaultPowerBIDataSourceVersion: powerBI_V3
+		sourceQueryCulture: en-US
+```
+
+Add no others — in particular **not** `culture` or `collation`, which cannot be
+set on a model that already contains an object. If that in turn complains about
+a property you have not listed, add it with the value the message says is
+current, and tell me which one it was.
 
 > **Why not just open a .pbix?** Because a Power BI file written by a different
 > Desktop version than yours may refuse to open, and you would be back to
