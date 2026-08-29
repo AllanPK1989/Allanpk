@@ -1,10 +1,10 @@
 /// PM task library, one checklist per machine family.
 table Dim_Checklist
-	lineageTag: 64e88126-b731-4fa3-a40b-d129a5a3fc59
+	lineageTag: b0e3e374-e00a-4d6e-a781-64df7ebfee9b
 
 	column ChecklistID
 		dataType: string
-		lineageTag: c8fef190-3f13-4c12-8a76-114184ebe018
+		lineageTag: cc47b188-700c-4ee3-9d5a-660f24b0d236
 		summarizeBy: none
 		sourceColumn: ChecklistID
 
@@ -13,7 +13,7 @@ table Dim_Checklist
 	column TaskNo
 		dataType: int64
 		formatString: #,0
-		lineageTag: 8fe596da-2833-4787-ae9e-dcd96893cc60
+		lineageTag: 96f38e38-b465-4735-bf24-d91ad2355cfc
 		summarizeBy: none
 		sourceColumn: TaskNo
 
@@ -21,7 +21,7 @@ table Dim_Checklist
 
 	column TaskDescription
 		dataType: string
-		lineageTag: 3aba6bcc-67c7-4106-99a7-0ee323c6bc87
+		lineageTag: 33abd581-9e38-416d-9651-94e49c740b9c
 		summarizeBy: none
 		sourceColumn: TaskDescription
 
@@ -29,7 +29,7 @@ table Dim_Checklist
 
 	column TaskType
 		dataType: string
-		lineageTag: e1cc51a9-7238-48ff-a586-f31a39c1a3ba
+		lineageTag: 827fdb7c-5e12-497f-9446-6c8014f143a4
 		summarizeBy: none
 		sourceColumn: TaskType
 
@@ -37,7 +37,7 @@ table Dim_Checklist
 
 	column AcceptanceStandard
 		dataType: string
-		lineageTag: 8083437f-2916-4fcf-91e5-f54038cd24a8
+		lineageTag: 98ed7a7a-6cd3-4d3f-ba00-372522ffaea1
 		summarizeBy: none
 		sourceColumn: AcceptanceStandard
 
@@ -45,7 +45,7 @@ table Dim_Checklist
 
 	column Mandatory
 		dataType: string
-		lineageTag: e5056f84-e10e-4da0-a6bc-58e86acec0fa
+		lineageTag: 4a89b6fc-84e0-4810-bdae-13034170a214
 		summarizeBy: none
 		sourceColumn: Mandatory
 
@@ -53,7 +53,7 @@ table Dim_Checklist
 
 	column SafetyCritical
 		dataType: string
-		lineageTag: 92b9bdf1-a8a3-43f2-b3b4-366406de64d3
+		lineageTag: 1f34080c-904f-444a-b0e4-66635ee13adb
 		summarizeBy: none
 		sourceColumn: SafetyCritical
 
@@ -62,7 +62,7 @@ table Dim_Checklist
 	column EstMinutes
 		dataType: int64
 		formatString: #,0
-		lineageTag: 8aa18e5d-9df1-4c89-95ea-6f19484b755d
+		lineageTag: 0dccc4f2-a740-435f-a16a-44296b96c016
 		summarizeBy: none
 		sourceColumn: EstMinutes
 
@@ -70,7 +70,7 @@ table Dim_Checklist
 
 	column TaskKey
 		dataType: string
-		lineageTag: 09730fc1-2fa6-4059-8eee-298c40a0c6d1
+		lineageTag: e08da8e2-2ca3-43b4-a944-14b226a1fc7b
 		summarizeBy: none
 		sourceColumn: TaskKey
 

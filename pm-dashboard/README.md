@@ -36,7 +36,7 @@ pm-dashboard/
 │   ├── build_sharepoint_templates.py → sharepoint-templates/*.xlsx
 │   ├── generate_qr_codes.py     → qr/
 │   ├── build_pbip.py            → powerbi/  (TMDL model + PBIR report)
-│   ├── validate_pbip.py         813 checks before Desktop ever opens it
+│   ├── validate_pbip.py         818 checks before Desktop ever opens it
 │   ├── build_flows.py           → flows/  (6 workflow definitions)
 │   ├── validate_flows.py        426 checks, itself proved against 7 faults
 │   ├── build_power_app.py       → powerapp/  (working prototype + Power Fx)
@@ -62,7 +62,7 @@ python3 scripts/build_sharepoint_templates.py   # 18 Excel templates
 python3 scripts/generate_qr_codes.py            # QR codes + print sheets
 python3 scripts/build_measure_docs.py           # measure documentation
 python3 scripts/build_pbip.py                   # the Power BI project
-python3 scripts/validate_pbip.py                # 813 consistency checks
+python3 scripts/validate_pbip.py                # 818 consistency checks
 
 # build_pbip.py also rezips the project to PM_Dashboard_pbip.zip on every run,
 # so the downloadable archive can never drift from powerbi/.

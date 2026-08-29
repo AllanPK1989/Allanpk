@@ -257,7 +257,8 @@ for rel in [f"{NAME}.pbip",
             f"{NAME}.SemanticModel/definition/expressions.tmdl",
             f"{NAME}.Report/.platform",
             f"{NAME}.Report/definition.pbir",
-            f"{NAME}.Report/definition/report.json"]:
+            f"{NAME}.Report/definition/report.json",
+            f"{NAME}.Report/definition/version.json"]:
     checks += 1
     if not os.path.exists(os.path.join(BASE, rel)):
         fail(f"missing project file: {rel}")
@@ -288,6 +289,9 @@ SCHEMA_RULES = {
     f"{NAME}.Report/definition/report.json":
         r"^https://developer\.microsoft\.com/json-schemas/fabric/item/report/"
         r"definition/report/3\.\d+\.\d+/schema\.json$",
+    f"{NAME}.Report/definition/version.json":
+        r"^https://developer\.microsoft\.com/json-schemas/fabric/item/report/"
+        r"definition/versionMetadata/1\.\d+\.\d+/schema\.json$",
     f"{NAME}.Report/definition/pages/pages.json":
         r"^https://developer\.microsoft\.com/json-schemas/fabric/item/report/"
         r"definition/pagesMetadata/1\.\d+\.\d+/schema\.json$",
@@ -337,6 +341,34 @@ if os.path.exists(mp):
     for t in sorted(refd - set(model)):
         fail(f"model.tmdl references table '{t}' with no .tmdl file")
     checks += len(refd)
+
+
+# ---------------------------------------------------------------------------
+# 8b · Every queryGroup referenced by a table or expression is declared in
+#      model.tmdl. Desktop fails to load the model if one is not.
+# ---------------------------------------------------------------------------
+declared_groups: set[str] = set()
+if os.path.exists(mp):
+    declared_groups = {g.strip().strip("'") for g in
+                       re.findall(r"^queryGroup\s+(.+)$", mtext, re.M)}
+referenced_groups: set[str] = set()
+for _fn in os.listdir(SM):
+    _p = os.path.join(SM, _fn)
+    if os.path.isfile(_p) and _fn.endswith(".tmdl"):
+        referenced_groups |= {g.strip().strip("'") for g in
+                              re.findall(r"^\s*queryGroup:\s*(.+)$",
+                                         open(_p, encoding="utf-8").read(), re.M)}
+if os.path.isdir(tables_dir):
+    for _fn in tmdl_files:
+        if _fn.endswith(".tmdl"):
+            referenced_groups |= {g.strip().strip("'") for g in
+                                  re.findall(r"^\s*queryGroup:\s*(.+)$",
+                                             open(os.path.join(tables_dir, _fn),
+                                                  encoding="utf-8").read(), re.M)}
+for g in sorted(referenced_groups - declared_groups):
+    checks += 1
+    fail(f"queryGroup '{g}' is referenced but never declared in model.tmdl")
+checks += len(referenced_groups)
 
 
 # ---------------------------------------------------------------------------

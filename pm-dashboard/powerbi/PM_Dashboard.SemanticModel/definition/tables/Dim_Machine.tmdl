@@ -1,10 +1,10 @@
 /// Machines. Every QR code resolves to a row here.
 table Dim_Machine
-	lineageTag: edcf7d65-faca-4855-8f04-b722b90475d9
+	lineageTag: 566fe1bc-0f92-4e60-a65d-a55ffcea6a8b
 
 	column MachineID
 		dataType: string
-		lineageTag: d26116a6-5190-4866-a318-866b65218bdf
+		lineageTag: 64fac6aa-c174-4683-90a2-79aca4df5aaa
 		summarizeBy: none
 		sourceColumn: MachineID
 
@@ -12,7 +12,7 @@ table Dim_Machine
 
 	column MachineName
 		dataType: string
-		lineageTag: f4ddceba-2a76-4e51-b619-fe1e3c194ed2
+		lineageTag: 24fe2d9d-eced-414a-8c09-dc85206341e2
 		summarizeBy: none
 		sourceColumn: MachineName
 
@@ -20,7 +20,7 @@ table Dim_Machine
 
 	column CellID
 		dataType: string
-		lineageTag: 17e479f0-a469-4364-b7b4-67c936b2e514
+		lineageTag: 8295728b-8a18-4b50-ad8c-4a018aab5878
 		summarizeBy: none
 		sourceColumn: CellID
 
@@ -28,7 +28,7 @@ table Dim_Machine
 
 	column MachineType
 		dataType: string
-		lineageTag: 45466f28-3034-40c5-9036-b3a51cc3882f
+		lineageTag: 8be277da-1de7-484c-b97b-2c2cb3cda366
 		summarizeBy: none
 		sourceColumn: MachineType
 
@@ -36,7 +36,7 @@ table Dim_Machine
 
 	column Make
 		dataType: string
-		lineageTag: f39c62c8-28a5-44c9-be75-80b7bb501297
+		lineageTag: 522de1af-988b-4488-8978-1f4b642c0445
 		summarizeBy: none
 		sourceColumn: Make
 
@@ -44,7 +44,7 @@ table Dim_Machine
 
 	column Model
 		dataType: string
-		lineageTag: 656d0dde-4fec-4601-a051-c5a805eb40a1
+		lineageTag: 3134267d-72f7-4e77-bf71-39862c6649e4
 		summarizeBy: none
 		sourceColumn: Model
 
@@ -52,7 +52,7 @@ table Dim_Machine
 
 	column SerialNo
 		dataType: string
-		lineageTag: 56a130b1-3383-4b15-ad4c-314baf697781
+		lineageTag: ce0a2588-0415-4664-97a7-6be8456c79f8
 		summarizeBy: none
 		sourceColumn: SerialNo
 
@@ -61,7 +61,7 @@ table Dim_Machine
 	column InstallDate
 		dataType: dateTime
 		formatString: yyyy-mm-dd
-		lineageTag: c9596c30-6a43-4660-a83b-988381c2d5b2
+		lineageTag: a39f076e-c14f-4f1a-8acb-a88e8e8b354e
 		summarizeBy: none
 		sourceColumn: InstallDate
 
@@ -71,7 +71,7 @@ table Dim_Machine
 
 	column Criticality
 		dataType: string
-		lineageTag: b5df3111-9f81-4e8d-b9a1-1cc4c91a7e7e
+		lineageTag: 4aca6a8c-57a0-46e7-b327-98de9cde80ea
 		summarizeBy: none
 		sourceColumn: Criticality
 
@@ -79,7 +79,7 @@ table Dim_Machine
 
 	column Location
 		dataType: string
-		lineageTag: bf41959d-6baf-4802-9a17-f005cfeda14c
+		lineageTag: 13285936-7217-4b38-a518-e9aa9194c799
 		summarizeBy: none
 		sourceColumn: Location
 
@@ -87,7 +87,7 @@ table Dim_Machine
 
 	column ChecklistID
 		dataType: string
-		lineageTag: f0c7bbf4-cada-4a5e-8b8d-823607f7d2d7
+		lineageTag: bdc2a983-e187-43e7-bd92-e275b333f0cc
 		summarizeBy: none
 		sourceColumn: ChecklistID
 
@@ -96,7 +96,7 @@ table Dim_Machine
 	column PMStdMinutes
 		dataType: int64
 		formatString: #,0
-		lineageTag: c2900ec4-b846-47f2-8d89-a8a58fae46fc
+		lineageTag: 10654551-2ab6-4255-9c15-4fa48bd97135
 		summarizeBy: none
 		sourceColumn: PMStdMinutes
 
@@ -104,7 +104,7 @@ table Dim_Machine
 
 	column QRPayload
 		dataType: string
-		lineageTag: 70baa413-35c1-4cc6-993a-937254edf9f4
+		lineageTag: 820df873-8e25-4ff6-92a9-80ec95085524
 		summarizeBy: none
 		sourceColumn: QRPayload
 
@@ -112,7 +112,7 @@ table Dim_Machine
 
 	column Active
 		dataType: string
-		lineageTag: dfeb61a2-39c5-4f36-b0b7-d2d2b5ebb659
+		lineageTag: 30649d8e-4f11-46d8-bf32-db5601a7e100
 		summarizeBy: none
 		sourceColumn: Active
 

@@ -76,7 +76,25 @@ and `scripts/validate_pbip.py` enforces every one of them.
 | `…/pages/<page>/page.json` | `…/fabric/item/report/definition/page/2.0.0/schema.json` | |
 | `…/visuals/<v>/visual.json` | `…/fabric/item/report/definition/visualContainer/2.4.0/schema.json` | |
 
-There is no `version.json` in a PBIR report — if you see one, delete it.
+`definition/version.json` is **required** — it is the only `version.json` in a PBIP
+and it lives in the report definition folder:
+
+```json
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/versionMetadata/1.0.0/schema.json",
+  "version": "2.0.0"
+}
+```
+
+`database.tmdl` uses `compatibilityLevel: 1601`. Any `queryGroup:` a table or
+expression references must also be declared in `model.tmdl`, or the model will not
+load.
+
+These files are in a published project but are **not** required:
+`cultures/*.tmdl` (localisation), `.pbi/editorSettings.json`, `DAXQueries/`,
+`diagramLayout.json`, `StaticResources/` (only if `report.json` names a resource),
+and `mobile.json` per visual (only for visuals placed in a mobile layout — it
+appears on 32 of 179 visuals in the reference).
 
 `report.json` here deliberately declares no `resourcePackages` and no custom
 `themeCollection`. Both name files that must exist on disk, and a wrong reference is
@@ -105,7 +123,7 @@ through a folder combine that picks up new files automatically.
 python3 scripts/validate_pbip.py
 ```
 
-813 checks: every JSON parses, every `$schema` matches the pattern Desktop enforces,
+818 checks: every JSON parses, every `$schema` matches the pattern Desktop enforces,
 every relationship and visual field reference resolves against the model, every
 measure's DAX references a real table, column or measure, folder names match the
 `name` inside their JSON, `pages.json` agrees with what is on disk, and every column

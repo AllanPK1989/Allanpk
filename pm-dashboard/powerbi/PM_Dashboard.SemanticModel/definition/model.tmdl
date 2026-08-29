@@ -10,6 +10,14 @@ annotation PBI_QueryOrder = ["SourceMode", "LocalDataFolder", "SharePointSiteUrl
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
+queryGroup Parameters
+
+	annotation PBI_QueryGroupOrder = 0
+
+queryGroup Functions
+
+	annotation PBI_QueryGroupOrder = 1
+
 annotation PBI_ProTooling = ["TMDL"]
 
 ref table Dim_Date

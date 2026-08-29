@@ -363,7 +363,7 @@ in
             f"/// {desc}",
             f'expression {name} = "{value}" meta [{meta}]',
             T + f"lineageTag: {uid()}",
-            T + "queryGroup: 0 Parameters",
+            T + "queryGroup: Parameters",
             "",
             T + "annotation PBI_ResultType = Text",
             "", ""])
@@ -372,7 +372,7 @@ in
         L = [f"/// {desc}", f"expression {name} = " + tmdl_expr(body, 2)[0]]
         L += tmdl_expr(body, 2)[1:]
         L.append(T + f"lineageTag: {uid()}")
-        L.append(T + "queryGroup: 1 Functions")
+        L.append(T + "queryGroup: Functions")
         L.append("")
         L.append(T + "annotation PBI_ResultType = Function")
         L.append("")
@@ -434,6 +434,14 @@ def emit_model() -> str:
         "",
         "annotation __PBI_TimeIntelligenceEnabled = 0",
         "",
+        "queryGroup Parameters",
+        "",
+        T + "annotation PBI_QueryGroupOrder = 0",
+        "",
+        "queryGroup Functions",
+        "",
+        T + "annotation PBI_QueryGroupOrder = 1",
+        "",
         "annotation PBI_ProTooling = [\"TMDL\"]",
         "",
     ]
@@ -461,7 +469,7 @@ def build_semantic_model(base: str) -> None:
         "settings": {},
     })
     w(os.path.join(sm, "definition", "database.tmdl"),
-      "database\n" + T + "compatibilityLevel: 1567\n")
+      "database\n" + T + "compatibilityLevel: 1601\n")
     w(os.path.join(sm, "definition", "model.tmdl"), emit_model())
     w(os.path.join(sm, "definition", "expressions.tmdl"), emit_expressions())
     w(os.path.join(sm, "definition", "relationships.tmdl"), emit_relationships())
@@ -1261,6 +1269,11 @@ def build_report(base: str, inject: bool = False) -> None:
             "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
             "metadata": {"type": "Report", "displayName": NAME},
             "config": {"version": "2.0", "logicalId": uid()},
+        })
+        wj(os.path.join(defn, "version.json"), {
+            "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/"
+                       "report/definition/versionMetadata/1.0.0/schema.json",
+            "version": "2.0.0",
         })
         wj(os.path.join(rp, "definition.pbir"), {
             "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/"
