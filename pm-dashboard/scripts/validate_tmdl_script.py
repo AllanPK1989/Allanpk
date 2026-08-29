@@ -149,7 +149,17 @@ def main() -> None:
           f"measures drift from the PBIP: "
           f"{len(script_measures ^ pbip_measures)} names differ")
 
-    # --- 8. relationship endpoints resolve -------------------------------
+    # --- 8. no model property the engine refuses to set late --------------
+    # Culture and collation can only be set on a model with no objects in it,
+    # and a Desktop file with auto date/time on already has a DateTableTemplate.
+    # Setting either aborts the whole apply.
+    for prop in ("culture", "collation", "sourceQueryCulture"):
+        offenders = [n for n, d, c in rows if d == 2 and c.startswith(prop + ":")]
+        check(not offenders,
+              f"the script sets model {prop} on line {offenders[:1]} - the engine "
+              f"rejects that once the model contains any object")
+
+    # --- 9. relationship endpoints resolve -------------------------------
     cols: dict[str, set[str]] = {}
     current = None
     for _, d, c in rows:
@@ -164,7 +174,7 @@ def main() -> None:
         check(tc in cols.get(tt, set()),
               f"relationship endpoint {tt}[{tc}] is not a column in the script")
 
-    # --- 9. every partition has a mode -----------------------------------
+    # --- 10. every partition has a mode ----------------------------------
     parts = [c for _, d, c in rows if d == 3 and c.startswith("partition ")]
     check(len(parts) == len(tables),
           f"{len(parts)} partitions for {len(tables)} tables")

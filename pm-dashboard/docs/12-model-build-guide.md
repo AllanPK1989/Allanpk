@@ -14,7 +14,8 @@ Building the semantic model by hand in Power BI Desktop. Nothing here depends on
 
 1. Power BI Desktop ▸ **Blank report**.
 2. **File ▸ Options and settings ▸ Options ▸ Preview features**. Nothing here is required if you save as `.pbix`; tick **Store semantic model using TMDL format** and **Enhanced report format (PBIR)** only if you intend to save as a `.pbip` project.
-3. **File ▸ Options ▸ Current file ▸ Regional settings**: set the locale you report in. The queries below parse dates as `en-US` explicitly, so this does not change how data loads.
+3. **File ▸ Options ▸ Data Load**: clear the auto date/time box under both *Global* and *Current File*. This model brings its own `Dim_Date`, and auto date/time would build a hidden date table behind every one of the thirty-odd date columns - a far larger model for nothing.
+4. **File ▸ Options ▸ Current file ▸ Regional settings**: set the locale you report in. The queries below parse dates as `en-US` explicitly, so this does not change how data loads.
 
 ---
 

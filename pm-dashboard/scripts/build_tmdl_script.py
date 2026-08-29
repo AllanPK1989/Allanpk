@@ -42,12 +42,16 @@ def model_header() -> list[str]:
         "createOrReplace",
         "",
         T + "model Model",
-        T * 2 + "culture: en-US",
-        T * 2 + "defaultPowerBIDataSourceVersion: powerBI_V3",
-        T * 2 + "sourceQueryCulture: en-US",
-        T * 2 + "dataAccessOptions",
-        T * 3 + "legacyRedirects",
-        T * 3 + "returnErrorValuesAsNull",
+        # No culture, collation, sourceQueryCulture, defaultPowerBIDataSourceVersion
+        # or dataAccessOptions here, deliberately. The engine refuses to set culture
+        # or collation once the model contains ANY object - and a "blank" Desktop
+        # file is not empty when auto date/time is on, because it carries a
+        # DateTableTemplate. Setting them failed with:
+        #   "Culture and Collation properties of the Model object may be changed
+        #    only before any other object has been created."
+        # Every one of those properties already holds the value this model wants in
+        # a new Desktop file, so dropping them costs nothing and makes the script
+        # apply to a file in any state.
         "",
         # Declared before anything references them; an expression carrying
         # queryGroup: Parameters fails to apply if the group is not here.

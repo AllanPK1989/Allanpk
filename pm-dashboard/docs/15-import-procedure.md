@@ -146,13 +146,21 @@ display folders.
 1. Copy `01_Power_BI/data` to `C:\PM_Dashboard\data`. The default
    `LocalDataFolder` parameter already points there, so the sample data loads
    with no editing.
-2. Open Power BI Desktop → **Blank report**. Use a genuinely blank file: the
-   script's `createOrReplace` command replaces the model it is applied to.
-3. **Model** ribbon → **TMDL view**.
-4. Open `PM_Model.tmdl` in Notepad, select all, copy, paste into the TMDL
+2. **Turn off auto date/time first.** File → Options and settings → Options →
+   **Data Load**, and clear the auto date/time box under both *Global* and
+   *Current File*.
+
+   Do not skip this. This model has its own `Dim_Date`, and auto date/time would
+   build a hidden date table behind every one of the thirty-odd date columns —
+   a much larger model for no benefit. It also puts a `DateTableTemplate` object
+   in a file you would otherwise call blank, which used to break the paste
+   outright.
+3. Open Power BI Desktop → **Blank report**.
+4. **Model** ribbon → **TMDL view**.
+5. Open `PM_Model.tmdl` in Notepad, select all, copy, paste into the TMDL
    editor.
-5. Select **Apply**.
-6. **Home** → **Refresh**.
+6. Select **Apply**.
+7. **Home** → **Refresh**.
 
 You now have the complete model on the sample data. Check three things before
 going further:
@@ -175,10 +183,18 @@ Manage parameters:
 
 Refresh. No query is rewritten and no relationship moves.
 
-> **If Apply fails**, the TMDL editor shows the offending line in the Output
-> pane. The most common cause by a distance is a paste that lost the tab
-> indentation — TMDL is indentation-sensitive and some editors helpfully convert
-> tabs to spaces. Paste from Notepad, not from Word or a browser.
+### If Apply fails
+
+The TMDL editor names the offending line in the Output pane. Two causes cover
+almost everything:
+
+| Message | Cause | Fix |
+|---------|-------|-----|
+| `Culture and Collation properties of the Model object may be changed only before any other object has been created` | An older copy of the script set the model's culture, which the engine only allows on a model containing nothing at all. | Use the current `PM_Model.tmdl` — it sets no culture. |
+| Unexpected indentation, or an object where a property was expected | The paste lost its tabs. TMDL is indentation-sensitive and some editors convert tabs to spaces. | Copy from Notepad, not from Word, a browser, or an email. |
+
+Applying twice is safe. `createOrReplace` replaces each object it names, so if a
+first attempt stopped half way, fix the cause and paste the whole script again.
 
 > **Why not just open a .pbix?** Because a Power BI file written by a different
 > Desktop version than yours may refuse to open, and you would be back to
