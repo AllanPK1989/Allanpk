@@ -191,9 +191,8 @@ almost everything:
 | Message | Cause | Fix |
 |---------|-------|-----|
 | `Culture and Collation properties of the Model object may be changed only before any other object has been created` | An older copy of the script set the model's culture. The engine allows that only on a model containing nothing at all, and a file with auto date/time on already holds a `DateTableTemplate`. | Use the current `PM_Model.tmdl`. |
-| `Power BI Data Source Version is only allowed to change from V1 to a higher version, Current version is '2'` | The script did not restate the property, so `createOrReplace` reset it to its V1 default — a downgrade. | Use the current `PM_Model.tmdl`, which restates it. If the message names a version other than 2, see below. |
+| `Power BI Data Source Version is only allowed to change from V1 to a higher version, Current version is '<n>'` | The script did not restate the property at your model's value, so it was reset — either to its V1 default, or to a version below yours. | Use the current `PM_Model.tmdl`. If it still fails, read `<n>` as an **enum ordinal** and set line 4 accordingly — see below. |
 | Unexpected indentation, or an object where a property was expected | The paste lost its tabs. TMDL is indentation-sensitive and some editors convert tabs to spaces. | Copy from Notepad, not from Word, a browser, or an email. |
-| The same data source version error, but naming `'3'` | Your model is at V3 where the script assumes V2. | Change line 4 to `powerBI_V3`. See below. |
 
 Applying twice is safe. `createOrReplace` replaces each object it names, so if a
 first attempt stopped half way, fix the cause and paste the whole script again.
@@ -211,17 +210,22 @@ exactly one property whose default is wrong:
 | `culture`, `collation` | matches | Cannot be assigned at all once the model holds any object. Their defaults match what the model already has, so letting them reset changes nothing. The script must **not** set them. |
 | everything else | matches | Left to reset harmlessly. |
 
-**If line 4's value does not match your model.** The script says `powerBI_V2`
-because that is what Desktop reported. If your file is at V3 you will get the
-same error again, naming `'3'`. Change line 4 to:
+**Read the number in that error as an enum ordinal, not a version name.** This
+is the trap, and it cost a round here:
 
-```
-		defaultPowerBIDataSourceVersion: powerBI_V3
-```
+| Message says | Model is actually on | Line 4 should read |
+|--------------|----------------------|--------------------|
+| `'0'` | V1 | `powerBI_V1` |
+| `'1'` | V2 | `powerBI_V2` |
+| `'2'` | **V3** | `powerBI_V3` |
 
-Two tabs of indentation, and whatever value the error message says is current.
+Add one to the number. The script ships `powerBI_V3`, which is what a current
+Power BI Desktop creates, so this should not come up — but if it does, that is
+the conversion.
+
 To check before pasting rather than after: open TMDL view on the blank file and
-read the first few lines — Desktop shows the model's own properties there.
+read the first few lines. Desktop shows the model's own properties there, by
+name.
 
 If a **different** property name appears in an error, the same rule applies: add
 it under `model Model` at the value the message says is current. Anything except

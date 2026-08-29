@@ -1,7 +1,7 @@
 createOrReplace
 
 	model Model
-		defaultPowerBIDataSourceVersion: powerBI_V2
+		defaultPowerBIDataSourceVersion: powerBI_V3
 
 		queryGroup Parameters
 			annotation PBI_QueryGroupOrder = 0

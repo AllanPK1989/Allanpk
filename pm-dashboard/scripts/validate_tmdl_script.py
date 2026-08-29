@@ -153,7 +153,8 @@ def main() -> None:
     # createOrReplace resets any model property the script does not restate to
     # its default. Most defaults match what a real model already holds, so the
     # reset is a no-op. defaultPowerBIDataSourceVersion is the exception: its
-    # default is V1, and the engine refuses that downgrade. Culture and collation
+    # default is V1, and the engine refuses that downgrade. Note the error reports
+    # the enum ORDINAL (V1=0, V2=1, V3=2), not the version name. Culture and collation
     # are the opposite case - they cannot be assigned at all once the model holds
     # an object, so they must stay absent.
     props = {c.split(":")[0].strip(): (n, c) for n, d, c in rows
@@ -163,9 +164,9 @@ def main() -> None:
           "createOrReplace resets it to V1 and the apply fails")
     if "defaultPowerBIDataSourceVersion" in props:
         _, line = props["defaultPowerBIDataSourceVersion"]
-        check(line.endswith("powerBI_V2"),
-              f"data source version must be restated at the model's current "
-              f"value, not raised: {line!r}")
+        check(line.endswith("powerBI_V3"),
+              f"data source version must be powerBI_V3, what a current Desktop "
+              f"creates and what this model was confirmed on: {line!r}")
     for banned in ("culture", "collation"):
         check(banned not in props,
               f"the script sets model {banned}, which the engine rejects once "

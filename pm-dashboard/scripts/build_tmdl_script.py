@@ -40,7 +40,7 @@ def model_header() -> list[str]:
         "createOrReplace",
         "",
         T + "model Model",
-        # Setting this to the value the model ALREADY holds is the point. Three
+        # Setting this to the value the model ALREADY holds is the point. Four
         # applies failed here, and the sequence is what taught the rule:
         #
         #   model Model + culture + powerBI_V3
@@ -49,22 +49,26 @@ def model_header() -> list[str]:
         #   model Model, properties deleted
         #     -> "Power BI Data Source Version is only allowed to change from V1
         #         to a higher version, Current version is '2'"
-        #   ref model Model, properties deleted
-        #     -> the same data source version error
+        #   ref model Model, properties deleted   -> the same
+        #   model Model + powerBI_V2              -> the same
         #
         # The second showed that deleting a property does not stop it being
         # written, it makes it DEFAULT: createOrReplace replaces the model object
-        # and resets everything not restated. The default is V1, a downgrade from
-        # 2, so it fails. The third showed `ref` does not exempt the model from
-        # that. So the only thing that works is to restate the property at its
-        # current value, making the assignment a no-op.
+        # and resets everything not restated. The default is V1, a downgrade, so
+        # it fails. The third showed `ref` does not exempt the model from that.
         #
-        # V2 is what Desktop reported. Culture is still omitted, and that is
-        # sound rather than lucky: after the property was removed the culture
-        # error stopped, which proves the default matches this model's value, so
-        # resetting it changes nothing. Collation the same. Only the data source
-        # version has a default that differs from what a real model carries.
-        T * 2 + "defaultPowerBIDataSourceVersion: powerBI_V2",
+        # The fourth was mine: "Current version is '2'" reports the ENUM ORDINAL,
+        # not the version name. The values are powerBI_V1=0, V2=1, V3=2, so '2'
+        # means the model is on V3. Reading it as "version 2" produced a script
+        # that tried to downgrade V3 -> V2 and failed identically. Add one to the
+        # number in the message to get the name.
+        #
+        # V3 is what a current Desktop creates, so it is also the right default.
+        # Culture stays omitted, and that is sound rather than lucky: after it was
+        # removed the culture error stopped, which proves its default matches this
+        # model's value, so resetting it changes nothing. Collation the same. Only
+        # the data source version has a default that differs from a real model's.
+        T * 2 + "defaultPowerBIDataSourceVersion: powerBI_V3",
         "",
         # Declared before anything references them; an expression carrying
         # queryGroup: Parameters fails to apply if the group is not here.
