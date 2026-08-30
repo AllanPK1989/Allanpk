@@ -1,0 +1,315 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.0.0/schema.json",
+  "name": "v31Stock",
+  "position": {
+    "x": 648,
+    "y": 460,
+    "z": 2003,
+    "width": 608,
+    "height": 176,
+    "tabOrder": 31
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dim_Spare"
+                    }
+                  },
+                  "Property": "Spare_Code"
+                }
+              },
+              "queryRef": "Dim_Spare.Spare_Code",
+              "nativeQueryRef": "Spare_Code"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dim_Spare"
+                    }
+                  },
+                  "Property": "Spare_Description"
+                }
+              },
+              "queryRef": "Dim_Spare.Spare_Description",
+              "nativeQueryRef": "Spare_Description"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dim_Spare"
+                    }
+                  },
+                  "Property": "Current_Stock"
+                }
+              },
+              "queryRef": "Dim_Spare.Current_Stock",
+              "nativeQueryRef": "Current_Stock"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dim_Spare"
+                    }
+                  },
+                  "Property": "Min_Stock"
+                }
+              },
+              "queryRef": "Dim_Spare.Min_Stock",
+              "nativeQueryRef": "Min_Stock"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dim_Spare"
+                    }
+                  },
+                  "Property": "Lead_Time_Days"
+                }
+              },
+              "queryRef": "Dim_Spare.Lead_Time_Days",
+              "nativeQueryRef": "Lead_Time_Days"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dim_Spare"
+                    }
+                  },
+                  "Property": "Stockout_Risk_Score"
+                }
+              },
+              "queryRef": "Dim_Spare.Stockout_Risk_Score",
+              "nativeQueryRef": "Stockout_Risk_Score"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Avg Approval Lead Time (Days)"
+                }
+              },
+              "queryRef": "_Measures.Avg Approval Lead Time (Days)",
+              "nativeQueryRef": "Avg Approval Lead Time (Days)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Avg Issue Lead Time (Days)"
+                }
+              },
+              "queryRef": "_Measures.Avg Issue Lead Time (Days)",
+              "nativeQueryRef": "Avg Issue Lead Time (Days)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Approved Not Issued Count"
+                }
+              },
+              "queryRef": "_Measures.Approved Not Issued Count",
+              "nativeQueryRef": "Approved Not Issued Count"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dim_Spare"
+                    }
+                  },
+                  "Property": "Preferred_Vendor"
+                }
+              },
+              "queryRef": "Dim_Spare.Preferred_Vendor",
+              "nativeQueryRef": "Preferred_Vendor"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Which parts will stop a PM if they run out?'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            },
+            "fontColor": {
+              "expr": {
+                "Literal": {
+                  "Value": "'#0C3549'"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'left'"
+                }
+              }
+            },
+            "titleWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Risk score weights how far below minimum a part is by how long it takes to replace'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            },
+            "fontColor": {
+              "expr": {
+                "Literal": {
+                  "Value": "'#7B8794'"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'left'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "grid": [
+        {
+          "properties": {
+            "gridVertical": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "gridHorizontal": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "rowPadding": {
+              "expr": {
+                "Literal": {
+                  "Value": "3D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "columnHeaders": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            },
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "values": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,243 @@
+table Fact_SpareReplaced
+	lineageTag: 8ea507cf-98c5-51d0-8cc0-725d92675c22
+
+	column Repl_ID
+		dataType: string
+		lineageTag: 7cfa5cd6-2247-5768-aa6d-b3547f733f0d
+		summarizeBy: none
+		sourceColumn: Repl_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Replaced_DateTime
+		dataType: dateTime
+		lineageTag: 0af41344-ea82-54a3-b548-3e19da586a3d
+		summarizeBy: none
+		sourceColumn: Replaced_DateTime
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source_Type
+		dataType: string
+		lineageTag: b3a068d4-a293-5a75-94ff-242a0ad55560
+		summarizeBy: none
+		sourceColumn: Source_Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source_Ref
+		dataType: string
+		lineageTag: 0b483596-08c8-592c-9f58-415873466e0b
+		summarizeBy: none
+		sourceColumn: Source_Ref
+
+		annotation SummarizationSetBy = Automatic
+
+	column Machine_ID
+		dataType: string
+		lineageTag: d07c565c-097e-578f-97f3-3ed7cc162d72
+		summarizeBy: none
+		sourceColumn: Machine_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cell_ID
+		dataType: string
+		lineageTag: 4b00ee78-d273-5562-b6e4-e883a8211c09
+		summarizeBy: none
+		sourceColumn: Cell_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Spare_Code
+		dataType: string
+		lineageTag: 8ed75ac3-532e-5336-a85f-979974435919
+		summarizeBy: none
+		sourceColumn: Spare_Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column Spare_Description
+		dataType: string
+		lineageTag: 8fbe68b3-6be2-5642-a0d3-a869180095ba
+		summarizeBy: none
+		sourceColumn: Spare_Description
+
+		annotation SummarizationSetBy = Automatic
+
+	column Qty_Used
+		dataType: int64
+		lineageTag: ca69f2b2-e7dd-5cb0-a4fc-5706890f8967
+		summarizeBy: none
+		sourceColumn: Qty_Used
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column Unit_Cost_INR
+		dataType: double
+		lineageTag: 8b9cc427-5285-5da8-a548-2060a9e4fbab
+		summarizeBy: none
+		sourceColumn: Unit_Cost_INR
+		formatString: #,##0.00
+
+		annotation SummarizationSetBy = Automatic
+
+	column Total_Cost_INR
+		dataType: double
+		lineageTag: 9a780afd-a38d-5cfc-9c29-e247cf532410
+		summarizeBy: none
+		sourceColumn: Total_Cost_INR
+		formatString: #,##0.00
+
+		annotation SummarizationSetBy = Automatic
+
+	column Old_Part_Condition
+		dataType: string
+		lineageTag: b8b88771-5f1c-5547-b973-7c70cee1843c
+		summarizeBy: none
+		sourceColumn: Old_Part_Condition
+
+		annotation SummarizationSetBy = Automatic
+
+	column Failure_Mode
+		dataType: string
+		lineageTag: f8e2a7b4-9195-58f7-898c-422eb9ff40e7
+		summarizeBy: none
+		sourceColumn: Failure_Mode
+
+		annotation SummarizationSetBy = Automatic
+
+	column Replaced_By
+		dataType: string
+		lineageTag: efb31f0a-50bc-50b4-8c6a-ef6720aa8059
+		summarizeBy: none
+		sourceColumn: Replaced_By
+
+		annotation SummarizationSetBy = Automatic
+
+	column Expected_Life_Hours
+		dataType: int64
+		lineageTag: efc7a2a3-878a-58e6-a8a3-977a291b9cf7
+		summarizeBy: none
+		sourceColumn: Expected_Life_Hours
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column Warranty_Claim
+		dataType: boolean
+		lineageTag: c8b2f004-0b2e-522f-b228-d16da4742c7a
+		summarizeBy: none
+		sourceColumn: Warranty_Claim
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	column Remarks
+		dataType: string
+		lineageTag: 1cb659f0-a4dc-5842-b526-5e692aa68380
+		summarizeBy: none
+		sourceColumn: Remarks
+
+		annotation SummarizationSetBy = Automatic
+
+	column Replaced_Date
+		dataType: dateTime
+		lineageTag: 2fb22326-c676-5ca9-95be-c0377bb7a1f3
+		summarizeBy: none
+		sourceColumn: Replaced_Date
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cost_Integrity_OK
+		dataType: boolean
+		lineageTag: 69c59ecd-8ff8-5596-822b-5618ee0c0fee
+		summarizeBy: none
+		sourceColumn: Cost_Integrity_OK
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	column Is_Planned_Spend
+		dataType: boolean
+		lineageTag: 9a3c2f79-a256-5499-a872-9be26f45f4e9
+		summarizeBy: none
+		sourceColumn: Is_Planned_Spend
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_SpareReplaced = m
+		mode: import
+		source = ```
+				// ===========================================================================
+				// Fact_SpareReplaced  <- Spare_Replaced
+				// ---------------------------------------------------------------------------
+				// Parts actually fitted.
+				//
+				// Unit_Cost_INR is copied from the master at the time of use, not looked up at
+				// report time, so a price rise does not retrospectively rewrite last year's
+				// maintenance cost. That is why this fact carries its own cost column rather
+				// than relying on Dim_Spare.
+				//
+				// Failure_Mode is the most valuable column in the table. Repeated
+				// "Contamination" on the same part is a filtration problem, not a spares
+				// problem, and no amount of buying more parts will fix it.
+				// ===========================================================================
+				let
+				    Source = fnGetTable("Spare_Replaced", "03_PM_Transactions_Dummy.xlsx", "Spare_Replaced"),
+
+				    Keys = fnCleanKeys(Source, {"Repl_ID", "Source_Ref", "Machine_ID",
+				                                "Cell_ID", "Spare_Code", "Replaced_By"}),
+				    Bools = fnYesNo(Keys, {"Warranty_Claim"}),
+
+				    Typed = Table.TransformColumnTypes(Bools, {
+				        {"Repl_ID",             type text},
+				        {"Replaced_DateTime",   type datetime},
+				        {"Source_Type",         type text},
+				        {"Source_Ref",          type text},
+				        {"Machine_ID",          type text},
+				        {"Cell_ID",             type text},
+				        {"Spare_Code",          type text},
+				        {"Spare_Description",   type text},
+				        {"Qty_Used",            Int64.Type},
+				        {"Unit_Cost_INR",       type number},
+				        {"Total_Cost_INR",      type number},
+				        {"Old_Part_Condition",  type text},
+				        {"Failure_Mode",        type text},
+				        {"Replaced_By",         type text},
+				        {"Expected_Life_Hours", Int64.Type},
+				        {"Warranty_Claim",      type logical},
+				        {"Remarks",             type text}
+				    }),
+
+				    WithDate = Table.AddColumn(
+				        Typed, "Replaced_Date",
+				        each if [Replaced_DateTime] = null then null else DateTime.Date([Replaced_DateTime]),
+				        type nullable date),
+
+				    // Integrity rule 5 recomputed in the model. If the source ever disagrees
+				    // with itself, this column is what surfaces it, rather than the cost total
+				    // being quietly wrong on a page nobody cross-checks.
+				    WithCheck = Table.AddColumn(
+				        WithDate, "Cost_Integrity_OK",
+				        each if [Qty_Used] = null or [Unit_Cost_INR] = null or [Total_Cost_INR] = null then null
+				             else Number.Abs([Qty_Used] * [Unit_Cost_INR] - [Total_Cost_INR]) < 0.01,
+				        type nullable logical),
+
+				    WithPlanned = Table.AddColumn(
+				        WithCheck, "Is_Planned_Spend",
+				        each [Source_Type] = "PM",
+				        type logical),
+
+				    Final = Table.SelectRows(WithPlanned, each [Repl_ID] <> null)
+				in
+				    Final
+				```
+
+	annotation PBI_ResultType = Table

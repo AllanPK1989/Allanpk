@@ -1,0 +1,169 @@
+{
+  "ListTitle": "Machine_Master",
+  "ListUrl": "Lists/Machine_Master",
+  "Description": "One row per machine. Carries the QR payload and the pre-filled form links behind the Machine Hub buttons.",
+  "Template": "GenericList",
+  "EnableVersioning": true,
+  "MajorVersionLimit": 50,
+  "EnableAttachments": false,
+  "TitleColumn": {
+    "Required": false,
+    "Hidden": false,
+    "SetFrom": "Machine_ID",
+    "Note": "Title is populated from the primary key on load so the item has a readable display name and shows up in search. Matching is always done on the explicit key column, never on Title."
+  },
+  "PrimaryKey": "Machine_ID",
+  "IndexedColumns": [
+    "Machine_ID",
+    "Cell_ID",
+    "Active",
+    "Checklist_ID"
+  ],
+  "Fields": [
+    {
+      "InternalName": "Machine_ID",
+      "DisplayName": "Machine_ID",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Machine_Name",
+      "DisplayName": "Machine_Name",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Cell_ID",
+      "DisplayName": "Cell_ID",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Cell_Name",
+      "DisplayName": "Cell_Name",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Machine_Family",
+      "DisplayName": "Machine_Family",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Make",
+      "DisplayName": "Make",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Model",
+      "DisplayName": "Model",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Serial_No",
+      "DisplayName": "Serial_No",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Year_Installed",
+      "DisplayName": "Year_Installed",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 0
+    },
+    {
+      "InternalName": "Location_Tag",
+      "DisplayName": "Location_Tag",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Checklist_ID",
+      "DisplayName": "Checklist_ID",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Checklist_Form_URL",
+      "DisplayName": "Checklist_Form_URL",
+      "Required": false,
+      "Indexed": false,
+      "Type": "URL"
+    },
+    {
+      "InternalName": "Breakdown_Form_URL",
+      "DisplayName": "Breakdown_Form_URL",
+      "Required": false,
+      "Indexed": false,
+      "Type": "URL"
+    },
+    {
+      "InternalName": "Spare_Request_Form_URL",
+      "DisplayName": "Spare_Request_Form_URL",
+      "Required": false,
+      "Indexed": false,
+      "Type": "URL"
+    },
+    {
+      "InternalName": "Abnormality_Form_URL",
+      "DisplayName": "Abnormality_Form_URL",
+      "Required": false,
+      "Indexed": false,
+      "Type": "URL"
+    },
+    {
+      "InternalName": "QR_Payload_URL",
+      "DisplayName": "QR_Payload_URL",
+      "Required": false,
+      "Indexed": false,
+      "Type": "URL"
+    },
+    {
+      "InternalName": "Criticality",
+      "DisplayName": "Criticality",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "A",
+        "B",
+        "C"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Active",
+      "DisplayName": "Active",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Boolean",
+      "DefaultValue": "0"
+    }
+  ]
+}

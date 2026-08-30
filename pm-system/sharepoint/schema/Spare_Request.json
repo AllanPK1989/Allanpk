@@ -1,0 +1,203 @@
+{
+  "ListTitle": "Spare_Request",
+  "ListUrl": "Lists/Spare_Request",
+  "Description": "Spare part requests and their approval trail.",
+  "Template": "GenericList",
+  "EnableVersioning": true,
+  "MajorVersionLimit": 50,
+  "EnableAttachments": false,
+  "TitleColumn": {
+    "Required": false,
+    "Hidden": false,
+    "SetFrom": "Req_ID",
+    "Note": "Title is populated from the primary key on load so the item has a readable display name and shows up in search. Matching is always done on the explicit key column, never on Title."
+  },
+  "PrimaryKey": "Req_ID",
+  "IndexedColumns": [
+    "WO_No",
+    "Spare_Code",
+    "Approval_Status",
+    "Request_DateTime"
+  ],
+  "Fields": [
+    {
+      "InternalName": "Req_ID",
+      "DisplayName": "Req_ID",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Request_DateTime",
+      "DisplayName": "Request_DateTime",
+      "Required": false,
+      "Indexed": true,
+      "Type": "DateTime",
+      "DisplayFormat": "DateTime"
+    },
+    {
+      "InternalName": "WO_No",
+      "DisplayName": "WO_No",
+      "Required": false,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Machine_ID",
+      "DisplayName": "Machine_ID",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Cell_ID",
+      "DisplayName": "Cell_ID",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Spare_Code",
+      "DisplayName": "Spare_Code",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Spare_Description",
+      "DisplayName": "Spare_Description",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Qty_Requested",
+      "DisplayName": "Qty_Requested",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 0
+    },
+    {
+      "InternalName": "Requested_By",
+      "DisplayName": "Requested_By",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Urgency",
+      "DisplayName": "Urgency",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "Normal",
+        "Urgent",
+        "Breakdown"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Reason",
+      "DisplayName": "Reason",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "PM replacement",
+        "Breakdown repair",
+        "Predictive finding",
+        "Stock top-up"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Approval_Status",
+      "DisplayName": "Approval_Status",
+      "Required": false,
+      "Indexed": true,
+      "Type": "Choice",
+      "Choices": [
+        "Pending",
+        "Approved",
+        "Rejected"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Approved_By",
+      "DisplayName": "Approved_By",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Approved_Date",
+      "DisplayName": "Approved_Date",
+      "Required": false,
+      "Indexed": false,
+      "Type": "DateTime",
+      "DisplayFormat": "DateOnly"
+    },
+    {
+      "InternalName": "Issue_Status",
+      "DisplayName": "Issue_Status",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "Not Issued",
+        "Partially Issued",
+        "Issued"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Issued_Qty",
+      "DisplayName": "Issued_Qty",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 0
+    },
+    {
+      "InternalName": "Issue_Date",
+      "DisplayName": "Issue_Date",
+      "Required": false,
+      "Indexed": false,
+      "Type": "DateTime",
+      "DisplayFormat": "DateOnly"
+    },
+    {
+      "InternalName": "Stock_At_Request",
+      "DisplayName": "Stock_At_Request",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 0
+    },
+    {
+      "InternalName": "Remarks",
+      "DisplayName": "Remarks",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Note",
+      "NumberOfLines": 4,
+      "RichText": false,
+      "AppendOnly": false
+    }
+  ]
+}

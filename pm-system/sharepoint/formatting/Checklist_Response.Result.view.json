@@ -1,0 +1,32 @@
+{
+  "_comment": [
+    "Checklist_Response findings view.",
+    "Result is the field the whole quality-of-PM story is built on, so it gets the",
+    "strongest visual treatment. Measured_Value is shown next to it because a NOT OK with",
+    "no reading is an opinion, and a NOT OK with a reading is evidence."
+  ],
+  "ColumnFormats": {
+    "Result": {
+      "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+      "elmType": "div",
+      "txt": "@currentField",
+      "style": {
+        "font-family": "'Segoe UI', system-ui, sans-serif",
+        "display": "flex", "align-items": "center", "justify-content": "center",
+        "min-height": "28px", "min-width": "84px", "padding": "0 12px",
+        "border-radius": "14px", "font-size": "13px", "font-weight": "700",
+        "color": "=if(@currentField == 'NOT OK', '#FFFFFF', if(@currentField == 'OK', '#146B3F', '#57606A'))",
+        "background-color": "=if(@currentField == 'NOT OK', '#ED7373', if(@currentField == 'OK', '#DBF3E6', '#EDF0F2'))"
+      }
+    },
+    "Follow_Up_Required": {
+      "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+      "elmType": "div",
+      "txt": "=if(@currentField, 'Follow-up raised', '')",
+      "style": {
+        "font-family": "'Segoe UI', system-ui, sans-serif",
+        "font-size": "12px", "font-weight": "600", "color": "#2E86AB"
+      }
+    }
+  }
+}

@@ -1,0 +1,172 @@
+table Dim_Date
+	lineageTag: de34047f-1683-5fa4-94bd-dc9c37f2e3fe
+
+	/// Generated in DAX and marked as the model's date table. The range covers
+	/// two Indian financial years, 2025-04-01 to 2027-03-31, so a report opened
+	/// in the current year still has next year's forecast dates to land on.
+	/// Marking it as a date table is what makes the time intelligence functions
+	/// work; without it they silently return wrong answers rather than erroring.
+
+	column Date
+		dataType: dateTime
+		lineageTag: b433e0a1-35d3-50ae-b5c8-eafdefd76352
+		summarizeBy: none
+		sourceColumn: [Date]
+		formatString: yyyy-mm-dd
+		isKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		dataType: int64
+		lineageTag: 4e171c53-78a8-5bf5-a591-eea758de81cd
+		summarizeBy: none
+		sourceColumn: [Year]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month No'
+		dataType: int64
+		lineageTag: b7880772-a3c7-52dc-9745-beac5854c8c8
+		summarizeBy: none
+		sourceColumn: [Month No]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Name'
+		dataType: string
+		lineageTag: 97702236-2f52-5a5a-9aa8-2e3e3b17b067
+		summarizeBy: none
+		sourceColumn: [Month Name]
+		sortByColumn: 'Month Sort'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Year'
+		dataType: string
+		lineageTag: 6e6f83f5-5243-5991-8f6d-63ab9013c09a
+		summarizeBy: none
+		sourceColumn: [Month Year]
+		sortByColumn: 'Month Sort'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Year Month'
+		dataType: string
+		lineageTag: 24758ee6-387f-5126-a1ba-ab6e2b706bbd
+		summarizeBy: none
+		sourceColumn: [Year Month]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quarter
+		dataType: string
+		lineageTag: 58382932-bd98-5abe-ba03-43319c3347fb
+		summarizeBy: none
+		sourceColumn: [Quarter]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Day
+		dataType: int64
+		lineageTag: 6fdbde24-950b-577d-8df3-adc13446ad48
+		summarizeBy: none
+		sourceColumn: [Day]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Day Name'
+		dataType: string
+		lineageTag: 7daec36b-538d-57d3-ad13-e25a8aa586bd
+		summarizeBy: none
+		sourceColumn: [Day Name]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Week No'
+		dataType: int64
+		lineageTag: d5f69929-3a96-5ac5-a441-7668ab988afa
+		summarizeBy: none
+		sourceColumn: [Week No]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Is Weekend'
+		dataType: boolean
+		lineageTag: e31fb56a-da84-5781-a2f1-1e01f7796fbb
+		summarizeBy: none
+		sourceColumn: [Is Weekend]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Fin Year'
+		dataType: string
+		lineageTag: a7277578-8aaa-5c1b-9d31-4c4b2871f43b
+		summarizeBy: none
+		sourceColumn: [Fin Year]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Fin Month No'
+		dataType: int64
+		lineageTag: e2530606-01f0-56d8-95db-39b699662e2a
+		summarizeBy: none
+		sourceColumn: [Fin Month No]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Fin Quarter'
+		dataType: string
+		lineageTag: 6fbfb694-03fd-5bd6-b9a0-40a24153ea97
+		summarizeBy: none
+		sourceColumn: [Fin Quarter]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Sort'
+		dataType: int64
+		isHidden: true
+		lineageTag: 1079a6f5-9938-5b79-b25f-dd306a671dbb
+		summarizeBy: none
+		sourceColumn: [Month Sort]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Is Past'
+		dataType: boolean
+		lineageTag: 6ea84fce-e487-55ad-9198-688d638a18bc
+		summarizeBy: none
+		sourceColumn: [Is Past]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Date = calculated
+		mode: import
+		source = ```
+				VAR _Start = DATE ( 2025, 4, 1 )
+				VAR _End = DATE ( 2027, 3, 31 )
+				VAR _Base = CALENDAR ( _Start, _End )
+				RETURN
+				ADDCOLUMNS (
+				    _Base,
+				    "Year", YEAR ( [Date] ),
+				    "Month No", MONTH ( [Date] ),
+				    "Month Name", FORMAT ( [Date], "MMM" ),
+				    "Month Year", FORMAT ( [Date], "MMM yyyy" ),
+				    "Year Month", FORMAT ( [Date], "yyyy-MM" ),
+				    "Quarter", "Q" & FORMAT ( [Date], "Q" ),
+				    "Day", DAY ( [Date] ),
+				    "Day Name", FORMAT ( [Date], "ddd" ),
+				    "Week No", WEEKNUM ( [Date], 2 ),
+				    "Is Weekend", WEEKDAY ( [Date], 2 ) > 5,
+				    "Fin Year",
+				        "FY" & FORMAT ( IF ( MONTH ( [Date] ) >= 4, YEAR ( [Date] ), YEAR ( [Date] ) - 1 ), "0000" )
+				            & "-" & FORMAT ( IF ( MONTH ( [Date] ) >= 4, YEAR ( [Date] ) + 1, YEAR ( [Date] ) ) - 2000, "00" ),
+				    "Fin Month No", IF ( MONTH ( [Date] ) >= 4, MONTH ( [Date] ) - 3, MONTH ( [Date] ) + 9 ),
+				    "Fin Quarter", "Q" & ROUNDUP ( DIVIDE ( IF ( MONTH ( [Date] ) >= 4, MONTH ( [Date] ) - 3, MONTH ( [Date] ) + 9 ), 3 ), 0 ),
+				    "Month Sort", YEAR ( [Date] ) * 100 + MONTH ( [Date] ),
+				    "Is Past", [Date] <= TODAY ()
+				)
+				```
+
+	annotation PBI_Id = DateTable

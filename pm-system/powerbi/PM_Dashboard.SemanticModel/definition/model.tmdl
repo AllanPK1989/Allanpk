@@ -1,0 +1,40 @@
+model Model
+	culture: en-IN
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: en-IN
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+	queryGroup '00 Parameters'
+		annotation PBI_QueryGroupOrder = 0
+
+	queryGroup '01 Functions'
+		annotation PBI_QueryGroupOrder = 1
+
+	annotation PBI_QueryOrder = ["pSourceMode", "pSourceFolder", "pSharePointSite", "pStdHoursArchiveFolder", "fnGetTable", "fnCleanKeys", "fnYesNo", "Dim_Cell", "Dim_Machine", "Dim_Technician", "Dim_Spare", "Dim_ChecklistItem", "Fact_StdHours", "Fact_WorkOrder", "Fact_MachineTask", "Fact_ChecklistResponse", "Fact_ScanLog", "Fact_Breakdown", "Fact_SpareRequest", "Fact_SpareReplaced", "Fact_Abnormality", "Fact_PlanCalendar"]
+
+	annotation PBIDesktopVersion = 2.140.0.0
+
+	annotation __PBI_TimeIntelligenceEnabled = 0
+
+	ref table Dim_Cell
+	ref table Dim_Machine
+	ref table Dim_Technician
+	ref table Dim_Spare
+	ref table Dim_ChecklistItem
+	ref table Fact_StdHours
+	ref table Fact_WorkOrder
+	ref table Fact_MachineTask
+	ref table Fact_ChecklistResponse
+	ref table Fact_ScanLog
+	ref table Fact_Breakdown
+	ref table Fact_SpareRequest
+	ref table Fact_SpareReplaced
+	ref table Fact_Abnormality
+	ref table Fact_PlanCalendar
+	ref table Dim_Date
+	ref table _Measures
+
+	ref cultureInfo en-IN

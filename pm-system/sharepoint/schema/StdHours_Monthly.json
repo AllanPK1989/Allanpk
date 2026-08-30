@@ -1,0 +1,88 @@
+{
+  "ListTitle": "StdHours_Monthly",
+  "ListUrl": "Lists/StdHours_Monthly",
+  "Description": "Monthly actual standard hours per cell. One row per cell per month.",
+  "Template": "GenericList",
+  "EnableVersioning": true,
+  "MajorVersionLimit": 50,
+  "EnableAttachments": false,
+  "TitleColumn": {
+    "Required": false,
+    "Hidden": false,
+    "SetFrom": null,
+    "Note": "Title is populated from the primary key on load so the item has a readable display name and shows up in search. Matching is always done on the explicit key column, never on Title."
+  },
+  "PrimaryKey": null,
+  "IndexedColumns": [
+    "Upload_Month",
+    "Cell_ID"
+  ],
+  "Fields": [
+    {
+      "InternalName": "Upload_Month",
+      "DisplayName": "Upload_Month",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Cell_ID",
+      "DisplayName": "Cell_ID",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Cell_Name",
+      "DisplayName": "Cell_Name",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Actual_Std_Hours",
+      "DisplayName": "Actual_Std_Hours",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 2
+    },
+    {
+      "InternalName": "Production_Qty",
+      "DisplayName": "Production_Qty",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 0
+    },
+    {
+      "InternalName": "Uploaded_By",
+      "DisplayName": "Uploaded_By",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Upload_Date",
+      "DisplayName": "Upload_Date",
+      "Required": false,
+      "Indexed": false,
+      "Type": "DateTime",
+      "DisplayFormat": "DateOnly"
+    },
+    {
+      "InternalName": "Remarks",
+      "DisplayName": "Remarks",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Note",
+      "NumberOfLines": 4,
+      "RichText": false,
+      "AppendOnly": false
+    }
+  ]
+}

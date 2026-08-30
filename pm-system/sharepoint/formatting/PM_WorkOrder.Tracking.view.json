@@ -1,0 +1,78 @@
+{
+  "_comment": [
+    "PM_WorkOrder tracking views.",
+    "",
+    "Machines_Completed renders as a completion bar out of Machines_In_Scope. This is the",
+    "number that matters most on a cell PM: the work order does not close, and the counter",
+    "does not reset, until this bar is full. A cell sitting at 3 of 4 for a week is the",
+    "single most common way a PM cycle quietly stalls.",
+    "",
+    "Planned_End_Date turns red once it is in the past on any work order that is not",
+    "Completed or Cancelled."
+  ],
+
+  "ColumnFormats": {
+    "Machines_Completed": {
+      "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+      "elmType": "div",
+      "style": { "font-family": "'Segoe UI', system-ui, sans-serif", "padding": "2px 0" },
+      "children": [
+        {
+          "elmType": "div",
+          "txt": "=[$Machines_Completed] + ' of ' + [$Machines_In_Scope] + ' machines'",
+          "style": { "font-size": "12px", "font-weight": "600", "color": "#1F2933", "margin-bottom": "3px" }
+        },
+        {
+          "elmType": "div",
+          "style": { "background-color": "#E8EDEF", "border-radius": "4px", "height": "10px", "width": "130px", "overflow": "hidden" },
+          "children": [
+            {
+              "elmType": "div",
+              "style": {
+                "height": "10px", "border-radius": "4px",
+                "width": "=if([$Machines_In_Scope] > 0, toString(round(([$Machines_Completed] / [$Machines_In_Scope]) * 100)) + '%', '0%')",
+                "background-color": "=if([$Machines_In_Scope] > 0 && [$Machines_Completed] >= [$Machines_In_Scope], '#44C088', '#2E86AB')"
+              }
+            }
+          ]
+        }
+      ]
+    },
+
+    "WO_Status": {
+      "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+      "elmType": "div",
+      "txt": "@currentField",
+      "style": {
+        "font-family": "'Segoe UI', system-ui, sans-serif",
+        "display": "flex", "align-items": "center", "justify-content": "center",
+        "min-height": "28px", "min-width": "100px", "padding": "0 12px",
+        "border-radius": "14px", "font-size": "13px", "font-weight": "700",
+        "color": "=if(@currentField == 'Overdue', '#FFFFFF', if(@currentField == 'Completed', '#146B3F', if(@currentField == 'In Progress', '#0C3549', '#57606A')))",
+        "background-color": "=if(@currentField == 'Overdue', '#ED7373', if(@currentField == 'Completed', '#DBF3E6', if(@currentField == 'In Progress', '#D8EBF4', '#EDF0F2')))"
+      }
+    },
+
+    "Planned_End_Date": {
+      "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+      "elmType": "div",
+      "txt": "=toLocaleDateString(@currentField)",
+      "style": {
+        "font-family": "'Segoe UI', system-ui, sans-serif",
+        "font-weight": "=if(@currentField < @now && [$WO_Status] != 'Completed' && [$WO_Status] != 'Cancelled', '700', '400')",
+        "color": "=if(@currentField < @now && [$WO_Status] != 'Completed' && [$WO_Status] != 'Cancelled', '#ED7373', '#1F2933')"
+      }
+    },
+
+    "Priority": {
+      "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+      "elmType": "div",
+      "txt": "@currentField",
+      "style": {
+        "font-family": "'Segoe UI', system-ui, sans-serif",
+        "font-weight": "700", "font-size": "13px",
+        "color": "=if(@currentField == 'High', '#ED7373', if(@currentField == 'Medium', '#F0A202', '#7B8794'))"
+      }
+    }
+  }
+}

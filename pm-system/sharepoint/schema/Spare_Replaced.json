@@ -1,0 +1,186 @@
+{
+  "ListTitle": "Spare_Replaced",
+  "ListUrl": "Lists/Spare_Replaced",
+  "Description": "Parts actually fitted, with failure mode and cost.",
+  "Template": "GenericList",
+  "EnableVersioning": true,
+  "MajorVersionLimit": 50,
+  "EnableAttachments": false,
+  "TitleColumn": {
+    "Required": false,
+    "Hidden": false,
+    "SetFrom": "Repl_ID",
+    "Note": "Title is populated from the primary key on load so the item has a readable display name and shows up in search. Matching is always done on the explicit key column, never on Title."
+  },
+  "PrimaryKey": "Repl_ID",
+  "IndexedColumns": [
+    "Source_Ref",
+    "Machine_ID",
+    "Spare_Code",
+    "Replaced_DateTime"
+  ],
+  "Fields": [
+    {
+      "InternalName": "Repl_ID",
+      "DisplayName": "Repl_ID",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Replaced_DateTime",
+      "DisplayName": "Replaced_DateTime",
+      "Required": false,
+      "Indexed": true,
+      "Type": "DateTime",
+      "DisplayFormat": "DateTime"
+    },
+    {
+      "InternalName": "Source_Type",
+      "DisplayName": "Source_Type",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "PM",
+        "Breakdown"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Source_Ref",
+      "DisplayName": "Source_Ref",
+      "Required": false,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Machine_ID",
+      "DisplayName": "Machine_ID",
+      "Required": false,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Cell_ID",
+      "DisplayName": "Cell_ID",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Spare_Code",
+      "DisplayName": "Spare_Code",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Spare_Description",
+      "DisplayName": "Spare_Description",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Qty_Used",
+      "DisplayName": "Qty_Used",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 0
+    },
+    {
+      "InternalName": "Unit_Cost_INR",
+      "DisplayName": "Unit_Cost_INR",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 2
+    },
+    {
+      "InternalName": "Total_Cost_INR",
+      "DisplayName": "Total_Cost_INR",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 2
+    },
+    {
+      "InternalName": "Old_Part_Condition",
+      "DisplayName": "Old_Part_Condition",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "Worn",
+        "Damaged",
+        "Burnt",
+        "Leaking",
+        "End of life"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Failure_Mode",
+      "DisplayName": "Failure_Mode",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "Wear",
+        "Fatigue",
+        "Electrical burnout",
+        "Contamination",
+        "Corrosion",
+        "Overload",
+        "End of rated life",
+        "Improper handling"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Replaced_By",
+      "DisplayName": "Replaced_By",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Expected_Life_Hours",
+      "DisplayName": "Expected_Life_Hours",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 0
+    },
+    {
+      "InternalName": "Warranty_Claim",
+      "DisplayName": "Warranty_Claim",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Boolean",
+      "DefaultValue": "0"
+    },
+    {
+      "InternalName": "Remarks",
+      "DisplayName": "Remarks",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Note",
+      "NumberOfLines": 4,
+      "RichText": false,
+      "AppendOnly": false
+    }
+  ]
+}

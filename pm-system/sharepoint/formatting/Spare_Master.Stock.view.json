@@ -1,0 +1,36 @@
+{
+  "_comment": [
+    "Spare_Master stock view.",
+    "CAML cannot compare one column against another, so the below-minimum test lives here",
+    "in the formatting layer instead of in the view filter. The row is tinted when",
+    "Current_Stock is at or below Min_Stock, and the stock figure carries the lead time",
+    "with it - a part that is one below minimum with a 30-day lead time is a different",
+    "problem from one with a 3-day lead time."
+  ],
+  "ViewFormat": {
+    "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/row-formatting.schema.json",
+    "additionalRowClass": "=if([$Current_Stock] <= [$Min_Stock], 'sp-field-severity--severeWarning', if([$Current_Stock] <= [$Min_Stock] * 1.5, 'sp-field-severity--warning', ''))"
+  },
+  "ColumnFormats": {
+    "Current_Stock": {
+      "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+      "elmType": "div",
+      "style": { "font-family": "'Segoe UI', system-ui, sans-serif" },
+      "children": [
+        {
+          "elmType": "div",
+          "txt": "=@currentField + ' ' + [$UOM] + '   (min ' + [$Min_Stock] + ')'",
+          "style": {
+            "font-size": "13px", "font-weight": "700",
+            "color": "=if(@currentField <= [$Min_Stock], '#ED7373', '#1F2933')"
+          }
+        },
+        {
+          "elmType": "div",
+          "txt": "='lead time ' + [$Lead_Time_Days] + ' days'",
+          "style": { "font-size": "11px", "color": "#7B8794" }
+        }
+      ]
+    }
+  }
+}

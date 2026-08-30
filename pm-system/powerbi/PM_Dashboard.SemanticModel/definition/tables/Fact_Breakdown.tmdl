@@ -1,0 +1,317 @@
+table Fact_Breakdown
+	lineageTag: 6c019760-2f65-5c26-ae70-16a52835d69d
+
+	column BD_ID
+		dataType: string
+		lineageTag: fbc534ce-e5de-5b8f-be55-83e2a6980085
+		summarizeBy: none
+		sourceColumn: BD_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Reported_DateTime
+		dataType: dateTime
+		lineageTag: 590c91b1-5118-5968-9e36-2b703e5c1be8
+		summarizeBy: none
+		sourceColumn: Reported_DateTime
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Machine_ID
+		dataType: string
+		lineageTag: dace00c0-e7c2-54e0-959a-33e89c865729
+		summarizeBy: none
+		sourceColumn: Machine_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cell_ID
+		dataType: string
+		lineageTag: 7281cde5-a51d-5033-89c3-fe5929fe5671
+		summarizeBy: none
+		sourceColumn: Cell_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Reported_By_Tech_ID
+		dataType: string
+		lineageTag: c6a95384-35a7-574c-a4ee-edeab0195195
+		summarizeBy: none
+		sourceColumn: Reported_By_Tech_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Shift
+		dataType: string
+		lineageTag: cbda304e-2390-5fa4-a65d-94a66480e967
+		summarizeBy: none
+		sourceColumn: Shift
+
+		annotation SummarizationSetBy = Automatic
+
+	column Breakdown_Type
+		dataType: string
+		lineageTag: e9fdef82-599e-503e-9b4a-99fe179de165
+		summarizeBy: none
+		sourceColumn: Breakdown_Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column Symptom
+		dataType: string
+		lineageTag: 769a6272-0e27-5a77-bc1e-b73e43b52c33
+		summarizeBy: none
+		sourceColumn: Symptom
+
+		annotation SummarizationSetBy = Automatic
+
+	column Root_Cause
+		dataType: string
+		lineageTag: 2a85dc58-fba7-517d-9f88-96894e11f6c7
+		summarizeBy: none
+		sourceColumn: Root_Cause
+
+		annotation SummarizationSetBy = Automatic
+
+	column Action_Taken
+		dataType: string
+		lineageTag: b7074daa-9fad-5502-88f1-e02242fdd9f4
+		summarizeBy: none
+		sourceColumn: Action_Taken
+
+		annotation SummarizationSetBy = Automatic
+
+	column Response_DateTime
+		dataType: dateTime
+		lineageTag: d5bc1860-0767-5932-8774-fedb9984c279
+		summarizeBy: none
+		sourceColumn: Response_DateTime
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Repair_Start
+		dataType: dateTime
+		lineageTag: 691dcbe1-fc4e-5fb4-b166-856e9eaf5b22
+		summarizeBy: none
+		sourceColumn: Repair_Start
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Repair_End
+		dataType: dateTime
+		lineageTag: bbd4d526-6b8e-5ce9-bf57-d74a4ea1f99a
+		summarizeBy: none
+		sourceColumn: Repair_End
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Response_Time_Min
+		dataType: int64
+		lineageTag: dc0adfc9-27ab-5280-acd7-6a24211e2af9
+		summarizeBy: none
+		sourceColumn: Response_Time_Min
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column MTTR_Min
+		dataType: int64
+		lineageTag: d51c20b1-a154-5a72-a4ae-008533a2ae86
+		summarizeBy: none
+		sourceColumn: MTTR_Min
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column Production_Loss_Min
+		dataType: int64
+		lineageTag: 6f45705d-1c62-5fa0-bd18-8a785b718dd0
+		summarizeBy: none
+		sourceColumn: Production_Loss_Min
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column Spare_Used
+		dataType: boolean
+		lineageTag: fd918721-9174-5e76-a2d2-3d94615160be
+		summarizeBy: none
+		sourceColumn: Spare_Used
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		dataType: string
+		lineageTag: 1c56c402-91fb-51d7-846d-a4d1ba221433
+		summarizeBy: none
+		sourceColumn: Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column Recurrence_Flag
+		dataType: boolean
+		lineageTag: 155e8b1f-7fd6-56ec-9baf-0dff0f62da3b
+		summarizeBy: none
+		sourceColumn: Recurrence_Flag
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	column Linked_PM_WO
+		dataType: string
+		lineageTag: 7672ce9c-97cb-5b3c-8fed-8d55087adeaf
+		summarizeBy: none
+		sourceColumn: Linked_PM_WO
+
+		annotation SummarizationSetBy = Automatic
+
+	column Remarks
+		dataType: string
+		lineageTag: bda3e157-abf1-5767-9c53-b49f495ed6d2
+		summarizeBy: none
+		sourceColumn: Remarks
+
+		annotation SummarizationSetBy = Automatic
+
+	column Reported_Date
+		dataType: dateTime
+		lineageTag: 7bda57a8-874b-5f60-9bfa-1425b0090627
+		summarizeBy: none
+		sourceColumn: Reported_Date
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column MTTR_Min_Calc
+		dataType: double
+		lineageTag: ac901903-c3b5-5089-a7da-325f0d94d74b
+		summarizeBy: none
+		sourceColumn: MTTR_Min_Calc
+		formatString: #,##0.00
+
+		annotation SummarizationSetBy = Automatic
+
+	column Response_Time_Min_Calc
+		dataType: double
+		lineageTag: a03afda7-20b0-5a2d-8f52-19f7fd93dc38
+		summarizeBy: none
+		sourceColumn: Response_Time_Min_Calc
+		formatString: #,##0.00
+
+		annotation SummarizationSetBy = Automatic
+
+	column Production_Loss_Hrs
+		dataType: double
+		lineageTag: 58cc4c65-fdf1-5379-bb7a-8a07318e7ed2
+		summarizeBy: none
+		sourceColumn: Production_Loss_Hrs
+		formatString: #,##0.00
+
+		annotation SummarizationSetBy = Automatic
+
+	column Is_Open
+		dataType: boolean
+		lineageTag: 4f1e90d2-80ea-50f4-8b6f-171d7d33631f
+		summarizeBy: none
+		sourceColumn: Is_Open
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_Breakdown = m
+		mode: import
+		source = ```
+				// ===========================================================================
+				// Fact_Breakdown  <- Breakdown_Log
+				// ---------------------------------------------------------------------------
+				// Unplanned stoppages.
+				//
+				// Production_Loss_Min and MTTR_Min are deliberately separate and must stay that
+				// way. MTTR is wrench time; production loss includes waiting for a technician,
+				// waiting for a spare, and restarting the line. Production loss is almost always
+				// the larger number, and using MTTR for availability makes availability look
+				// flattering and wrong.
+				//
+				// Linked_PM_WO is populated by Flow 6 when a breakdown falls within 7 days of a
+				// completed PM on that cell. It is EMPTY on the dummy data, so the
+				// "Breakdowns After PM (7d)" measure does not depend on it - the measure derives
+				// the relationship from dates instead, and works whether or not the flow has
+				// backfilled the column. See dax/measures.dax.
+				// ===========================================================================
+				let
+				    Source = fnGetTable("Breakdown_Log", "03_PM_Transactions_Dummy.xlsx", "Breakdown_Log"),
+
+				    Keys = fnCleanKeys(Source, {"BD_ID", "Machine_ID", "Cell_ID",
+				                                "Reported_By_Tech_ID", "Linked_PM_WO"}),
+				    Bools = fnYesNo(Keys, {"Spare_Used", "Recurrence_Flag"}),
+
+				    Typed = Table.TransformColumnTypes(Bools, {
+				        {"BD_ID",               type text},
+				        {"Reported_DateTime",   type datetime},
+				        {"Machine_ID",          type text},
+				        {"Cell_ID",             type text},
+				        {"Reported_By_Tech_ID", type text},
+				        {"Shift",               type text},
+				        {"Breakdown_Type",      type text},
+				        {"Symptom",             type text},
+				        {"Root_Cause",          type text},
+				        {"Action_Taken",        type text},
+				        {"Response_DateTime",   type datetime},
+				        {"Repair_Start",        type datetime},
+				        {"Repair_End",          type datetime},
+				        {"Response_Time_Min",   Int64.Type},
+				        {"MTTR_Min",            Int64.Type},
+				        {"Production_Loss_Min", Int64.Type},
+				        {"Spare_Used",          type logical},
+				        {"Status",              type text},
+				        {"Recurrence_Flag",     type logical},
+				        {"Linked_PM_WO",        type text},
+				        {"Remarks",             type text}
+				    }),
+
+				    WithDate = Table.AddColumn(
+				        Typed, "Reported_Date",
+				        each if [Reported_DateTime] = null then null else DateTime.Date([Reported_DateTime]),
+				        type nullable date),
+
+				    // Recomputed from the timestamps rather than trusted from the source column.
+				    // If the two disagree, the timestamps are the evidence and the number is the
+				    // claim - and the discrepancy is worth seeing.
+				    WithCalc = Table.AddColumn(
+				        WithDate, "MTTR_Min_Calc",
+				        each if [Repair_Start] = null or [Repair_End] = null then null
+				             else Duration.TotalMinutes([Repair_End] - [Repair_Start]),
+				        type nullable number),
+
+				    WithResp = Table.AddColumn(
+				        WithCalc, "Response_Time_Min_Calc",
+				        each if [Reported_DateTime] = null or [Response_DateTime] = null then null
+				             else Duration.TotalMinutes([Response_DateTime] - [Reported_DateTime]),
+				        type nullable number),
+
+				    WithLoss = Table.AddColumn(
+				        WithResp, "Production_Loss_Hrs",
+				        each if [Production_Loss_Min] = null then null else [Production_Loss_Min] / 60,
+				        type nullable number),
+
+				    WithOpen = Table.AddColumn(
+				        WithLoss, "Is_Open",
+				        each [Status] <> "Closed",
+				        type logical),
+
+				    Final = Table.SelectRows(WithOpen, each [BD_ID] <> null)
+				in
+				    Final
+				```
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,86 @@
+{
+  "_comment": [
+    "Map of the canvas app: data sources, screens, collections and globals.",
+    "This is documentation, not an importable file - a .msapp is a compiled binary",
+    "and is built in Power Apps Studio by following CANVAS_APP_BUILD.md.",
+    "",
+    "Keep this file in step with the app. When someone has to change the app in two",
+    "years, this is the only thing that tells them which screen writes which list."
+  ],
+
+  "AppName": "EPQPL PM Technician",
+  "AppType": "Canvas",
+  "FormFactor": "Phone",
+  "Orientation": "Portrait",
+  "TargetDevice": "Shared shop-floor Android handsets",
+
+  "Licensing": {
+    "Connectors": ["SharePoint", "Office365Users"],
+    "PremiumConnectors": [],
+    "Dataverse": false,
+    "CustomConnectors": [],
+    "Note": "Standard connectors only. Confirm seeded Power Apps rights with your licensing owner before building."
+  },
+
+  "DataSources": [
+    { "Name": "Cell_Master",        "Type": "SharePointList", "Access": "Read + Update (counter reset is done by Flow 5, never by the app)" },
+    { "Name": "Machine_Master",     "Type": "SharePointList", "Access": "Read" },
+    { "Name": "Checklist_Master",   "Type": "SharePointList", "Access": "Read" },
+    { "Name": "Technician_Master",  "Type": "SharePointList", "Access": "Read" },
+    { "Name": "Spare_Master",       "Type": "SharePointList", "Access": "Read" },
+    { "Name": "PM_WorkOrder",       "Type": "SharePointList", "Access": "Read" },
+    { "Name": "PM_Machine_Task",    "Type": "SharePointList", "Access": "Read + Update" },
+    { "Name": "Checklist_Response", "Type": "SharePointList", "Access": "Create" },
+    { "Name": "Scan_Log",           "Type": "SharePointList", "Access": "Create" },
+    { "Name": "Breakdown_Log",      "Type": "SharePointList", "Access": "Create" },
+    { "Name": "Spare_Request",      "Type": "SharePointList", "Access": "Create" },
+    { "Name": "Spare_Replaced",     "Type": "SharePointList", "Access": "Create" },
+    { "Name": "Abnormality_Log",    "Type": "SharePointList", "Access": "Create" },
+    { "Name": "PM_Photos",          "Type": "SharePointLibrary", "Access": "Create" },
+    { "Name": "Abnormality_Photos", "Type": "SharePointLibrary", "Access": "Create" }
+  ],
+
+  "Screens": [
+    { "Name": "scrHome",        "Purpose": "Pick technician name (mandatory, once per session). Entry point.", "Writes": [] },
+    { "Name": "scrMyList",      "Purpose": "Allotted PM list, grouped by cell. Filter Task_Status <> Completed.", "Writes": [] },
+    { "Name": "scrScan",        "Purpose": "Barcode reader. Resolves a scanned Machine_ID to the hub.", "Writes": ["Scan_Log"] },
+    { "Name": "scrMachineHub",  "Purpose": "Machine identity, cell counter, open work order, five actions.", "Writes": ["Scan_Log"] },
+    { "Name": "scrStartPM",     "Purpose": "Confirm scan-in. Stamps Scan_Start_Time.", "Writes": ["Scan_Log", "PM_Machine_Task"] },
+    { "Name": "scrChecklist",   "Purpose": "One check point at a time with its acceptance standard on screen.", "Writes": ["Checklist_Response", "PM_Machine_Task", "PM_Photos"] },
+    { "Name": "scrBreakdown",   "Purpose": "Report an unplanned stoppage.", "Writes": ["Breakdown_Log"] },
+    { "Name": "scrSpare",       "Purpose": "Request a part, showing current stock before asking.", "Writes": ["Spare_Request"] },
+    { "Name": "scrSpareUsed",   "Purpose": "Record a part actually fitted, with failure mode.", "Writes": ["Spare_Replaced"] },
+    { "Name": "scrAbnormality", "Purpose": "Log a condition that is not yet a failure.", "Writes": ["Abnormality_Log", "Abnormality_Photos"] },
+    { "Name": "scrDone",        "Purpose": "Confirmation, with what happens next stated plainly.", "Writes": [] }
+  ],
+
+  "Globals": [
+    { "Name": "gblTech",        "Type": "Record",  "Purpose": "The selected technician. Set on scrHome, read by every write. The entire audit trail." },
+    { "Name": "gblMachine",     "Type": "Record",  "Purpose": "The machine currently in context, from the QR or the allotted list." },
+    { "Name": "gblCell",        "Type": "Record",  "Purpose": "That machine's cell, for the counter display." },
+    { "Name": "gblTask",        "Type": "Record",  "Purpose": "The open PM_Machine_Task for this machine, if any." },
+    { "Name": "gblWO",          "Type": "Record",  "Purpose": "The parent work order." },
+    { "Name": "gblOffline",     "Type": "Boolean", "Purpose": "Connection.Connected, sampled on screen visible." },
+    { "Name": "gblSubmitting",  "Type": "Boolean", "Purpose": "Disables the submit button while a write is in flight - stops the double-tap duplicate." }
+  ],
+
+  "Collections": [
+    { "Name": "colChecklist",  "Purpose": "The check points for this machine's checklist set, with the technician's answers held before submission." },
+    { "Name": "colPendingWrites", "Purpose": "Rows captured while offline, replayed on reconnect. Persisted with SaveData." },
+    { "Name": "colTechs",      "Purpose": "Cached active technicians, so the dropdown works offline." },
+    { "Name": "colMachines",   "Purpose": "Cached machine master, so the hub renders offline." }
+  ],
+
+  "OfflineStrategy": {
+    "Cache": ["colTechs", "colMachines", "colChecklist"],
+    "Persist": "SaveData / LoadData on App.OnStart and App.OnClose",
+    "Replay": "colPendingWrites is replayed on scrHome.OnVisible when Connection.Connected is true",
+    "Note": "Offline capture is for the checklist and the abnormality log only. Anything needing a server-side lookup at the moment of capture - current stock on a spare request - is blocked offline rather than captured against a stale number."
+  },
+
+  "Boundaries": {
+    "TheAppDoesNotResetCounters": "Cum_Std_Hours_Since_PM is only ever set to 0 by Flow 5, together with Last_PM_Date, Last_PM_WO_No, Reset_Applied and Reset_Date. The app writes task status; the flow decides what that means.",
+    "TheAppDoesNotCreateWorkOrders": "Flow 2 owns work order creation, so the trigger rule lives in exactly one place.",
+    "TheAppDoesNotComputeCost": "Total_Cost_INR is computed by Flow 8 from the master price at the time of use."
+  }
+}

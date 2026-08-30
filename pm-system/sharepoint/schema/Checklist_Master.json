@@ -1,0 +1,124 @@
+{
+  "ListTitle": "Checklist_Master",
+  "ListUrl": "Lists/Checklist_Master",
+  "Description": "The check points that make up each of the nine checklist sets.",
+  "Template": "GenericList",
+  "EnableVersioning": true,
+  "MajorVersionLimit": 50,
+  "EnableAttachments": false,
+  "TitleColumn": {
+    "Required": false,
+    "Hidden": false,
+    "SetFrom": null,
+    "Note": "Title is populated from the primary key on load so the item has a readable display name and shows up in search. Matching is always done on the explicit key column, never on Title."
+  },
+  "PrimaryKey": null,
+  "IndexedColumns": [
+    "Checklist_ID",
+    "Active"
+  ],
+  "Fields": [
+    {
+      "InternalName": "Checklist_ID",
+      "DisplayName": "Checklist_ID",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Checklist_Name",
+      "DisplayName": "Checklist_Name",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Item_No",
+      "DisplayName": "Item_No",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 0
+    },
+    {
+      "InternalName": "Check_Point",
+      "DisplayName": "Check_Point",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Check_Type",
+      "DisplayName": "Check_Type",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "Visual",
+        "Measurement",
+        "Functional"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Acceptance_Standard",
+      "DisplayName": "Acceptance_Standard",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Note",
+      "NumberOfLines": 4,
+      "RichText": false,
+      "AppendOnly": false
+    },
+    {
+      "InternalName": "Tool_Required",
+      "DisplayName": "Tool_Required",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Frequency",
+      "DisplayName": "Frequency",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "Monthly (per PM cycle)",
+        "Quarterly",
+        "Annual"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Safety_Critical",
+      "DisplayName": "Safety_Critical",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Boolean",
+      "DefaultValue": "0"
+    },
+    {
+      "InternalName": "Expected_Time_Min",
+      "DisplayName": "Expected_Time_Min",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 0
+    },
+    {
+      "InternalName": "Active",
+      "DisplayName": "Active",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Boolean",
+      "DefaultValue": "0"
+    }
+  ]
+}

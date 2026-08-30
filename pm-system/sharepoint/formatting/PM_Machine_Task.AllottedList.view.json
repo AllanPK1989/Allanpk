@@ -1,0 +1,61 @@
+{
+  "_comment": [
+    "PM_Machine_Task - 'My Allotted PM List'.",
+    "",
+    "Status renders as a coloured pill so a technician can read the list at arm's length",
+    "without putting his phone close to his face. The Machine_ID column becomes a large",
+    "tappable target because it is the thing he is looking for in the list.",
+    "",
+    "The row itself is not formatted. The view's filter (Task_Status ne Completed) already",
+    "does the important work: finished rows leave the list, so what remains on screen is",
+    "exactly what is still owed."
+  ],
+
+  "ColumnFormats": {
+    "Task_Status": {
+      "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+      "elmType": "div",
+      "txt": "@currentField",
+      "style": {
+        "font-family": "'Segoe UI', system-ui, sans-serif",
+        "display": "flex", "align-items": "center", "justify-content": "center",
+        "min-height": "28px", "min-width": "96px", "padding": "0 12px",
+        "border-radius": "14px", "font-size": "13px", "font-weight": "700",
+        "color": "=if(@currentField == 'Pending', '#8A5A00', if(@currentField == 'In Progress', '#0C3549', if(@currentField == 'Completed', '#146B3F', '#57606A')))",
+        "background-color": "=if(@currentField == 'Pending', '#FDF0D2', if(@currentField == 'In Progress', '#D8EBF4', if(@currentField == 'Completed', '#DBF3E6', '#EDF0F2')))"
+      }
+    },
+
+    "Machine_ID": {
+      "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+      "elmType": "div",
+      "style": { "font-family": "'Segoe UI', system-ui, sans-serif", "display": "flex", "flex-direction": "column", "justify-content": "center", "min-height": "44px" },
+      "children": [
+        {
+          "elmType": "div",
+          "txt": "@currentField",
+          "style": { "font-size": "16px", "font-weight": "700", "color": "#0C3549" }
+        },
+        {
+          "elmType": "div",
+          "txt": "=[$WO_No]",
+          "style": { "font-size": "11px", "color": "#7B8794" }
+        }
+      ]
+    },
+
+    "NOT_OK_Count": {
+      "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+      "elmType": "div",
+      "txt": "=if(@currentField > 0, @currentField, '')",
+      "style": {
+        "font-family": "'Segoe UI', system-ui, sans-serif",
+        "display": "=if(@currentField > 0, 'flex', 'none')",
+        "align-items": "center", "justify-content": "center",
+        "width": "24px", "height": "24px", "border-radius": "12px",
+        "font-size": "12px", "font-weight": "700",
+        "color": "#FFFFFF", "background-color": "#ED7373"
+      }
+    }
+  }
+}

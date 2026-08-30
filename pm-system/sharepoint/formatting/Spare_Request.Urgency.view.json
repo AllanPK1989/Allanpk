@@ -1,0 +1,53 @@
+{
+  "_comment": [
+    "Spare_Request approval queue.",
+    "Urgency colours the row's left edge; Request_DateTime shows the age of the request in",
+    "days, because the age of the oldest pending request is the honest measure of whether",
+    "the approval step is working."
+  ],
+  "ColumnFormats": {
+    "Urgency": {
+      "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+      "elmType": "div",
+      "txt": "@currentField",
+      "style": {
+        "font-family": "'Segoe UI', system-ui, sans-serif",
+        "display": "flex", "align-items": "center", "justify-content": "center",
+        "min-height": "28px", "min-width": "94px", "padding": "0 12px",
+        "border-radius": "14px", "font-size": "13px", "font-weight": "700",
+        "color": "=if(@currentField == 'Breakdown', '#FFFFFF', if(@currentField == 'Urgent', '#8A5A00', '#57606A'))",
+        "background-color": "=if(@currentField == 'Breakdown', '#ED7373', if(@currentField == 'Urgent', '#FDF0D2', '#EDF0F2'))"
+      }
+    },
+    "Approval_Status": {
+      "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+      "elmType": "div",
+      "txt": "@currentField",
+      "style": {
+        "font-family": "'Segoe UI', system-ui, sans-serif",
+        "font-weight": "700", "font-size": "13px",
+        "color": "=if(@currentField == 'Approved', '#146B3F', if(@currentField == 'Rejected', '#ED7373', '#F0A202'))"
+      }
+    },
+    "Request_DateTime": {
+      "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+      "elmType": "div",
+      "style": { "font-family": "'Segoe UI', system-ui, sans-serif" },
+      "children": [
+        {
+          "elmType": "div",
+          "txt": "=toLocaleDateString(@currentField)",
+          "style": { "font-size": "13px", "color": "#1F2933" }
+        },
+        {
+          "elmType": "div",
+          "txt": "=floor((Number(@now) - Number(@currentField)) / 86400000) + ' days old'",
+          "style": {
+            "font-size": "11px", "font-weight": "600",
+            "color": "=if((Number(@now) - Number(@currentField)) / 86400000 > 3, '#ED7373', '#7B8794')"
+          }
+        }
+      ]
+    }
+  }
+}

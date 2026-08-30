@@ -1,0 +1,76 @@
+{
+  "_comment": [
+    "Column formatting for Cell_Master.",
+    "",
+    "Cum_Std_Hours_Since_PM renders as a coloured data bar whose width is the cell's own",
+    "utilisation against its own PM_Trigger_Hours - not against a hard-coded 4,000. A",
+    "hard-coded 4000 anywhere in this system is a defect, including in the formatting.",
+    "",
+    "Colour thresholds match the PM Status Flag measure in the Power BI model exactly, so",
+    "a cell that is amber on the shop-floor list is amber on the manager's dashboard:",
+    "   >= 100 %  overdue   #ED7373",
+    "   >=  90 %  due soon  #F0A202",
+    "   >=  75 %  watch     #2E86AB",
+    "   below     ok        #44C088"
+  ],
+
+  "ColumnFormats": {
+    "Cum_Std_Hours_Since_PM": {
+      "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+      "elmType": "div",
+      "style": { "font-family": "'Segoe UI', system-ui, sans-serif", "padding": "2px 0" },
+      "children": [
+        {
+          "elmType": "div",
+          "txt": "=[$Cum_Std_Hours_Since_PM] + ' / ' + [$PM_Trigger_Hours] + ' h  (' + toString(round(([$Cum_Std_Hours_Since_PM] / [$PM_Trigger_Hours]) * 100)) + '%)'",
+          "style": { "font-size": "12px", "font-weight": "600", "color": "#1F2933", "margin-bottom": "3px" }
+        },
+        {
+          "elmType": "div",
+          "style": {
+            "background-color": "#E8EDEF",
+            "border-radius": "4px",
+            "height": "12px",
+            "width": "150px",
+            "overflow": "hidden"
+          },
+          "children": [
+            {
+              "elmType": "div",
+              "style": {
+                "height": "12px",
+                "border-radius": "4px",
+                "width": "=if(([$Cum_Std_Hours_Since_PM] / [$PM_Trigger_Hours]) > 1, '100%', toString(round(([$Cum_Std_Hours_Since_PM] / [$PM_Trigger_Hours]) * 100)) + '%')",
+                "background-color": "=if(([$Cum_Std_Hours_Since_PM] / [$PM_Trigger_Hours]) >= 1, '#ED7373', if(([$Cum_Std_Hours_Since_PM] / [$PM_Trigger_Hours]) >= 0.9, '#F0A202', if(([$Cum_Std_Hours_Since_PM] / [$PM_Trigger_Hours]) >= 0.75, '#2E86AB', '#44C088')))"
+              }
+            }
+          ]
+        }
+      ]
+    },
+
+    "Criticality": {
+      "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+      "elmType": "div",
+      "txt": "@currentField",
+      "style": {
+        "font-family": "'Segoe UI', system-ui, sans-serif",
+        "display": "flex", "align-items": "center", "justify-content": "center",
+        "width": "26px", "height": "26px", "border-radius": "13px",
+        "font-size": "13px", "font-weight": "700", "color": "#FFFFFF",
+        "background-color": "=if(@currentField == 'A', '#ED7373', if(@currentField == 'B', '#F0A202', '#7B8794'))"
+      }
+    },
+
+    "Next_PM_Due_Date_Calendar": {
+      "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+      "elmType": "div",
+      "txt": "=toLocaleDateString(@currentField)",
+      "style": {
+        "font-family": "'Segoe UI', system-ui, sans-serif",
+        "font-weight": "=if(@currentField <= @now, '700', '400')",
+        "color": "=if(@currentField <= @now, '#ED7373', '#1F2933')"
+      }
+    }
+  }
+}

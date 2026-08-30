@@ -1,0 +1,173 @@
+table Dim_ChecklistItem
+	lineageTag: 7563647d-22e0-51f4-a427-8c20554dd442
+
+	column Checklist_ID
+		dataType: string
+		lineageTag: 771accb3-84ca-5b9b-ac72-9aca62500065
+		summarizeBy: none
+		sourceColumn: Checklist_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Checklist_Name
+		dataType: string
+		lineageTag: 3f94b448-ab7d-5491-a320-c5b9d28f87e5
+		summarizeBy: none
+		sourceColumn: Checklist_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Item_No
+		dataType: int64
+		lineageTag: e3dc90bd-0602-5a8a-9e4a-12717671bf0f
+		summarizeBy: none
+		sourceColumn: Item_No
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column Check_Point
+		dataType: string
+		lineageTag: dba0f70c-1bea-5826-b115-ec17e538fe32
+		summarizeBy: none
+		sourceColumn: Check_Point
+
+		annotation SummarizationSetBy = Automatic
+
+	column Check_Type
+		dataType: string
+		lineageTag: 35e382c0-a53a-5f7f-ad36-50c90efe1a98
+		summarizeBy: none
+		sourceColumn: Check_Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column Acceptance_Standard
+		dataType: string
+		lineageTag: a56db59f-922c-552f-82af-56eba62eb90d
+		summarizeBy: none
+		sourceColumn: Acceptance_Standard
+
+		annotation SummarizationSetBy = Automatic
+
+	column Tool_Required
+		dataType: string
+		lineageTag: 1d528c5b-1383-58cd-ae07-0f30b377eec1
+		summarizeBy: none
+		sourceColumn: Tool_Required
+
+		annotation SummarizationSetBy = Automatic
+
+	column Frequency
+		dataType: string
+		lineageTag: c75d3418-583c-54bb-9e81-aa36ccfc52da
+		summarizeBy: none
+		sourceColumn: Frequency
+
+		annotation SummarizationSetBy = Automatic
+
+	column Safety_Critical
+		dataType: boolean
+		lineageTag: 65221a8f-cb6c-51e7-949b-2e59808ce351
+		summarizeBy: none
+		sourceColumn: Safety_Critical
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	column Expected_Time_Min
+		dataType: int64
+		lineageTag: 4c48e4d7-ca7c-5dab-aeeb-d182cc647be4
+		summarizeBy: none
+		sourceColumn: Expected_Time_Min
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column Active
+		dataType: boolean
+		lineageTag: 22e35159-ffce-56c9-bc2c-1f7d99cc2fff
+		summarizeBy: none
+		sourceColumn: Active
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	column Checklist_Item_Key
+		dataType: string
+		isHidden: true
+		lineageTag: f49d94ac-39d7-5f24-9f94-3e0265aebd3b
+		summarizeBy: none
+		sourceColumn: Checklist_Item_Key
+
+		annotation SummarizationSetBy = Automatic
+
+	column Check_Point_Short
+		dataType: string
+		lineageTag: 35417bad-6d60-59a2-8b3c-fb5a3a28bcb6
+		summarizeBy: none
+		sourceColumn: Check_Point_Short
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_ChecklistItem = m
+		mode: import
+		source = ```
+				// ===========================================================================
+				// Dim_ChecklistItem  <- Checklist_Master
+				// ---------------------------------------------------------------------------
+				// The 51 check points across 9 checklist sets.
+				//
+				// Grain note: a checklist response is identified by Checklist_ID AND Item_No,
+				// not by Item_No alone. Item 1 of CL-PRESS and item 1 of CL-OVEN are different
+				// checks. The composite key below is what makes the relationship to
+				// Fact_ChecklistResponse one-to-many instead of many-to-many.
+				// ===========================================================================
+				let
+				    Source = fnGetTable("Checklist_Master", "01_PM_Master_Data.xlsx", "Checklist_Master"),
+
+				    Keys = fnCleanKeys(Source, {"Checklist_ID"}),
+				    Bools = fnYesNo(Keys, {"Safety_Critical", "Active"}),
+
+				    Typed = Table.TransformColumnTypes(Bools, {
+				        {"Checklist_ID",        type text},
+				        {"Checklist_Name",      type text},
+				        {"Item_No",             Int64.Type},
+				        {"Check_Point",         type text},
+				        {"Check_Type",          type text},
+				        {"Acceptance_Standard", type text},
+				        {"Tool_Required",       type text},
+				        {"Frequency",           type text},
+				        {"Safety_Critical",     type logical},
+				        {"Expected_Time_Min",   Int64.Type},
+				        {"Active",              type logical}
+				    }),
+
+				    Trimmed = Table.TransformColumns(Typed, {
+				        {"Check_Point", each if _ = null then null else Text.Trim(_), type nullable text},
+				        {"Check_Type",  each if _ = null then null else Text.Trim(_), type nullable text}
+				    }),
+
+				    // Composite key. Built here so the relationship is a single column join -
+				    // Power BI has no composite relationships, and the alternative is a
+				    // bidirectional many-to-many that will quietly wreck the filter direction.
+				    WithKey = Table.AddColumn(
+				        Trimmed, "Checklist_Item_Key",
+				        each Text.From([Checklist_ID]) & "|" & Text.From([Item_No]),
+				        type text),
+
+				    // Used on the findings Pareto, where the full check point text is too long
+				    // for an axis label but the item number alone is meaningless.
+				    WithShort = Table.AddColumn(
+				        WithKey, "Check_Point_Short",
+				        each if [Check_Point] = null then null
+				             else if Text.Length([Check_Point]) <= 42 then [Check_Point]
+				             else Text.Start([Check_Point], 39) & "...",
+				        type nullable text),
+
+				    Final = Table.SelectRows(WithShort, each [Checklist_ID] <> null and [Item_No] <> null)
+				in
+				    Final
+				```
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,2 @@
+# Data preparation and verification tooling
+openpyxl>=3.1     # reads the source workbooks

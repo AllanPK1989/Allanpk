@@ -1,0 +1,163 @@
+{
+  "ListTitle": "Checklist_Response",
+  "ListUrl": "Lists/Checklist_Response",
+  "Description": "One row per check point per machine per PM.",
+  "Template": "GenericList",
+  "EnableVersioning": true,
+  "MajorVersionLimit": 50,
+  "EnableAttachments": true,
+  "TitleColumn": {
+    "Required": false,
+    "Hidden": false,
+    "SetFrom": "Response_ID",
+    "Note": "Title is populated from the primary key on load so the item has a readable display name and shows up in search. Matching is always done on the explicit key column, never on Title."
+  },
+  "PrimaryKey": "Response_ID",
+  "IndexedColumns": [
+    "Response_ID",
+    "WO_No",
+    "Machine_ID",
+    "Result",
+    "Submitted_DateTime",
+    "Follow_Up_Required"
+  ],
+  "Fields": [
+    {
+      "InternalName": "Response_ID",
+      "DisplayName": "Response_ID",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Submitted_DateTime",
+      "DisplayName": "Submitted_DateTime",
+      "Required": false,
+      "Indexed": true,
+      "Type": "DateTime",
+      "DisplayFormat": "DateTime"
+    },
+    {
+      "InternalName": "WO_No",
+      "DisplayName": "WO_No",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Machine_ID",
+      "DisplayName": "Machine_ID",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Cell_ID",
+      "DisplayName": "Cell_ID",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Checklist_ID",
+      "DisplayName": "Checklist_ID",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Item_No",
+      "DisplayName": "Item_No",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 0
+    },
+    {
+      "InternalName": "Check_Point",
+      "DisplayName": "Check_Point",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Result",
+      "DisplayName": "Result",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Choice",
+      "Choices": [
+        "OK",
+        "NOT OK",
+        "NA"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Measured_Value",
+      "DisplayName": "Measured_Value",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 2
+    },
+    {
+      "InternalName": "Observation",
+      "DisplayName": "Observation",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Note",
+      "NumberOfLines": 4,
+      "RichText": false,
+      "AppendOnly": false
+    },
+    {
+      "InternalName": "Photo_Link",
+      "DisplayName": "Photo_Link",
+      "Required": false,
+      "Indexed": false,
+      "Type": "URL"
+    },
+    {
+      "InternalName": "Action_Taken",
+      "DisplayName": "Action_Taken",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Note",
+      "NumberOfLines": 4,
+      "RichText": false,
+      "AppendOnly": false
+    },
+    {
+      "InternalName": "Tech_ID",
+      "DisplayName": "Tech_ID",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Follow_Up_Required",
+      "DisplayName": "Follow_Up_Required",
+      "Required": false,
+      "Indexed": true,
+      "Type": "Boolean",
+      "DefaultValue": "0"
+    },
+    {
+      "InternalName": "Follow_Up_WO",
+      "DisplayName": "Follow_Up_WO",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    }
+  ]
+}

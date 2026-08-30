@@ -1,0 +1,7 @@
+﻿Tech_ID,Tech_Name,Skill_Level,Trade,Default_Shift,Contact_No,Role_Scope,Active
+TECH-01,Murugan S,Senior,Mechanical,A (06:00-14:00),+91-9045594951,PM + Breakdown,Yes
+TECH-02,Karthik R,Senior,Electrical,B (14:00-22:00),+91-9071070189,PM + Breakdown,Yes
+TECH-03,Dinesh V,Junior,Mechanical,C (22:00-06:00),+91-9048285503,PM + Breakdown,Yes
+TECH-04,Prakash A,Senior,Electrical,A (06:00-14:00),+91-9066775103,PM + Breakdown,Yes
+TECH-05,Sathish B,Junior,Mechanical,B (14:00-22:00),+91-9084593961,PM + Breakdown,Yes
+TECH-06,Manoj K,Trainee,Electrical,C (22:00-06:00),+91-9098834863,PM + Breakdown,Yes

@@ -1,0 +1,981 @@
+// ============================================================================
+// EPQPL PM System - measure definitions
+// ----------------------------------------------------------------------------
+// Every measure lives on the _Measures table and is grouped into a display
+// folder. Each one carries a comment saying what question it answers and, where
+// the DAX is not obvious, why it is written the way it is.
+//
+// Hand-verified values on the supplied dummy data are recorded in
+// docs/ASSUMPTIONS.md. If you change a definition here, re-run
+// tools/verify_measures.py and update that table - a measure nobody has checked
+// against a known answer is a number, not a fact.
+//
+// Conventions used throughout:
+//   * DIVIDE() everywhere, never "/". A division by zero that returns blank is
+//     an empty card; one that errors is a broken page.
+//   * FILTER() over the table for column-to-column comparisons. Putting
+//     Actual_End_Date <= Planned_End_Date directly inside CALCULATE is not
+//     allowed - CALCULATE's filter arguments compare a column to a value, not to
+//     another column, and the engine rejects it.
+//   * Blank vs zero is chosen deliberately. A count returns 0 so a card reads
+//     "0 overdue"; a ratio returns blank so an empty denominator does not draw a
+//     misleading 0 %.
+// ============================================================================
+
+
+// ============================================================================
+// 01 PM Compliance
+// ============================================================================
+
+// How many cell PMs came due in the period. The denominator of compliance.
+// A cancelled work order is excluded: it was not "due and not done", it was
+// withdrawn, and counting it as a miss punishes the right decision.
+PM Due Count =
+CALCULATE(
+    COUNTROWS ( Fact_WorkOrder ),
+    KEEPFILTERS ( Fact_WorkOrder[WO_Status] <> "Cancelled" )
+) + 0
+
+// Cell PMs that reached Completed. The numerator of compliance.
+PM Completed Count =
+CALCULATE (
+    COUNTROWS ( Fact_WorkOrder ),
+    KEEPFILTERS ( Fact_WorkOrder[WO_Status] = "Completed" )
+) + 0
+
+// Work orders explicitly flagged Overdue, plus any still-open work order whose
+// planned end date has passed. The second half matters: a work order only gets
+// the Overdue status when a flow runs, and between runs an open work order past
+// its date is overdue in fact if not yet in the field.
+PM Overdue Count =
+VAR Today_ = TODAY ()
+RETURN
+    COUNTROWS (
+        FILTER (
+            Fact_WorkOrder,
+            Fact_WorkOrder[WO_Status] <> "Completed"
+                && Fact_WorkOrder[WO_Status] <> "Cancelled"
+                && NOT ISBLANK ( Fact_WorkOrder[Planned_End_Date] )
+                && Fact_WorkOrder[Planned_End_Date] < Today_
+        )
+    ) + 0
+
+PM In Progress Count =
+CALCULATE (
+    COUNTROWS ( Fact_WorkOrder ),
+    KEEPFILTERS ( Fact_WorkOrder[WO_Status] = "In Progress" )
+) + 0
+
+// The headline number. Blank rather than 0 when nothing was due, so a month
+// with no scheduled PM does not report 0 % compliance.
+PM Compliance % =
+DIVIDE ( [PM Completed Count], [PM Due Count] )
+
+// Completed on or before the committed end date.
+// FILTER over the table is required here - this is a column-to-column
+// comparison, which CALCULATE's filter arguments cannot express.
+PM On-Time Count =
+COUNTROWS (
+    FILTER (
+        Fact_WorkOrder,
+        Fact_WorkOrder[WO_Status] = "Completed"
+            && NOT ISBLANK ( Fact_WorkOrder[Actual_End_Date] )
+            && NOT ISBLANK ( Fact_WorkOrder[Planned_End_Date] )
+            && Fact_WorkOrder[Actual_End_Date] <= Fact_WorkOrder[Planned_End_Date]
+    )
+) + 0
+
+// On-time out of completed - not out of due. Mixing the two answers neither
+// question: this one is "of the work we finished, how much was on time".
+PM On-Time % =
+DIVIDE ( [PM On-Time Count], [PM Completed Count] )
+
+// Adherence against the FROZEN plan, which is a harder and more honest test than
+// on-time against a work order date that can be edited after the fact.
+// Forecast rows are excluded - scoring against a projection you never committed
+// to is how an adherence figure becomes fiction.
+Schedule Adherence % =
+VAR Committed =
+    CALCULATE (
+        COUNTROWS ( Fact_PlanCalendar ),
+        KEEPFILTERS ( Fact_PlanCalendar[Is_Committed_Plan] = TRUE () )
+    )
+VAR OnTime =
+    CALCULATE (
+        COUNTROWS ( Fact_PlanCalendar ),
+        KEEPFILTERS ( Fact_PlanCalendar[Is_Committed_Plan] = TRUE () ),
+        KEEPFILTERS ( Fact_PlanCalendar[Adherence_Status] = "On Time" )
+    )
+RETURN
+    DIVIDE ( OnTime, Committed )
+
+// Average days late across completed work orders. Early finishes carry a
+// negative delay and are included, so this is a true average rather than a
+// lateness-only figure - a team that is three days early half the time and three
+// days late the other half should read zero, not three.
+Avg PM Delay (Days) =
+AVERAGEX (
+    FILTER (
+        Fact_WorkOrder,
+        Fact_WorkOrder[WO_Status] = "Completed"
+            && NOT ISBLANK ( Fact_WorkOrder[Delay_Days] )
+    ),
+    Fact_WorkOrder[Delay_Days]
+)
+
+// Of the PMs that fired, how many fired because the clock ran out rather than
+// because the hours were used. If most work orders are Calendar Backstop, the
+// 4,000-hour rule is set too high for this plant's actual utilisation.
+Calendar-Triggered PM % =
+DIVIDE (
+    CALCULATE (
+        COUNTROWS ( Fact_WorkOrder ),
+        KEEPFILTERS ( Fact_WorkOrder[Trigger_Type] = "Calendar Backstop" )
+    ),
+    [PM Due Count]
+)
+
+
+// ============================================================================
+// 02 Hours & Forecast
+// ============================================================================
+
+// The running counter, summed over whatever cells are in context.
+// This is a SNAPSHOT: it is the counter as at the last refresh, with no time
+// dimension in it. Summing it across cells is meaningful; summing it across
+// months is not, and no visual in this report does so.
+Cum Std Hours =
+SUM ( Dim_Cell[Cum_Std_Hours_Since_PM] )
+
+// Held per cell, never hard-coded. A literal 4000 anywhere in this model is a
+// defect - it makes retuning one cell a code change.
+PM Trigger Hours =
+SUM ( Dim_Cell[PM_Trigger_Hours] )
+
+Hours to Next PM =
+VAR Remaining = [PM Trigger Hours] - [Cum Std Hours]
+RETURN
+    IF ( Remaining < 0, 0, Remaining )
+
+// The RAG driver. 1.0 means the cell is at its trigger.
+Hours Utilisation % =
+DIVIDE ( [Cum Std Hours], [PM Trigger Hours] )
+
+// Rolling three-month consumption, computed from the actual upload history
+// rather than read from the snapshot column on Dim_Cell.
+//
+// Three months is a deliberate choice: it smooths a festival shutdown or an
+// extra-Sunday month without going stale the way a twelve-month average would.
+// The window is anchored to the last month that actually has data, not to
+// TODAY(), so the forecast does not collapse in the days before a month's upload
+// arrives - which is precisely when a planner looks at it.
+Avg Monthly Std Hours L3M =
+VAR LastMonth =
+    CALCULATE ( MAX ( Fact_StdHours[Month_Start_Date] ), ALLSELECTED ( Fact_StdHours ) )
+VAR WindowStart = EDATE ( LastMonth, -2 )
+VAR Recent =
+    CALCULATETABLE (
+        Fact_StdHours,
+        Fact_StdHours[Month_Start_Date] >= WindowStart,
+        Fact_StdHours[Month_Start_Date] <= LastMonth
+    )
+VAR TotalHours = SUMX ( Recent, Fact_StdHours[Actual_Std_Hours] )
+VAR MonthCount = COUNTROWS ( DISTINCT ( SELECTCOLUMNS ( Recent, "@m", Fact_StdHours[Month_Start_Date] ) ) )
+RETURN
+    DIVIDE ( TotalHours, MonthCount )
+
+// How many months of current running before this cell hits its trigger.
+Months to PM =
+DIVIDE ( [Hours to Next PM], [Avg Monthly Std Hours L3M] )
+
+// The hours-based projection. Rounded UP because a cell that needs 1.2 months
+// of running is due in the second month, not the first - rounding down would
+// schedule a PM before the hours exist to justify it.
+//
+// Shown alongside Calendar Due Date so a planner sees both clocks. Whichever
+// comes first is the real due date.
+Projected PM Date =
+VAR M = [Months to PM]
+RETURN
+    IF (
+        NOT ISBLANK ( M ) && M >= 0,
+        EDATE ( TODAY (), ROUNDUP ( M, 0 ) )
+    )
+
+// The earlier of the two clocks - the date the cell is actually due.
+Next PM Due Date =
+VAR ByHours = [Projected PM Date]
+VAR ByCalendar = [Calendar Due Date]
+RETURN
+    IF (
+        ISBLANK ( ByHours ), ByCalendar,
+        IF ( ISBLANK ( ByCalendar ), ByHours, MIN ( ByHours, ByCalendar ) )
+    )
+
+Days Since Last PM =
+VAR LastPM = MAX ( Dim_Cell[Last_PM_Date] )
+RETURN
+    IF ( NOT ISBLANK ( LastPM ), DATEDIFF ( LastPM, TODAY (), DAY ) )
+
+// The calendar backstop date, derived in Power Query from Last_PM_Date plus the
+// cell's own Calendar_Backstop_Months.
+Calendar Due Date =
+MAX ( Dim_Cell[Calendar_Due_Date] )
+
+Days to Calendar Due =
+VAR D = [Calendar Due Date]
+RETURN
+    IF ( NOT ISBLANK ( D ), DATEDIFF ( TODAY (), D, DAY ) )
+
+// The RAG flag. Thresholds match the SharePoint column formatting exactly, so a
+// cell that is amber on the shop-floor list is amber on this dashboard.
+//
+// Both clocks are tested. A cell at 40 % of its hours that has not been touched
+// for 190 days is OVERDUE, because the calendar backstop has already passed -
+// and a low-utilisation cell is exactly the one the hours rule alone would
+// never catch.
+PM Status Flag =
+VAR Util = [Hours Utilisation %]
+VAR DaysSince = [Days Since Last PM]
+VAR BackstopDays = MAX ( Dim_Cell[Calendar_Backstop_Months] ) * 30.44
+RETURN
+    SWITCH (
+        TRUE (),
+        ISBLANK ( Util ) && ISBLANK ( DaysSince ), BLANK (),
+        Util >= 1
+            || ( NOT ISBLANK ( DaysSince ) && NOT ISBLANK ( BackstopDays ) && DaysSince >= BackstopDays ),
+            "OVERDUE",
+        Util >= 0.9, "DUE SOON",
+        Util >= 0.75, "WATCH",
+        "OK"
+    )
+
+// Returns the theme hex for the flag above. Used as a conditional-formatting
+// field so the colour is defined once, here, rather than being re-picked in
+// every visual's formatting pane where it will drift.
+PM Status Colour =
+SWITCH (
+    [PM Status Flag],
+    "OVERDUE",  "#ED7373",
+    "DUE SOON", "#F0A202",
+    "WATCH",    "#2E86AB",
+    "OK",       "#44C088",
+    "#7B8794"
+)
+
+// Count of cells at or past the amber line. The planning meeting's agenda size.
+Cells Due Soon Count =
+COUNTROWS (
+    FILTER (
+        Dim_Cell,
+        Dim_Cell[Active] = TRUE ()
+            && Dim_Cell[PM_Trigger_Hours] > 0
+            && DIVIDE ( Dim_Cell[Cum_Std_Hours_Since_PM], Dim_Cell[PM_Trigger_Hours] ) >= 0.9
+    )
+) + 0
+
+Overdue Cells Count =
+VAR Today_ = TODAY ()
+RETURN
+    COUNTROWS (
+        FILTER (
+            Dim_Cell,
+            Dim_Cell[Active] = TRUE ()
+                && (
+                    ( Dim_Cell[PM_Trigger_Hours] > 0
+                        && Dim_Cell[Cum_Std_Hours_Since_PM] >= Dim_Cell[PM_Trigger_Hours] )
+                    || ( NOT ISBLANK ( Dim_Cell[Calendar_Due_Date] )
+                        && Dim_Cell[Calendar_Due_Date] <= Today_ )
+                )
+        )
+    ) + 0
+
+// Total standard hours consumed. Also the loading-hours base for availability.
+Total Std Hours =
+SUM ( Fact_StdHours[Actual_Std_Hours] )
+
+Production Qty =
+SUM ( Fact_StdHours[Production_Qty] )
+
+
+// ============================================================================
+// 03 Execution
+// ============================================================================
+
+Machine Tasks Total =
+COUNTROWS ( Fact_MachineTask ) + 0
+
+Machine Tasks Completed =
+CALCULATE (
+    COUNTROWS ( Fact_MachineTask ),
+    KEEPFILTERS ( Fact_MachineTask[Task_Status] = "Completed" )
+) + 0
+
+Machine Tasks Pending =
+CALCULATE (
+    COUNTROWS ( Fact_MachineTask ),
+    KEEPFILTERS ( Fact_MachineTask[Task_Status] IN { "Pending", "In Progress" } )
+) + 0
+
+// The number that decides whether a work order can close and the counter can
+// reset. One machine scanned is not enough; this has to reach 100 %.
+Cell Completion % =
+DIVIDE ( [Machine Tasks Completed], [Machine Tasks Total] )
+
+// Average wall-clock minutes per machine task, over completed tasks with a real
+// duration. Blanks are excluded rather than treated as zero, which would drag
+// the average down and make a slow team look fast.
+Avg PM Duration (Hrs) =
+DIVIDE (
+    AVERAGEX (
+        FILTER (
+            Fact_MachineTask,
+            Fact_MachineTask[Task_Status] = "Completed"
+                && NOT ISBLANK ( Fact_MachineTask[Duration_Min] )
+                && Fact_MachineTask[Duration_Min] > 0
+        ),
+        Fact_MachineTask[Duration_Min]
+    ),
+    60
+)
+
+Total PM Man-Hours =
+DIVIDE ( SUM ( Fact_MachineTask[Duration_Min] ), 60 )
+
+// Work orders completed with no NOT OK finding anywhere in the cell.
+// This is not "good" on its own. A first-pass rate of 100 % across a year means
+// nobody is finding anything, which is a different problem from a machine that
+// never fails. Read it next to NOT OK % and Findings Raised per PM.
+First-Pass PM % =
+VAR CompletedWOs =
+    CALCULATETABLE (
+        VALUES ( Fact_WorkOrder[WO_No] ),
+        KEEPFILTERS ( Fact_WorkOrder[WO_Status] = "Completed" )
+    )
+VAR CleanWOs =
+    FILTER (
+        CompletedWOs,
+        CALCULATE ( SUM ( Fact_MachineTask[NOT_OK_Count] ) ) = 0
+    )
+RETURN
+    DIVIDE ( COUNTROWS ( CleanWOs ), COUNTROWS ( CompletedWOs ) )
+
+// Expected minutes for the machines in scope, summed from the checklist master.
+// This is the number you show production when you ask for a window - and the
+// number Duration_Min gets compared against to spot a pencil-whipped PM.
+Expected PM Duration (Min) =
+SUMX (
+    Fact_MachineTask,
+    VAR ChecklistId =
+        CALCULATE (
+            SELECTEDVALUE ( Dim_Machine[Checklist_ID] ),
+            Dim_Machine[Machine_ID] = Fact_MachineTask[Machine_ID]
+        )
+    RETURN
+        CALCULATE (
+            SUM ( Dim_ChecklistItem[Expected_Time_Min] ),
+            REMOVEFILTERS ( Dim_ChecklistItem ),
+            Dim_ChecklistItem[Checklist_ID] = ChecklistId,
+            Dim_ChecklistItem[Active] = TRUE ()
+        )
+)
+
+// Actual over expected. Below about 0.3 is not a fast technician, it is a
+// checklist that was signed rather than done.
+PM Duration vs Expected % =
+DIVIDE ( SUM ( Fact_MachineTask[Duration_Min] ), [Expected PM Duration (Min)] )
+
+// Machines in an open work order that nobody has started.
+Machines Not Scanned =
+COUNTROWS (
+    FILTER (
+        Fact_MachineTask,
+        Fact_MachineTask[Task_Status] = "Pending"
+            && ISBLANK ( Fact_MachineTask[Scan_Start_Time] )
+    )
+) + 0
+
+// Days since the work order was raised, for open work orders only.
+Open WO Ageing (Days) =
+AVERAGEX (
+    FILTER (
+        Fact_WorkOrder,
+        Fact_WorkOrder[WO_Status] IN { "Planned", "In Progress", "Overdue" }
+            && NOT ISBLANK ( Fact_WorkOrder[WO_Created_Date] )
+    ),
+    DATEDIFF ( Fact_WorkOrder[WO_Created_Date], TODAY (), DAY )
+)
+
+// Work orders marked Completed where the counter was never zeroed. Per integrity
+// rule 3 the reset quartet moves together or not at all, so any value above zero
+// here is a flow failure and belongs on the daily digest.
+Reset Not Applied Count =
+COUNTROWS (
+    FILTER (
+        Fact_WorkOrder,
+        Fact_WorkOrder[WO_Status] = "Completed"
+            && Fact_WorkOrder[Reset_Applied] <> TRUE ()
+    )
+) + 0
+
+
+// ============================================================================
+// 04 Quality of PM
+// ============================================================================
+
+// Check points that returned a verdict. NA answers are excluded - a check that
+// did not apply was not a check, and counting it inflates the denominator and
+// flatters the NOT OK rate.
+Checklist Items Checked =
+CALCULATE (
+    COUNTROWS ( Fact_ChecklistResponse ),
+    KEEPFILTERS ( Fact_ChecklistResponse[Result] IN { "OK", "NOT OK" } )
+) + 0
+
+NOT OK Count =
+CALCULATE (
+    COUNTROWS ( Fact_ChecklistResponse ),
+    KEEPFILTERS ( Fact_ChecklistResponse[Result] = "NOT OK" )
+) + 0
+
+NOT OK % =
+DIVIDE ( [NOT OK Count], [Checklist Items Checked] )
+
+// A NOT OK on a safety-critical item blocks the task from closing and escalates
+// immediately, regardless of the severity anyone selected. This measure is the
+// count that must be watched daily; a non-zero value is not a trend, it is an
+// event.
+Safety-Critical NOT OK Count =
+CALCULATE (
+    COUNTROWS ( Fact_ChecklistResponse ),
+    KEEPFILTERS ( Fact_ChecklistResponse[Result] = "NOT OK" ),
+    KEEPFILTERS ( Dim_ChecklistItem[Safety_Critical] = TRUE () )
+) + 0
+
+Follow-Up Raised Count =
+CALCULATE (
+    COUNTROWS ( Fact_ChecklistResponse ),
+    KEEPFILTERS ( Fact_ChecklistResponse[Follow_Up_Required] = TRUE () )
+) + 0
+
+Open Abnormalities =
+CALCULATE (
+    COUNTROWS ( Fact_Abnormality ),
+    KEEPFILTERS ( Fact_Abnormality[Status] <> "Closed" )
+) + 0
+
+High Severity Open =
+CALCULATE (
+    COUNTROWS ( Fact_Abnormality ),
+    KEEPFILTERS ( Fact_Abnormality[Status] <> "Closed" ),
+    KEEPFILTERS ( Fact_Abnormality[Severity] = "High" )
+) + 0
+
+// Average age. Closed items stop ageing at their closed date, so this does not
+// drift upward simply because time passes.
+Abnormality Ageing (Days) =
+AVERAGEX (
+    FILTER ( Fact_Abnormality, NOT ISBLANK ( Fact_Abnormality[Age_Days] ) ),
+    Fact_Abnormality[Age_Days]
+)
+
+Overdue Abnormalities =
+CALCULATE (
+    COUNTROWS ( Fact_Abnormality ),
+    KEEPFILTERS ( Fact_Abnormality[Is_Overdue] = TRUE () )
+) + 0
+
+// The same check point failing on the same machine in two ADJACENT PM cycles.
+//
+// Adjacency is what makes this meaningful. A check point that failed in January
+// and again in November is two independent findings; one that failed in two
+// consecutive PMs was not actually fixed the first time, and that is a different
+// conversation with a different person.
+//
+// The cycle sequence is built from Fact_MachineTask rather than from the
+// response table because a machine task is exactly one PM cycle per machine,
+// which is the grain the word "consecutive" needs.
+Repeat Finding Count =
+VAR AllCycles =
+    ADDCOLUMNS (
+        FILTER (
+            ALL ( Fact_MachineTask[Machine_ID], Fact_MachineTask[WO_No], Fact_MachineTask[Completion_Date] ),
+            NOT ISBLANK ( Fact_MachineTask[Completion_Date] )
+        ),
+        "@Seq",
+            VAR ThisMachine = Fact_MachineTask[Machine_ID]
+            VAR ThisDate = Fact_MachineTask[Completion_Date]
+            RETURN
+                COUNTROWS (
+                    FILTER (
+                        ALL ( Fact_MachineTask[Machine_ID], Fact_MachineTask[WO_No], Fact_MachineTask[Completion_Date] ),
+                        Fact_MachineTask[Machine_ID] = ThisMachine
+                            && NOT ISBLANK ( Fact_MachineTask[Completion_Date] )
+                            && Fact_MachineTask[Completion_Date] <= ThisDate
+                    )
+                )
+    )
+VAR NotOkFindings =
+    CALCULATETABLE (
+        SUMMARIZE (
+            Fact_ChecklistResponse,
+            Fact_ChecklistResponse[Machine_ID],
+            Fact_ChecklistResponse[Check_Point],
+            Fact_ChecklistResponse[WO_No]
+        ),
+        KEEPFILTERS ( Fact_ChecklistResponse[Result] = "NOT OK" )
+    )
+VAR FindingsWithSeq =
+    NATURALLEFTOUTERJOIN (
+        SELECTCOLUMNS (
+            NotOkFindings,
+            "@Machine_ID", Fact_ChecklistResponse[Machine_ID],
+            "@Check", Fact_ChecklistResponse[Check_Point],
+            "@WO", Fact_ChecklistResponse[WO_No]
+        ),
+        SELECTCOLUMNS (
+            AllCycles,
+            "@Machine_ID", Fact_MachineTask[Machine_ID],
+            "@WO", Fact_MachineTask[WO_No],
+            "@CycleSeq", [@Seq]
+        )
+    )
+RETURN
+    COUNTROWS (
+        FILTER (
+            FindingsWithSeq,
+            VAR M = [@Machine_ID]
+            VAR C = [@Check]
+            VAR S = [@CycleSeq]
+            RETURN
+                NOT ISBLANK ( S )
+                    && COUNTROWS (
+                        FILTER (
+                            FindingsWithSeq,
+                            [@Machine_ID] = M && [@Check] = C && [@CycleSeq] = S - 1
+                        )
+                    ) > 0
+        )
+    ) + 0
+
+
+// ============================================================================
+// 05 Reliability
+// ============================================================================
+
+Breakdown Count =
+COUNTROWS ( Fact_Breakdown ) + 0
+
+// Mean time to repair - wrench time only. Deliberately NOT the same as downtime.
+MTTR (Min) =
+AVERAGEX (
+    FILTER ( Fact_Breakdown, NOT ISBLANK ( Fact_Breakdown[MTTR_Min] ) ),
+    Fact_Breakdown[MTTR_Min]
+)
+
+// Report to arrival. A team KPI, distinct from repair time: a fast repair that
+// started ninety minutes after the call is not a fast response.
+Avg Response Time (Min) =
+AVERAGEX (
+    FILTER ( Fact_Breakdown, NOT ISBLANK ( Fact_Breakdown[Response_Time_Min] ) ),
+    Fact_Breakdown[Response_Time_Min]
+)
+
+// Loading hours - the denominator for availability. Standard hours consumed is
+// the honest measure of how long the equipment was actually asked to run.
+Loading Hours =
+SUM ( Fact_StdHours[Actual_Std_Hours] )
+
+// Production loss, not MTTR. Production loss includes waiting for a technician,
+// waiting for a spare and restarting the line, and is almost always the larger
+// number. Using MTTR here would make availability look flattering and wrong.
+Downtime Hours =
+DIVIDE ( SUM ( Fact_Breakdown[Production_Loss_Min] ), 60 )
+
+MTBF (Hrs) =
+DIVIDE ( [Loading Hours], [Breakdown Count] )
+
+Availability % =
+DIVIDE ( [Loading Hours] - [Downtime Hours], [Loading Hours] )
+
+// ----------------------------------------------------------------------------
+// THE MOST IMPORTANT MEASURE IN THE MODEL.
+//
+// Breakdowns on a cell within 7 days of a completed PM on that same cell.
+//
+// It answers the only question that matters about a PM programme: is the PM
+// actually working, or is it cosmetic? Compliance can be 100 % while this number
+// climbs, and when that happens the checklist is being signed rather than
+// performed - or the checklist is checking the wrong things.
+//
+// Deliberately derived from dates rather than from Breakdown_Log[Linked_PM_WO].
+// That column is populated by Flow 6 going forward and is empty for all history
+// loaded before the flow existed. A measure that depended on it would read zero
+// on historical data and look reassuring, which is the worst possible failure
+// mode for this particular number.
+//
+// REMOVEFILTERS(Dim_Date) on the PM list is load-bearing: a breakdown reported
+// on 3 March may follow a PM completed on 28 February, and with the date filter
+// still applied to the PM side that pairing would be invisible in a March view.
+// ----------------------------------------------------------------------------
+Breakdowns After PM (7d) =
+VAR CompletedPMs =
+    CALCULATETABLE (
+        SELECTCOLUMNS (
+            FILTER ( Fact_WorkOrder, NOT ISBLANK ( Fact_WorkOrder[Actual_End_Date] ) ),
+            "@PMCell", Fact_WorkOrder[Cell_ID],
+            "@PMEnd", Fact_WorkOrder[Actual_End_Date]
+        ),
+        KEEPFILTERS ( Fact_WorkOrder[WO_Status] = "Completed" ),
+        REMOVEFILTERS ( Dim_Date )
+    )
+RETURN
+    COUNTROWS (
+        FILTER (
+            Fact_Breakdown,
+            VAR BdCell = Fact_Breakdown[Cell_ID]
+            VAR BdDate = Fact_Breakdown[Reported_Date]
+            RETURN
+                NOT ISBLANK ( BdDate )
+                    && COUNTROWS (
+                        FILTER (
+                            CompletedPMs,
+                            [@PMCell] = BdCell
+                                && BdDate >= [@PMEnd]
+                                && BdDate <= [@PMEnd] + 7
+                        )
+                    ) > 0
+        )
+    ) + 0
+
+// The same figure as a share of all breakdowns, which is how it should be read.
+// A rising count during a period of rising PM volume is expected; a rising
+// SHARE is the warning.
+Breakdowns After PM % =
+DIVIDE ( [Breakdowns After PM (7d)], [Breakdown Count] )
+
+Repeat Breakdown Count =
+CALCULATE (
+    COUNTROWS ( Fact_Breakdown ),
+    KEEPFILTERS ( Fact_Breakdown[Recurrence_Flag] = TRUE () )
+) + 0
+
+Open Breakdowns =
+CALCULATE (
+    COUNTROWS ( Fact_Breakdown ),
+    KEEPFILTERS ( Fact_Breakdown[Status] <> "Closed" )
+) + 0
+
+Total Production Loss (Hrs) =
+DIVIDE ( SUM ( Fact_Breakdown[Production_Loss_Min] ), 60 )
+
+
+// ============================================================================
+// 06 Spares
+// ============================================================================
+
+Spare Cost =
+SUM ( Fact_SpareReplaced[Total_Cost_INR] )
+
+// Spare cost divided by the number of completed cell PMs. The unit cost of a
+// preventive maintenance, which is the number a finance review will ask for.
+Spare Cost per PM =
+DIVIDE (
+    CALCULATE ( [Spare Cost], KEEPFILTERS ( Fact_SpareReplaced[Source_Type] = "PM" ) ),
+    [PM Completed Count]
+)
+
+// Planned versus unplanned spend. Splitting these is the point of Source_Type.
+Planned Spare Cost =
+CALCULATE ( [Spare Cost], KEEPFILTERS ( Fact_SpareReplaced[Source_Type] = "PM" ) )
+
+Unplanned Spare Cost =
+CALCULATE ( [Spare Cost], KEEPFILTERS ( Fact_SpareReplaced[Source_Type] = "Breakdown" ) )
+
+Qty Replaced =
+SUM ( Fact_SpareReplaced[Qty_Used] ) + 0
+
+Requests Pending Approval =
+CALCULATE (
+    COUNTROWS ( Fact_SpareRequest ),
+    KEEPFILTERS ( Fact_SpareRequest[Approval_Status] = "Pending" )
+) + 0
+
+Avg Approval Lead Time (Days) =
+AVERAGEX (
+    FILTER ( Fact_SpareRequest, NOT ISBLANK ( Fact_SpareRequest[Approval_Lead_Days] ) ),
+    Fact_SpareRequest[Approval_Lead_Days]
+)
+
+// Approved but not yet issued. The gap nobody watches, because the approver's
+// job is done and the storekeeper was never told there was a clock running.
+Approved Not Issued Count =
+CALCULATE (
+    COUNTROWS ( Fact_SpareRequest ),
+    KEEPFILTERS ( Fact_SpareRequest[Is_Approved_Not_Issued] = TRUE () )
+) + 0
+
+Avg Issue Lead Time (Days) =
+AVERAGEX (
+    FILTER ( Fact_SpareRequest, NOT ISBLANK ( Fact_SpareRequest[Issue_Lead_Days] ) ),
+    Fact_SpareRequest[Issue_Lead_Days]
+)
+
+// Counted over active parts only. A superseded part sitting at zero stock is not
+// a stock-out, and counting it hides the ones that are.
+Stock Below Min Count =
+COUNTROWS (
+    FILTER (
+        Dim_Spare,
+        Dim_Spare[Active] = TRUE ()
+            && NOT ISBLANK ( Dim_Spare[Current_Stock] )
+            && NOT ISBLANK ( Dim_Spare[Min_Stock] )
+            && Dim_Spare[Current_Stock] <= Dim_Spare[Min_Stock]
+    )
+) + 0
+
+Stock Value (INR) =
+SUMX ( Dim_Spare, Dim_Spare[Current_Stock] * Dim_Spare[Unit_Cost_INR] )
+
+Warranty Claims Flagged =
+CALCULATE (
+    COUNTROWS ( Fact_SpareReplaced ),
+    KEEPFILTERS ( Fact_SpareReplaced[Warranty_Claim] = TRUE () )
+) + 0
+
+
+// ============================================================================
+// 07 Technician
+// ============================================================================
+
+// Attribution rests entirely on the Completed_By dropdown, because every
+// technician signs in with the same M365 account. That is why the field is
+// mandatory on every form and why it is never free text.
+PMs Completed by Tech =
+CALCULATE (
+    COUNTROWS ( Fact_MachineTask ),
+    KEEPFILTERS ( Fact_MachineTask[Task_Status] = "Completed" )
+) + 0
+
+Avg Task Duration by Tech =
+AVERAGEX (
+    FILTER (
+        Fact_MachineTask,
+        Fact_MachineTask[Task_Status] = "Completed"
+            && NOT ISBLANK ( Fact_MachineTask[Duration_Min] )
+            && Fact_MachineTask[Duration_Min] > 0
+    ),
+    Fact_MachineTask[Duration_Min]
+)
+
+// Findings per completed task.
+//
+// Read this as thoroughness, not as fault. A technician who raises more findings
+// per PM is looking harder, and the one at the bottom of this chart is the one
+// to review - not the one at the top. Label it that way on the page, every time,
+// or within a month people will stop reporting findings to protect their number.
+Findings Raised per PM =
+DIVIDE (
+    CALCULATE (
+        SUM ( Fact_MachineTask[NOT_OK_Count] ),
+        KEEPFILTERS ( Fact_MachineTask[Task_Status] = "Completed" )
+    ),
+    [Machine Tasks Completed]
+)
+
+Abnormalities Raised by Tech =
+COUNTROWS ( Fact_Abnormality ) + 0
+
+// Distinct technicians who completed work in the period. The workload-balance
+// denominator.
+Active Technicians =
+CALCULATE (
+    DISTINCTCOUNT ( Fact_MachineTask[Completed_By] ),
+    KEEPFILTERS ( Fact_MachineTask[Task_Status] = "Completed" )
+) + 0
+
+// How unevenly work is spread. Zero means perfectly balanced. A high value with
+// six technicians on the roster usually means two of them are doing the PMs and
+// four are on breakdowns.
+Workload Imbalance =
+VAR PerTech =
+    ADDCOLUMNS (
+        VALUES ( Dim_Technician[Tech_ID] ),
+        "@Tasks", CALCULATE ( [Machine Tasks Completed] )
+    )
+VAR MaxT = MAXX ( PerTech, [@Tasks] )
+VAR MinT = MINX ( PerTech, [@Tasks] )
+RETURN
+    IF ( COUNTROWS ( PerTech ) > 1, MaxT - MinT )
+
+
+// ============================================================================
+// 08 Utility  (formatting and titles - hidden from the field list where noted)
+// ============================================================================
+
+// Titles that state the question the visual answers, with the live figure in
+// them. A title that changes with the filter is read; a static one is not.
+Title - Cells At Risk =
+"Which cells are at or past 90% of their PM trigger?  ("
+    & FORMAT ( [Cells Due Soon Count], "0" ) & " of "
+    & FORMAT ( COUNTROWS ( FILTER ( Dim_Cell, Dim_Cell[Active] = TRUE () ) ), "0" ) & " cells)"
+
+Title - Breakdowns After PM =
+"Breakdowns within 7 days of a completed PM  -  "
+    & FORMAT ( [Breakdowns After PM (7d)], "0" ) & " of "
+    & FORMAT ( [Breakdown Count], "0" ) & " breakdowns ("
+    & FORMAT ( [Breakdowns After PM %], "0.0%" ) & ").  A rising share means the PM is not working."
+
+// Colour helper for compliance, using the theme's positive / warning / negative.
+Compliance Colour =
+VAR C = [PM Compliance %]
+RETURN
+    SWITCH ( TRUE (), ISBLANK ( C ), "#7B8794", C >= 0.95, "#44C088", C >= 0.85, "#F0A202", "#ED7373" )
+
+Availability Colour =
+VAR A = [Availability %]
+RETURN
+    SWITCH ( TRUE (), ISBLANK ( A ), "#7B8794", A >= 0.95, "#44C088", A >= 0.9, "#F0A202", "#ED7373" )
+
+
+
+// ============================================================================
+// 09 Forecast & Schedule Helpers
+// ============================================================================
+
+// Expected man-hours to PM one whole cell, summed from the checklist master
+// across that cell's active machines.
+// This is the number you show production when you ask for a window. It is built
+// from what the checklist actually says, not from what last time happened to
+// take, so it does not quietly inflate as the team gets slower.
+Cell Expected PM Hours =
+DIVIDE (
+    SUMX (
+        FILTER ( Dim_Machine, Dim_Machine[Active] = TRUE () ),
+        VAR ChecklistId = Dim_Machine[Checklist_ID]
+        RETURN
+            CALCULATE (
+                SUM ( Dim_ChecklistItem[Expected_Time_Min] ),
+                REMOVEFILTERS ( Dim_ChecklistItem ),
+                Dim_ChecklistItem[Checklist_ID] = ChecklistId,
+                Dim_ChecklistItem[Active] = TRUE ()
+            )
+    ),
+    60
+)
+
+// How many cell PMs are projected to fall in the month on the axis.
+//
+// This is the workload forecast, and it is the only visual on the planning page
+// that answers "how many technicians do I need in November". Dim_Cell has no
+// relationship to Dim_Date - deliberately, since the counter is a snapshot - so
+// the month window is read off the axis with MIN/MAX and each cell's own due
+// date is compared against it.
+Forecast PM Count =
+VAR MonthStart = MIN ( Dim_Date[Date] )
+VAR MonthEnd = MAX ( Dim_Date[Date] )
+VAR CellsWithDue =
+    ADDCOLUMNS (
+        CALCULATETABLE (
+            VALUES ( Dim_Cell[Cell_ID] ),
+            REMOVEFILTERS ( Dim_Date ),
+            Dim_Cell[Active] = TRUE ()
+        ),
+        "@Due", CALCULATE ( [Next PM Due Date], REMOVEFILTERS ( Dim_Date ) )
+    )
+RETURN
+    COUNTROWS (
+        FILTER (
+            CellsWithDue,
+            NOT ISBLANK ( [@Due] ) && [@Due] >= MonthStart && [@Due] <= MonthEnd
+        )
+    ) + 0
+
+// The same forecast expressed in man-hours, which is what a shift plan is
+// actually built from. Three cells due in one month is meaningless until you
+// know whether that is 12 hours or 60.
+Forecast Man-Hours =
+VAR MonthStart = MIN ( Dim_Date[Date] )
+VAR MonthEnd = MAX ( Dim_Date[Date] )
+VAR CellsWithDue =
+    ADDCOLUMNS (
+        CALCULATETABLE (
+            VALUES ( Dim_Cell[Cell_ID] ),
+            REMOVEFILTERS ( Dim_Date ),
+            Dim_Cell[Active] = TRUE ()
+        ),
+        "@Due", CALCULATE ( [Next PM Due Date], REMOVEFILTERS ( Dim_Date ) ),
+        "@Hrs", CALCULATE ( [Cell Expected PM Hours], REMOVEFILTERS ( Dim_Date ) )
+    )
+RETURN
+    SUMX (
+        FILTER (
+            CellsWithDue,
+            NOT ISBLANK ( [@Due] ) && [@Due] >= MonthStart && [@Due] <= MonthEnd
+        ),
+        [@Hrs]
+    )
+
+// Spare spend in the month currently in context, for the executive KPI row.
+Spare Cost MTD =
+CALCULATE ( [Spare Cost], DATESMTD ( Dim_Date[Date] ) )
+
+// ----------------------------------------------------------------------------
+// Gantt-style planned-vs-actual bars.
+//
+// Power BI has no native Gantt. The standard construction is a stacked bar with
+// two series: an INVISIBLE offset bar that pushes the visible bar to the right,
+// then the visible duration bar. Set the offset series to no fill in the visual
+// and what remains reads as a timeline.
+//
+// The origin is the earliest planned start in the current selection, so the
+// chart re-bases itself when the month slicer moves rather than always starting
+// at some fixed date far off screen.
+// ----------------------------------------------------------------------------
+Gantt Origin Date =
+CALCULATE (
+    MIN ( Fact_WorkOrder[Planned_Start_Date] ),
+    ALLSELECTED ( Fact_WorkOrder )
+)
+
+Gantt Planned Offset (Days) =
+VAR Origin = [Gantt Origin Date]
+VAR Start = MIN ( Fact_WorkOrder[Planned_Start_Date] )
+RETURN
+    IF ( NOT ISBLANK ( Start ) && NOT ISBLANK ( Origin ), DATEDIFF ( Origin, Start, DAY ) )
+
+Gantt Planned Duration (Days) =
+VAR S = MIN ( Fact_WorkOrder[Planned_Start_Date] )
+VAR E = MAX ( Fact_WorkOrder[Planned_End_Date] )
+RETURN
+    IF ( NOT ISBLANK ( S ) && NOT ISBLANK ( E ), DATEDIFF ( S, E, DAY ) + 1 )
+
+Gantt Actual Offset (Days) =
+VAR Origin = [Gantt Origin Date]
+VAR Start = MIN ( Fact_WorkOrder[Actual_Start_Date] )
+RETURN
+    IF ( NOT ISBLANK ( Start ) && NOT ISBLANK ( Origin ), DATEDIFF ( Origin, Start, DAY ) )
+
+Gantt Actual Duration (Days) =
+VAR S = MIN ( Fact_WorkOrder[Actual_Start_Date] )
+VAR E = MAX ( Fact_WorkOrder[Actual_End_Date] )
+RETURN
+    IF ( NOT ISBLANK ( S ) && NOT ISBLANK ( E ), DATEDIFF ( S, E, DAY ) + 1 )
+
+// Planned work orders in the month, using the INACTIVE Planned_End_Date
+// relationship. This is what the inactive relationships exist for: one month
+// slicer, two different questions - what did we plan for March, and what did we
+// finish in March.
+Planned WO Count =
+CALCULATE (
+    COUNTROWS ( Fact_WorkOrder ),
+    USERELATIONSHIP ( Fact_WorkOrder[Planned_End_Date], Dim_Date[Date] ),
+    KEEPFILTERS ( Fact_WorkOrder[WO_Status] <> "Cancelled" )
+) + 0
+
+Completed WO Count (by Actual Date) =
+CALCULATE (
+    COUNTROWS ( Fact_WorkOrder ),
+    USERELATIONSHIP ( Fact_WorkOrder[Actual_End_Date], Dim_Date[Date] ),
+    KEEPFILTERS ( Fact_WorkOrder[WO_Status] = "Completed" )
+) + 0

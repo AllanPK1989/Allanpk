@@ -1,0 +1,209 @@
+{
+  "ListTitle": "PM_WorkOrder",
+  "ListUrl": "Lists/PM_WorkOrder",
+  "Description": "One row per cell PM. Closes only when every machine task in the cell is complete.",
+  "Template": "GenericList",
+  "EnableVersioning": true,
+  "MajorVersionLimit": 50,
+  "EnableAttachments": false,
+  "TitleColumn": {
+    "Required": false,
+    "Hidden": false,
+    "SetFrom": "WO_No",
+    "Note": "Title is populated from the primary key on load so the item has a readable display name and shows up in search. Matching is always done on the explicit key column, never on Title."
+  },
+  "PrimaryKey": "WO_No",
+  "IndexedColumns": [
+    "WO_No",
+    "Cell_ID",
+    "WO_Status",
+    "Planned_Month",
+    "WO_Created_Date",
+    "Planned_End_Date",
+    "Actual_End_Date"
+  ],
+  "Fields": [
+    {
+      "InternalName": "WO_No",
+      "DisplayName": "WO_No",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Cell_ID",
+      "DisplayName": "Cell_ID",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Cell_Name",
+      "DisplayName": "Cell_Name",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Trigger_Type",
+      "DisplayName": "Trigger_Type",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "Std Hours",
+        "Calendar Backstop",
+        "Manual"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Trigger_Hours_At_Creation",
+      "DisplayName": "Trigger_Hours_At_Creation",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 2
+    },
+    {
+      "InternalName": "WO_Created_Date",
+      "DisplayName": "WO_Created_Date",
+      "Required": false,
+      "Indexed": true,
+      "Type": "DateTime",
+      "DisplayFormat": "DateOnly"
+    },
+    {
+      "InternalName": "Planned_Month",
+      "DisplayName": "Planned_Month",
+      "Required": false,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Planned_Start_Date",
+      "DisplayName": "Planned_Start_Date",
+      "Required": false,
+      "Indexed": false,
+      "Type": "DateTime",
+      "DisplayFormat": "DateOnly"
+    },
+    {
+      "InternalName": "Planned_End_Date",
+      "DisplayName": "Planned_End_Date",
+      "Required": false,
+      "Indexed": true,
+      "Type": "DateTime",
+      "DisplayFormat": "DateOnly"
+    },
+    {
+      "InternalName": "Lead_Tech_ID",
+      "DisplayName": "Lead_Tech_ID",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Priority",
+      "DisplayName": "Priority",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "High",
+        "Medium",
+        "Low"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Machines_In_Scope",
+      "DisplayName": "Machines_In_Scope",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 0
+    },
+    {
+      "InternalName": "Machines_Completed",
+      "DisplayName": "Machines_Completed",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 0
+    },
+    {
+      "InternalName": "WO_Status",
+      "DisplayName": "WO_Status",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Choice",
+      "Choices": [
+        "Planned",
+        "In Progress",
+        "Completed",
+        "Overdue",
+        "Cancelled"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Actual_Start_Date",
+      "DisplayName": "Actual_Start_Date",
+      "Required": false,
+      "Indexed": false,
+      "Type": "DateTime",
+      "DisplayFormat": "DateOnly"
+    },
+    {
+      "InternalName": "Actual_End_Date",
+      "DisplayName": "Actual_End_Date",
+      "Required": false,
+      "Indexed": true,
+      "Type": "DateTime",
+      "DisplayFormat": "DateOnly"
+    },
+    {
+      "InternalName": "PM_Duration_Min",
+      "DisplayName": "PM_Duration_Min",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 0
+    },
+    {
+      "InternalName": "Reset_Applied",
+      "DisplayName": "Reset_Applied",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Boolean",
+      "DefaultValue": "0"
+    },
+    {
+      "InternalName": "Reset_Date",
+      "DisplayName": "Reset_Date",
+      "Required": false,
+      "Indexed": false,
+      "Type": "DateTime",
+      "DisplayFormat": "DateOnly"
+    },
+    {
+      "InternalName": "Remarks",
+      "DisplayName": "Remarks",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Note",
+      "NumberOfLines": 4,
+      "RichText": false,
+      "AppendOnly": false
+    }
+  ]
+}

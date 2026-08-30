@@ -1,0 +1,270 @@
+table Fact_Abnormality
+	lineageTag: 5124cc61-5b35-5085-9434-7eab943ffe76
+
+	column Abn_ID
+		dataType: string
+		lineageTag: daac522c-0a1a-557b-a75f-f19ebff7adca
+		summarizeBy: none
+		sourceColumn: Abn_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Logged_DateTime
+		dataType: dateTime
+		lineageTag: 9b45f600-6d90-54de-b9fc-fe57da8c2931
+		summarizeBy: none
+		sourceColumn: Logged_DateTime
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Machine_ID
+		dataType: string
+		lineageTag: edb7db45-b81c-5298-a944-286f0a5396cc
+		summarizeBy: none
+		sourceColumn: Machine_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cell_ID
+		dataType: string
+		lineageTag: c556b423-20f8-5cd7-8184-c2a304b28711
+		summarizeBy: none
+		sourceColumn: Cell_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Logged_By
+		dataType: string
+		lineageTag: b1d2fe22-cccd-53c0-8453-87befb4c2588
+		summarizeBy: none
+		sourceColumn: Logged_By
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category
+		dataType: string
+		lineageTag: a48aee07-763a-5721-94e9-94a35411c72c
+		summarizeBy: none
+		sourceColumn: Category
+
+		annotation SummarizationSetBy = Automatic
+
+	column Description
+		dataType: string
+		lineageTag: bcdd6b78-2208-57db-a90a-bfb6f3b507db
+		summarizeBy: none
+		sourceColumn: Description
+
+		annotation SummarizationSetBy = Automatic
+
+	column Severity
+		dataType: string
+		lineageTag: 1ccce1c0-5159-544a-873f-20fc2b26bf10
+		summarizeBy: none
+		sourceColumn: Severity
+		sortByColumn: Severity_Sort
+
+		annotation SummarizationSetBy = Automatic
+
+	column Photo_Link
+		dataType: string
+		lineageTag: b9ff930c-47ba-50c2-9965-e50330c198d3
+		summarizeBy: none
+		sourceColumn: Photo_Link
+
+		annotation SummarizationSetBy = Automatic
+
+	column Immediate_Action
+		dataType: string
+		lineageTag: 438f3fb9-3368-50d2-8496-2dd1988abb2f
+		summarizeBy: none
+		sourceColumn: Immediate_Action
+
+		annotation SummarizationSetBy = Automatic
+
+	column Responsibility
+		dataType: string
+		lineageTag: 805a16a4-548b-5370-b60d-d2c5d7fadd91
+		summarizeBy: none
+		sourceColumn: Responsibility
+
+		annotation SummarizationSetBy = Automatic
+
+	column Target_Date
+		dataType: dateTime
+		lineageTag: bc4945e4-0c45-59f6-af00-79113a7e0bdf
+		summarizeBy: none
+		sourceColumn: Target_Date
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		dataType: string
+		lineageTag: 03f514f7-17ea-5bdd-99d4-52d0df99d7a4
+		summarizeBy: none
+		sourceColumn: Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column Closed_Date
+		dataType: dateTime
+		lineageTag: 86482537-e0fa-5339-95c0-5b9b8dfe6c5b
+		summarizeBy: none
+		sourceColumn: Closed_Date
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Closure_Remarks
+		dataType: string
+		lineageTag: 47dd796e-1e26-591a-a20a-8fb470c731de
+		summarizeBy: none
+		sourceColumn: Closure_Remarks
+
+		annotation SummarizationSetBy = Automatic
+
+	column Converted_To_WO
+		dataType: boolean
+		lineageTag: b9d570f1-adcb-5a25-90c7-223920ae8558
+		summarizeBy: none
+		sourceColumn: Converted_To_WO
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	column Logged_Date
+		dataType: dateTime
+		lineageTag: d90b2611-2476-5be0-b0f8-caddd15e634b
+		summarizeBy: none
+		sourceColumn: Logged_Date
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Age_Days
+		dataType: int64
+		lineageTag: 82699fcd-c3ca-51be-a1e2-d3637a7f0fff
+		summarizeBy: none
+		sourceColumn: Age_Days
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column Is_Open
+		dataType: boolean
+		lineageTag: af22065e-429f-5d11-911d-8bb40545dd81
+		summarizeBy: none
+		sourceColumn: Is_Open
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	column Is_Overdue
+		dataType: boolean
+		lineageTag: f6518d86-af9a-5928-90f2-0c9315b1f1f7
+		summarizeBy: none
+		sourceColumn: Is_Overdue
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	column Severity_Sort
+		dataType: int64
+		isHidden: true
+		lineageTag: 9610dd70-4bd6-599b-b581-500b10126fd6
+		summarizeBy: none
+		sourceColumn: Severity_Sort
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_Abnormality = m
+		mode: import
+		source = ```
+				// ===========================================================================
+				// Fact_Abnormality  <- Abnormality_Log
+				// ---------------------------------------------------------------------------
+				// Conditions found that are not yet failures. The cheapest maintenance data
+				// there is: an air leak logged today costs nothing to record and shows up in the
+				// compressed-air bill for years if it is not.
+				//
+				// Ageing is computed against the CLOSED date where one exists and against today
+				// where it does not, so a closed item's age stops moving. Ageing that keeps
+				// counting after closure makes the average meaningless.
+				// ===========================================================================
+				let
+				    Source = fnGetTable("Abnormality_Log", "03_PM_Transactions_Dummy.xlsx", "Abnormality_Log"),
+
+				    Keys = fnCleanKeys(Source, {"Abn_ID", "Machine_ID", "Cell_ID", "Logged_By"}),
+				    Bools = fnYesNo(Keys, {"Converted_To_WO"}),
+
+				    Flattened = Table.TransformColumns(
+				        Bools,
+				        List.Transform(
+				            List.Intersect({Table.ColumnNames(Bools), {"Photo_Link"}}),
+				            each {_, (v) => if v = null then null
+				                            else if v is record then Record.FieldOrDefault(v, "Url", null)
+				                            else Text.From(v),
+				                  type nullable text})),
+
+				    Typed = Table.TransformColumnTypes(Flattened, {
+				        {"Abn_ID",           type text},
+				        {"Logged_DateTime",  type datetime},
+				        {"Machine_ID",       type text},
+				        {"Cell_ID",          type text},
+				        {"Logged_By",        type text},
+				        {"Category",         type text},
+				        {"Description",      type text},
+				        {"Severity",         type text},
+				        {"Photo_Link",       type text},
+				        {"Immediate_Action", type text},
+				        {"Responsibility",   type text},
+				        {"Target_Date",      type date},
+				        {"Status",           type text},
+				        {"Closed_Date",      type date},
+				        {"Closure_Remarks",  type text},
+				        {"Converted_To_WO",  type logical}
+				    }),
+
+				    WithDate = Table.AddColumn(
+				        Typed, "Logged_Date",
+				        each if [Logged_DateTime] = null then null else DateTime.Date([Logged_DateTime]),
+				        type nullable date),
+
+				    WithAge = Table.AddColumn(
+				        WithDate, "Age_Days",
+				        each if [Logged_Date] = null then null
+				             else if [Closed_Date] <> null
+				                  then Duration.Days([Closed_Date] - [Logged_Date])
+				                  else Duration.Days(Date.From(DateTime.LocalNow()) - [Logged_Date]),
+				        Int64.Type),
+
+				    WithOpen = Table.AddColumn(
+				        WithAge, "Is_Open",
+				        each [Status] <> "Closed",
+				        type logical),
+
+				    WithOverdue = Table.AddColumn(
+				        WithOpen, "Is_Overdue",
+				        each [Status] <> "Closed"
+				             and [Target_Date] <> null
+				             and [Target_Date] < Date.From(DateTime.LocalNow()),
+				        type logical),
+
+				    WithSort = Table.AddColumn(
+				        WithOverdue, "Severity_Sort",
+				        each if [Severity] = "High" then 1 else if [Severity] = "Medium" then 2 else 3,
+				        Int64.Type),
+
+				    Final = Table.SelectRows(WithSort, each [Abn_ID] <> null)
+				in
+				    Final
+				```
+
+	annotation PBI_ResultType = Table

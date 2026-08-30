@@ -1,0 +1,9 @@
+﻿Cell_ID,Cell_Name,Plant,Process_Area,Machine_Count,PM_Trigger_Hours,Calendar_Backstop_Months,Cum_Std_Hours_Since_PM,Last_PM_Date,Last_PM_WO_No,Next_PM_Due_Date_Calendar,Avg_Monthly_Std_Hours_L3M,Owner_Supervisor,Criticality,Active
+CELL-01,Element Punching Cell,EPQPL Pondicherry,Element,4,4000,6,980,2026-02-28,WO-1094,2026-08-29,572,Ramesh K,A,Yes
+CELL-02,Element Welding Cell,EPQPL Pondicherry,Element,4,4000,6,3720,2026-02-13,WO-1035,2026-08-14,734,Ramesh K,A,Yes
+CELL-03,Cap Fitting Cell,EPQPL Pondicherry,Assembly,4,4000,6,980,2026-05-28,WO-1012,2026-11-26,679,Suresh M,A,Yes
+CELL-04,Sand Filling Cell,EPQPL Pondicherry,Filling,4,4000,6,2400,2026-07-27,WO-1004,2027-01-25,980,Suresh M,A,Yes
+CELL-05,Curing / Autoclave Cell,EPQPL Pondicherry,Curing,4,4000,6,4180,2026-04-02,WO-1096,2026-10-01,606,Anand P,B,Yes
+CELL-06,Assembly Cell - NH000,EPQPL Pondicherry,Assembly,4,4000,6,2980,2026-08-10,WO-1097,2027-02-08,816,Anand P,A,Yes
+CELL-07,Testing & Calibration,EPQPL Pondicherry,Testing,3,4000,6,1650,2026-07-24,WO-1084,2027-01-22,625,Vinoth R,B,Yes
+CELL-08,Marking & Packing Cell,EPQPL Pondicherry,Packing,3,4000,6,3450,2026-07-25,WO-1075,2027-01-23,570,Vinoth R,C,Yes

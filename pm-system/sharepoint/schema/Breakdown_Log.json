@@ -1,0 +1,220 @@
+{
+  "ListTitle": "Breakdown_Log",
+  "ListUrl": "Lists/Breakdown_Log",
+  "Description": "Unplanned stoppages, with response and repair timings.",
+  "Template": "GenericList",
+  "EnableVersioning": true,
+  "MajorVersionLimit": 50,
+  "EnableAttachments": true,
+  "TitleColumn": {
+    "Required": false,
+    "Hidden": false,
+    "SetFrom": "BD_ID",
+    "Note": "Title is populated from the primary key on load so the item has a readable display name and shows up in search. Matching is always done on the explicit key column, never on Title."
+  },
+  "PrimaryKey": "BD_ID",
+  "IndexedColumns": [
+    "Machine_ID",
+    "Cell_ID",
+    "Status",
+    "Reported_DateTime"
+  ],
+  "Fields": [
+    {
+      "InternalName": "BD_ID",
+      "DisplayName": "BD_ID",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Reported_DateTime",
+      "DisplayName": "Reported_DateTime",
+      "Required": false,
+      "Indexed": true,
+      "Type": "DateTime",
+      "DisplayFormat": "DateTime"
+    },
+    {
+      "InternalName": "Machine_ID",
+      "DisplayName": "Machine_ID",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Cell_ID",
+      "DisplayName": "Cell_ID",
+      "Required": false,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Reported_By_Tech_ID",
+      "DisplayName": "Reported_By_Tech_ID",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Shift",
+      "DisplayName": "Shift",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "A (06:00-14:00)",
+        "B (14:00-22:00)",
+        "C (22:00-06:00)"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Breakdown_Type",
+      "DisplayName": "Breakdown_Type",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "Mechanical",
+        "Electrical",
+        "Pneumatic",
+        "Hydraulic",
+        "Instrumentation",
+        "Utility"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Symptom",
+      "DisplayName": "Symptom",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Note",
+      "NumberOfLines": 4,
+      "RichText": false,
+      "AppendOnly": false
+    },
+    {
+      "InternalName": "Root_Cause",
+      "DisplayName": "Root_Cause",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Note",
+      "NumberOfLines": 4,
+      "RichText": false,
+      "AppendOnly": false
+    },
+    {
+      "InternalName": "Action_Taken",
+      "DisplayName": "Action_Taken",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Note",
+      "NumberOfLines": 4,
+      "RichText": false,
+      "AppendOnly": false
+    },
+    {
+      "InternalName": "Response_DateTime",
+      "DisplayName": "Response_DateTime",
+      "Required": false,
+      "Indexed": false,
+      "Type": "DateTime",
+      "DisplayFormat": "DateTime"
+    },
+    {
+      "InternalName": "Repair_Start",
+      "DisplayName": "Repair_Start",
+      "Required": false,
+      "Indexed": false,
+      "Type": "DateTime",
+      "DisplayFormat": "DateTime"
+    },
+    {
+      "InternalName": "Repair_End",
+      "DisplayName": "Repair_End",
+      "Required": false,
+      "Indexed": false,
+      "Type": "DateTime",
+      "DisplayFormat": "DateTime"
+    },
+    {
+      "InternalName": "Response_Time_Min",
+      "DisplayName": "Response_Time_Min",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 0
+    },
+    {
+      "InternalName": "MTTR_Min",
+      "DisplayName": "MTTR_Min",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 0
+    },
+    {
+      "InternalName": "Production_Loss_Min",
+      "DisplayName": "Production_Loss_Min",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 0
+    },
+    {
+      "InternalName": "Spare_Used",
+      "DisplayName": "Spare_Used",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Boolean",
+      "DefaultValue": "0"
+    },
+    {
+      "InternalName": "Status",
+      "DisplayName": "Status",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Choice",
+      "Choices": [
+        "Open",
+        "Closed"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Recurrence_Flag",
+      "DisplayName": "Recurrence_Flag",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Boolean",
+      "DefaultValue": "0"
+    },
+    {
+      "InternalName": "Linked_PM_WO",
+      "DisplayName": "Linked_PM_WO",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Remarks",
+      "DisplayName": "Remarks",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Note",
+      "NumberOfLines": 4,
+      "RichText": false,
+      "AppendOnly": false
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Power BI Desktop working files
+*.pbix
+.pbi/
+localSettings.json
+cache.abf
+
+# Generated label images are committed on purpose (they are a deliverable),
+# but the working folder Desktop creates next to a .pbip is not.

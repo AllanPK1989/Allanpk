@@ -1,0 +1,142 @@
+{
+  "ListTitle": "PM_Plan_Calendar",
+  "ListUrl": "Lists/PM_Plan_Calendar",
+  "Description": "The frozen monthly plan. Adherence is measured against this, not against the work order.",
+  "Template": "GenericList",
+  "EnableVersioning": true,
+  "MajorVersionLimit": 50,
+  "EnableAttachments": false,
+  "TitleColumn": {
+    "Required": false,
+    "Hidden": false,
+    "SetFrom": "Plan_ID",
+    "Note": "Title is populated from the primary key on load so the item has a readable display name and shows up in search. Matching is always done on the explicit key column, never on Title."
+  },
+  "PrimaryKey": "Plan_ID",
+  "IndexedColumns": [
+    "Plan_Month",
+    "Cell_ID",
+    "Adherence_Status",
+    "Planned_Date"
+  ],
+  "Fields": [
+    {
+      "InternalName": "Plan_ID",
+      "DisplayName": "Plan_ID",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Plan_Month",
+      "DisplayName": "Plan_Month",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Cell_ID",
+      "DisplayName": "Cell_ID",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Cell_Name",
+      "DisplayName": "Cell_Name",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Planned_Date",
+      "DisplayName": "Planned_Date",
+      "Required": true,
+      "Indexed": true,
+      "Type": "DateTime",
+      "DisplayFormat": "DateOnly"
+    },
+    {
+      "InternalName": "Planned_Shift",
+      "DisplayName": "Planned_Shift",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "A (06:00-14:00)",
+        "B (14:00-22:00)",
+        "C (22:00-06:00)"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Planned_Tech_ID",
+      "DisplayName": "Planned_Tech_ID",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Estimated_Duration_Hrs",
+      "DisplayName": "Estimated_Duration_Hrs",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 2
+    },
+    {
+      "InternalName": "Plan_Version",
+      "DisplayName": "Plan_Version",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "V1",
+        "V1 Forecast",
+        "V2"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Frozen_Date",
+      "DisplayName": "Frozen_Date",
+      "Required": false,
+      "Indexed": false,
+      "Type": "DateTime",
+      "DisplayFormat": "DateOnly"
+    },
+    {
+      "InternalName": "WO_No",
+      "DisplayName": "WO_No",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Adherence_Status",
+      "DisplayName": "Adherence_Status",
+      "Required": false,
+      "Indexed": true,
+      "Type": "Choice",
+      "Choices": [
+        "On Time",
+        "Delayed",
+        "Overdue",
+        "Cancelled",
+        "Forecast",
+        "Planned",
+        "In Progress"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    }
+  ]
+}

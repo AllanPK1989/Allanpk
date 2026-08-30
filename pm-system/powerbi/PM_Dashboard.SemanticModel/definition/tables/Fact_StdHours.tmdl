@@ -1,0 +1,193 @@
+table Fact_StdHours
+	lineageTag: 04d76ce7-0f20-557a-8efd-a3f190d02ac0
+
+	column Upload_Month
+		dataType: string
+		lineageTag: 7b906b33-f6dc-5939-937a-b7558067ffa1
+		summarizeBy: none
+		sourceColumn: Upload_Month
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cell_ID
+		dataType: string
+		lineageTag: 6a8690f3-8634-59f9-87b6-353119fcfb8a
+		summarizeBy: none
+		sourceColumn: Cell_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cell_Name
+		dataType: string
+		lineageTag: b4f0c8da-0da0-5b0b-9f27-7177033b8ad7
+		summarizeBy: none
+		sourceColumn: Cell_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Actual_Std_Hours
+		dataType: double
+		lineageTag: e57738d0-71e3-5414-b5b8-81d845cf6d98
+		summarizeBy: none
+		sourceColumn: Actual_Std_Hours
+		formatString: #,##0.00
+
+		annotation SummarizationSetBy = Automatic
+
+	column Production_Qty
+		dataType: int64
+		lineageTag: b1d09095-13dd-5d6a-bc31-ac4148dc6a28
+		summarizeBy: none
+		sourceColumn: Production_Qty
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column Uploaded_By
+		dataType: string
+		lineageTag: e1969c79-f9e0-5fea-8e3a-021524028a99
+		summarizeBy: none
+		sourceColumn: Uploaded_By
+
+		annotation SummarizationSetBy = Automatic
+
+	column Upload_Date
+		dataType: dateTime
+		lineageTag: 0f4865c6-12ea-5670-8ba1-53ec65338a78
+		summarizeBy: none
+		sourceColumn: Upload_Date
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Remarks
+		dataType: string
+		lineageTag: d417ca8f-7f83-54b3-948c-8aec08a6d383
+		summarizeBy: none
+		sourceColumn: Remarks
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month_Start_Date
+		dataType: dateTime
+		lineageTag: 44839948-1aa3-51c2-b12d-291555f8871a
+		summarizeBy: none
+		sourceColumn: Month_Start_Date
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_StdHours = m
+		mode: import
+		source = ```
+				// ===========================================================================
+				// Fact_StdHours  <- StdHours_Monthly  (or a folder of monthly workbooks)
+				// ---------------------------------------------------------------------------
+				// The number that drives everything. One row per cell per month, added to that
+				// cell's running counter by Flow 1.
+				//
+				// THIS QUERY APPENDS A FOLDER, IT DOES NOT READ ONE FILE. That is deliberate.
+				// The monthly process is "drop one workbook per month into a library". If the
+				// query read a single file, every month would need a query edit; as a folder
+				// query it just picks the new file up. Point pStdHoursArchiveFolder at the
+				// SharePoint StdHours_Archive library and the same code works unchanged.
+				//
+				// Three source shapes are supported, chosen in this order:
+				//   1. pSourceMode = "SharePoint"          -> the StdHours_Monthly list
+				//   2. pStdHoursArchiveFolder is set       -> append every workbook in it
+				//   3. otherwise                           -> the single template workbook
+				//
+				// The Instructions sheet is excluded by name in the transform function, so a
+				// monthly file that still carries it imports cleanly.
+				// ===========================================================================
+				let
+				    // --- shape 3: the single template workbook (dummy data) ----------------
+				    FromTemplate = fnGetTable("StdHours_Monthly",
+				                              "02_StdHours_Monthly_Upload_Template.xlsx",
+				                              "StdHours_Upload"),
+
+				    // --- shape 2: append every workbook in the archive folder ---------------
+				    // The sample-file transform function. Applied to each file's binary, it
+				    // returns that file's StdHours_Upload sheet with headers promoted. Anything
+				    // that is not a data sheet - Instructions, a stray pivot - is filtered out
+				    // rather than erroring, because one malformed file must not stop the year.
+				    TransformFile = (WorkbookContents as binary) as table =>
+				        let
+				            Book   = Excel.Workbook(WorkbookContents, null, true),
+				            Sheets = Table.SelectRows(Book, each [Kind] = "Sheet"
+				                                              and [Item] <> "Instructions"),
+				            Pick   = if Table.RowCount(Table.SelectRows(Sheets, each [Item] = "StdHours_Upload")) > 0
+				                     then Table.SelectRows(Sheets, each [Item] = "StdHours_Upload")
+				                     else Sheets,
+				            Data   = if Table.RowCount(Pick) = 0 then #table({}, {}) else Pick{0}[Data],
+				            Header = if Table.RowCount(Pick) = 0 then Data
+				                     else Table.PromoteHeaders(Data, [PromoteAllScalars = true])
+				        in
+				            Header,
+
+				    FromFolder =
+				        let
+				            Files    = Folder.Files(pStdHoursArchiveFolder),
+				            OnlyXlsx = Table.SelectRows(
+				                           Files,
+				                           each Text.Lower([Extension]) = ".xlsx"
+				                                // Skip Excel's lock files, which appear the moment
+				                                // someone opens a workbook in the library and would
+				                                // otherwise fail the whole refresh.
+				                                and not Text.StartsWith([Name], "~$")),
+				            Parsed   = Table.AddColumn(OnlyXlsx, "Data", each TransformFile([Content])),
+				            Kept     = Table.SelectRows(Parsed,
+				                           each Table.HasColumns([Data], {"Upload_Month", "Cell_ID", "Actual_Std_Hours"})),
+				            Expanded = Table.ExpandTableColumn(
+				                           Table.SelectColumns(Kept, {"Data"}), "Data",
+				                           {"Upload_Month", "Cell_ID", "Cell_Name", "Actual_Std_Hours",
+				                            "Production_Qty", "Uploaded_By", "Upload_Date", "Remarks"})
+				        in
+				            Expanded,
+
+				    Source =
+				        if pSourceMode = "SharePoint" then
+				            fnGetTable("StdHours_Monthly", "02_StdHours_Monthly_Upload_Template.xlsx", "StdHours_Upload")
+				        else if Text.Trim(pStdHoursArchiveFolder) <> "" then
+				            FromFolder
+				        else
+				            FromTemplate,
+
+				    Keys = fnCleanKeys(Source, {"Cell_ID"}),
+
+				    // Upload_Month is text YYYY-MM and must stay text. Let it become a date and
+				    // "2025-09" silently becomes 1 September, which then sorts correctly by
+				    // accident and breaks the moment a locale reads it day-first.
+				    Typed = Table.TransformColumnTypes(Keys, {
+				        {"Upload_Month",     type text},
+				        {"Cell_ID",          type text},
+				        {"Cell_Name",        type text},
+				        {"Actual_Std_Hours", type number},
+				        {"Production_Qty",   Int64.Type},
+				        {"Uploaded_By",      type text},
+				        {"Upload_Date",      type date},
+				        {"Remarks",          type text}
+				    }),
+
+				    // A real date for the month, so Dim_Date can join to it. Always the first of
+				    // the month: the hours belong to the month, not to a day within it.
+				    WithMonthDate = Table.AddColumn(
+				        Typed, "Month_Start_Date",
+				        each if [Upload_Month] = null or Text.Length([Upload_Month]) < 7 then null
+				             else #date(Number.FromText(Text.Start([Upload_Month], 4)),
+				                        Number.FromText(Text.Middle([Upload_Month], 5, 2)), 1),
+				        type nullable date),
+
+				    // Guard against the duplicate-upload case surviving into the model. Flow 1
+				    // rejects a month that already exists, but a hand-loaded file can bypass it,
+				    // and a double-counted month inflates the counter with no visible error.
+				    Deduped = Table.Distinct(WithMonthDate, {"Upload_Month", "Cell_ID"}),
+
+				    Final = Table.SelectRows(Deduped, each [Cell_ID] <> null and [Actual_Std_Hours] <> null)
+				in
+				    Final
+				```
+
+	annotation PBI_ResultType = Table

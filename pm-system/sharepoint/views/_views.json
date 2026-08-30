@@ -1,0 +1,149 @@
+{
+  "_comment": [
+    "View definitions applied by apply_views.ps1.",
+    "These views ARE the technician user interface. The single most important one is",
+    "'My Allotted PM List' on PM_Machine_Task: it filters to work that is not yet done,",
+    "so when a scan flips Task_Status to Completed the row leaves the list by itself.",
+    "That is the whole 'auto-updating list' behaviour - no code, no app, just a filter.",
+    "",
+    "CAML notes:",
+    "  * <Today/> is evaluated server side, so a date filter needs no flow to refresh.",
+    "  * Filtering on an indexed column keeps the view working past 5,000 items.",
+    "  * RowLimit Paged='TRUE' is what keeps a big list usable on a phone."
+  ],
+
+  "Views": [
+    {
+      "List": "PM_Machine_Task",
+      "Title": "My Allotted PM List",
+      "SetAsDefault": true,
+      "Personal": false,
+      "RowLimit": 30,
+      "Paged": true,
+      "Fields": ["Machine_ID", "Cell_ID", "WO_No", "Task_Status", "Assigned_Tech_ID", "Scan_Start_Time", "NOT_OK_Count"],
+      "Query": "<Where><Neq><FieldRef Name='Task_Status' /><Value Type='Text'>Completed</Value></Neq></Where><OrderBy><FieldRef Name='Cell_ID' Ascending='TRUE' /><FieldRef Name='WO_No' Ascending='TRUE' /><FieldRef Name='Machine_ID' Ascending='TRUE' /></OrderBy><GroupBy Collapse='FALSE'><FieldRef Name='Cell_ID' /></GroupBy>",
+      "FormatFile": "PM_Machine_Task.AllottedList.view.json",
+      "Purpose": "The technician's open work. A completed scan removes the row automatically."
+    },
+    {
+      "List": "PM_Machine_Task",
+      "Title": "Not Scanned Yet",
+      "SetAsDefault": false,
+      "RowLimit": 50,
+      "Paged": true,
+      "Fields": ["Machine_ID", "Cell_ID", "WO_No", "Task_Status", "Assigned_Tech_ID"],
+      "Query": "<Where><Eq><FieldRef Name='Task_Status' /><Value Type='Text'>Pending</Value></Eq></Where><OrderBy><FieldRef Name='WO_No' Ascending='TRUE' /></OrderBy>",
+      "Purpose": "Machines in an open work order that nobody has started. The supervisor's chase list."
+    },
+    {
+      "List": "Machine_Master",
+      "Title": "Machine Hub",
+      "SetAsDefault": false,
+      "RowLimit": 1,
+      "Paged": false,
+      "Fields": ["Machine_ID", "Machine_Name", "Cell_ID", "Cell_Name", "Location_Tag", "Checklist_ID", "Criticality", "Checklist_Form_URL", "Breakdown_Form_URL", "Spare_Request_Form_URL", "Abnormality_Form_URL", "QR_Payload_URL"],
+      "Query": "<Where><Eq><FieldRef Name='Active' /><Value Type='Boolean'>1</Value></Eq></Where>",
+      "FormatFile": "Machine_Master.MachineHub.view.json",
+      "Purpose": "The QR landing target. Reached with ?FilterField1=Machine_ID&FilterValue1=<id>&FilterType1=Text, which narrows it to the single scanned machine.",
+      "QrTargetPattern": "{SiteUrl}/Lists/Machine_Master/{ViewUrlName}?FilterField1=Machine_ID&FilterValue1={Machine_ID}&FilterType1=Text"
+    },
+    {
+      "List": "Cell_Master",
+      "Title": "Cells Due This Month",
+      "SetAsDefault": false,
+      "RowLimit": 30,
+      "Paged": true,
+      "Fields": ["Cell_ID", "Cell_Name", "Process_Area", "Cum_Std_Hours_Since_PM", "PM_Trigger_Hours", "Last_PM_Date", "Next_PM_Due_Date_Calendar", "Owner_Supervisor", "Criticality"],
+      "Query": "<Where><And><Eq><FieldRef Name='Active' /><Value Type='Boolean'>1</Value></Eq><Or><Geq><FieldRef Name='Cum_Std_Hours_Since_PM' /><Value Type='Number'>3600</Value></Geq><Leq><FieldRef Name='Next_PM_Due_Date_Calendar' /><Value Type='DateTime'><Today OffsetDays='30' /></Value></Leq></Or></And></Where><OrderBy><FieldRef Name='Cum_Std_Hours_Since_PM' Ascending='FALSE' /></OrderBy>",
+      "FormatFile": "Cell_Master.HoursBar.view.json",
+      "Purpose": "Cells at or past the 3,600-hour amber warning, or inside 30 days of their calendar backstop. This is the planning meeting's agenda.",
+      "Note": "3600 is the amber threshold for a 4,000-hour trigger. If you retune PM_Trigger_Hours on a cell, retune this view's literal to match - CAML cannot divide one column by another."
+    },
+    {
+      "List": "PM_WorkOrder",
+      "Title": "Overdue PM",
+      "SetAsDefault": false,
+      "RowLimit": 30,
+      "Paged": true,
+      "Fields": ["WO_No", "Cell_ID", "Cell_Name", "WO_Status", "Priority", "Planned_End_Date", "Machines_In_Scope", "Machines_Completed", "Lead_Tech_ID"],
+      "Query": "<Where><And><Neq><FieldRef Name='WO_Status' /><Value Type='Text'>Completed</Value></Neq><And><Neq><FieldRef Name='WO_Status' /><Value Type='Text'>Cancelled</Value></Neq><Lt><FieldRef Name='Planned_End_Date' /><Value Type='DateTime'><Today /></Value></Lt></And></And></Where><OrderBy><FieldRef Name='Planned_End_Date' Ascending='TRUE' /></OrderBy>",
+      "FormatFile": "PM_WorkOrder.Tracking.view.json",
+      "Purpose": "Work orders past their committed end date and still open. Oldest first, because the oldest one is the one production has stopped asking about."
+    },
+    {
+      "List": "PM_WorkOrder",
+      "Title": "Open Work Orders",
+      "SetAsDefault": true,
+      "RowLimit": 50,
+      "Paged": true,
+      "Fields": ["WO_No", "Cell_ID", "Cell_Name", "WO_Status", "Priority", "Planned_Start_Date", "Planned_End_Date", "Machines_In_Scope", "Machines_Completed", "Trigger_Type"],
+      "Query": "<Where><And><Neq><FieldRef Name='WO_Status' /><Value Type='Text'>Completed</Value></Neq><Neq><FieldRef Name='WO_Status' /><Value Type='Text'>Cancelled</Value></Neq></And></Where><OrderBy><FieldRef Name='Planned_End_Date' Ascending='TRUE' /></OrderBy>",
+      "FormatFile": "PM_WorkOrder.Tracking.view.json",
+      "Purpose": "Everything in flight, with a completion bar per cell."
+    },
+    {
+      "List": "Abnormality_Log",
+      "Title": "Open Abnormalities",
+      "SetAsDefault": true,
+      "RowLimit": 50,
+      "Paged": true,
+      "Fields": ["Abn_ID", "Machine_ID", "Cell_ID", "Category", "Severity", "Description", "Responsibility", "Target_Date", "Status", "Logged_DateTime"],
+      "Query": "<Where><Neq><FieldRef Name='Status' /><Value Type='Text'>Closed</Value></Neq></Where><OrderBy><FieldRef Name='Severity' Ascending='TRUE' /><FieldRef Name='Target_Date' Ascending='TRUE' /></OrderBy>",
+      "FormatFile": "Abnormality_Log.Severity.view.json",
+      "Purpose": "Everything found but not yet fixed. High severity sorts to the top because 'High' precedes 'Low' and 'Medium' alphabetically - a useful accident, but check it if you ever rename the choices."
+    },
+    {
+      "List": "Abnormality_Log",
+      "Title": "Overdue Abnormalities",
+      "SetAsDefault": false,
+      "RowLimit": 50,
+      "Paged": true,
+      "Fields": ["Abn_ID", "Machine_ID", "Category", "Severity", "Description", "Responsibility", "Target_Date", "Status"],
+      "Query": "<Where><And><Neq><FieldRef Name='Status' /><Value Type='Text'>Closed</Value></Neq><Lt><FieldRef Name='Target_Date' /><Value Type='DateTime'><Today /></Value></Lt></And></Where><OrderBy><FieldRef Name='Target_Date' Ascending='TRUE' /></OrderBy>",
+      "Purpose": "Past their committed date. Feeds the daily digest."
+    },
+    {
+      "List": "Spare_Request",
+      "Title": "Pending Spare Approvals",
+      "SetAsDefault": true,
+      "RowLimit": 50,
+      "Paged": true,
+      "Fields": ["Req_ID", "Request_DateTime", "Machine_ID", "Spare_Code", "Spare_Description", "Qty_Requested", "Urgency", "Reason", "Requested_By", "Approval_Status", "Stock_At_Request"],
+      "Query": "<Where><Eq><FieldRef Name='Approval_Status' /><Value Type='Text'>Pending</Value></Eq></Where><OrderBy><FieldRef Name='Request_DateTime' Ascending='TRUE' /></OrderBy>",
+      "FormatFile": "Spare_Request.Urgency.view.json",
+      "Purpose": "The approval queue, oldest first. The gap between approval and issue is where PMs actually stall, so watch the age of the top row."
+    },
+    {
+      "List": "Checklist_Response",
+      "Title": "NOT OK Findings",
+      "SetAsDefault": false,
+      "RowLimit": 50,
+      "Paged": true,
+      "Fields": ["Response_ID", "Submitted_DateTime", "Machine_ID", "Check_Point", "Result", "Measured_Value", "Observation", "Action_Taken", "Tech_ID", "Follow_Up_Required", "Follow_Up_WO"],
+      "Query": "<Where><Eq><FieldRef Name='Result' /><Value Type='Text'>NOT OK</Value></Eq></Where><OrderBy><FieldRef Name='Submitted_DateTime' Ascending='FALSE' /></OrderBy>",
+      "FormatFile": "Checklist_Response.Result.view.json",
+      "Purpose": "Every finding, newest first. The follow-up column tells you which ones became corrective work."
+    },
+    {
+      "List": "Spare_Master",
+      "Title": "Stock Below Minimum",
+      "SetAsDefault": false,
+      "RowLimit": 50,
+      "Paged": true,
+      "Fields": ["Spare_Code", "Spare_Description", "Category", "Current_Stock", "Min_Stock", "Lead_Time_Days", "Unit_Cost_INR", "Bin_Location", "Preferred_Vendor"],
+      "Query": "<Where><Eq><FieldRef Name='Active' /><Value Type='Boolean'>1</Value></Eq></Where><OrderBy><FieldRef Name='Current_Stock' Ascending='TRUE' /></OrderBy>",
+      "FormatFile": "Spare_Master.Stock.view.json",
+      "Purpose": "Sorted lowest stock first, with the below-minimum rows coloured by the view format. CAML cannot compare two columns, so the comparison is done in the formatting layer."
+    },
+    {
+      "List": "StdHours_Monthly",
+      "Title": "Latest Upload",
+      "SetAsDefault": true,
+      "RowLimit": 30,
+      "Paged": true,
+      "Fields": ["Upload_Month", "Cell_ID", "Cell_Name", "Actual_Std_Hours", "Production_Qty", "Uploaded_By", "Upload_Date", "Remarks"],
+      "Query": "<OrderBy><FieldRef Name='Upload_Month' Ascending='FALSE' /><FieldRef Name='Cell_ID' Ascending='TRUE' /></OrderBy>",
+      "Purpose": "Newest month at the top, so a missing or late upload is visible the moment you open the list."
+    }
+  ]
+}

@@ -1,0 +1,182 @@
+{
+  "ListTitle": "Abnormality_Log",
+  "ListUrl": "Lists/Abnormality_Log",
+  "Description": "Conditions found that are not yet failures.",
+  "Template": "GenericList",
+  "EnableVersioning": true,
+  "MajorVersionLimit": 50,
+  "EnableAttachments": true,
+  "TitleColumn": {
+    "Required": false,
+    "Hidden": false,
+    "SetFrom": "Abn_ID",
+    "Note": "Title is populated from the primary key on load so the item has a readable display name and shows up in search. Matching is always done on the explicit key column, never on Title."
+  },
+  "PrimaryKey": "Abn_ID",
+  "IndexedColumns": [
+    "Machine_ID",
+    "Cell_ID",
+    "Status",
+    "Severity",
+    "Target_Date"
+  ],
+  "Fields": [
+    {
+      "InternalName": "Abn_ID",
+      "DisplayName": "Abn_ID",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Logged_DateTime",
+      "DisplayName": "Logged_DateTime",
+      "Required": false,
+      "Indexed": false,
+      "Type": "DateTime",
+      "DisplayFormat": "DateTime"
+    },
+    {
+      "InternalName": "Machine_ID",
+      "DisplayName": "Machine_ID",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Cell_ID",
+      "DisplayName": "Cell_ID",
+      "Required": false,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Logged_By",
+      "DisplayName": "Logged_By",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Category",
+      "DisplayName": "Category",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "Safety",
+        "Quality",
+        "Air Leak",
+        "Oil Leak",
+        "Abnormal Noise",
+        "Vibration",
+        "Overheating",
+        "Contamination",
+        "5S / Housekeeping"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Description",
+      "DisplayName": "Description",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Note",
+      "NumberOfLines": 4,
+      "RichText": false,
+      "AppendOnly": false
+    },
+    {
+      "InternalName": "Severity",
+      "DisplayName": "Severity",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Choice",
+      "Choices": [
+        "High",
+        "Medium",
+        "Low"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Photo_Link",
+      "DisplayName": "Photo_Link",
+      "Required": false,
+      "Indexed": false,
+      "Type": "URL"
+    },
+    {
+      "InternalName": "Immediate_Action",
+      "DisplayName": "Immediate_Action",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Note",
+      "NumberOfLines": 4,
+      "RichText": false,
+      "AppendOnly": false
+    },
+    {
+      "InternalName": "Responsibility",
+      "DisplayName": "Responsibility",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Target_Date",
+      "DisplayName": "Target_Date",
+      "Required": false,
+      "Indexed": true,
+      "Type": "DateTime",
+      "DisplayFormat": "DateOnly"
+    },
+    {
+      "InternalName": "Status",
+      "DisplayName": "Status",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Choice",
+      "Choices": [
+        "Open",
+        "In Progress",
+        "Closed"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Closed_Date",
+      "DisplayName": "Closed_Date",
+      "Required": false,
+      "Indexed": false,
+      "Type": "DateTime",
+      "DisplayFormat": "DateOnly"
+    },
+    {
+      "InternalName": "Closure_Remarks",
+      "DisplayName": "Closure_Remarks",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Note",
+      "NumberOfLines": 4,
+      "RichText": false,
+      "AppendOnly": false
+    },
+    {
+      "InternalName": "Converted_To_WO",
+      "DisplayName": "Converted_To_WO",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Boolean",
+      "DefaultValue": "0"
+    }
+  ]
+}

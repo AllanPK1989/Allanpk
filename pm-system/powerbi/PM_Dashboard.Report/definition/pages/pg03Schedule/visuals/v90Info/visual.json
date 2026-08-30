@@ -1,0 +1,141 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.0.0/schema.json",
+  "name": "v90Info",
+  "position": {
+    "x": 24,
+    "y": 656,
+    "z": 90,
+    "width": 1232,
+    "height": 40,
+    "tabOrder": 90
+  },
+  "visual": {
+    "visualType": "textbox",
+    "drillFilterOtherVisuals": true,
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "How this is calculated   ",
+                    "textStyle": {
+                      "fontSize": "8pt",
+                      "color": "#0C3549",
+                      "fontWeight": "bold",
+                      "fontFamily": "Segoe UI"
+                    }
+                  },
+                  {
+                    "value": "Adherence is measured against PM_Plan_Calendar (frozen on the 25th), not against the work order's own planned date, which can be edited after the fact.   ",
+                    "textStyle": {
+                      "fontSize": "8pt",
+                      "color": "#7B8794",
+                      "fontWeight": "normal",
+                      "fontFamily": "Segoe UI"
+                    }
+                  },
+                  {
+                    "value": "Plan_Version 'V1 Forecast' rows are projections beyond the frozen month and never count in the denominator.   ",
+                    "textStyle": {
+                      "fontSize": "8pt",
+                      "color": "#7B8794",
+                      "fontWeight": "normal",
+                      "fontFamily": "Segoe UI"
+                    }
+                  },
+                  {
+                    "value": "The Gantt bars are a stacked bar: an invisible offset series then a visible duration series.   ",
+                    "textStyle": {
+                      "fontSize": "8pt",
+                      "color": "#7B8794",
+                      "fontWeight": "normal",
+                      "fontFamily": "Segoe UI"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#E1E8EB'"
+                    }
+                  }
+                }
+              }
+            },
+            "radius": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dropShadow": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

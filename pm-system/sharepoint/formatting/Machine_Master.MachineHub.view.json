@@ -1,0 +1,138 @@
+{
+  "_comment": [
+    "MACHINE HUB - this is what a technician sees after scanning the QR sticker.",
+    "",
+    "Applied as a row formatter on the 'Machine Hub' view of Machine_Master. The view",
+    "is reached with ?FilterField1=Machine_ID&FilterValue1=<id>&FilterType1=Text, so it",
+    "renders exactly one card: the machine that was just scanned.",
+    "",
+    "Design constraints that are not negotiable:",
+    "  * Every button is 48 px tall. These are pressed with gloved fingers, often with",
+    "    one hand, standing next to a running machine. 44 px is the accessibility floor;",
+    "    48 gives margin for a glove.",
+    "  * The machine name is shown large at the top so the technician can confirm he",
+    "    scanned the sticker he thinks he scanned. A wrong sticker discovered later is a",
+    "    field problem that takes a month to find.",
+    "  * Buttons are ordered by how often they are pressed, not by importance:",
+    "    Start PM and Checklist are the daily path and sit first.",
+    "  * The URLs come from the stored per-machine form links, so Machine_ID and Cell_ID",
+    "    arrive at the form pre-filled. The technician types nothing the system knows."
+  ],
+
+  "ViewFormat": {
+    "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/row-formatting.schema.json",
+    "hideSelection": true,
+    "hideColumnHeader": true,
+    "elmType": "div",
+    "style": {
+      "font-family": "'Segoe UI', system-ui, sans-serif",
+      "background-color": "#FFFFFF",
+      "border": "1px solid #D9E2E6",
+      "border-radius": "10px",
+      "padding": "20px",
+      "margin-bottom": "12px",
+      "box-shadow": "0 1px 3px rgba(12,53,73,0.10)"
+    },
+    "children": [
+      {
+        "elmType": "div",
+        "style": { "display": "flex", "flex-direction": "row", "align-items": "center", "margin-bottom": "4px" },
+        "children": [
+          {
+            "elmType": "div",
+            "txt": "=[$Machine_ID]",
+            "style": {
+              "font-size": "26px", "font-weight": "700", "color": "#0C3549", "letter-spacing": "0.5px"
+            }
+          },
+          {
+            "elmType": "div",
+            "txt": "='  ·  Criticality ' + [$Criticality]",
+            "style": {
+              "font-size": "13px", "font-weight": "600", "margin-left": "10px",
+              "padding": "3px 10px", "border-radius": "12px", "color": "#FFFFFF",
+              "background-color": "=if([$Criticality] == 'A', '#ED7373', if([$Criticality] == 'B', '#F0A202', '#7B8794'))"
+            }
+          }
+        ]
+      },
+      {
+        "elmType": "div",
+        "txt": "=[$Machine_Name]",
+        "style": { "font-size": "18px", "font-weight": "600", "color": "#1F2933", "margin-bottom": "2px" }
+      },
+      {
+        "elmType": "div",
+        "txt": "=[$Cell_ID] + ' · ' + [$Cell_Name] + '  |  ' + [$Location_Tag] + '  |  Checklist ' + [$Checklist_ID]",
+        "style": { "font-size": "13px", "color": "#7B8794", "margin-bottom": "16px" }
+      },
+
+      {
+        "elmType": "div",
+        "style": { "display": "flex", "flex-direction": "column" },
+        "children": [
+          {
+            "elmType": "a",
+            "txt": "▶   START PM  (scan in)",
+            "attributes": { "href": "=[$Checklist_Form_URL]", "target": "_blank", "role": "button" },
+            "style": {
+              "display": "flex", "align-items": "center", "justify-content": "center",
+              "height": "48px", "min-height": "48px", "margin-bottom": "10px",
+              "border-radius": "8px", "text-decoration": "none",
+              "font-size": "16px", "font-weight": "700", "letter-spacing": "0.3px",
+              "background-color": "#0C3549", "color": "#FFFFFF", "border": "none"
+            }
+          },
+          {
+            "elmType": "a",
+            "txt": "☑   COMPLETE CHECKLIST",
+            "attributes": { "href": "=[$Checklist_Form_URL]", "target": "_blank", "role": "button" },
+            "style": {
+              "display": "flex", "align-items": "center", "justify-content": "center",
+              "height": "48px", "min-height": "48px", "margin-bottom": "10px",
+              "border-radius": "8px", "text-decoration": "none",
+              "font-size": "16px", "font-weight": "700",
+              "background-color": "#2E86AB", "color": "#FFFFFF", "border": "none"
+            }
+          },
+          {
+            "elmType": "a",
+            "txt": "⚠   REPORT BREAKDOWN",
+            "attributes": { "href": "=[$Breakdown_Form_URL]", "target": "_blank", "role": "button" },
+            "style": {
+              "display": "flex", "align-items": "center", "justify-content": "center",
+              "height": "48px", "min-height": "48px", "margin-bottom": "10px",
+              "border-radius": "8px", "text-decoration": "none",
+              "font-size": "16px", "font-weight": "700",
+              "background-color": "#ED7373", "color": "#FFFFFF", "border": "none"
+            }
+          },
+          {
+            "elmType": "a",
+            "txt": "🔧   REQUEST SPARE",
+            "attributes": { "href": "=[$Spare_Request_Form_URL]", "target": "_blank", "role": "button" },
+            "style": {
+              "display": "flex", "align-items": "center", "justify-content": "center",
+              "height": "48px", "min-height": "48px", "margin-bottom": "10px",
+              "border-radius": "8px", "text-decoration": "none",
+              "font-size": "16px", "font-weight": "700",
+              "background-color": "#FFFFFF", "color": "#0C3549", "border": "2px solid #0C3549"
+            }
+          },
+          {
+            "elmType": "a",
+            "txt": "👁   LOG ABNORMALITY",
+            "attributes": { "href": "=[$Abnormality_Form_URL]", "target": "_blank", "role": "button" },
+            "style": {
+              "display": "flex", "align-items": "center", "justify-content": "center",
+              "height": "48px", "min-height": "48px",
+              "border-radius": "8px", "text-decoration": "none",
+              "font-size": "16px", "font-weight": "700",
+              "background-color": "#FFFFFF", "color": "#0C3549", "border": "2px solid #0C3549"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

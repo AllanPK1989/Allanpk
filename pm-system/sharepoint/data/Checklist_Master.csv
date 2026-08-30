@@ -1,0 +1,52 @@
+﻿Checklist_ID,Checklist_Name,Item_No,Check_Point,Check_Type,Acceptance_Standard,Tool_Required,Frequency,Safety_Critical,Expected_Time_Min,Active
+CL-PRESS,CL-PRESS Standard PM Checklist,1,Slide / ram guideway lubrication,Visual,"Grease film present, no dry patch",Grease gun,Monthly (per PM cycle),No,10,Yes
+CL-PRESS,CL-PRESS Standard PM Checklist,2,Clutch & brake air pressure,Measurement,5.0 - 6.0 bar,Pressure gauge,Monthly (per PM cycle),No,10,Yes
+CL-PRESS,CL-PRESS Standard PM Checklist,3,Die clamping bolt torque,Measurement,As per torque chart,Torque wrench,Monthly (per PM cycle),No,8,Yes
+CL-PRESS,CL-PRESS Standard PM Checklist,4,Safety light curtain function,Functional,Stops ram within 200 ms,Test rod,Monthly (per PM cycle),Yes,5,Yes
+CL-PRESS,CL-PRESS Standard PM Checklist,5,Flywheel bearing temperature,Measurement,< 60 deg C,IR thermometer,Monthly (per PM cycle),No,8,Yes
+CL-PRESS,CL-PRESS Standard PM Checklist,6,Oil level in gearbox,Visual,Between min and max mark,-,Monthly (per PM cycle),No,8,Yes
+CL-PRESS,CL-PRESS Standard PM Checklist,7,Air line FRL water drain,Visual,"Bowl empty, drain free",-,Monthly (per PM cycle),No,5,Yes
+CL-PRESS,CL-PRESS Standard PM Checklist,8,Emergency stop function,Functional,Machine stops in all modes,-,Monthly (per PM cycle),Yes,3,Yes
+CL-WELD,CL-WELD Standard PM Checklist,1,Electrode tip dressing condition,Visual,"Flat, no mushrooming",Tip dresser,Monthly (per PM cycle),No,3,Yes
+CL-WELD,CL-WELD Standard PM Checklist,2,Weld current calibration,Measurement,Within +/- 3% of set value,Weld checker,Monthly (per PM cycle),No,8,Yes
+CL-WELD,CL-WELD Standard PM Checklist,3,Cooling water flow rate,Measurement,> 4 LPM,Flow meter,Monthly (per PM cycle),No,5,Yes
+CL-WELD,CL-WELD Standard PM Checklist,4,Transformer terminal tightness,Functional,"No discoloration, torque OK",Spanner,Monthly (per PM cycle),No,8,Yes
+CL-WELD,CL-WELD Standard PM Checklist,5,Pneumatic cylinder leak check,Visual,No audible leak,-,Monthly (per PM cycle),No,8,Yes
+CL-WELD,CL-WELD Standard PM Checklist,6,Earth continuity,Measurement,< 1 ohm,Multimeter,Monthly (per PM cycle),No,8,Yes
+CL-FILL,CL-FILL Standard PM Checklist,1,Vibrator motor mounting bolts,Visual,"All bolts tight, no crack",Spanner,Monthly (per PM cycle),No,3,Yes
+CL-FILL,CL-FILL Standard PM Checklist,2,Sand hopper level sensor,Functional,Triggers at set level,-,Monthly (per PM cycle),No,3,Yes
+CL-FILL,CL-FILL Standard PM Checklist,3,Filling nozzle wear,Measurement,Bore within 0.2 mm of nominal,Vernier,Monthly (per PM cycle),No,3,Yes
+CL-FILL,CL-FILL Standard PM Checklist,4,Compaction cycle time,Measurement,Within +/- 5% of standard,Stopwatch,Monthly (per PM cycle),No,8,Yes
+CL-FILL,CL-FILL Standard PM Checklist,5,Dust extraction suction,Measurement,> 15 m/s at hood,Anemometer,Monthly (per PM cycle),No,5,Yes
+CL-FILL,CL-FILL Standard PM Checklist,6,Conveyor belt tracking,Visual,"Centered, no edge rub",-,Monthly (per PM cycle),No,3,Yes
+CL-FILL,CL-FILL Standard PM Checklist,7,PLC battery status,Functional,No low-battery alarm,GX Works3,Monthly (per PM cycle),No,5,Yes
+CL-OVEN,CL-OVEN Standard PM Checklist,1,Door gasket condition,Visual,"No cut, seals fully",-,Monthly (per PM cycle),No,5,Yes
+CL-OVEN,CL-OVEN Standard PM Checklist,2,Steam trap operation,Functional,"Discharging, no live steam",-,Monthly (per PM cycle),No,5,Yes
+CL-OVEN,CL-OVEN Standard PM Checklist,3,Temperature sensor calibration,Measurement,Within +/- 2 deg C of master,Master probe,Monthly (per PM cycle),No,10,Yes
+CL-OVEN,CL-OVEN Standard PM Checklist,4,Safety relief valve test,Functional,Lifts at set pressure,-,Monthly (per PM cycle),Yes,8,Yes
+CL-OVEN,CL-OVEN Standard PM Checklist,5,Insulation surface temperature,Measurement,< 55 deg C,IR thermometer,Monthly (per PM cycle),No,5,Yes
+CL-OVEN,CL-OVEN Standard PM Checklist,6,Condensate drain line,Visual,"Free flow, no blockage",-,Monthly (per PM cycle),No,8,Yes
+CL-TEST,CL-TEST Standard PM Checklist,1,Calibration validity,Visual,Within due date,Cal sticker,Monthly (per PM cycle),No,5,Yes
+CL-TEST,CL-TEST Standard PM Checklist,2,Test lead / probe condition,Visual,"No fray, firm contact",-,Monthly (per PM cycle),No,5,Yes
+CL-TEST,CL-TEST Standard PM Checklist,3,Reference standard verification,Measurement,Within stated accuracy,Ref resistor,Monthly (per PM cycle),No,8,Yes
+CL-TEST,CL-TEST Standard PM Checklist,4,Earthing of test bench,Measurement,< 1 ohm,Multimeter,Monthly (per PM cycle),No,5,Yes
+CL-TEST,CL-TEST Standard PM Checklist,5,Interlock and guard function,Functional,Test inhibited when open,-,Monthly (per PM cycle),Yes,3,Yes
+CL-VISION,CL-VISION Standard PM Checklist,1,Camera lens cleanliness,Visual,No smear or dust,Lens cloth,Monthly (per PM cycle),No,8,Yes
+CL-VISION,CL-VISION Standard PM Checklist,2,Lighting intensity,Measurement,Within recipe tolerance,Lux meter,Monthly (per PM cycle),No,10,Yes
+CL-VISION,CL-VISION Standard PM Checklist,3,Reject gate actuation,Functional,Rejects within 2 stations,Master sample,Monthly (per PM cycle),No,3,Yes
+CL-VISION,CL-VISION Standard PM Checklist,4,Master sample pass/fail check,Functional,100% correct classification,Master sample,Monthly (per PM cycle),No,3,Yes
+CL-FEED,CL-FEED Standard PM Checklist,1,Feed roller wear,Visual,"No slip, no groove",-,Monthly (per PM cycle),No,10,Yes
+CL-FEED,CL-FEED Standard PM Checklist,2,Servo backlash check,Measurement,< 0.05 mm,Dial gauge,Monthly (per PM cycle),No,3,Yes
+CL-FEED,CL-FEED Standard PM Checklist,3,Strip guide alignment,Measurement,Strip centered within 0.5 mm,Scale,Monthly (per PM cycle),No,3,Yes
+CL-FEED,CL-FEED Standard PM Checklist,4,Lubrication unit level,Visual,Above min mark,-,Monthly (per PM cycle),No,5,Yes
+CL-UTIL,CL-UTIL Standard PM Checklist,1,Motor current draw,Measurement,Within nameplate FLC,Clamp meter,Monthly (per PM cycle),No,5,Yes
+CL-UTIL,CL-UTIL Standard PM Checklist,2,Vibration level at bearing,Measurement,< 4.5 mm/s RMS,Vib pen,Monthly (per PM cycle),No,8,Yes
+CL-UTIL,CL-UTIL Standard PM Checklist,3,Coupling / belt condition,Visual,"No crack, correct tension",-,Monthly (per PM cycle),No,8,Yes
+CL-UTIL,CL-UTIL Standard PM Checklist,4,Panel cleanliness and glands,Visual,"No dust ingress, glands sealed",-,Monthly (per PM cycle),No,8,Yes
+CL-UTIL,CL-UTIL Standard PM Checklist,5,Leak check on all joints,Visual,No leak,Soap solution,Monthly (per PM cycle),No,5,Yes
+CL-GEN,CL-GEN Standard PM Checklist,1,General cleanliness and 5S,Visual,"No dust, tools in place",-,Monthly (per PM cycle),No,8,Yes
+CL-GEN,CL-GEN Standard PM Checklist,2,Fastener tightness check,Functional,All fasteners tight,Spanner,Monthly (per PM cycle),No,3,Yes
+CL-GEN,CL-GEN Standard PM Checklist,3,Guard and interlock function,Functional,Machine stops on guard open,-,Monthly (per PM cycle),Yes,5,Yes
+CL-GEN,CL-GEN Standard PM Checklist,4,Lubrication as per chart,Visual,All points greased,Grease gun,Monthly (per PM cycle),No,8,Yes
+CL-GEN,CL-GEN Standard PM Checklist,5,Electrical panel inspection,Visual,No loose wire or heating,-,Monthly (per PM cycle),No,3,Yes
+CL-GEN,CL-GEN Standard PM Checklist,6,Abnormal noise / vibration,Visual,No abnormal sound,-,Monthly (per PM cycle),No,8,Yes

@@ -1,0 +1,6 @@
+# QR label generator
+qrcode[pil]>=7.4      # QR encoding, error-correction level H
+Pillow>=10.0          # label rendering
+reportlab>=4.0        # A4 sheet layout for pre-cut sticker paper
+openpyxl>=3.1         # reads Machine_Master from the source workbook
+pyzbar>=0.1.9         # OPTIONAL: real optical decode for --test (needs libzbar0)

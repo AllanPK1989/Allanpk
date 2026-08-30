@@ -1,0 +1,259 @@
+table Fact_ChecklistResponse
+	lineageTag: 60af5ec4-2fa4-5cd9-b7c9-936de58511ed
+
+	column Response_ID
+		dataType: string
+		lineageTag: 4640d5b3-bf92-5ae6-b92e-805b9a05d983
+		summarizeBy: none
+		sourceColumn: Response_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Submitted_DateTime
+		dataType: dateTime
+		lineageTag: e332d66d-4eef-577b-a03a-f3a5b81b9963
+		summarizeBy: none
+		sourceColumn: Submitted_DateTime
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column WO_No
+		dataType: string
+		lineageTag: 6d628f12-61d1-5961-8a3a-44f02dcba07f
+		summarizeBy: none
+		sourceColumn: WO_No
+
+		annotation SummarizationSetBy = Automatic
+
+	column Machine_ID
+		dataType: string
+		lineageTag: f11fb03f-f85f-5a47-a652-cc699308373f
+		summarizeBy: none
+		sourceColumn: Machine_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cell_ID
+		dataType: string
+		lineageTag: 50aae37b-ce44-5ac2-b70f-654d8147f8d6
+		summarizeBy: none
+		sourceColumn: Cell_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Checklist_ID
+		dataType: string
+		lineageTag: 8e687272-e40d-5c85-978f-4f5919059ac5
+		summarizeBy: none
+		sourceColumn: Checklist_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Item_No
+		dataType: int64
+		lineageTag: 0fb1a4f3-63ce-59e0-aeb6-aebae743aec5
+		summarizeBy: none
+		sourceColumn: Item_No
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column Check_Point
+		dataType: string
+		lineageTag: 89ddaf9e-1c6d-579a-8ab9-a7a0c1a00269
+		summarizeBy: none
+		sourceColumn: Check_Point
+
+		annotation SummarizationSetBy = Automatic
+
+	column Result
+		dataType: string
+		lineageTag: 7f140dcd-4218-598b-8b7a-f287172d0b2d
+		summarizeBy: none
+		sourceColumn: Result
+
+		annotation SummarizationSetBy = Automatic
+
+	column Measured_Value
+		dataType: double
+		lineageTag: bc200bc2-612b-54cd-83dd-03d3a9d4720b
+		summarizeBy: none
+		sourceColumn: Measured_Value
+		formatString: #,##0.00
+
+		annotation SummarizationSetBy = Automatic
+
+	column Observation
+		dataType: string
+		lineageTag: b2b6ee02-fdc0-564b-93fc-a0a77416ee09
+		summarizeBy: none
+		sourceColumn: Observation
+
+		annotation SummarizationSetBy = Automatic
+
+	column Photo_Link
+		dataType: string
+		lineageTag: a16836fb-23dc-567a-9b9b-328e25d66428
+		summarizeBy: none
+		sourceColumn: Photo_Link
+
+		annotation SummarizationSetBy = Automatic
+
+	column Action_Taken
+		dataType: string
+		lineageTag: cdde88e1-ca6d-59e4-af58-fc0fa6d68b64
+		summarizeBy: none
+		sourceColumn: Action_Taken
+
+		annotation SummarizationSetBy = Automatic
+
+	column Tech_ID
+		dataType: string
+		lineageTag: ec95c7a2-e2f2-5ba3-aea4-98ef6f4e46d3
+		summarizeBy: none
+		sourceColumn: Tech_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Follow_Up_Required
+		dataType: boolean
+		lineageTag: 8a2843e4-24e8-542f-a32e-9a1bb1838b8d
+		summarizeBy: none
+		sourceColumn: Follow_Up_Required
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	column Follow_Up_WO
+		dataType: string
+		lineageTag: e69e9d76-5905-5a82-b74b-09b7634b8e84
+		summarizeBy: none
+		sourceColumn: Follow_Up_WO
+
+		annotation SummarizationSetBy = Automatic
+
+	column Checklist_Item_Key
+		dataType: string
+		isHidden: true
+		lineageTag: fedd1e23-8354-5812-8a2d-c071823c01ed
+		summarizeBy: none
+		sourceColumn: Checklist_Item_Key
+
+		annotation SummarizationSetBy = Automatic
+
+	column Submitted_Date
+		dataType: dateTime
+		lineageTag: 91ad4ae6-39a6-55fd-ba40-027397100904
+		summarizeBy: none
+		sourceColumn: Submitted_Date
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Is_Not_OK
+		dataType: boolean
+		lineageTag: 4f843e0e-8e15-51f6-a4e1-51afb23b2f58
+		summarizeBy: none
+		sourceColumn: Is_Not_OK
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	column Is_Checked
+		dataType: boolean
+		lineageTag: 36928576-d7b1-59fb-aed1-20bcf90f24aa
+		summarizeBy: none
+		sourceColumn: Is_Checked
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_ChecklistResponse = m
+		mode: import
+		source = ```
+				// ===========================================================================
+				// Fact_ChecklistResponse  <- Checklist_Response
+				// ---------------------------------------------------------------------------
+				// One row per check point per machine per PM. The largest table in the model
+				// (about 1,000 rows on dummy data, roughly 25,000 a year in production) and the
+				// one that turns a checklist into condition monitoring.
+				//
+				// Measured_Value is the reason this table matters. A bearing running 48, 52,
+				// 57 degrees across three PMs is a failure you can see coming - but only if the
+				// reading is stored as a number, per check point, per machine, over time. That
+				// is exactly this grain.
+				// ===========================================================================
+				let
+				    Source = fnGetTable("Checklist_Response", "03_PM_Transactions_Dummy.xlsx", "Checklist_Response"),
+
+				    Keys = fnCleanKeys(Source, {"Response_ID", "WO_No", "Machine_ID", "Cell_ID",
+				                                "Checklist_ID", "Tech_ID", "Follow_Up_WO"}),
+				    Bools = fnYesNo(Keys, {"Follow_Up_Required"}),
+
+				    // Photo_Link is a hyperlink in SharePoint and text in Excel - flatten both.
+				    Flattened = Table.TransformColumns(
+				        Bools,
+				        List.Transform(
+				            List.Intersect({Table.ColumnNames(Bools), {"Photo_Link"}}),
+				            each {_, (v) => if v = null then null
+				                            else if v is record then Record.FieldOrDefault(v, "Url", null)
+				                            else Text.From(v),
+				                  type nullable text})),
+
+				    Typed = Table.TransformColumnTypes(Flattened, {
+				        {"Response_ID",        type text},
+				        {"Submitted_DateTime", type datetime},
+				        {"WO_No",              type text},
+				        {"Machine_ID",         type text},
+				        {"Cell_ID",            type text},
+				        {"Checklist_ID",       type text},
+				        {"Item_No",            Int64.Type},
+				        {"Check_Point",        type text},
+				        {"Result",             type text},
+				        {"Measured_Value",     type number},
+				        {"Observation",        type text},
+				        {"Photo_Link",         type text},
+				        {"Action_Taken",       type text},
+				        {"Tech_ID",            type text},
+				        {"Follow_Up_Required", type logical},
+				        {"Follow_Up_WO",       type text}
+				    }),
+
+				    Trimmed = Table.TransformColumns(Typed, {
+				        {"Result", each if _ = null then null else Text.Upper(Text.Trim(_)), type nullable text}
+				    }),
+
+				    // Matches Dim_ChecklistItem[Checklist_Item_Key]. Built the same way in both
+				    // queries; if you change one, change the other.
+				    WithKey = Table.AddColumn(
+				        Trimmed, "Checklist_Item_Key",
+				        each Text.From([Checklist_ID]) & "|" & Text.From([Item_No]),
+				        type text),
+
+				    // A date column for the Dim_Date join. The relationship has to be on a date,
+				    // not a datetime: joining a datetime to a date table matches only the rows
+				    // that happen to fall exactly at midnight, which is almost none of them.
+				    WithDate = Table.AddColumn(
+				        WithKey, "Submitted_Date",
+				        each if [Submitted_DateTime] = null then null else DateTime.Date([Submitted_DateTime]),
+				        type nullable date),
+
+				    WithNotOk = Table.AddColumn(
+				        WithDate, "Is_Not_OK",
+				        each [Result] = "NOT OK",
+				        type logical),
+
+				    WithChecked = Table.AddColumn(
+				        WithNotOk, "Is_Checked",
+				        each [Result] = "OK" or [Result] = "NOT OK",
+				        type logical),
+
+				    Final = Table.SelectRows(WithChecked, each [Response_ID] <> null)
+				in
+				    Final
+				```
+
+	annotation PBI_ResultType = Table

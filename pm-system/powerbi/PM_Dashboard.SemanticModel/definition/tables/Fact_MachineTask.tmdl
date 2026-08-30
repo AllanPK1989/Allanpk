@@ -1,0 +1,253 @@
+table Fact_MachineTask
+	lineageTag: 3c3bc161-e7d3-5547-81ac-76b2e6899a67
+
+	column Task_ID
+		dataType: string
+		lineageTag: be46decc-1a15-5a80-990d-31b811d098e9
+		summarizeBy: none
+		sourceColumn: Task_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column WO_No
+		dataType: string
+		lineageTag: 724b6614-8c86-5bda-880b-f09fe0e74c61
+		summarizeBy: none
+		sourceColumn: WO_No
+
+		annotation SummarizationSetBy = Automatic
+
+	column Machine_ID
+		dataType: string
+		lineageTag: b11e661f-11ee-56f2-822e-1e904eb868c7
+		summarizeBy: none
+		sourceColumn: Machine_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cell_ID
+		dataType: string
+		lineageTag: 91b339b6-cfef-5231-937c-66c326374769
+		summarizeBy: none
+		sourceColumn: Cell_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Assigned_Tech_ID
+		dataType: string
+		lineageTag: 3965f2dd-20a7-5227-974d-03f9cde65bd8
+		summarizeBy: none
+		sourceColumn: Assigned_Tech_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Task_Status
+		dataType: string
+		lineageTag: 84f2221d-e03c-5cd3-85cb-452545a781f4
+		summarizeBy: none
+		sourceColumn: Task_Status
+		sortByColumn: Status_Sort
+
+		annotation SummarizationSetBy = Automatic
+
+	column Scan_Start_Time
+		dataType: dateTime
+		lineageTag: 7bea24f1-a0e4-58b4-8466-ef7768be246a
+		summarizeBy: none
+		sourceColumn: Scan_Start_Time
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Scan_End_Time
+		dataType: dateTime
+		lineageTag: 641fb37c-f226-5aee-824a-aee81c487ee2
+		summarizeBy: none
+		sourceColumn: Scan_End_Time
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Duration_Min
+		dataType: int64
+		lineageTag: 1aaddab6-eaa3-577b-a5bf-1a03e132f0a9
+		summarizeBy: none
+		sourceColumn: Duration_Min
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column Checklist_Response_ID
+		dataType: string
+		lineageTag: b08d5f87-275b-5305-b2c3-ab0a93b2a409
+		summarizeBy: none
+		sourceColumn: Checklist_Response_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column NOT_OK_Count
+		dataType: int64
+		lineageTag: 76cd1923-9254-5be3-ba6f-26e27deb6773
+		summarizeBy: none
+		sourceColumn: NOT_OK_Count
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column Abnormality_Raised
+		dataType: boolean
+		lineageTag: 1fc2aba8-64bb-5d07-932f-5b4a87fa708a
+		summarizeBy: none
+		sourceColumn: Abnormality_Raised
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	column Spare_Used_Flag
+		dataType: boolean
+		lineageTag: 6de3c1b2-f828-5b8b-b288-3e881bdccb8d
+		summarizeBy: none
+		sourceColumn: Spare_Used_Flag
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	column Completed_By
+		dataType: string
+		lineageTag: b9aa9155-b2bf-59b6-8453-41effd7bc7cd
+		summarizeBy: none
+		sourceColumn: Completed_By
+
+		annotation SummarizationSetBy = Automatic
+
+	column Completion_Date
+		dataType: dateTime
+		lineageTag: 39b64b97-dd0f-5a19-a621-60d49e8f242b
+		summarizeBy: none
+		sourceColumn: Completion_Date
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Skip_Reason
+		dataType: string
+		lineageTag: 0e2e9a64-2cb3-5ee4-9093-265f1220e928
+		summarizeBy: none
+		sourceColumn: Skip_Reason
+
+		annotation SummarizationSetBy = Automatic
+
+	column Is_Completed
+		dataType: boolean
+		lineageTag: 23ac0e7b-6199-5067-bd41-0d5f08224aa0
+		summarizeBy: none
+		sourceColumn: Is_Completed
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	column Is_Open
+		dataType: boolean
+		lineageTag: d63efa57-6645-55a1-9f05-d32d64c28e3f
+		summarizeBy: none
+		sourceColumn: Is_Open
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	column Is_Clean_Pass
+		dataType: boolean
+		lineageTag: 2219ff4c-87f2-5ffd-9a2f-c6b0f5af3d51
+		summarizeBy: none
+		sourceColumn: Is_Clean_Pass
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status_Sort
+		dataType: int64
+		isHidden: true
+		lineageTag: c8ba70e7-592d-52df-898c-d339a9acb187
+		summarizeBy: none
+		sourceColumn: Status_Sort
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_MachineTask = m
+		mode: import
+		source = ```
+				// ===========================================================================
+				// Fact_MachineTask  <- PM_Machine_Task
+				// ---------------------------------------------------------------------------
+				// One row per machine per work order. The grain the whole execution story is
+				// told at, and the table the technician's allotted list is a view over.
+				//
+				// Duration_Min is the pencil-whipping detector. Compared against the summed
+				// Expected_Time_Min for that machine's checklist, a 45-minute checklist closed
+				// in 4 minutes is visible immediately. That comparison is the reason this table
+				// carries an expected-duration column at all.
+				// ===========================================================================
+				let
+				    Source = fnGetTable("PM_Machine_Task", "03_PM_Transactions_Dummy.xlsx", "PM_Machine_Task"),
+
+				    Keys = fnCleanKeys(Source, {"Task_ID", "WO_No", "Machine_ID", "Cell_ID",
+				                                "Assigned_Tech_ID", "Completed_By", "Checklist_Response_ID"}),
+				    Bools = fnYesNo(Keys, {"Abnormality_Raised", "Spare_Used_Flag"}),
+
+				    Typed = Table.TransformColumnTypes(Bools, {
+				        {"Task_ID",               type text},
+				        {"WO_No",                 type text},
+				        {"Machine_ID",            type text},
+				        {"Cell_ID",               type text},
+				        {"Assigned_Tech_ID",      type text},
+				        {"Task_Status",           type text},
+				        {"Scan_Start_Time",       type datetime},
+				        {"Scan_End_Time",         type datetime},
+				        {"Duration_Min",          Int64.Type},
+				        {"Checklist_Response_ID", type text},
+				        {"NOT_OK_Count",          Int64.Type},
+				        {"Abnormality_Raised",    type logical},
+				        {"Spare_Used_Flag",       type logical},
+				        {"Completed_By",          type text},
+				        {"Completion_Date",       type date},
+				        {"Skip_Reason",           type text}
+				    }),
+
+				    WithComplete = Table.AddColumn(
+				        Typed, "Is_Completed",
+				        each [Task_Status] = "Completed",
+				        type logical),
+
+				    WithOpen = Table.AddColumn(
+				        WithComplete, "Is_Open",
+				        each [Task_Status] = "Pending" or [Task_Status] = "In Progress",
+				        type logical),
+
+				    // A completed task with no findings at all. Rolled up to the work order this
+				    // becomes First-Pass PM %.
+				    WithClean = Table.AddColumn(
+				        WithOpen, "Is_Clean_Pass",
+				        each [Task_Status] = "Completed"
+				             and ([NOT_OK_Count] = null or [NOT_OK_Count] = 0),
+				        type logical),
+
+				    // Sort key so a status axis reads in workflow order rather than alphabetically
+				    // (which would put Completed before In Progress before Pending - backwards).
+				    WithSort = Table.AddColumn(
+				        WithClean, "Status_Sort",
+				        each if [Task_Status] = "Pending" then 1
+				             else if [Task_Status] = "In Progress" then 2
+				             else if [Task_Status] = "Completed" then 3
+				             else 4,
+				        Int64.Type),
+
+				    Final = Table.SelectRows(WithSort, each [Task_ID] <> null)
+				in
+				    Final
+				```
+
+	annotation PBI_ResultType = Table

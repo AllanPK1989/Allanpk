@@ -1,0 +1,16 @@
+﻿Spare_Code,Spare_Description,Category,UOM,ABC_Class,FMR_Class,Unit_Cost_INR,Min_Stock,Current_Stock,Lead_Time_Days,Bin_Location,Preferred_Vendor,Active
+SP-1001,Proximity Sensor M12 PNP NO,Sensor,Nos,A,F,1250,6,14,21,R1-B03,Omron India,Yes
+SP-1002,Pneumatic Cylinder 32x100 DA,Pneumatic,Nos,A,M,3400,3,5,30,R2-B01,Festo India,Yes
+SP-1003,Solenoid Valve 5/2 24VDC,Pneumatic,Nos,A,F,2150,4,9,21,R2-B04,SMC India,Yes
+SP-1004,Deep Groove Ball Bearing 6205,Mechanical,Nos,B,F,380,10,26,10,R3-A02,SKF Dist,Yes
+SP-1005,V-Belt A-42,Mechanical,Nos,C,M,290,8,18,7,R3-A05,Fenner,Yes
+SP-1006,Contactor 25A 3P 240V Coil,Electrical,Nos,A,M,1850,4,7,15,R1-C01,Schneider,Yes
+SP-1007,PLC Battery CR2032 FX Series,Electrical,Nos,B,R,240,5,12,20,R1-C04,Mitsubishi,Yes
+SP-1008,FRL Unit 1/2 inch,Pneumatic,Nos,B,R,4200,2,3,25,R2-B07,Festo India,Yes
+SP-1009,Thermocouple Type K 3mm,Instrument,Nos,A,M,950,5,11,18,R4-A01,Tempsens,Yes
+SP-1010,Steam Trap 1/2 inch Thermodynamic,Utility,Nos,A,R,6800,2,2,35,R4-B02,Spirax,Yes
+SP-1011,Door Gasket Silicone 10m Roll,Consumable,Mtr,B,F,520,20,45,12,R5-A03,Local,Yes
+SP-1012,Vibration Motor 0.25 kW,Mechanical,Nos,A,R,12500,1,2,40,R3-B01,Local Fab,Yes
+SP-1013,Welding Electrode Tip Cu-Cr,Consumable,Nos,A,F,680,15,38,14,R5-B01,Local,Yes
+SP-1014,SMPS 24VDC 5A,Electrical,Nos,B,M,3100,3,6,20,R1-C08,Omron India,Yes
+SP-1015,Servo Drive Cooling Fan 24V,Electrical,Nos,C,R,890,4,8,22,R1-D02,Mitsubishi,Yes

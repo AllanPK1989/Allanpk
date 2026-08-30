@@ -1,0 +1,286 @@
+table Fact_SpareRequest
+	lineageTag: c18e6594-7078-5ec2-89cd-be204981c52c
+
+	column Req_ID
+		dataType: string
+		lineageTag: ee4439f8-6645-579a-90d9-e678ee184291
+		summarizeBy: none
+		sourceColumn: Req_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Request_DateTime
+		dataType: dateTime
+		lineageTag: 53504ee1-86f5-543a-88ed-48c512d8088b
+		summarizeBy: none
+		sourceColumn: Request_DateTime
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column WO_No
+		dataType: string
+		lineageTag: 1265d653-87ec-50d5-a2ae-469742672210
+		summarizeBy: none
+		sourceColumn: WO_No
+
+		annotation SummarizationSetBy = Automatic
+
+	column Machine_ID
+		dataType: string
+		lineageTag: 9a7191a3-76bc-5b16-8330-c98322a803e0
+		summarizeBy: none
+		sourceColumn: Machine_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cell_ID
+		dataType: string
+		lineageTag: ca16ecf9-fc9c-5144-8d77-399417870d9d
+		summarizeBy: none
+		sourceColumn: Cell_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Spare_Code
+		dataType: string
+		lineageTag: 4ec4c376-fbe4-5352-ae50-1a3ef661fcc0
+		summarizeBy: none
+		sourceColumn: Spare_Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column Spare_Description
+		dataType: string
+		lineageTag: 1b7e2715-1cbf-50cb-bcc6-816f658e734b
+		summarizeBy: none
+		sourceColumn: Spare_Description
+
+		annotation SummarizationSetBy = Automatic
+
+	column Qty_Requested
+		dataType: int64
+		lineageTag: 338f9652-12b0-53fc-9831-c35c577f2369
+		summarizeBy: none
+		sourceColumn: Qty_Requested
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column Requested_By
+		dataType: string
+		lineageTag: 7e607205-cebf-5d32-b3fa-9b05392370e2
+		summarizeBy: none
+		sourceColumn: Requested_By
+
+		annotation SummarizationSetBy = Automatic
+
+	column Urgency
+		dataType: string
+		lineageTag: 5c19cd5e-7f85-5acd-b879-a1bd6d3edab2
+		summarizeBy: none
+		sourceColumn: Urgency
+
+		annotation SummarizationSetBy = Automatic
+
+	column Reason
+		dataType: string
+		lineageTag: 404e4d2f-b51c-56ee-9160-0679a0895a5b
+		summarizeBy: none
+		sourceColumn: Reason
+
+		annotation SummarizationSetBy = Automatic
+
+	column Approval_Status
+		dataType: string
+		lineageTag: bbb7db97-a544-59a4-a073-9ddfd5bcb125
+		summarizeBy: none
+		sourceColumn: Approval_Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column Approved_By
+		dataType: string
+		lineageTag: 22ff59c9-6a2f-5954-88c6-6c31da3bcb9b
+		summarizeBy: none
+		sourceColumn: Approved_By
+
+		annotation SummarizationSetBy = Automatic
+
+	column Approved_Date
+		dataType: dateTime
+		lineageTag: e2d06225-65a0-508e-9941-ec6a3c1265d5
+		summarizeBy: none
+		sourceColumn: Approved_Date
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Issue_Status
+		dataType: string
+		lineageTag: 9639794a-3326-5da2-8743-54dca7e705de
+		summarizeBy: none
+		sourceColumn: Issue_Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column Issued_Qty
+		dataType: int64
+		lineageTag: 47950ecc-1435-52f4-87d9-927e6f746356
+		summarizeBy: none
+		sourceColumn: Issued_Qty
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column Issue_Date
+		dataType: dateTime
+		lineageTag: c546caa2-174b-58e4-a2c0-8d1fc37ac1a7
+		summarizeBy: none
+		sourceColumn: Issue_Date
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Stock_At_Request
+		dataType: int64
+		lineageTag: 37c24859-21f0-567e-8a45-6490e74b1cfe
+		summarizeBy: none
+		sourceColumn: Stock_At_Request
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column Remarks
+		dataType: string
+		lineageTag: 5f5c73f3-9d97-5ddd-8faf-b3b726aa612e
+		summarizeBy: none
+		sourceColumn: Remarks
+
+		annotation SummarizationSetBy = Automatic
+
+	column Request_Date
+		dataType: dateTime
+		lineageTag: 0a6619f1-41bd-5df5-a20f-482800e8520f
+		summarizeBy: none
+		sourceColumn: Request_Date
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Approval_Lead_Days
+		dataType: int64
+		lineageTag: 56d330ac-fdf6-5724-8757-458f26e149a8
+		summarizeBy: none
+		sourceColumn: Approval_Lead_Days
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column Issue_Lead_Days
+		dataType: int64
+		lineageTag: 5c10303f-fc2f-59d0-af96-9147444c2e8f
+		summarizeBy: none
+		sourceColumn: Issue_Lead_Days
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column Is_Pending_Approval
+		dataType: boolean
+		lineageTag: b8cda491-95e4-558c-8876-d81afc24735e
+		summarizeBy: none
+		sourceColumn: Is_Pending_Approval
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	column Is_Approved_Not_Issued
+		dataType: boolean
+		lineageTag: 4a143adc-0b77-5580-a3ac-91f50ec07b6d
+		summarizeBy: none
+		sourceColumn: Is_Approved_Not_Issued
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_SpareRequest = m
+		mode: import
+		source = ```
+				// ===========================================================================
+				// Fact_SpareRequest  <- Spare_Request
+				// ---------------------------------------------------------------------------
+				// Requests and their approval trail.
+				//
+				// The interesting number here is not how many were approved. It is the gap
+				// between Approved_Date and Issue_Date. Approval is fast because it is one
+				// click; issue needs someone to walk to the store. That gap is where PMs
+				// actually stall, and Issue_Lead_Days below is what makes it visible.
+				// ===========================================================================
+				let
+				    Source = fnGetTable("Spare_Request", "03_PM_Transactions_Dummy.xlsx", "Spare_Request"),
+
+				    Keys = fnCleanKeys(Source, {"Req_ID", "WO_No", "Machine_ID", "Cell_ID",
+				                                "Spare_Code", "Requested_By"}),
+
+				    Typed = Table.TransformColumnTypes(Keys, {
+				        {"Req_ID",            type text},
+				        {"Request_DateTime",  type datetime},
+				        {"WO_No",             type text},
+				        {"Machine_ID",        type text},
+				        {"Cell_ID",           type text},
+				        {"Spare_Code",        type text},
+				        {"Spare_Description", type text},
+				        {"Qty_Requested",     Int64.Type},
+				        {"Requested_By",      type text},
+				        {"Urgency",           type text},
+				        {"Reason",            type text},
+				        {"Approval_Status",   type text},
+				        {"Approved_By",       type text},
+				        {"Approved_Date",     type date},
+				        {"Issue_Status",      type text},
+				        {"Issued_Qty",        Int64.Type},
+				        {"Issue_Date",        type date},
+				        {"Stock_At_Request",  Int64.Type},
+				        {"Remarks",           type text}
+				    }),
+
+				    WithDate = Table.AddColumn(
+				        Typed, "Request_Date",
+				        each if [Request_DateTime] = null then null else DateTime.Date([Request_DateTime]),
+				        type nullable date),
+
+				    WithApprovalLead = Table.AddColumn(
+				        WithDate, "Approval_Lead_Days",
+				        each if [Approved_Date] = null or [Request_Date] = null then null
+				             else Duration.Days([Approved_Date] - [Request_Date]),
+				        Int64.Type),
+
+				    WithIssueLead = Table.AddColumn(
+				        WithApprovalLead, "Issue_Lead_Days",
+				        each if [Issue_Date] = null or [Approved_Date] = null then null
+				             else Duration.Days([Issue_Date] - [Approved_Date]),
+				        Int64.Type),
+
+				    WithPending = Table.AddColumn(
+				        WithIssueLead, "Is_Pending_Approval",
+				        each [Approval_Status] = "Pending",
+				        type logical),
+
+				    // A request that was approved but never issued. This is the silent one:
+				    // nothing is flagged red, the approver's job is done, and the PM waits.
+				    WithStuck = Table.AddColumn(
+				        WithPending, "Is_Approved_Not_Issued",
+				        each [Approval_Status] = "Approved" and [Issue_Status] <> "Issued",
+				        type logical),
+
+				    Final = Table.SelectRows(WithStuck, each [Req_ID] <> null)
+				in
+				    Final
+				```
+
+	annotation PBI_ResultType = Table

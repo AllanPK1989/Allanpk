@@ -1,0 +1,204 @@
+table Dim_Spare
+	lineageTag: 944382e4-ae3f-551e-b124-633a9a51b9b9
+
+	column Spare_Code
+		dataType: string
+		lineageTag: db129cb8-81ec-5e6f-91b8-64f13ce51155
+		summarizeBy: none
+		sourceColumn: Spare_Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column Spare_Description
+		dataType: string
+		lineageTag: a987178e-d202-53c4-9a09-06ceedf5fe08
+		summarizeBy: none
+		sourceColumn: Spare_Description
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category
+		dataType: string
+		lineageTag: 482b25b5-2093-51e9-82d5-be0d80430cfc
+		summarizeBy: none
+		sourceColumn: Category
+
+		annotation SummarizationSetBy = Automatic
+
+	column UOM
+		dataType: string
+		lineageTag: 67deb38d-5202-549c-970c-0738b1cf5240
+		summarizeBy: none
+		sourceColumn: UOM
+
+		annotation SummarizationSetBy = Automatic
+
+	column ABC_Class
+		dataType: string
+		lineageTag: 320267a7-ae64-57c5-8c6c-248e077a6165
+		summarizeBy: none
+		sourceColumn: ABC_Class
+
+		annotation SummarizationSetBy = Automatic
+
+	column FMR_Class
+		dataType: string
+		lineageTag: 51427dd1-3576-5b13-a049-9e6bb816ed35
+		summarizeBy: none
+		sourceColumn: FMR_Class
+
+		annotation SummarizationSetBy = Automatic
+
+	column Unit_Cost_INR
+		dataType: double
+		lineageTag: ed68383f-5dc2-5f94-9f4d-968fab87b990
+		summarizeBy: none
+		sourceColumn: Unit_Cost_INR
+		formatString: #,##0.00
+
+		annotation SummarizationSetBy = Automatic
+
+	column Min_Stock
+		dataType: int64
+		lineageTag: a2ce223c-afe0-5936-9a2f-bb9f9ac4e96e
+		summarizeBy: none
+		sourceColumn: Min_Stock
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column Current_Stock
+		dataType: int64
+		lineageTag: 4822bae4-ac1b-5f27-bd21-90ac11fde86d
+		summarizeBy: none
+		sourceColumn: Current_Stock
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column Lead_Time_Days
+		dataType: int64
+		lineageTag: ccf96c94-cd42-5a41-8c36-1848a454cc57
+		summarizeBy: none
+		sourceColumn: Lead_Time_Days
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column Bin_Location
+		dataType: string
+		lineageTag: 3c708124-8973-5fc8-bace-fbd4716bf79a
+		summarizeBy: none
+		sourceColumn: Bin_Location
+
+		annotation SummarizationSetBy = Automatic
+
+	column Preferred_Vendor
+		dataType: string
+		lineageTag: 90a0bcd1-50c5-5c78-8a67-b7d95ad40c00
+		summarizeBy: none
+		sourceColumn: Preferred_Vendor
+
+		annotation SummarizationSetBy = Automatic
+
+	column Active
+		dataType: boolean
+		lineageTag: 0ffc1b07-b5c9-5dc5-a433-9f39511d00ca
+		summarizeBy: none
+		sourceColumn: Active
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	column ABC_FMR_Class
+		dataType: string
+		lineageTag: 27425746-4b79-5e8b-a206-95a4b631c293
+		summarizeBy: none
+		sourceColumn: ABC_FMR_Class
+
+		annotation SummarizationSetBy = Automatic
+
+	column Below_Min_Stock
+		dataType: boolean
+		lineageTag: 2115d152-00e5-53e9-a7e3-49790e983f6e
+		summarizeBy: none
+		sourceColumn: Below_Min_Stock
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	column Stockout_Risk_Score
+		dataType: double
+		lineageTag: 5731c185-5828-5fb9-8cbe-2b86c64c14a0
+		summarizeBy: none
+		sourceColumn: Stockout_Risk_Score
+		formatString: #,##0.00
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Spare = m
+		mode: import
+		source = ```
+				// ===========================================================================
+				// Dim_Spare  <- Spare_Master
+				// ---------------------------------------------------------------------------
+				// Current_Stock is a snapshot maintained by Flow 8, not a history, so it is
+				// only meaningful at the row level. The ABC/FMR pair combine into the nine-box
+				// class used on the spares page: AR (high value, rarely moves) is the one to
+				// review, CF (low value, moves constantly) is the one to bulk order.
+				// ===========================================================================
+				let
+				    Source = fnGetTable("Spare_Master", "01_PM_Master_Data.xlsx", "Spare_Master"),
+
+				    Keys = fnCleanKeys(Source, {"Spare_Code"}),
+				    Bools = fnYesNo(Keys, {"Active"}),
+
+				    Typed = Table.TransformColumnTypes(Bools, {
+				        {"Spare_Code",        type text},
+				        {"Spare_Description", type text},
+				        {"Category",          type text},
+				        {"UOM",               type text},
+				        {"ABC_Class",         type text},
+				        {"FMR_Class",         type text},
+				        {"Unit_Cost_INR",     type number},
+				        {"Min_Stock",         Int64.Type},
+				        {"Current_Stock",     Int64.Type},
+				        {"Lead_Time_Days",    Int64.Type},
+				        {"Bin_Location",      type text},
+				        {"Preferred_Vendor",  type text},
+				        {"Active",            type logical}
+				    }),
+
+				    Trimmed = Table.TransformColumns(Typed, {
+				        {"Spare_Description", each if _ = null then null else Text.Trim(_), type nullable text},
+				        {"Category",          each if _ = null then null else Text.Trim(_), type nullable text},
+				        {"ABC_Class",         each if _ = null then null else Text.Upper(Text.Trim(_)), type nullable text},
+				        {"FMR_Class",         each if _ = null then null else Text.Upper(Text.Trim(_)), type nullable text}
+				    }),
+
+				    WithMatrix = Table.AddColumn(
+				        Trimmed, "ABC_FMR_Class",
+				        each Text.From([ABC_Class]) & Text.From([FMR_Class]),
+				        type text),
+
+				    WithBelowMin = Table.AddColumn(
+				        WithMatrix, "Below_Min_Stock",
+				        each [Current_Stock] <> null and [Min_Stock] <> null and [Current_Stock] <= [Min_Stock],
+				        type logical),
+
+				    // A part one unit below minimum with a 30-day lead time is a different
+				    // problem from one with a 3-day lead time. This is the column that separates
+				    // them, and it is what the stock-out risk table sorts on.
+				    WithRisk = Table.AddColumn(
+				        WithBelowMin, "Stockout_Risk_Score",
+				        each if [Current_Stock] = null or [Min_Stock] = null or [Lead_Time_Days] = null then null
+				             else (if [Min_Stock] = 0 then 0 else (1 - Number.Min([Current_Stock] / [Min_Stock], 1)))
+				                  * [Lead_Time_Days],
+				        type nullable number),
+
+				    Final = Table.SelectRows(WithRisk, each [Spare_Code] <> null)
+				in
+				    Final
+				```
+
+	annotation PBI_ResultType = Table

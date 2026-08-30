@@ -1,0 +1,105 @@
+{
+  "ListTitle": "Technician_Master",
+  "ListUrl": "Lists/Technician_Master",
+  "Description": "The values behind the mandatory Technician Name dropdown on every form.",
+  "Template": "GenericList",
+  "EnableVersioning": true,
+  "MajorVersionLimit": 50,
+  "EnableAttachments": false,
+  "TitleColumn": {
+    "Required": false,
+    "Hidden": false,
+    "SetFrom": "Tech_ID",
+    "Note": "Title is populated from the primary key on load so the item has a readable display name and shows up in search. Matching is always done on the explicit key column, never on Title."
+  },
+  "PrimaryKey": "Tech_ID",
+  "IndexedColumns": [
+    "Tech_ID",
+    "Active"
+  ],
+  "Fields": [
+    {
+      "InternalName": "Tech_ID",
+      "DisplayName": "Tech_ID",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Tech_Name",
+      "DisplayName": "Tech_Name",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Skill_Level",
+      "DisplayName": "Skill_Level",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "Senior",
+        "Junior",
+        "Trainee"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Trade",
+      "DisplayName": "Trade",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "Mechanical",
+        "Electrical"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Default_Shift",
+      "DisplayName": "Default_Shift",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "A (06:00-14:00)",
+        "B (14:00-22:00)",
+        "C (22:00-06:00)"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Contact_No",
+      "DisplayName": "Contact_No",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Role_Scope",
+      "DisplayName": "Role_Scope",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Note",
+      "NumberOfLines": 4,
+      "RichText": false,
+      "AppendOnly": false
+    },
+    {
+      "InternalName": "Active",
+      "DisplayName": "Active",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Boolean",
+      "DefaultValue": "0"
+    }
+  ]
+}

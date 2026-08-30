@@ -1,0 +1,295 @@
+table Fact_WorkOrder
+	lineageTag: 48104589-2d45-5d7c-b863-87f53882c949
+
+	column WO_No
+		dataType: string
+		lineageTag: 1ef92e2f-7d02-539c-bc51-ad3ee55ca19e
+		summarizeBy: none
+		sourceColumn: WO_No
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cell_ID
+		dataType: string
+		lineageTag: 3e0855da-80cd-5cc9-b954-ce4e6b1ebc9a
+		summarizeBy: none
+		sourceColumn: Cell_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cell_Name
+		dataType: string
+		lineageTag: 586cde83-4c02-51ff-94fa-4f307a91b467
+		summarizeBy: none
+		sourceColumn: Cell_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Trigger_Type
+		dataType: string
+		lineageTag: 5ef8369f-4539-5560-8b4a-9b091302eb0d
+		summarizeBy: none
+		sourceColumn: Trigger_Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column Trigger_Hours_At_Creation
+		dataType: double
+		lineageTag: edb2b94b-b029-5a8f-a8f8-f6b9c23d6740
+		summarizeBy: none
+		sourceColumn: Trigger_Hours_At_Creation
+		formatString: #,##0.00
+
+		annotation SummarizationSetBy = Automatic
+
+	column WO_Created_Date
+		dataType: dateTime
+		lineageTag: 12cb828d-dd19-5050-a588-1c12a28d03b3
+		summarizeBy: none
+		sourceColumn: WO_Created_Date
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Planned_Month
+		dataType: string
+		lineageTag: 46b27f1d-8ea4-56cf-8d9d-0e7515031eaa
+		summarizeBy: none
+		sourceColumn: Planned_Month
+
+		annotation SummarizationSetBy = Automatic
+
+	column Planned_Start_Date
+		dataType: dateTime
+		lineageTag: efd95162-ad87-5dfd-9818-e5c6ae3f48e3
+		summarizeBy: none
+		sourceColumn: Planned_Start_Date
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Planned_End_Date
+		dataType: dateTime
+		lineageTag: 4a73425b-8740-5c80-b294-e11ca3593dfe
+		summarizeBy: none
+		sourceColumn: Planned_End_Date
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Lead_Tech_ID
+		dataType: string
+		lineageTag: fc8a1f07-d59b-5109-a7a2-d13d7e05b7ab
+		summarizeBy: none
+		sourceColumn: Lead_Tech_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Priority
+		dataType: string
+		lineageTag: 5e654f1e-b705-552f-b96a-10de88fc48f3
+		summarizeBy: none
+		sourceColumn: Priority
+
+		annotation SummarizationSetBy = Automatic
+
+	column Machines_In_Scope
+		dataType: int64
+		lineageTag: 4883c193-e298-5322-915a-dc3895ab59f6
+		summarizeBy: none
+		sourceColumn: Machines_In_Scope
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column Machines_Completed
+		dataType: int64
+		lineageTag: 8be6f2af-a483-5702-acab-430b00973ca6
+		summarizeBy: none
+		sourceColumn: Machines_Completed
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column WO_Status
+		dataType: string
+		lineageTag: e2215349-2e7c-59f9-898c-993a2b03b9c7
+		summarizeBy: none
+		sourceColumn: WO_Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column Actual_Start_Date
+		dataType: dateTime
+		lineageTag: 04c0d4bd-196e-5191-a50b-69ebcb0c3929
+		summarizeBy: none
+		sourceColumn: Actual_Start_Date
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Actual_End_Date
+		dataType: dateTime
+		lineageTag: 1138d54b-8e82-5dea-a55d-1188b69af4ba
+		summarizeBy: none
+		sourceColumn: Actual_End_Date
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column PM_Duration_Min
+		dataType: int64
+		lineageTag: 1680fc0a-9348-5c74-92af-055cd518fcd5
+		summarizeBy: none
+		sourceColumn: PM_Duration_Min
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column Reset_Applied
+		dataType: boolean
+		lineageTag: 6f519c45-4482-50ad-999d-d81044a25047
+		summarizeBy: none
+		sourceColumn: Reset_Applied
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	column Reset_Date
+		dataType: dateTime
+		lineageTag: 4fb4c50a-550f-5b40-bb47-7341cf194ee7
+		summarizeBy: none
+		sourceColumn: Reset_Date
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Remarks
+		dataType: string
+		lineageTag: 92b3c15b-5b67-5a7c-b497-ed5814afc7a4
+		summarizeBy: none
+		sourceColumn: Remarks
+
+		annotation SummarizationSetBy = Automatic
+
+	column Delay_Days
+		dataType: int64
+		lineageTag: 15dacf95-004e-5da3-abde-c48d6dbe4df5
+		summarizeBy: none
+		sourceColumn: Delay_Days
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column Is_On_Time
+		dataType: boolean
+		lineageTag: 0d7f00b4-2cf3-5bdd-8dbc-407bf4f5017b
+		summarizeBy: none
+		sourceColumn: Is_On_Time
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	column Trigger_Overshoot_Hours
+		dataType: double
+		lineageTag: 3f57cea7-122b-5aee-b881-0890ac06c832
+		summarizeBy: none
+		sourceColumn: Trigger_Overshoot_Hours
+		formatString: #,##0.00
+
+		annotation SummarizationSetBy = Automatic
+
+	column Completion_Ratio
+		dataType: double
+		lineageTag: bec4d98d-8b12-58f7-a87c-1605d419da89
+		summarizeBy: none
+		sourceColumn: Completion_Ratio
+		formatString: #,##0.00
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_WorkOrder = m
+		mode: import
+		source = ```
+				// ===========================================================================
+				// Fact_WorkOrder  <- PM_WorkOrder
+				// ---------------------------------------------------------------------------
+				// One row per cell PM.
+				//
+				// Date relationships: WO_Created_Date is the ACTIVE join to Dim_Date, because
+				// it is the one date every work order has. Planned_End_Date and Actual_End_Date
+				// get INACTIVE relationships, exposed through USERELATIONSHIP measures. That is
+				// what lets a single month slicer answer both "what did we plan for March" and
+				// "what did we finish in March" without two copies of the fact table.
+				// ===========================================================================
+				let
+				    Source = fnGetTable("PM_WorkOrder", "03_PM_Transactions_Dummy.xlsx", "PM_WorkOrder"),
+
+				    Keys = fnCleanKeys(Source, {"WO_No", "Cell_ID", "Lead_Tech_ID"}),
+				    Bools = fnYesNo(Keys, {"Reset_Applied"}),
+
+				    Typed = Table.TransformColumnTypes(Bools, {
+				        {"WO_No",                     type text},
+				        {"Cell_ID",                   type text},
+				        {"Cell_Name",                 type text},
+				        {"Trigger_Type",              type text},
+				        {"Trigger_Hours_At_Creation", type number},
+				        {"WO_Created_Date",           type date},
+				        {"Planned_Month",             type text},
+				        {"Planned_Start_Date",        type date},
+				        {"Planned_End_Date",          type date},
+				        {"Lead_Tech_ID",              type text},
+				        {"Priority",                  type text},
+				        {"Machines_In_Scope",         Int64.Type},
+				        {"Machines_Completed",        Int64.Type},
+				        {"WO_Status",                 type text},
+				        {"Actual_Start_Date",         type date},
+				        {"Actual_End_Date",           type date},
+				        {"PM_Duration_Min",           Int64.Type},
+				        {"Reset_Applied",             type logical},
+				        {"Reset_Date",                type date},
+				        {"Remarks",                   type text}
+				    }),
+
+				    // Delay in days against the commitment. Negative means early. Computed here
+				    // rather than in DAX because it is a property of the row: a work order that
+				    // finished four days late finished four days late regardless of filter.
+				    WithDelay = Table.AddColumn(
+				        Typed, "Delay_Days",
+				        each if [Actual_End_Date] = null or [Planned_End_Date] = null then null
+				             else Duration.Days([Actual_End_Date] - [Planned_End_Date]),
+				        Int64.Type),
+
+				    WithOnTime = Table.AddColumn(
+				        WithDelay, "Is_On_Time",
+				        each if [Actual_End_Date] = null or [Planned_End_Date] = null then null
+				             else [Actual_End_Date] <= [Planned_End_Date],
+				        type nullable logical),
+
+				    // Overshoot past the trigger. Consistently seeing +300 hours means the
+				    // monthly upload granularity is too coarse for a 4,000-hour interval - the
+				    // cell crosses the line mid-month and nothing notices until month end.
+				    WithOvershoot = Table.AddColumn(
+				        WithOnTime, "Trigger_Overshoot_Hours",
+				        each if [Trigger_Hours_At_Creation] = null then null
+				             else [Trigger_Hours_At_Creation] - 4000,
+				        type nullable number),
+
+				    WithCompletion = Table.AddColumn(
+				        WithOvershoot, "Completion_Ratio",
+				        each if [Machines_In_Scope] = null or [Machines_In_Scope] = 0 then null
+				             else [Machines_Completed] / [Machines_In_Scope],
+				        type nullable number),
+
+				    Final = Table.SelectRows(WithCompletion, each [WO_No] <> null)
+				in
+				    Final
+				```
+
+	annotation PBI_ResultType = Table

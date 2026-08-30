@@ -1,0 +1,195 @@
+table Fact_PlanCalendar
+	lineageTag: 65bee6db-99c5-5b3c-b617-c2a1b1b89df3
+
+	column Plan_ID
+		dataType: string
+		lineageTag: 5d7828bb-fb5c-51cf-bf23-20290b8d496b
+		summarizeBy: none
+		sourceColumn: Plan_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Plan_Month
+		dataType: string
+		lineageTag: 583efdab-79da-5d67-85be-55c1807aa912
+		summarizeBy: none
+		sourceColumn: Plan_Month
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cell_ID
+		dataType: string
+		lineageTag: d6c0c2c2-d28e-51d2-80f6-db6c273695e9
+		summarizeBy: none
+		sourceColumn: Cell_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cell_Name
+		dataType: string
+		lineageTag: 1f3c6a73-63ae-5e88-b7a0-013c75d1ddfd
+		summarizeBy: none
+		sourceColumn: Cell_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Planned_Date
+		dataType: dateTime
+		lineageTag: 067b180a-bb69-51fa-a9ca-1c6592db68d1
+		summarizeBy: none
+		sourceColumn: Planned_Date
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Planned_Shift
+		dataType: string
+		lineageTag: eb60e1b3-95a9-5379-a4a2-c04c56c76441
+		summarizeBy: none
+		sourceColumn: Planned_Shift
+
+		annotation SummarizationSetBy = Automatic
+
+	column Planned_Tech_ID
+		dataType: string
+		lineageTag: 746b36f1-b2f1-5154-8ddd-78b3ff85b35a
+		summarizeBy: none
+		sourceColumn: Planned_Tech_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Estimated_Duration_Hrs
+		dataType: double
+		lineageTag: ca4acab0-384b-50b4-9512-d1d33d5b546c
+		summarizeBy: none
+		sourceColumn: Estimated_Duration_Hrs
+		formatString: #,##0.00
+
+		annotation SummarizationSetBy = Automatic
+
+	column Plan_Version
+		dataType: string
+		lineageTag: 154731f5-3dd9-58cd-8d10-cd9870d7f055
+		summarizeBy: none
+		sourceColumn: Plan_Version
+
+		annotation SummarizationSetBy = Automatic
+
+	column Frozen_Date
+		dataType: dateTime
+		lineageTag: 5e8df8f1-3c7d-577c-b2e6-d11aa72cd173
+		summarizeBy: none
+		sourceColumn: Frozen_Date
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column WO_No
+		dataType: string
+		lineageTag: 918a7d94-8ca0-506f-b134-7cd1b364fb6a
+		summarizeBy: none
+		sourceColumn: WO_No
+
+		annotation SummarizationSetBy = Automatic
+
+	column Adherence_Status
+		dataType: string
+		lineageTag: edf82129-4e72-576e-958d-7e9943526ce2
+		summarizeBy: none
+		sourceColumn: Adherence_Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column Plan_Month_Date
+		dataType: dateTime
+		lineageTag: 2a3f9ca8-b8c6-5b2d-bd7e-5e7b1f3f9bb5
+		summarizeBy: none
+		sourceColumn: Plan_Month_Date
+		formatString: yyyy-mm-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Is_Committed_Plan
+		dataType: boolean
+		lineageTag: 487b6c09-a4bf-5130-8406-4f1c82d9c385
+		summarizeBy: none
+		sourceColumn: Is_Committed_Plan
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	column Is_On_Time
+		dataType: boolean
+		lineageTag: 11d1feaf-bbc5-5632-abc7-4386b1fe7ecc
+		summarizeBy: none
+		sourceColumn: Is_On_Time
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_PlanCalendar = m
+		mode: import
+		source = ```
+				// ===========================================================================
+				// Fact_PlanCalendar  <- PM_Plan_Calendar
+				// ---------------------------------------------------------------------------
+				// The frozen monthly plan.
+				//
+				// Without this table you can measure "did we do it" but never "did we do it
+				// when we said we would". Adherence is measured against Planned_Date here, not
+				// against PM_WorkOrder.Planned_End_Date, because a work order's planned date can
+				// be edited after the fact and a frozen plan row cannot.
+				//
+				// Plan_Version "V1 Forecast" rows are projections beyond the frozen month. They
+				// are excluded from adherence - scoring yourself against a forecast you have not
+				// committed to is how adherence percentages become fiction.
+				// ===========================================================================
+				let
+				    Source = fnGetTable("PM_Plan_Calendar", "03_PM_Transactions_Dummy.xlsx", "PM_Plan_Calendar"),
+
+				    Keys = fnCleanKeys(Source, {"Plan_ID", "Cell_ID", "Planned_Tech_ID", "WO_No"}),
+
+				    Typed = Table.TransformColumnTypes(Keys, {
+				        {"Plan_ID",                type text},
+				        {"Plan_Month",             type text},
+				        {"Cell_ID",                type text},
+				        {"Cell_Name",              type text},
+				        {"Planned_Date",           type date},
+				        {"Planned_Shift",          type text},
+				        {"Planned_Tech_ID",        type text},
+				        {"Estimated_Duration_Hrs", type number},
+				        {"Plan_Version",           type text},
+				        {"Frozen_Date",            type date},
+				        {"WO_No",                  type text},
+				        {"Adherence_Status",       type text}
+				    }),
+
+				    WithMonthDate = Table.AddColumn(
+				        Typed, "Plan_Month_Date",
+				        each if [Plan_Month] = null or Text.Length([Plan_Month]) < 7 then null
+				             else #date(Number.FromText(Text.Start([Plan_Month], 4)),
+				                        Number.FromText(Text.Middle([Plan_Month], 5, 2)), 1),
+				        type nullable date),
+
+				    // The adherence denominator. A forecast row is a projection, not a promise.
+				    WithCommitted = Table.AddColumn(
+				        WithMonthDate, "Is_Committed_Plan",
+				        each [Plan_Version] <> null
+				             and not Text.Contains([Plan_Version], "Forecast")
+				             and [Adherence_Status] <> "Forecast",
+				        type logical),
+
+				    WithOnTime = Table.AddColumn(
+				        WithCommitted, "Is_On_Time",
+				        each [Adherence_Status] = "On Time",
+				        type logical),
+
+				    Final = Table.SelectRows(WithOnTime, each [Plan_ID] <> null)
+				in
+				    Final
+				```
+
+	annotation PBI_ResultType = Table

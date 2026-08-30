@@ -1,0 +1,112 @@
+{
+  "ListTitle": "Scan_Log",
+  "ListUrl": "Lists/Scan_Log",
+  "Description": "Raw QR scan events, including the scans that never led to a completion.",
+  "Template": "GenericList",
+  "EnableVersioning": true,
+  "MajorVersionLimit": 50,
+  "EnableAttachments": false,
+  "TitleColumn": {
+    "Required": false,
+    "Hidden": false,
+    "SetFrom": "Scan_ID",
+    "Note": "Title is populated from the primary key on load so the item has a readable display name and shows up in search. Matching is always done on the explicit key column, never on Title."
+  },
+  "PrimaryKey": "Scan_ID",
+  "IndexedColumns": [
+    "Machine_ID",
+    "Scan_DateTime",
+    "WO_No"
+  ],
+  "Fields": [
+    {
+      "InternalName": "Scan_ID",
+      "DisplayName": "Scan_ID",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Scan_DateTime",
+      "DisplayName": "Scan_DateTime",
+      "Required": false,
+      "Indexed": true,
+      "Type": "DateTime",
+      "DisplayFormat": "DateTime"
+    },
+    {
+      "InternalName": "Machine_ID",
+      "DisplayName": "Machine_ID",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Cell_ID",
+      "DisplayName": "Cell_ID",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Tech_ID",
+      "DisplayName": "Tech_ID",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Scan_Action",
+      "DisplayName": "Scan_Action",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "Start PM",
+        "Complete PM",
+        "Breakdown",
+        "Spare Request",
+        "Abnormality",
+        "View"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Device",
+      "DisplayName": "Device",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "Android",
+        "iOS",
+        "Kiosk"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "WO_No",
+      "DisplayName": "WO_No",
+      "Required": false,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Comments",
+      "DisplayName": "Comments",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Note",
+      "NumberOfLines": 4,
+      "RichText": false,
+      "AppendOnly": false
+    }
+  ]
+}

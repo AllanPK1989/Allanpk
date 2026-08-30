@@ -1,0 +1,16 @@
+﻿List_Name,Row_Count,Column_Count,Load_Order
+Cell_Master,8,15,1
+Technician_Master,6,8,2
+Spare_Master,15,13,3
+Checklist_Master,51,11,4
+Machine_Master,30,18,5
+StdHours_Monthly,96,8,6
+PM_WorkOrder,51,20,7
+PM_Machine_Task,193,16,8
+Checklist_Response,997,16,9
+Scan_Log,336,9,10
+Breakdown_Log,88,21,11
+Spare_Request,64,19,12
+Spare_Replaced,58,17,13
+Abnormality_Log,44,16,14
+PM_Plan_Calendar,55,12,15

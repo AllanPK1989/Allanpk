@@ -1,0 +1,1243 @@
+table _Measures
+	lineageTag: 77cddf1a-4791-5aa3-be4b-4fae660aee51
+
+	/// Every measure in the model lives here, grouped into display folders.
+	/// A dedicated measure table keeps the field list readable: measures are
+	/// found by what they answer, not by which table happens to hold the column
+	/// they were first written against.
+
+	/// How many cell PMs came due in the period.
+	/// The denominator of compliance.
+	/// A cancelled work order is excluded: it was not "due and not done", it was withdrawn, and counting it as a miss punishes the right decision.
+	measure 'PM Due Count' = ```
+			CALCULATE(
+			    COUNTROWS ( Fact_WorkOrder ),
+			    KEEPFILTERS ( Fact_WorkOrder[WO_Status] <> "Cancelled" )
+			) + 0
+			```
+		formatString: #,##0
+		displayFolder: 01 PM Compliance
+		lineageTag: 50ee1fc7-54d1-53ce-aa81-e5b60b197119
+
+	/// Cell PMs that reached Completed.
+	/// The numerator of compliance.
+	measure 'PM Completed Count' = ```
+			CALCULATE (
+			    COUNTROWS ( Fact_WorkOrder ),
+			    KEEPFILTERS ( Fact_WorkOrder[WO_Status] = "Completed" )
+			) + 0
+			```
+		formatString: #,##0
+		displayFolder: 01 PM Compliance
+		lineageTag: 13e91d08-fdad-5d56-9c94-941bbefed184
+
+	/// Work orders explicitly flagged Overdue, plus any still-open work order whose planned end date has passed.
+	/// The second half matters: a work order only gets the Overdue status when a flow runs, and between runs an open work order past its date is overdue in fact if not yet in the field.
+	measure 'PM Overdue Count' = ```
+			VAR Today_ = TODAY ()
+			RETURN
+			    COUNTROWS (
+			        FILTER (
+			            Fact_WorkOrder,
+			            Fact_WorkOrder[WO_Status] <> "Completed"
+			                && Fact_WorkOrder[WO_Status] <> "Cancelled"
+			                && NOT ISBLANK ( Fact_WorkOrder[Planned_End_Date] )
+			                && Fact_WorkOrder[Planned_End_Date] < Today_
+			        )
+			    ) + 0
+			```
+		formatString: #,##0
+		displayFolder: 01 PM Compliance
+		lineageTag: 2bc79f2f-288a-5921-9b22-1142155c3427
+
+	measure 'PM In Progress Count' = ```
+			CALCULATE (
+			    COUNTROWS ( Fact_WorkOrder ),
+			    KEEPFILTERS ( Fact_WorkOrder[WO_Status] = "In Progress" )
+			) + 0
+			```
+		formatString: #,##0
+		displayFolder: 01 PM Compliance
+		lineageTag: 4329f499-8615-5323-bf02-34c1a960c65b
+
+	/// The headline number.
+	/// Blank rather than 0 when nothing was due, so a month with no scheduled PM does not report 0 % compliance.
+	measure 'PM Compliance %' = ```
+			DIVIDE ( [PM Completed Count], [PM Due Count] )
+			```
+		formatString: 0.0%
+		displayFolder: 01 PM Compliance
+		lineageTag: 1ab8b858-9ec7-592d-9949-a4c117f80f2f
+
+	/// Completed on or before the committed end date.
+	/// FILTER over the table is required here - this is a column-to-column comparison, which CALCULATE's filter arguments cannot express.
+	measure 'PM On-Time Count' = ```
+			COUNTROWS (
+			    FILTER (
+			        Fact_WorkOrder,
+			        Fact_WorkOrder[WO_Status] = "Completed"
+			            && NOT ISBLANK ( Fact_WorkOrder[Actual_End_Date] )
+			            && NOT ISBLANK ( Fact_WorkOrder[Planned_End_Date] )
+			            && Fact_WorkOrder[Actual_End_Date] <= Fact_WorkOrder[Planned_End_Date]
+			    )
+			) + 0
+			```
+		formatString: #,##0
+		displayFolder: 01 PM Compliance
+		lineageTag: 33a8e278-3a35-52a3-ac39-38af6d2422fd
+
+	/// On-time out of completed - not out of due.
+	/// Mixing the two answers neither question: this one is "of the work we finished, how much was on time".
+	measure 'PM On-Time %' = ```
+			DIVIDE ( [PM On-Time Count], [PM Completed Count] )
+			```
+		formatString: 0.0%
+		displayFolder: 01 PM Compliance
+		lineageTag: bf564409-9b5f-5a94-801d-d150a655923d
+
+	/// Adherence against the FROZEN plan, which is a harder and more honest test than on-time against a work order date that can be edited after the fact.
+	/// Forecast rows are excluded - scoring against a projection you never committed to is how an adherence figure becomes fiction.
+	measure 'Schedule Adherence %' = ```
+			VAR Committed =
+			    CALCULATE (
+			        COUNTROWS ( Fact_PlanCalendar ),
+			        KEEPFILTERS ( Fact_PlanCalendar[Is_Committed_Plan] = TRUE () )
+			    )
+			VAR OnTime =
+			    CALCULATE (
+			        COUNTROWS ( Fact_PlanCalendar ),
+			        KEEPFILTERS ( Fact_PlanCalendar[Is_Committed_Plan] = TRUE () ),
+			        KEEPFILTERS ( Fact_PlanCalendar[Adherence_Status] = "On Time" )
+			    )
+			RETURN
+			    DIVIDE ( OnTime, Committed )
+			```
+		formatString: 0.0%
+		displayFolder: 01 PM Compliance
+		lineageTag: 29138fbc-f3d0-5495-a531-64c7ca1ac810
+
+	/// Average days late across completed work orders.
+	/// Early finishes carry a negative delay and are included, so this is a true average rather than a lateness-only figure - a team that is three days early half the time and three days late the other half should read zero, not three.
+	measure 'Avg PM Delay (Days)' = ```
+			AVERAGEX (
+			    FILTER (
+			        Fact_WorkOrder,
+			        Fact_WorkOrder[WO_Status] = "Completed"
+			            && NOT ISBLANK ( Fact_WorkOrder[Delay_Days] )
+			    ),
+			    Fact_WorkOrder[Delay_Days]
+			)
+			```
+		formatString: #,##0.0
+		displayFolder: 01 PM Compliance
+		lineageTag: c0264caf-7688-567a-bede-8b7f13cfdbf8
+
+	/// Of the PMs that fired, how many fired because the clock ran out rather than because the hours were used.
+	/// If most work orders are Calendar Backstop, the 4,000-hour rule is set too high for this plant's actual utilisation.
+	measure 'Calendar-Triggered PM %' = ```
+			DIVIDE (
+			    CALCULATE (
+			        COUNTROWS ( Fact_WorkOrder ),
+			        KEEPFILTERS ( Fact_WorkOrder[Trigger_Type] = "Calendar Backstop" )
+			    ),
+			    [PM Due Count]
+			)
+			```
+		formatString: 0.0%
+		displayFolder: 01 PM Compliance
+		lineageTag: 0554805f-465d-59e7-8640-ac0bb9db2967
+
+	/// The running counter, summed over whatever cells are in context.
+	/// This is a SNAPSHOT: it is the counter as at the last refresh, with no time dimension in it.
+	/// Summing it across cells is meaningful; summing it across months is not, and no visual in this report does so.
+	measure 'Cum Std Hours' = ```
+			SUM ( Dim_Cell[Cum_Std_Hours_Since_PM] )
+			```
+		formatString: #,##0
+		displayFolder: 02 Hours & Forecast
+		lineageTag: 04e6de06-cd12-5155-be90-bb2a3d8f4cd3
+
+	/// Held per cell, never hard-coded.
+	/// A literal 4000 anywhere in this model is a defect - it makes retuning one cell a code change.
+	measure 'PM Trigger Hours' = ```
+			SUM ( Dim_Cell[PM_Trigger_Hours] )
+			```
+		formatString: #,##0
+		displayFolder: 02 Hours & Forecast
+		lineageTag: 1b54a0c5-8ee9-5be0-991f-327a11e2a2a0
+
+	measure 'Hours to Next PM' = ```
+			VAR Remaining = [PM Trigger Hours] - [Cum Std Hours]
+			RETURN
+			    IF ( Remaining < 0, 0, Remaining )
+			```
+		formatString: #,##0
+		displayFolder: 02 Hours & Forecast
+		lineageTag: 2bf09a31-4203-5f89-9771-6331f97d2554
+
+	/// The RAG driver.
+	/// 1.0 means the cell is at its trigger.
+	measure 'Hours Utilisation %' = ```
+			DIVIDE ( [Cum Std Hours], [PM Trigger Hours] )
+			```
+		formatString: 0.0%
+		displayFolder: 02 Hours & Forecast
+		lineageTag: b1b6e887-9507-5892-a859-c56cebdbd245
+
+	/// Rolling three-month consumption, computed from the actual upload history rather than read from the snapshot column on Dim_Cell.
+	/// Three months is a deliberate choice: it smooths a festival shutdown or an extra-Sunday month without going stale the way a twelve-month average would.
+	/// The window is anchored to the last month that actually has data, not to TODAY(), so the forecast does not collapse in the days before a month's upload arrives - which is precisely when a planner looks at it.
+	measure 'Avg Monthly Std Hours L3M' = ```
+			VAR LastMonth =
+			    CALCULATE ( MAX ( Fact_StdHours[Month_Start_Date] ), ALLSELECTED ( Fact_StdHours ) )
+			VAR WindowStart = EDATE ( LastMonth, -2 )
+			VAR Recent =
+			    CALCULATETABLE (
+			        Fact_StdHours,
+			        Fact_StdHours[Month_Start_Date] >= WindowStart,
+			        Fact_StdHours[Month_Start_Date] <= LastMonth
+			    )
+			VAR TotalHours = SUMX ( Recent, Fact_StdHours[Actual_Std_Hours] )
+			VAR MonthCount = COUNTROWS ( DISTINCT ( SELECTCOLUMNS ( Recent, "@m", Fact_StdHours[Month_Start_Date] ) ) )
+			RETURN
+			    DIVIDE ( TotalHours, MonthCount )
+			```
+		formatString: #,##0
+		displayFolder: 02 Hours & Forecast
+		lineageTag: 326f12cf-4d3c-59c7-bc87-16bb1245d6ae
+
+	/// How many months of current running before this cell hits its trigger.
+	measure 'Months to PM' = ```
+			DIVIDE ( [Hours to Next PM], [Avg Monthly Std Hours L3M] )
+			```
+		formatString: #,##0.00
+		displayFolder: 02 Hours & Forecast
+		lineageTag: b19bd1ca-a98a-5c73-8ba4-dfce9185026a
+
+	/// The hours-based projection.
+	/// Rounded UP because a cell that needs 1.2 months of running is due in the second month, not the first - rounding down would schedule a PM before the hours exist to justify it.
+	/// Shown alongside Calendar Due Date so a planner sees both clocks.
+	/// Whichever comes first is the real due date.
+	measure 'Projected PM Date' = ```
+			VAR M = [Months to PM]
+			RETURN
+			    IF (
+			        NOT ISBLANK ( M ) && M >= 0,
+			        EDATE ( TODAY (), ROUNDUP ( M, 0 ) )
+			    )
+			```
+		formatString: yyyy-mm-dd
+		displayFolder: 02 Hours & Forecast
+		lineageTag: 046cfbe3-3579-5ee7-8eb9-4d849c151459
+
+	/// The earlier of the two clocks - the date the cell is actually due.
+	measure 'Next PM Due Date' = ```
+			VAR ByHours = [Projected PM Date]
+			VAR ByCalendar = [Calendar Due Date]
+			RETURN
+			    IF (
+			        ISBLANK ( ByHours ), ByCalendar,
+			        IF ( ISBLANK ( ByCalendar ), ByHours, MIN ( ByHours, ByCalendar ) )
+			    )
+			```
+		formatString: yyyy-mm-dd
+		displayFolder: 02 Hours & Forecast
+		lineageTag: 6559b4c4-ee3e-5ca2-b373-00ed5cbeb8eb
+
+	measure 'Days Since Last PM' = ```
+			VAR LastPM = MAX ( Dim_Cell[Last_PM_Date] )
+			RETURN
+			    IF ( NOT ISBLANK ( LastPM ), DATEDIFF ( LastPM, TODAY (), DAY ) )
+			```
+		formatString: #,##0.00
+		displayFolder: 02 Hours & Forecast
+		lineageTag: 428854f7-79cc-5e62-b645-3a09d8cd5887
+
+	/// The calendar backstop date, derived in Power Query from Last_PM_Date plus the cell's own Calendar_Backstop_Months.
+	measure 'Calendar Due Date' = ```
+			MAX ( Dim_Cell[Calendar_Due_Date] )
+			```
+		formatString: yyyy-mm-dd
+		displayFolder: 02 Hours & Forecast
+		lineageTag: 0db3d23d-31dd-5824-a387-5f9ff8511a76
+
+	measure 'Days to Calendar Due' = ```
+			VAR D = [Calendar Due Date]
+			RETURN
+			    IF ( NOT ISBLANK ( D ), DATEDIFF ( TODAY (), D, DAY ) )
+			```
+		formatString: #,##0.00
+		displayFolder: 02 Hours & Forecast
+		lineageTag: 46daf5aa-6b4d-5256-9cd9-2574c13bbe15
+
+	/// The RAG flag.
+	/// Thresholds match the SharePoint column formatting exactly, so a cell that is amber on the shop-floor list is amber on this dashboard.
+	/// Both clocks are tested.
+	/// A cell at 40 % of its hours that has not been touched for 190 days is OVERDUE, because the calendar backstop has already passed - and a low-utilisation cell is exactly the one the hours rule alone would never catch.
+	measure 'PM Status Flag' = ```
+			VAR Util = [Hours Utilisation %]
+			VAR DaysSince = [Days Since Last PM]
+			VAR BackstopDays = MAX ( Dim_Cell[Calendar_Backstop_Months] ) * 30.44
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        ISBLANK ( Util ) && ISBLANK ( DaysSince ), BLANK (),
+			        Util >= 1
+			            || ( NOT ISBLANK ( DaysSince ) && NOT ISBLANK ( BackstopDays ) && DaysSince >= BackstopDays ),
+			            "OVERDUE",
+			        Util >= 0.9, "DUE SOON",
+			        Util >= 0.75, "WATCH",
+			        "OK"
+			    )
+			```
+		formatString: #,##0.00
+		displayFolder: 02 Hours & Forecast
+		lineageTag: ec03b4a9-850e-5c91-a5c9-1b84b500226b
+
+	/// Returns the theme hex for the flag above.
+	/// Used as a conditional-formatting field so the colour is defined once, here, rather than being re-picked in every visual's formatting pane where it will drift.
+	measure 'PM Status Colour' = ```
+			SWITCH (
+			    [PM Status Flag],
+			    "OVERDUE",  "#ED7373",
+			    "DUE SOON", "#F0A202",
+			    "WATCH",    "#2E86AB",
+			    "OK",       "#44C088",
+			    "#7B8794"
+			)
+			```
+		displayFolder: 02 Hours & Forecast
+		lineageTag: 3d98d6d2-3408-5b0f-9250-01e6110346d2
+
+	/// Count of cells at or past the amber line.
+	/// The planning meeting's agenda size.
+	measure 'Cells Due Soon Count' = ```
+			COUNTROWS (
+			    FILTER (
+			        Dim_Cell,
+			        Dim_Cell[Active] = TRUE ()
+			            && Dim_Cell[PM_Trigger_Hours] > 0
+			            && DIVIDE ( Dim_Cell[Cum_Std_Hours_Since_PM], Dim_Cell[PM_Trigger_Hours] ) >= 0.9
+			    )
+			) + 0
+			```
+		formatString: #,##0
+		displayFolder: 02 Hours & Forecast
+		lineageTag: 71b12450-e7fe-57e2-8dc9-9005ae1eae64
+
+	measure 'Overdue Cells Count' = ```
+			VAR Today_ = TODAY ()
+			RETURN
+			    COUNTROWS (
+			        FILTER (
+			            Dim_Cell,
+			            Dim_Cell[Active] = TRUE ()
+			                && (
+			                    ( Dim_Cell[PM_Trigger_Hours] > 0
+			                        && Dim_Cell[Cum_Std_Hours_Since_PM] >= Dim_Cell[PM_Trigger_Hours] )
+			                    || ( NOT ISBLANK ( Dim_Cell[Calendar_Due_Date] )
+			                        && Dim_Cell[Calendar_Due_Date] <= Today_ )
+			                )
+			        )
+			    ) + 0
+			```
+		formatString: #,##0
+		displayFolder: 02 Hours & Forecast
+		lineageTag: 4533de5c-61b6-5bd9-b40a-2e89eacb621f
+
+	/// Total standard hours consumed.
+	/// Also the loading-hours base for availability.
+	measure 'Total Std Hours' = ```
+			SUM ( Fact_StdHours[Actual_Std_Hours] )
+			```
+		formatString: #,##0
+		displayFolder: 02 Hours & Forecast
+		lineageTag: b8f94e26-8cb8-5a72-86fc-50351709e0c6
+
+	measure 'Production Qty' = ```
+			SUM ( Fact_StdHours[Production_Qty] )
+			```
+		formatString: #,##0
+		displayFolder: 02 Hours & Forecast
+		lineageTag: ac967799-ce7b-57f3-8aed-acd95a5a329e
+
+	measure 'Machine Tasks Total' = ```
+			COUNTROWS ( Fact_MachineTask ) + 0
+			```
+		formatString: #,##0
+		displayFolder: 03 Execution
+		lineageTag: 1fba2569-c587-5f36-a474-470f118ceae6
+
+	measure 'Machine Tasks Completed' = ```
+			CALCULATE (
+			    COUNTROWS ( Fact_MachineTask ),
+			    KEEPFILTERS ( Fact_MachineTask[Task_Status] = "Completed" )
+			) + 0
+			```
+		formatString: #,##0.00
+		displayFolder: 03 Execution
+		lineageTag: 267b93e0-cc5a-5888-ae55-96c02c98e68f
+
+	measure 'Machine Tasks Pending' = ```
+			CALCULATE (
+			    COUNTROWS ( Fact_MachineTask ),
+			    KEEPFILTERS ( Fact_MachineTask[Task_Status] IN { "Pending", "In Progress" } )
+			) + 0
+			```
+		formatString: #,##0.00
+		displayFolder: 03 Execution
+		lineageTag: 52f7e787-ab33-5fc0-af61-7f23f2f76b4c
+
+	/// The number that decides whether a work order can close and the counter can reset.
+	/// One machine scanned is not enough; this has to reach 100 %.
+	measure 'Cell Completion %' = ```
+			DIVIDE ( [Machine Tasks Completed], [Machine Tasks Total] )
+			```
+		formatString: 0.0%
+		displayFolder: 03 Execution
+		lineageTag: 2748a17d-2476-51d7-8c49-e536248846ea
+
+	/// Average wall-clock minutes per machine task, over completed tasks with a real duration.
+	/// Blanks are excluded rather than treated as zero, which would drag the average down and make a slow team look fast.
+	measure 'Avg PM Duration (Hrs)' = ```
+			DIVIDE (
+			    AVERAGEX (
+			        FILTER (
+			            Fact_MachineTask,
+			            Fact_MachineTask[Task_Status] = "Completed"
+			                && NOT ISBLANK ( Fact_MachineTask[Duration_Min] )
+			                && Fact_MachineTask[Duration_Min] > 0
+			        ),
+			        Fact_MachineTask[Duration_Min]
+			    ),
+			    60
+			)
+			```
+		formatString: #,##0.0
+		displayFolder: 03 Execution
+		lineageTag: d1d7fdae-700b-5447-a04a-9a1a17eb9617
+
+	measure 'Total PM Man-Hours' = ```
+			DIVIDE ( SUM ( Fact_MachineTask[Duration_Min] ), 60 )
+			```
+		formatString: #,##0
+		displayFolder: 03 Execution
+		lineageTag: 4a559a36-a51d-5980-9e6f-8a3abc76379f
+
+	/// Work orders completed with no NOT OK finding anywhere in the cell.
+	/// This is not "good" on its own.
+	/// A first-pass rate of 100 % across a year means nobody is finding anything, which is a different problem from a machine that never fails.
+	/// Read it next to NOT OK % and Findings Raised per PM.
+	measure 'First-Pass PM %' = ```
+			VAR CompletedWOs =
+			    CALCULATETABLE (
+			        VALUES ( Fact_WorkOrder[WO_No] ),
+			        KEEPFILTERS ( Fact_WorkOrder[WO_Status] = "Completed" )
+			    )
+			VAR CleanWOs =
+			    FILTER (
+			        CompletedWOs,
+			        CALCULATE ( SUM ( Fact_MachineTask[NOT_OK_Count] ) ) = 0
+			    )
+			RETURN
+			    DIVIDE ( COUNTROWS ( CleanWOs ), COUNTROWS ( CompletedWOs ) )
+			```
+		formatString: 0.0%
+		displayFolder: 03 Execution
+		lineageTag: 248a5121-724b-5763-b5f1-cec23987ec94
+
+	/// Expected minutes for the machines in scope, summed from the checklist master.
+	/// This is the number you show production when you ask for a window - and the number Duration_Min gets compared against to spot a pencil-whipped PM.
+	measure 'Expected PM Duration (Min)' = ```
+			SUMX (
+			    Fact_MachineTask,
+			    VAR ChecklistId =
+			        CALCULATE (
+			            SELECTEDVALUE ( Dim_Machine[Checklist_ID] ),
+			            Dim_Machine[Machine_ID] = Fact_MachineTask[Machine_ID]
+			        )
+			    RETURN
+			        CALCULATE (
+			            SUM ( Dim_ChecklistItem[Expected_Time_Min] ),
+			            REMOVEFILTERS ( Dim_ChecklistItem ),
+			            Dim_ChecklistItem[Checklist_ID] = ChecklistId,
+			            Dim_ChecklistItem[Active] = TRUE ()
+			        )
+			)
+			```
+		formatString: #,##0
+		displayFolder: 03 Execution
+		lineageTag: 29b8c955-62ea-5967-bd38-6f31e5c9e671
+
+	/// Actual over expected.
+	/// Below about 0.3 is not a fast technician, it is a checklist that was signed rather than done.
+	measure 'PM Duration vs Expected %' = ```
+			DIVIDE ( SUM ( Fact_MachineTask[Duration_Min] ), [Expected PM Duration (Min)] )
+			```
+		formatString: 0.0%
+		displayFolder: 03 Execution
+		lineageTag: 48900ee8-8559-5fe5-9e12-7b0151d09ed7
+
+	/// Machines in an open work order that nobody has started.
+	measure 'Machines Not Scanned' = ```
+			COUNTROWS (
+			    FILTER (
+			        Fact_MachineTask,
+			        Fact_MachineTask[Task_Status] = "Pending"
+			            && ISBLANK ( Fact_MachineTask[Scan_Start_Time] )
+			    )
+			) + 0
+			```
+		formatString: #,##0.00
+		displayFolder: 03 Execution
+		lineageTag: 8bff63ca-014d-5f0d-8ad7-f367d9102cc7
+
+	/// Days since the work order was raised, for open work orders only.
+	measure 'Open WO Ageing (Days)' = ```
+			AVERAGEX (
+			    FILTER (
+			        Fact_WorkOrder,
+			        Fact_WorkOrder[WO_Status] IN { "Planned", "In Progress", "Overdue" }
+			            && NOT ISBLANK ( Fact_WorkOrder[WO_Created_Date] )
+			    ),
+			    DATEDIFF ( Fact_WorkOrder[WO_Created_Date], TODAY (), DAY )
+			)
+			```
+		formatString: #,##0.0
+		displayFolder: 03 Execution
+		lineageTag: 70f7775b-f498-58d5-9e53-47c026b95e4a
+
+	/// Work orders marked Completed where the counter was never zeroed.
+	/// Per integrity rule 3 the reset quartet moves together or not at all, so any value above zero here is a flow failure and belongs on the daily digest.
+	measure 'Reset Not Applied Count' = ```
+			COUNTROWS (
+			    FILTER (
+			        Fact_WorkOrder,
+			        Fact_WorkOrder[WO_Status] = "Completed"
+			            && Fact_WorkOrder[Reset_Applied] <> TRUE ()
+			    )
+			) + 0
+			```
+		formatString: #,##0
+		displayFolder: 03 Execution
+		lineageTag: acf226d2-7b6f-5d37-8156-3270e5855881
+
+	/// Check points that returned a verdict.
+	/// NA answers are excluded - a check that did not apply was not a check, and counting it inflates the denominator and flatters the NOT OK rate.
+	measure 'Checklist Items Checked' = ```
+			CALCULATE (
+			    COUNTROWS ( Fact_ChecklistResponse ),
+			    KEEPFILTERS ( Fact_ChecklistResponse[Result] IN { "OK", "NOT OK" } )
+			) + 0
+			```
+		formatString: #,##0.00
+		displayFolder: 04 Quality of PM
+		lineageTag: 89e65d70-e2a7-58fa-aee5-09361e7cc2c2
+
+	measure 'NOT OK Count' = ```
+			CALCULATE (
+			    COUNTROWS ( Fact_ChecklistResponse ),
+			    KEEPFILTERS ( Fact_ChecklistResponse[Result] = "NOT OK" )
+			) + 0
+			```
+		formatString: #,##0
+		displayFolder: 04 Quality of PM
+		lineageTag: b3e33b14-389a-5948-be6d-f97a1708f7e8
+
+	measure 'NOT OK %' = ```
+			DIVIDE ( [NOT OK Count], [Checklist Items Checked] )
+			```
+		formatString: 0.0%
+		displayFolder: 04 Quality of PM
+		lineageTag: fb809589-60c7-5e29-ba53-b9fed0a09f33
+
+	/// A NOT OK on a safety-critical item blocks the task from closing and escalates immediately, regardless of the severity anyone selected.
+	/// This measure is the count that must be watched daily; a non-zero value is not a trend, it is an event.
+	measure 'Safety-Critical NOT OK Count' = ```
+			CALCULATE (
+			    COUNTROWS ( Fact_ChecklistResponse ),
+			    KEEPFILTERS ( Fact_ChecklistResponse[Result] = "NOT OK" ),
+			    KEEPFILTERS ( Dim_ChecklistItem[Safety_Critical] = TRUE () )
+			) + 0
+			```
+		formatString: #,##0
+		displayFolder: 04 Quality of PM
+		lineageTag: 5e333fba-b5d0-56dd-9a59-3a882402170d
+
+	measure 'Follow-Up Raised Count' = ```
+			CALCULATE (
+			    COUNTROWS ( Fact_ChecklistResponse ),
+			    KEEPFILTERS ( Fact_ChecklistResponse[Follow_Up_Required] = TRUE () )
+			) + 0
+			```
+		formatString: #,##0
+		displayFolder: 04 Quality of PM
+		lineageTag: df25f39d-57ce-5ad4-8650-c45434d691dc
+
+	measure 'Open Abnormalities' = ```
+			CALCULATE (
+			    COUNTROWS ( Fact_Abnormality ),
+			    KEEPFILTERS ( Fact_Abnormality[Status] <> "Closed" )
+			) + 0
+			```
+		formatString: #,##0.00
+		displayFolder: 04 Quality of PM
+		lineageTag: 9b08c8f6-b5e7-5d09-85f6-f3fdb78d5b08
+
+	measure 'High Severity Open' = ```
+			CALCULATE (
+			    COUNTROWS ( Fact_Abnormality ),
+			    KEEPFILTERS ( Fact_Abnormality[Status] <> "Closed" ),
+			    KEEPFILTERS ( Fact_Abnormality[Severity] = "High" )
+			) + 0
+			```
+		formatString: #,##0.00
+		displayFolder: 04 Quality of PM
+		lineageTag: 42dd7aca-1d26-596f-9ae7-20259d9cfa20
+
+	/// Average age.
+	/// Closed items stop ageing at their closed date, so this does not drift upward simply because time passes.
+	measure 'Abnormality Ageing (Days)' = ```
+			AVERAGEX (
+			    FILTER ( Fact_Abnormality, NOT ISBLANK ( Fact_Abnormality[Age_Days] ) ),
+			    Fact_Abnormality[Age_Days]
+			)
+			```
+		formatString: #,##0.0
+		displayFolder: 04 Quality of PM
+		lineageTag: a243249d-2e3e-5b3c-b923-a3a92878bf4d
+
+	measure 'Overdue Abnormalities' = ```
+			CALCULATE (
+			    COUNTROWS ( Fact_Abnormality ),
+			    KEEPFILTERS ( Fact_Abnormality[Is_Overdue] = TRUE () )
+			) + 0
+			```
+		formatString: #,##0.00
+		displayFolder: 04 Quality of PM
+		lineageTag: 0daa9911-95ac-58ae-9972-8febe48e81e8
+
+	/// The same check point failing on the same machine in two ADJACENT PM cycles.
+	/// Adjacency is what makes this meaningful.
+	/// A check point that failed in January and again in November is two independent findings; one that failed in two consecutive PMs was not actually fixed the first time, and that is a different conversation with a different person.
+	/// The cycle sequence is built from Fact_MachineTask rather than from the response table because a machine task is exactly one PM cycle per machine, which is the grain the word "consecutive" needs.
+	measure 'Repeat Finding Count' = ```
+			VAR AllCycles =
+			    ADDCOLUMNS (
+			        FILTER (
+			            ALL ( Fact_MachineTask[Machine_ID], Fact_MachineTask[WO_No], Fact_MachineTask[Completion_Date] ),
+			            NOT ISBLANK ( Fact_MachineTask[Completion_Date] )
+			        ),
+			        "@Seq",
+			            VAR ThisMachine = Fact_MachineTask[Machine_ID]
+			            VAR ThisDate = Fact_MachineTask[Completion_Date]
+			            RETURN
+			                COUNTROWS (
+			                    FILTER (
+			                        ALL ( Fact_MachineTask[Machine_ID], Fact_MachineTask[WO_No], Fact_MachineTask[Completion_Date] ),
+			                        Fact_MachineTask[Machine_ID] = ThisMachine
+			                            && NOT ISBLANK ( Fact_MachineTask[Completion_Date] )
+			                            && Fact_MachineTask[Completion_Date] <= ThisDate
+			                    )
+			                )
+			    )
+			VAR NotOkFindings =
+			    CALCULATETABLE (
+			        SUMMARIZE (
+			            Fact_ChecklistResponse,
+			            Fact_ChecklistResponse[Machine_ID],
+			            Fact_ChecklistResponse[Check_Point],
+			            Fact_ChecklistResponse[WO_No]
+			        ),
+			        KEEPFILTERS ( Fact_ChecklistResponse[Result] = "NOT OK" )
+			    )
+			VAR FindingsWithSeq =
+			    NATURALLEFTOUTERJOIN (
+			        SELECTCOLUMNS (
+			            NotOkFindings,
+			            "@Machine_ID", Fact_ChecklistResponse[Machine_ID],
+			            "@Check", Fact_ChecklistResponse[Check_Point],
+			            "@WO", Fact_ChecklistResponse[WO_No]
+			        ),
+			        SELECTCOLUMNS (
+			            AllCycles,
+			            "@Machine_ID", Fact_MachineTask[Machine_ID],
+			            "@WO", Fact_MachineTask[WO_No],
+			            "@CycleSeq", [@Seq]
+			        )
+			    )
+			RETURN
+			    COUNTROWS (
+			        FILTER (
+			            FindingsWithSeq,
+			            VAR M = [@Machine_ID]
+			            VAR C = [@Check]
+			            VAR S = [@CycleSeq]
+			            RETURN
+			                NOT ISBLANK ( S )
+			                    && COUNTROWS (
+			                        FILTER (
+			                            FindingsWithSeq,
+			                            [@Machine_ID] = M && [@Check] = C && [@CycleSeq] = S - 1
+			                        )
+			                    ) > 0
+			        )
+			    ) + 0
+			```
+		formatString: #,##0
+		displayFolder: 04 Quality of PM
+		lineageTag: 44475bf5-6a4e-50fc-837e-89e1e887a96c
+
+	measure 'Breakdown Count' = ```
+			COUNTROWS ( Fact_Breakdown ) + 0
+			```
+		formatString: #,##0
+		displayFolder: 05 Reliability
+		lineageTag: f60d06d9-725d-5548-8e22-e6321aeb3ba1
+
+	/// Mean time to repair - wrench time only.
+	/// Deliberately NOT the same as downtime.
+	measure 'MTTR (Min)' = ```
+			AVERAGEX (
+			    FILTER ( Fact_Breakdown, NOT ISBLANK ( Fact_Breakdown[MTTR_Min] ) ),
+			    Fact_Breakdown[MTTR_Min]
+			)
+			```
+		formatString: #,##0
+		displayFolder: 05 Reliability
+		lineageTag: 021ffc35-c858-504e-8d07-1fcc38bbc67b
+
+	/// Report to arrival.
+	/// A team KPI, distinct from repair time: a fast repair that started ninety minutes after the call is not a fast response.
+	measure 'Avg Response Time (Min)' = ```
+			AVERAGEX (
+			    FILTER ( Fact_Breakdown, NOT ISBLANK ( Fact_Breakdown[Response_Time_Min] ) ),
+			    Fact_Breakdown[Response_Time_Min]
+			)
+			```
+		formatString: #,##0
+		displayFolder: 05 Reliability
+		lineageTag: 85c1d4df-735e-56cb-abe9-f10929a606fb
+
+	/// Loading hours - the denominator for availability.
+	/// Standard hours consumed is the honest measure of how long the equipment was actually asked to run.
+	measure 'Loading Hours' = ```
+			SUM ( Fact_StdHours[Actual_Std_Hours] )
+			```
+		formatString: #,##0
+		displayFolder: 05 Reliability
+		lineageTag: 2a89fe97-ef79-534d-acd6-7940b8390ab2
+
+	/// Production loss, not MTTR.
+	/// Production loss includes waiting for a technician, waiting for a spare and restarting the line, and is almost always the larger number.
+	/// Using MTTR here would make availability look flattering and wrong.
+	measure 'Downtime Hours' = ```
+			DIVIDE ( SUM ( Fact_Breakdown[Production_Loss_Min] ), 60 )
+			```
+		formatString: #,##0
+		displayFolder: 05 Reliability
+		lineageTag: 1e0b803f-9e91-5664-8334-315f626a9283
+
+	measure 'MTBF (Hrs)' = ```
+			DIVIDE ( [Loading Hours], [Breakdown Count] )
+			```
+		formatString: #,##0.0
+		displayFolder: 05 Reliability
+		lineageTag: 378fa158-fac8-5389-84c9-e0b4cff63b40
+
+	measure 'Availability %' = ```
+			DIVIDE ( [Loading Hours] - [Downtime Hours], [Loading Hours] )
+			```
+		formatString: 0.0%
+		displayFolder: 05 Reliability
+		lineageTag: 2b3ad486-e909-5785-b18a-71a6b7e6417c
+
+	/// THE MOST IMPORTANT MEASURE IN THE MODEL.
+	/// Breakdowns on a cell within 7 days of a completed PM on that same cell.
+	/// It answers the only question that matters about a PM programme: is the PM actually working, or is it cosmetic? Compliance can be 100 % while this number climbs, and when that happens the checklist is being signed rather than performed - or the checklist is checking the wrong things.
+	/// Deliberately derived from dates rather than from Breakdown_Log[Linked_PM_WO].
+	/// That column is populated by Flow 6 going forward and is empty for all history loaded before the flow existed.
+	/// A measure that depended on it would read zero on historical data and look reassuring, which is the worst possible failure mode for this particular number.
+	/// REMOVEFILTERS(Dim_Date) on the PM list is load-bearing: a breakdown reported on 3 March may follow a PM completed on 28 February, and with the date filter still applied to the PM side that pairing would be invisible in a March view.
+	measure 'Breakdowns After PM (7d)' = ```
+			VAR CompletedPMs =
+			    CALCULATETABLE (
+			        SELECTCOLUMNS (
+			            FILTER ( Fact_WorkOrder, NOT ISBLANK ( Fact_WorkOrder[Actual_End_Date] ) ),
+			            "@PMCell", Fact_WorkOrder[Cell_ID],
+			            "@PMEnd", Fact_WorkOrder[Actual_End_Date]
+			        ),
+			        KEEPFILTERS ( Fact_WorkOrder[WO_Status] = "Completed" ),
+			        REMOVEFILTERS ( Dim_Date )
+			    )
+			RETURN
+			    COUNTROWS (
+			        FILTER (
+			            Fact_Breakdown,
+			            VAR BdCell = Fact_Breakdown[Cell_ID]
+			            VAR BdDate = Fact_Breakdown[Reported_Date]
+			            RETURN
+			                NOT ISBLANK ( BdDate )
+			                    && COUNTROWS (
+			                        FILTER (
+			                            CompletedPMs,
+			                            [@PMCell] = BdCell
+			                                && BdDate >= [@PMEnd]
+			                                && BdDate <= [@PMEnd] + 7
+			                        )
+			                    ) > 0
+			        )
+			    ) + 0
+			```
+		formatString: #,##0.00
+		displayFolder: 05 Reliability
+		lineageTag: 4f3f0edc-6571-5f32-9d1c-90ca2bb9bf26
+
+	/// The same figure as a share of all breakdowns, which is how it should be read.
+	/// A rising count during a period of rising PM volume is expected; a rising SHARE is the warning.
+	measure 'Breakdowns After PM %' = ```
+			DIVIDE ( [Breakdowns After PM (7d)], [Breakdown Count] )
+			```
+		formatString: 0.0%
+		displayFolder: 05 Reliability
+		lineageTag: 890b34aa-2052-5e65-9162-338666def68d
+
+	measure 'Repeat Breakdown Count' = ```
+			CALCULATE (
+			    COUNTROWS ( Fact_Breakdown ),
+			    KEEPFILTERS ( Fact_Breakdown[Recurrence_Flag] = TRUE () )
+			) + 0
+			```
+		formatString: #,##0
+		displayFolder: 05 Reliability
+		lineageTag: 943bac4f-8478-589d-a9da-ce392a7dd76d
+
+	measure 'Open Breakdowns' = ```
+			CALCULATE (
+			    COUNTROWS ( Fact_Breakdown ),
+			    KEEPFILTERS ( Fact_Breakdown[Status] <> "Closed" )
+			) + 0
+			```
+		formatString: #,##0.00
+		displayFolder: 05 Reliability
+		lineageTag: 30f3e4d6-dd71-5e0f-87b9-0035fbc64223
+
+	measure 'Total Production Loss (Hrs)' = ```
+			DIVIDE ( SUM ( Fact_Breakdown[Production_Loss_Min] ), 60 )
+			```
+		formatString: #,##0.0
+		displayFolder: 05 Reliability
+		lineageTag: 568c5e6f-df7b-51ff-a1d4-eb3ff9d4d45d
+
+	measure 'Spare Cost' = ```
+			SUM ( Fact_SpareReplaced[Total_Cost_INR] )
+			```
+		formatString: "₹"#,##0
+		displayFolder: 06 Spares
+		lineageTag: 45de2bbb-82e0-5cd6-8c42-bfed038b86fc
+
+	/// Spare cost divided by the number of completed cell PMs.
+	/// The unit cost of a preventive maintenance, which is the number a finance review will ask for.
+	measure 'Spare Cost per PM' = ```
+			DIVIDE (
+			    CALCULATE ( [Spare Cost], KEEPFILTERS ( Fact_SpareReplaced[Source_Type] = "PM" ) ),
+			    [PM Completed Count]
+			)
+			```
+		formatString: "₹"#,##0
+		displayFolder: 06 Spares
+		lineageTag: 5086b4dd-9b1e-5328-b3c8-1e7a9aa44e0e
+
+	/// Planned versus unplanned spend.
+	/// Splitting these is the point of Source_Type.
+	measure 'Planned Spare Cost' = ```
+			CALCULATE ( [Spare Cost], KEEPFILTERS ( Fact_SpareReplaced[Source_Type] = "PM" ) )
+			```
+		formatString: "₹"#,##0
+		displayFolder: 06 Spares
+		lineageTag: 3014577a-95ce-564c-90d7-45f17f1c412d
+
+	measure 'Unplanned Spare Cost' = ```
+			CALCULATE ( [Spare Cost], KEEPFILTERS ( Fact_SpareReplaced[Source_Type] = "Breakdown" ) )
+			```
+		formatString: "₹"#,##0
+		displayFolder: 06 Spares
+		lineageTag: 22085baa-3c76-5f5d-9876-63414c0a59c1
+
+	measure 'Qty Replaced' = ```
+			SUM ( Fact_SpareReplaced[Qty_Used] ) + 0
+			```
+		formatString: #,##0.00
+		displayFolder: 06 Spares
+		lineageTag: 23af69e3-714c-525b-96d2-cac656e07bc3
+
+	measure 'Requests Pending Approval' = ```
+			CALCULATE (
+			    COUNTROWS ( Fact_SpareRequest ),
+			    KEEPFILTERS ( Fact_SpareRequest[Approval_Status] = "Pending" )
+			) + 0
+			```
+		formatString: #,##0.00
+		displayFolder: 06 Spares
+		lineageTag: 10bb4a20-00ff-5aab-9c3a-6e1c0d04b99c
+
+	measure 'Avg Approval Lead Time (Days)' = ```
+			AVERAGEX (
+			    FILTER ( Fact_SpareRequest, NOT ISBLANK ( Fact_SpareRequest[Approval_Lead_Days] ) ),
+			    Fact_SpareRequest[Approval_Lead_Days]
+			)
+			```
+		formatString: #,##0.0
+		displayFolder: 06 Spares
+		lineageTag: a53a5acc-872b-5811-83ba-1332df835c39
+
+	/// Approved but not yet issued.
+	/// The gap nobody watches, because the approver's job is done and the storekeeper was never told there was a clock running.
+	measure 'Approved Not Issued Count' = ```
+			CALCULATE (
+			    COUNTROWS ( Fact_SpareRequest ),
+			    KEEPFILTERS ( Fact_SpareRequest[Is_Approved_Not_Issued] = TRUE () )
+			) + 0
+			```
+		formatString: #,##0
+		displayFolder: 06 Spares
+		lineageTag: 3d0769d5-07b9-5ba3-8558-a7b35be4139b
+
+	measure 'Avg Issue Lead Time (Days)' = ```
+			AVERAGEX (
+			    FILTER ( Fact_SpareRequest, NOT ISBLANK ( Fact_SpareRequest[Issue_Lead_Days] ) ),
+			    Fact_SpareRequest[Issue_Lead_Days]
+			)
+			```
+		formatString: #,##0.0
+		displayFolder: 06 Spares
+		lineageTag: ca440cb6-7c0c-51af-8428-59a46591a153
+
+	/// Counted over active parts only.
+	/// A superseded part sitting at zero stock is not a stock-out, and counting it hides the ones that are.
+	measure 'Stock Below Min Count' = ```
+			COUNTROWS (
+			    FILTER (
+			        Dim_Spare,
+			        Dim_Spare[Active] = TRUE ()
+			            && NOT ISBLANK ( Dim_Spare[Current_Stock] )
+			            && NOT ISBLANK ( Dim_Spare[Min_Stock] )
+			            && Dim_Spare[Current_Stock] <= Dim_Spare[Min_Stock]
+			    )
+			) + 0
+			```
+		formatString: #,##0
+		displayFolder: 06 Spares
+		lineageTag: 82b924d8-8c93-5b8f-97a3-d2ba006eb8df
+
+	measure 'Stock Value (INR)' = ```
+			SUMX ( Dim_Spare, Dim_Spare[Current_Stock] * Dim_Spare[Unit_Cost_INR] )
+			```
+		formatString: #,##0
+		displayFolder: 06 Spares
+		lineageTag: 178ccf48-3580-5ada-9322-dc04c8151899
+
+	measure 'Warranty Claims Flagged' = ```
+			CALCULATE (
+			    COUNTROWS ( Fact_SpareReplaced ),
+			    KEEPFILTERS ( Fact_SpareReplaced[Warranty_Claim] = TRUE () )
+			) + 0
+			```
+		formatString: #,##0.00
+		displayFolder: 06 Spares
+		lineageTag: 208ff87b-c225-585a-9edc-ce867cc32c39
+
+	/// Attribution rests entirely on the Completed_By dropdown, because every technician signs in with the same M365 account.
+	/// That is why the field is mandatory on every form and why it is never free text.
+	measure 'PMs Completed by Tech' = ```
+			CALCULATE (
+			    COUNTROWS ( Fact_MachineTask ),
+			    KEEPFILTERS ( Fact_MachineTask[Task_Status] = "Completed" )
+			) + 0
+			```
+		formatString: #,##0.00
+		displayFolder: 07 Technician
+		lineageTag: 8879b648-9e71-57cd-ba16-8ee27ad446de
+
+	measure 'Avg Task Duration by Tech' = ```
+			AVERAGEX (
+			    FILTER (
+			        Fact_MachineTask,
+			        Fact_MachineTask[Task_Status] = "Completed"
+			            && NOT ISBLANK ( Fact_MachineTask[Duration_Min] )
+			            && Fact_MachineTask[Duration_Min] > 0
+			    ),
+			    Fact_MachineTask[Duration_Min]
+			)
+			```
+		formatString: #,##0.00
+		displayFolder: 07 Technician
+		lineageTag: 5fdc9b96-8f5e-57c9-a046-944ac89523f6
+
+	/// Findings per completed task.
+	/// Read this as thoroughness, not as fault.
+	/// A technician who raises more findings per PM is looking harder, and the one at the bottom of this chart is the one to review - not the one at the top.
+	/// Label it that way on the page, every time, or within a month people will stop reporting findings to protect their number.
+	measure 'Findings Raised per PM' = ```
+			DIVIDE (
+			    CALCULATE (
+			        SUM ( Fact_MachineTask[NOT_OK_Count] ),
+			        KEEPFILTERS ( Fact_MachineTask[Task_Status] = "Completed" )
+			    ),
+			    [Machine Tasks Completed]
+			)
+			```
+		formatString: #,##0.00
+		displayFolder: 07 Technician
+		lineageTag: 8de5e99f-d8e1-5285-ac5c-3100606f21ec
+
+	measure 'Abnormalities Raised by Tech' = ```
+			COUNTROWS ( Fact_Abnormality ) + 0
+			```
+		formatString: #,##0.00
+		displayFolder: 07 Technician
+		lineageTag: 2403511e-7a4d-5c74-a715-2a3183995764
+
+	/// Distinct technicians who completed work in the period.
+	/// The workload-balance denominator.
+	measure 'Active Technicians' = ```
+			CALCULATE (
+			    DISTINCTCOUNT ( Fact_MachineTask[Completed_By] ),
+			    KEEPFILTERS ( Fact_MachineTask[Task_Status] = "Completed" )
+			) + 0
+			```
+		formatString: #,##0.00
+		displayFolder: 07 Technician
+		lineageTag: d5a6fd8c-30fb-554d-8a4f-8919be6f075b
+
+	/// How unevenly work is spread.
+	/// Zero means perfectly balanced.
+	/// A high value with six technicians on the roster usually means two of them are doing the PMs and four are on breakdowns.
+	measure 'Workload Imbalance' = ```
+			VAR PerTech =
+			    ADDCOLUMNS (
+			        VALUES ( Dim_Technician[Tech_ID] ),
+			        "@Tasks", CALCULATE ( [Machine Tasks Completed] )
+			    )
+			VAR MaxT = MAXX ( PerTech, [@Tasks] )
+			VAR MinT = MINX ( PerTech, [@Tasks] )
+			RETURN
+			    IF ( COUNTROWS ( PerTech ) > 1, MaxT - MinT )
+			```
+		formatString: #,##0.00
+		displayFolder: 07 Technician
+		lineageTag: 6ca2d12a-7274-56f5-8055-c2b0501dbcab
+
+	/// Titles that state the question the visual answers, with the live figure in them.
+	/// A title that changes with the filter is read; a static one is not.
+	measure 'Title - Cells At Risk' = ```
+			"Which cells are at or past 90% of their PM trigger?  ("
+			    & FORMAT ( [Cells Due Soon Count], "0" ) & " of "
+			    & FORMAT ( COUNTROWS ( FILTER ( Dim_Cell, Dim_Cell[Active] = TRUE () ) ), "0" ) & " cells)"
+			```
+		displayFolder: 08 Utility
+		lineageTag: 46f5a444-1c80-5f86-8478-be3576f24c6a
+
+	measure 'Title - Breakdowns After PM' = ```
+			"Breakdowns within 7 days of a completed PM  -  "
+			    & FORMAT ( [Breakdowns After PM (7d)], "0" ) & " of "
+			    & FORMAT ( [Breakdown Count], "0" ) & " breakdowns ("
+			    & FORMAT ( [Breakdowns After PM %], "0.0%" ) & ").  A rising share means the PM is not working."
+			```
+		displayFolder: 08 Utility
+		lineageTag: 56e49023-1c69-50f9-9bce-a942671684f6
+
+	/// Colour helper for compliance, using the theme's positive / warning / negative.
+	measure 'Compliance Colour' = ```
+			VAR C = [PM Compliance %]
+			RETURN
+			    SWITCH ( TRUE (), ISBLANK ( C ), "#7B8794", C >= 0.95, "#44C088", C >= 0.85, "#F0A202", "#ED7373" )
+			```
+		displayFolder: 08 Utility
+		lineageTag: 0c202cf6-34ef-5e12-9daf-4add7ff87142
+
+	measure 'Availability Colour' = ```
+			VAR A = [Availability %]
+			RETURN
+			    SWITCH ( TRUE (), ISBLANK ( A ), "#7B8794", A >= 0.95, "#44C088", A >= 0.9, "#F0A202", "#ED7373" )
+			```
+		displayFolder: 08 Utility
+		lineageTag: 461fab05-4299-5f18-9dce-0be2f705d6ee
+
+	/// Expected man-hours to PM one whole cell, summed from the checklist master across that cell's active machines.
+	/// This is the number you show production when you ask for a window.
+	/// It is built from what the checklist actually says, not from what last time happened to take, so it does not quietly inflate as the team gets slower.
+	measure 'Cell Expected PM Hours' = ```
+			DIVIDE (
+			    SUMX (
+			        FILTER ( Dim_Machine, Dim_Machine[Active] = TRUE () ),
+			        VAR ChecklistId = Dim_Machine[Checklist_ID]
+			        RETURN
+			            CALCULATE (
+			                SUM ( Dim_ChecklistItem[Expected_Time_Min] ),
+			                REMOVEFILTERS ( Dim_ChecklistItem ),
+			                Dim_ChecklistItem[Checklist_ID] = ChecklistId,
+			                Dim_ChecklistItem[Active] = TRUE ()
+			            )
+			    ),
+			    60
+			)
+			```
+		formatString: #,##0
+		displayFolder: 09 Forecast & Schedule Helpers
+		lineageTag: d37dc870-e67d-5d27-9f9c-57f29443ffcf
+
+	/// How many cell PMs are projected to fall in the month on the axis.
+	/// This is the workload forecast, and it is the only visual on the planning page that answers "how many technicians do I need in November".
+	/// Dim_Cell has no relationship to Dim_Date - deliberately, since the counter is a snapshot - so the month window is read off the axis with MIN/MAX and each cell's own due date is compared against it.
+	measure 'Forecast PM Count' = ```
+			VAR MonthStart = MIN ( Dim_Date[Date] )
+			VAR MonthEnd = MAX ( Dim_Date[Date] )
+			VAR CellsWithDue =
+			    ADDCOLUMNS (
+			        CALCULATETABLE (
+			            VALUES ( Dim_Cell[Cell_ID] ),
+			            REMOVEFILTERS ( Dim_Date ),
+			            Dim_Cell[Active] = TRUE ()
+			        ),
+			        "@Due", CALCULATE ( [Next PM Due Date], REMOVEFILTERS ( Dim_Date ) )
+			    )
+			RETURN
+			    COUNTROWS (
+			        FILTER (
+			            CellsWithDue,
+			            NOT ISBLANK ( [@Due] ) && [@Due] >= MonthStart && [@Due] <= MonthEnd
+			        )
+			    ) + 0
+			```
+		formatString: #,##0
+		displayFolder: 09 Forecast & Schedule Helpers
+		lineageTag: 89df0f84-9ada-56ca-a3d5-b72bb0a57d8a
+
+	/// The same forecast expressed in man-hours, which is what a shift plan is actually built from.
+	/// Three cells due in one month is meaningless until you know whether that is 12 hours or 60.
+	measure 'Forecast Man-Hours' = ```
+			VAR MonthStart = MIN ( Dim_Date[Date] )
+			VAR MonthEnd = MAX ( Dim_Date[Date] )
+			VAR CellsWithDue =
+			    ADDCOLUMNS (
+			        CALCULATETABLE (
+			            VALUES ( Dim_Cell[Cell_ID] ),
+			            REMOVEFILTERS ( Dim_Date ),
+			            Dim_Cell[Active] = TRUE ()
+			        ),
+			        "@Due", CALCULATE ( [Next PM Due Date], REMOVEFILTERS ( Dim_Date ) ),
+			        "@Hrs", CALCULATE ( [Cell Expected PM Hours], REMOVEFILTERS ( Dim_Date ) )
+			    )
+			RETURN
+			    SUMX (
+			        FILTER (
+			            CellsWithDue,
+			            NOT ISBLANK ( [@Due] ) && [@Due] >= MonthStart && [@Due] <= MonthEnd
+			        ),
+			        [@Hrs]
+			    )
+			```
+		formatString: #,##0
+		displayFolder: 09 Forecast & Schedule Helpers
+		lineageTag: 6c287ff1-edc7-503f-8896-a557dea099d1
+
+	/// Spare spend in the month currently in context, for the executive KPI row.
+	measure 'Spare Cost MTD' = ```
+			CALCULATE ( [Spare Cost], DATESMTD ( Dim_Date[Date] ) )
+			```
+		formatString: "₹"#,##0
+		displayFolder: 09 Forecast & Schedule Helpers
+		lineageTag: 86fe0a15-dc33-5e67-8c44-bbafa81ffe71
+
+	/// Gantt-style planned-vs-actual bars.
+	/// Power BI has no native Gantt.
+	/// The standard construction is a stacked bar with two series: an INVISIBLE offset bar that pushes the visible bar to the right, then the visible duration bar.
+	/// Set the offset series to no fill in the visual and what remains reads as a timeline.
+	/// The origin is the earliest planned start in the current selection, so the chart re-bases itself when the month slicer moves rather than always starting at some fixed date far off screen.
+	measure 'Gantt Origin Date' = ```
+			CALCULATE (
+			    MIN ( Fact_WorkOrder[Planned_Start_Date] ),
+			    ALLSELECTED ( Fact_WorkOrder )
+			)
+			```
+		formatString: yyyy-mm-dd
+		displayFolder: 09 Forecast & Schedule Helpers
+		lineageTag: e6f67187-2f20-5058-9294-026fbc8bc9a2
+
+	measure 'Gantt Planned Offset (Days)' = ```
+			VAR Origin = [Gantt Origin Date]
+			VAR Start = MIN ( Fact_WorkOrder[Planned_Start_Date] )
+			RETURN
+			    IF ( NOT ISBLANK ( Start ) && NOT ISBLANK ( Origin ), DATEDIFF ( Origin, Start, DAY ) )
+			```
+		formatString: #,##0.0
+		displayFolder: 09 Forecast & Schedule Helpers
+		lineageTag: bd9336f2-c35b-5bf5-b99b-0ce7487db7f9
+
+	measure 'Gantt Planned Duration (Days)' = ```
+			VAR S = MIN ( Fact_WorkOrder[Planned_Start_Date] )
+			VAR E = MAX ( Fact_WorkOrder[Planned_End_Date] )
+			RETURN
+			    IF ( NOT ISBLANK ( S ) && NOT ISBLANK ( E ), DATEDIFF ( S, E, DAY ) + 1 )
+			```
+		formatString: #,##0.0
+		displayFolder: 09 Forecast & Schedule Helpers
+		lineageTag: 5282e882-feb3-5d21-8074-73458df5586f
+
+	measure 'Gantt Actual Offset (Days)' = ```
+			VAR Origin = [Gantt Origin Date]
+			VAR Start = MIN ( Fact_WorkOrder[Actual_Start_Date] )
+			RETURN
+			    IF ( NOT ISBLANK ( Start ) && NOT ISBLANK ( Origin ), DATEDIFF ( Origin, Start, DAY ) )
+			```
+		formatString: #,##0.0
+		displayFolder: 09 Forecast & Schedule Helpers
+		lineageTag: 7b88aaa2-5006-5adb-b11f-cc21b5800a2a
+
+	measure 'Gantt Actual Duration (Days)' = ```
+			VAR S = MIN ( Fact_WorkOrder[Actual_Start_Date] )
+			VAR E = MAX ( Fact_WorkOrder[Actual_End_Date] )
+			RETURN
+			    IF ( NOT ISBLANK ( S ) && NOT ISBLANK ( E ), DATEDIFF ( S, E, DAY ) + 1 )
+			```
+		formatString: #,##0.0
+		displayFolder: 09 Forecast & Schedule Helpers
+		lineageTag: 83437099-83a8-5150-89df-15d666776f09
+
+	/// Planned work orders in the month, using the INACTIVE Planned_End_Date relationship.
+	/// This is what the inactive relationships exist for: one month slicer, two different questions - what did we plan for March, and what did we finish in March.
+	measure 'Planned WO Count' = ```
+			CALCULATE (
+			    COUNTROWS ( Fact_WorkOrder ),
+			    USERELATIONSHIP ( Fact_WorkOrder[Planned_End_Date], Dim_Date[Date] ),
+			    KEEPFILTERS ( Fact_WorkOrder[WO_Status] <> "Cancelled" )
+			) + 0
+			```
+		formatString: #,##0
+		displayFolder: 09 Forecast & Schedule Helpers
+		lineageTag: cd75fdfe-2986-51ed-ad90-d81793f9c278
+
+	measure 'Completed WO Count (by Actual Date)' = ```
+			CALCULATE (
+			    COUNTROWS ( Fact_WorkOrder ),
+			    USERELATIONSHIP ( Fact_WorkOrder[Actual_End_Date], Dim_Date[Date] ),
+			    KEEPFILTERS ( Fact_WorkOrder[WO_Status] = "Completed" )
+			) + 0
+			```
+		formatString: #,##0.00
+		displayFolder: 09 Forecast & Schedule Helpers
+		lineageTag: 6fb159f4-5234-55b1-9212-859facbf5a06
+
+	column _placeholder
+		isHidden: true
+		dataType: int64
+		lineageTag: e44a338a-9c78-562d-bc3d-42b185d0e753
+		summarizeBy: none
+		sourceColumn: [_placeholder]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Measures = calculated
+		mode: import
+		source = ROW("_placeholder", 1)

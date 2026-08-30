@@ -1,0 +1,43 @@
+{
+  "_comment": [
+    "Abnormality_Log.",
+    "Severity drives a coloured pill; Target_Date turns red once it is past and the item",
+    "is still open. Those two together are the whole triage: what is serious, and what is",
+    "late. A High-severity item past its target date is what the daily digest escalates."
+  ],
+  "ColumnFormats": {
+    "Severity": {
+      "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+      "elmType": "div",
+      "txt": "@currentField",
+      "style": {
+        "font-family": "'Segoe UI', system-ui, sans-serif",
+        "display": "flex", "align-items": "center", "justify-content": "center",
+        "min-height": "28px", "min-width": "80px", "padding": "0 12px",
+        "border-radius": "14px", "font-size": "13px", "font-weight": "700",
+        "color": "=if(@currentField == 'High', '#FFFFFF', if(@currentField == 'Medium', '#8A5A00', '#57606A'))",
+        "background-color": "=if(@currentField == 'High', '#ED7373', if(@currentField == 'Medium', '#FDF0D2', '#EDF0F2'))"
+      }
+    },
+    "Target_Date": {
+      "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+      "elmType": "div",
+      "txt": "=toLocaleDateString(@currentField)",
+      "style": {
+        "font-family": "'Segoe UI', system-ui, sans-serif",
+        "font-weight": "=if(@currentField < @now && [$Status] != 'Closed', '700', '400')",
+        "color": "=if(@currentField < @now && [$Status] != 'Closed', '#ED7373', '#1F2933')"
+      }
+    },
+    "Status": {
+      "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+      "elmType": "div",
+      "txt": "@currentField",
+      "style": {
+        "font-family": "'Segoe UI', system-ui, sans-serif",
+        "font-weight": "600", "font-size": "13px",
+        "color": "=if(@currentField == 'Open', '#ED7373', if(@currentField == 'In Progress', '#F0A202', '#44C088'))"
+      }
+    }
+  }
+}

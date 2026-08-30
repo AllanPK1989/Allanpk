@@ -1,0 +1,148 @@
+{
+  "ListTitle": "Spare_Master",
+  "ListUrl": "Lists/Spare_Master",
+  "Description": "Spare parts catalogue with cost, stock and reorder data.",
+  "Template": "GenericList",
+  "EnableVersioning": true,
+  "MajorVersionLimit": 50,
+  "EnableAttachments": false,
+  "TitleColumn": {
+    "Required": false,
+    "Hidden": false,
+    "SetFrom": "Spare_Code",
+    "Note": "Title is populated from the primary key on load so the item has a readable display name and shows up in search. Matching is always done on the explicit key column, never on Title."
+  },
+  "PrimaryKey": "Spare_Code",
+  "IndexedColumns": [
+    "Spare_Code",
+    "Active"
+  ],
+  "Fields": [
+    {
+      "InternalName": "Spare_Code",
+      "DisplayName": "Spare_Code",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Spare_Description",
+      "DisplayName": "Spare_Description",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Category",
+      "DisplayName": "Category",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "Mechanical",
+        "Electrical",
+        "Pneumatic",
+        "Instrument",
+        "Utility",
+        "Consumable",
+        "Sensor"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "UOM",
+      "DisplayName": "UOM",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "ABC_Class",
+      "DisplayName": "ABC_Class",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "A",
+        "B",
+        "C"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "FMR_Class",
+      "DisplayName": "FMR_Class",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "F",
+        "M",
+        "R"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Unit_Cost_INR",
+      "DisplayName": "Unit_Cost_INR",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 2
+    },
+    {
+      "InternalName": "Min_Stock",
+      "DisplayName": "Min_Stock",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 0
+    },
+    {
+      "InternalName": "Current_Stock",
+      "DisplayName": "Current_Stock",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 0
+    },
+    {
+      "InternalName": "Lead_Time_Days",
+      "DisplayName": "Lead_Time_Days",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 0
+    },
+    {
+      "InternalName": "Bin_Location",
+      "DisplayName": "Bin_Location",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Preferred_Vendor",
+      "DisplayName": "Preferred_Vendor",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Active",
+      "DisplayName": "Active",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Boolean",
+      "DefaultValue": "0"
+    }
+  ]
+}

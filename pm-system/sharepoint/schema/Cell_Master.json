@@ -1,0 +1,159 @@
+{
+  "ListTitle": "Cell_Master",
+  "ListUrl": "Lists/Cell_Master",
+  "Description": "One row per production cell. Holds the running standard-hours counter that triggers PM.",
+  "Template": "GenericList",
+  "EnableVersioning": true,
+  "MajorVersionLimit": 50,
+  "EnableAttachments": false,
+  "TitleColumn": {
+    "Required": false,
+    "Hidden": false,
+    "SetFrom": "Cell_ID",
+    "Note": "Title is populated from the primary key on load so the item has a readable display name and shows up in search. Matching is always done on the explicit key column, never on Title."
+  },
+  "PrimaryKey": "Cell_ID",
+  "IndexedColumns": [
+    "Cell_ID",
+    "Active",
+    "Cum_Std_Hours_Since_PM",
+    "Last_PM_Date"
+  ],
+  "Fields": [
+    {
+      "InternalName": "Cell_ID",
+      "DisplayName": "Cell_ID",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Cell_Name",
+      "DisplayName": "Cell_Name",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Plant",
+      "DisplayName": "Plant",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Process_Area",
+      "DisplayName": "Process_Area",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "Element",
+        "Assembly",
+        "Filling",
+        "Curing",
+        "Testing",
+        "Packing"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Machine_Count",
+      "DisplayName": "Machine_Count",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 0
+    },
+    {
+      "InternalName": "PM_Trigger_Hours",
+      "DisplayName": "PM_Trigger_Hours",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 0
+    },
+    {
+      "InternalName": "Calendar_Backstop_Months",
+      "DisplayName": "Calendar_Backstop_Months",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 0
+    },
+    {
+      "InternalName": "Cum_Std_Hours_Since_PM",
+      "DisplayName": "Cum_Std_Hours_Since_PM",
+      "Required": false,
+      "Indexed": true,
+      "Type": "Number",
+      "Decimals": 2
+    },
+    {
+      "InternalName": "Last_PM_Date",
+      "DisplayName": "Last_PM_Date",
+      "Required": false,
+      "Indexed": true,
+      "Type": "DateTime",
+      "DisplayFormat": "DateOnly"
+    },
+    {
+      "InternalName": "Last_PM_WO_No",
+      "DisplayName": "Last_PM_WO_No",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Next_PM_Due_Date_Calendar",
+      "DisplayName": "Next_PM_Due_Date_Calendar",
+      "Required": false,
+      "Indexed": false,
+      "Type": "DateTime",
+      "DisplayFormat": "DateOnly"
+    },
+    {
+      "InternalName": "Avg_Monthly_Std_Hours_L3M",
+      "DisplayName": "Avg_Monthly_Std_Hours_L3M",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 2
+    },
+    {
+      "InternalName": "Owner_Supervisor",
+      "DisplayName": "Owner_Supervisor",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Criticality",
+      "DisplayName": "Criticality",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Choice",
+      "Choices": [
+        "A",
+        "B",
+        "C"
+      ],
+      "Format": "Dropdown",
+      "FillInChoice": false
+    },
+    {
+      "InternalName": "Active",
+      "DisplayName": "Active",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Boolean",
+      "DefaultValue": "0"
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+table Dim_Technician
+	lineageTag: 75d966c4-0fd3-50a2-b8ec-953baed7c1df
+
+	column Tech_ID
+		dataType: string
+		lineageTag: e30888d8-62f2-56b1-bc14-74a911182587
+		summarizeBy: none
+		sourceColumn: Tech_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Tech_Name
+		dataType: string
+		lineageTag: c759ae5a-8cf6-5e61-b523-3af92a836306
+		summarizeBy: none
+		sourceColumn: Tech_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Skill_Level
+		dataType: string
+		lineageTag: 25c11a70-38a8-5cf8-b4ca-3949cfe9601b
+		summarizeBy: none
+		sourceColumn: Skill_Level
+		sortByColumn: Skill_Sort
+
+		annotation SummarizationSetBy = Automatic
+
+	column Trade
+		dataType: string
+		lineageTag: d82dab44-91c4-50b1-bd37-6b6a38cd94eb
+		summarizeBy: none
+		sourceColumn: Trade
+
+		annotation SummarizationSetBy = Automatic
+
+	column Default_Shift
+		dataType: string
+		lineageTag: d3037a04-d503-50f0-a546-69bcedd15da3
+		summarizeBy: none
+		sourceColumn: Default_Shift
+
+		annotation SummarizationSetBy = Automatic
+
+	column Contact_No
+		dataType: string
+		lineageTag: ba4a3ef7-6451-5bdb-b605-6a530d13e07d
+		summarizeBy: none
+		sourceColumn: Contact_No
+
+		annotation SummarizationSetBy = Automatic
+
+	column Role_Scope
+		dataType: string
+		lineageTag: d9939c43-8809-59dc-80e9-4a7808f8259b
+		summarizeBy: none
+		sourceColumn: Role_Scope
+
+		annotation SummarizationSetBy = Automatic
+
+	column Active
+		dataType: boolean
+		lineageTag: e1a3b04b-3eda-582c-a39c-c5ec34ed2ff1
+		summarizeBy: none
+		sourceColumn: Active
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	column Skill_Sort
+		dataType: int64
+		isHidden: true
+		lineageTag: 21e4e463-e735-5117-9a5d-205db77b80c6
+		summarizeBy: none
+		sourceColumn: Skill_Sort
+		formatString: #,##0
+
+		annotation SummarizationSetBy = Automatic
+
+	column Tech_Label
+		dataType: string
+		lineageTag: 38dbdcfb-1099-5d60-b2d7-dc7ad14444f7
+		summarizeBy: none
+		sourceColumn: Tech_Label
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Technician = m
+		mode: import
+		source = ```
+				// ===========================================================================
+				// Dim_Technician  <- Technician_Master
+				// ---------------------------------------------------------------------------
+				// Technicians share one M365 login, so the name captured on each form is the
+				// only attribution the system has. That makes this dimension the entire audit
+				// trail, and it makes an inactive technician's rows worth keeping: a leaver's
+				// completed work still has to be attributable.
+				// ===========================================================================
+				let
+				    Source = fnGetTable("Technician_Master", "01_PM_Master_Data.xlsx", "Technician_Master"),
+
+				    Keys = fnCleanKeys(Source, {"Tech_ID"}),
+				    Bools = fnYesNo(Keys, {"Active"}),
+
+				    Typed = Table.TransformColumnTypes(Bools, {
+				        {"Tech_ID",       type text},
+				        {"Tech_Name",     type text},
+				        {"Skill_Level",   type text},
+				        {"Trade",         type text},
+				        {"Default_Shift", type text},
+				        {"Contact_No",    type text},
+				        {"Role_Scope",    type text},
+				        {"Active",        type logical}
+				    }),
+
+				    Trimmed = Table.TransformColumns(Typed, {
+				        {"Tech_Name",   each if _ = null then null else Text.Trim(_), type nullable text},
+				        {"Skill_Level", each if _ = null then null else Text.Trim(_), type nullable text},
+				        {"Trade",       each if _ = null then null else Text.Trim(_), type nullable text}
+				    }),
+
+				    // Senior / Junior / Trainee is a rank, not an alphabet.
+				    WithSort = Table.AddColumn(
+				        Trimmed, "Skill_Sort",
+				        each if [Skill_Level] = "Senior" then 1
+				             else if [Skill_Level] = "Junior" then 2 else 3,
+				        Int64.Type),
+
+				    // The label used on every visual: the ID alone means nothing to a manager,
+				    // the name alone is ambiguous when two people share a first name.
+				    WithLabel = Table.AddColumn(
+				        WithSort, "Tech_Label",
+				        each Text.From([Tech_Name]) & " (" & Text.From([Tech_ID]) & ")",
+				        type text),
+
+				    Final = Table.SelectRows(WithLabel, each [Tech_ID] <> null)
+				in
+				    Final
+				```
+
+	annotation PBI_ResultType = Table

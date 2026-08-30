@@ -1,0 +1,172 @@
+relationship cf3340c7-0e3e-59f0-9b80-ce996e7b94da
+	fromColumn: Fact_StdHours.Cell_ID
+	toColumn: Dim_Cell.Cell_ID
+
+relationship 902c9ca3-429f-59e0-84a1-6c8094cdc0a6
+	fromColumn: Fact_WorkOrder.Cell_ID
+	toColumn: Dim_Cell.Cell_ID
+
+relationship 5ef7cb8a-3ad8-5973-b123-8f1fbac1917c
+	fromColumn: Fact_MachineTask.Cell_ID
+	toColumn: Dim_Cell.Cell_ID
+
+relationship 52b1a80a-21c1-5858-9bad-f36ecebb1fbf
+	fromColumn: Fact_ChecklistResponse.Cell_ID
+	toColumn: Dim_Cell.Cell_ID
+
+relationship d4eea79a-9ff7-5945-ad2c-038460622375
+	fromColumn: Fact_ScanLog.Cell_ID
+	toColumn: Dim_Cell.Cell_ID
+
+relationship cff1909b-59fa-576c-b232-5dd0463ba762
+	fromColumn: Fact_Breakdown.Cell_ID
+	toColumn: Dim_Cell.Cell_ID
+
+relationship 4831c7c6-34ef-5175-a5f8-841ff69f7b99
+	fromColumn: Fact_SpareRequest.Cell_ID
+	toColumn: Dim_Cell.Cell_ID
+
+relationship d455369d-1d27-5667-9dc7-d61bcb7d95eb
+	fromColumn: Fact_SpareReplaced.Cell_ID
+	toColumn: Dim_Cell.Cell_ID
+
+relationship 6e8275e3-1abc-5a0c-b7e7-6c32e8ff376f
+	fromColumn: Fact_Abnormality.Cell_ID
+	toColumn: Dim_Cell.Cell_ID
+
+relationship 517da5e3-c988-59b5-ae1b-f04b85016012
+	fromColumn: Fact_PlanCalendar.Cell_ID
+	toColumn: Dim_Cell.Cell_ID
+
+relationship 1025032c-12d4-59fd-8b64-ffc8cf96dba4
+	fromColumn: Fact_MachineTask.Machine_ID
+	toColumn: Dim_Machine.Machine_ID
+
+relationship cb54d497-2859-54d6-a7fb-62f8c5d332e2
+	fromColumn: Fact_ChecklistResponse.Machine_ID
+	toColumn: Dim_Machine.Machine_ID
+
+relationship 9ca7977e-b0ed-5c19-836e-9ed9ebfbfea7
+	fromColumn: Fact_ScanLog.Machine_ID
+	toColumn: Dim_Machine.Machine_ID
+
+relationship 0a2e47e6-6241-5d02-8fd5-adbbb91d1e3c
+	fromColumn: Fact_Breakdown.Machine_ID
+	toColumn: Dim_Machine.Machine_ID
+
+relationship b20b8dfa-0da3-50d6-a195-c0244b97696e
+	fromColumn: Fact_SpareRequest.Machine_ID
+	toColumn: Dim_Machine.Machine_ID
+
+relationship e4c68396-8146-578f-90b2-c7c5fdadea4f
+	fromColumn: Fact_SpareReplaced.Machine_ID
+	toColumn: Dim_Machine.Machine_ID
+
+relationship ec2a2cd0-0c47-50b6-83b2-108a90d1cf05
+	fromColumn: Fact_Abnormality.Machine_ID
+	toColumn: Dim_Machine.Machine_ID
+
+relationship f3c2d23a-07e8-519c-b1cd-fa534e91aea9
+	fromColumn: Fact_MachineTask.Completed_By
+	toColumn: Dim_Technician.Tech_ID
+
+relationship 2be7ca75-1c87-5c64-916f-2868fed056bd
+	fromColumn: Fact_ChecklistResponse.Tech_ID
+	toColumn: Dim_Technician.Tech_ID
+
+relationship 62710348-dd8c-54ea-8bc3-3aea4cdee5e9
+	fromColumn: Fact_ScanLog.Tech_ID
+	toColumn: Dim_Technician.Tech_ID
+
+relationship 05373cf5-1977-56d7-a552-e66dce9feb8a
+	fromColumn: Fact_Breakdown.Reported_By_Tech_ID
+	toColumn: Dim_Technician.Tech_ID
+
+relationship 6a6e1e33-6b0e-5d02-b021-fe477436f070
+	fromColumn: Fact_SpareRequest.Requested_By
+	toColumn: Dim_Technician.Tech_ID
+
+relationship 02db6a22-330d-5ce8-bb20-f0bbde3a7e7e
+	fromColumn: Fact_SpareReplaced.Replaced_By
+	toColumn: Dim_Technician.Tech_ID
+
+relationship a4ec26be-116e-537e-91be-918e3e36e226
+	fromColumn: Fact_Abnormality.Logged_By
+	toColumn: Dim_Technician.Tech_ID
+
+relationship 2229067c-0824-5960-9265-4303ded6efae
+	isActive: false
+	fromColumn: Fact_WorkOrder.Lead_Tech_ID
+	toColumn: Dim_Technician.Tech_ID
+
+relationship 3e84b4d2-ea9a-5d11-aa0f-0039822810c3
+	fromColumn: Fact_SpareRequest.Spare_Code
+	toColumn: Dim_Spare.Spare_Code
+
+relationship 19da574f-ef1d-536e-8973-11c4fde14fad
+	fromColumn: Fact_SpareReplaced.Spare_Code
+	toColumn: Dim_Spare.Spare_Code
+
+relationship f9492445-a2e4-55c4-bb5a-804f5915b135
+	fromColumn: Fact_ChecklistResponse.Checklist_Item_Key
+	toColumn: Dim_ChecklistItem.Checklist_Item_Key
+
+relationship 8d217c50-c6c1-5f89-ba4a-186e1dc2a57e
+	fromColumn: Fact_StdHours.Month_Start_Date
+	toColumn: Dim_Date.Date
+
+relationship 0ffdee09-44d3-5988-952e-887418a12742
+	fromColumn: Fact_WorkOrder.WO_Created_Date
+	toColumn: Dim_Date.Date
+
+relationship 41bfd143-fe21-5c79-866a-62c683fad6cb
+	fromColumn: Fact_MachineTask.Completion_Date
+	toColumn: Dim_Date.Date
+
+relationship 4c3c7f36-9a57-591e-8cbf-1e1a4977cb1f
+	fromColumn: Fact_ChecklistResponse.Submitted_Date
+	toColumn: Dim_Date.Date
+
+relationship 7b224dcb-75c5-574b-9c5a-4e037b95e910
+	fromColumn: Fact_ScanLog.Scan_Date
+	toColumn: Dim_Date.Date
+
+relationship d2e93106-19c5-5c96-a31c-6df1fe038a35
+	fromColumn: Fact_Breakdown.Reported_Date
+	toColumn: Dim_Date.Date
+
+relationship afcd929b-3d8e-5ffe-a8fb-83e0364ec4f0
+	fromColumn: Fact_SpareRequest.Request_Date
+	toColumn: Dim_Date.Date
+
+relationship b823677c-aba8-5a63-b79f-ecb25504a20b
+	fromColumn: Fact_SpareReplaced.Replaced_Date
+	toColumn: Dim_Date.Date
+
+relationship 2d9ee452-5c19-57a5-b360-989029f33bc3
+	fromColumn: Fact_Abnormality.Logged_Date
+	toColumn: Dim_Date.Date
+
+relationship 221513f1-6b18-58f5-863a-608ff69c7faa
+	fromColumn: Fact_PlanCalendar.Planned_Date
+	toColumn: Dim_Date.Date
+
+relationship bd8394d1-5fc4-52dd-8ca9-131a96434adf
+	isActive: false
+	fromColumn: Fact_WorkOrder.Planned_End_Date
+	toColumn: Dim_Date.Date
+
+relationship edd48cf2-02a4-52da-a4ee-42a122146c0e
+	isActive: false
+	fromColumn: Fact_WorkOrder.Actual_End_Date
+	toColumn: Dim_Date.Date
+
+relationship e133d2a6-d25e-5782-ab99-eb57146022f3
+	isActive: false
+	fromColumn: Fact_Abnormality.Target_Date
+	toColumn: Dim_Date.Date
+
+relationship 64f7f593-fd91-524f-a130-6168cf152e6d
+	isActive: false
+	fromColumn: Fact_SpareRequest.Approved_Date
+	toColumn: Dim_Date.Date

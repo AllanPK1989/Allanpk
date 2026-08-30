@@ -1,0 +1,134 @@
+{
+  "SiteDescription": "EPQPL Pondicherry - cell-based preventive maintenance system",
+  "ProvisioningOrder": [
+    "Cell_Master",
+    "Technician_Master",
+    "Spare_Master",
+    "Checklist_Master",
+    "Machine_Master",
+    "StdHours_Monthly",
+    "PM_WorkOrder",
+    "PM_Machine_Task",
+    "Checklist_Response",
+    "Scan_Log",
+    "Breakdown_Log",
+    "Spare_Request",
+    "Spare_Replaced",
+    "Abnormality_Log",
+    "PM_Plan_Calendar"
+  ],
+  "DocumentLibraries": [
+    {
+      "Title": "StdHours_Inbox",
+      "Description": "Drop the monthly standard-hours workbook here. Flow 1 picks it up, validates it and moves it out."
+    },
+    {
+      "Title": "StdHours_Archive",
+      "Description": "Processed monthly workbooks. Power BI's folder query points here."
+    },
+    {
+      "Title": "PM_Photos",
+      "Description": "Photos attached to checklist findings."
+    },
+    {
+      "Title": "Abnormality_Photos",
+      "Description": "Evidence photos for abnormality records."
+    },
+    {
+      "Title": "Checklist_PDFs",
+      "Description": "Printable checklist sheets, one per checklist set, for the paper fallback."
+    }
+  ],
+  "Lists": [
+    {
+      "Title": "Cell_Master",
+      "SchemaFile": "Cell_Master.json",
+      "FieldCount": 15,
+      "IndexCount": 4
+    },
+    {
+      "Title": "Technician_Master",
+      "SchemaFile": "Technician_Master.json",
+      "FieldCount": 8,
+      "IndexCount": 2
+    },
+    {
+      "Title": "Spare_Master",
+      "SchemaFile": "Spare_Master.json",
+      "FieldCount": 13,
+      "IndexCount": 2
+    },
+    {
+      "Title": "Checklist_Master",
+      "SchemaFile": "Checklist_Master.json",
+      "FieldCount": 11,
+      "IndexCount": 2
+    },
+    {
+      "Title": "Machine_Master",
+      "SchemaFile": "Machine_Master.json",
+      "FieldCount": 18,
+      "IndexCount": 4
+    },
+    {
+      "Title": "StdHours_Monthly",
+      "SchemaFile": "StdHours_Monthly.json",
+      "FieldCount": 8,
+      "IndexCount": 2
+    },
+    {
+      "Title": "PM_WorkOrder",
+      "SchemaFile": "PM_WorkOrder.json",
+      "FieldCount": 20,
+      "IndexCount": 7
+    },
+    {
+      "Title": "PM_Machine_Task",
+      "SchemaFile": "PM_Machine_Task.json",
+      "FieldCount": 16,
+      "IndexCount": 6
+    },
+    {
+      "Title": "Checklist_Response",
+      "SchemaFile": "Checklist_Response.json",
+      "FieldCount": 16,
+      "IndexCount": 6
+    },
+    {
+      "Title": "Scan_Log",
+      "SchemaFile": "Scan_Log.json",
+      "FieldCount": 9,
+      "IndexCount": 3
+    },
+    {
+      "Title": "Breakdown_Log",
+      "SchemaFile": "Breakdown_Log.json",
+      "FieldCount": 21,
+      "IndexCount": 4
+    },
+    {
+      "Title": "Spare_Request",
+      "SchemaFile": "Spare_Request.json",
+      "FieldCount": 19,
+      "IndexCount": 4
+    },
+    {
+      "Title": "Spare_Replaced",
+      "SchemaFile": "Spare_Replaced.json",
+      "FieldCount": 17,
+      "IndexCount": 4
+    },
+    {
+      "Title": "Abnormality_Log",
+      "SchemaFile": "Abnormality_Log.json",
+      "FieldCount": 16,
+      "IndexCount": 5
+    },
+    {
+      "Title": "PM_Plan_Calendar",
+      "SchemaFile": "PM_Plan_Calendar.json",
+      "FieldCount": 12,
+      "IndexCount": 4
+    }
+  ]
+}
