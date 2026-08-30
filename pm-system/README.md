@@ -61,6 +61,7 @@ powerapps/              Phase 2 — specified and costed, not licensed today
   app_manifest.json     data sources, screens, globals
 
 docs/
+  HANDOVER.md                 START HERE - the single handover summary
   IMPLEMENTATION_RUNBOOK.md   step-numbered, start to finish
   ASSUMPTIONS.md              every judgement call, with verified figures
   UAT_TEST_CASES.md           35 cases
@@ -76,6 +77,13 @@ tools/
   validate_model.py             checks every reference resolves
   verify_measures.py            recomputes every measure independently of the DAX
 ```
+
+## Start here
+
+**`docs/HANDOVER.md`** — the single document that covers everything: what the system
+does, what is built, the eight decisions of record, how to go live, the one live
+risk and how it is managed, who does what ongoing, and how to prove it still works.
+Read that first; everything else is detail it points at.
 
 ## Quick start
 
