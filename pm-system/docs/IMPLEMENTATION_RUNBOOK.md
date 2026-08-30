@@ -16,15 +16,42 @@ the mistakes get caught, and both are tempting to rush.
 | SharePoint site | A dedicated team site. **Do not** use an existing one — this creates 16 lists and 5 libraries |
 | Permissions | Site Owner on that site |
 | Licences | Microsoft 365 E3 or better. Power Automate and Forms are included |
-| Service account | e.g. `svc-pm@yourcompany.com`, licensed, password not expiring. **All eleven flows are built under this account** |
+| Owning account | **One individual account** owns all eleven flows and all five Forms — no service account is available. Decide *which* person before you start, and read `ASSUMPTIONS.md` §8.2 first: this works, but the risk has to be managed |
 | Workstation | Power BI Desktop, PowerShell 7, Python 3.9+ |
 | Shop floor | At least one Android handset with a working camera |
 
-### Why a service account
+### Building on an individual account
 
-A flow owned by a person stops the day their licence is removed. That day arrives
-without notice — a resignation, a role change, a licence audit — and the first
-symptom is a counter that never resets, discovered weeks later.
+No service account is available, so all eleven flows and all five Forms are created
+under one person's login. That is workable, and this system is designed to survive
+it — but only because of three things you have to do while building, not afterwards.
+
+**What actually breaks.** A flow has *owners* and it has *connections*. Co-owners
+can edit and repair the flow. The connections, though, belong to the single account
+that created them — SharePoint, Outlook, Forms, Teams, Approvals. When that account
+is disabled or unlicensed, every connection breaks and all eleven flows stop,
+regardless of who else owns them. Co-ownership shortens the repair; it does not
+prevent the failure.
+
+**So do these three as you build:**
+
+1. **Add two named co-owners to every flow.** Flow → Share → add both. Retrofitting
+   this across eleven flows later is an hour nobody schedules.
+2. **Point every failure branch at a shared mailbox**, not the owner's inbox. The
+   built-in *"Send me an email if a flow fails"* only ever reaches the owner.
+3. **Export a flow package after UAT** (Power Automate → Export → Package) and keep
+   the `.zip` with this repository. If the account is deleted outright rather than
+   just unlicensed, the flows go with it.
+
+**And know the warning sign.** Flow 11 sends a one-line "PM system healthy" every
+Monday even when there is nothing to report. **If no digest arrives on a Monday, the
+flows have stopped.** That is deliberate: without it, a silent inbox means either
+"nothing outstanding" or "everything died three weeks ago", and there is no way to
+tell which. Put that sentence in the handover note.
+
+The reassignment procedure — for when the owning person changes role or leaves — is
+written out in `ASSUMPTIONS.md` §8.2. Budget half a day; it is roughly forty
+connector steps.
 
 ```powershell
 Install-Module PnP.PowerShell -Scope CurrentUser
@@ -163,7 +190,7 @@ Five forms: **PM Start**, **PM Checklist**, **Breakdown Report**, **Spare Reques
 
 For each:
 
-1. **forms.office.com** → **New Form**, created **under the service account**
+1. **forms.office.com** → **New Form**, created **under the owning account** (the same one that will own the flows)
 2. Question 1: **Text**, "Machine ID", **Required**
 3. Question 2: **Text**, "Cell ID", **Required**
 4. Question 3: **Choice**, "Technician Name", **Required** — paste all six names
@@ -329,7 +356,7 @@ and set the SharePoint credentials under **Data source credentials**.
 
 ## Step 8 — UAT (1 day)
 
-Work through `docs/UAT_TEST_CASES.md` in order. All 33 cases, recorded, with a name
+Work through `docs/UAT_TEST_CASES.md` in order. All 35 cases, recorded, with a name
 and a date against each.
 
 **Do not shorten this step.** The five that must pass before go-live:
@@ -340,7 +367,8 @@ and a date against each.
 | UAT-07 | The 6-month backstop fires for a cell that never reaches 4,000 |
 | UAT-14 | Three of four machines complete and **nothing** resets |
 | UAT-15 | The fourth completes and all five `Cell_Master` fields move together |
-| UAT-19 | A mid-month reset prorates to the hand-calculated figure |
+| UAT-19 | A mid-month reset prorates by working days to 720.00 h |
+| UAT-30a | The Monday heartbeat arrives on a clean week — the only way a stopped flow becomes visible |
 
 UAT-14 and UAT-15 together are the whole system. If the counter resets when three of
 four machines are done, every PM interval is wrong from that day on and nothing on
@@ -385,6 +413,7 @@ the most moving parts and the one nobody will remember in a year.
 | Monthly | Review `Breakdowns After PM (7d)` — is the PM working? | Manager |
 | Quarterly | Review `Trigger_Type` split. Mostly Calendar Backstop means 4,000 is too high | Manager |
 | Quarterly | Review `Min_Stock` against `Stock_At_Request` history | Stores |
+| Every Monday | Confirm the heartbeat digest arrived. No digest = flows stopped | Supervisor |
 | Each December | Mark next year's holidays and shutdown in `Plant_Calendar` | Planner |
 | Year 4 | Extend `Plant_Calendar` past 2027-03-31; review `Scan_Log` archiving | IT |
 
@@ -408,7 +437,8 @@ and the second question is the one production actually cares about.
 | Power BI shows blank columns after repointing | Mangled column internal names | Recreate the columns from field XML |
 | Flow fails with "cannot convert null" | A null number in arithmetic | Wrap in `float(coalesce(x, 0))` |
 | List view threshold error | A filtered column is not indexed | Re-run `provision_lists.ps1`; it is idempotent |
-| Digest never arrives | It only sends when something is outstanding | That is intended — check the run history shows a skip |
+| Digest never arrives on a weekday | It only sends when something is outstanding | Intended — check the run history shows a skip |
+| **No digest on a Monday** | **The flows have stopped** | Check `My flows` for a disabled flow or an "Invalid connection" banner. Usually the owning account's connections — see `ASSUMPTIONS.md` §8.2 |
 
 ---
 
@@ -421,11 +451,15 @@ and the second question is the one production actually cares about.
 - [ ] 5 Forms built, technician dropdown mandatory on all five
 - [ ] All 30 pre-filled URLs tested on a real phone
 - [ ] 30 QR labels printed, fitted and **individually scan-tested**
-- [ ] All 11 flows built, owned by the service account, failure alerts on
+- [ ] All 11 flows built, failure alerts routed to a **shared mailbox**
+- [ ] **Two co-owners added to all 11 flows** (§8.2 — do not skip this)
+- [ ] Flow package exported to `.zip` and stored with the repository
+- [ ] Monday heartbeat confirmed arriving, and the "no Monday digest = flows stopped"
+      rule written into the handover note
 - [ ] Concurrency off on flows 1 and 5
 - [ ] Power BI published, refresh scheduled, credentials set
-- [ ] All 33 UAT cases passed and recorded
+- [ ] All 35 UAT cases passed and recorded
 - [ ] SOP printed and laminated at each cell
 - [ ] Technicians and supervisors trained
-- [ ] `ASSUMPTIONS.md` §8 — flow ownership (§8.2) settled with IT
+- [ ] `ASSUMPTIONS.md` §8.2 reassignment procedure circulated to both co-owners
 - [ ] First monthly upload run with someone watching

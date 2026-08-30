@@ -13,7 +13,7 @@ Every expression referenced here is written in full in `expressions.md`.
 |---|---|
 | **Connections needed** | SharePoint, Office 365 Outlook, Microsoft Forms, Approvals, Microsoft Teams, Excel Online (Business) |
 | **All standard connectors** | Nothing here needs premium licensing |
-| **Owner account** | Build all eleven under one **service account**, not a personal one. A flow owned by someone who leaves stops the day their licence is removed |
+| **Owner account** | No service account is available, so these are built under an **individual account**. That is workable but carries a real risk — read `ASSUMPTIONS.md` §8.2 **before** you start, and add the two co-owners as you build each flow rather than afterwards |
 | **Naming** | `PM-01 Monthly Std Hours Import` … `PM-11 Daily Digest`. The number is what makes the run history navigable at 7 a.m. |
 
 ### Two rules that will save you a day each
@@ -23,8 +23,16 @@ name with spaces replaced by underscores. Rename an action afterwards and the
 expression breaks — the flow still saves, then fails at runtime with a null.
 
 **Turn on `Configure run after` for every SharePoint write.** Default behaviour on
-failure is to stop silently. Add a failure branch that emails the owner, or you will
-find out about a broken flow when someone asks why a counter never reset.
+failure is to stop silently. Add a failure branch that emails a **shared mailbox**
+— not the owner's inbox — or you will find out about a broken flow when someone asks
+why a counter never reset.
+
+**Add two co-owners to every flow as you build it.** Flow → Share → add both. Be
+clear what this buys: co-owners can *edit and repair* the flow, but the flow still
+runs on the **connections** belonging to whoever created them. If that account is
+disabled the connections break regardless of who else owns the flow. Co-ownership
+shortens the repair; it does not prevent the failure. `ASSUMPTIONS.md` §8.2 has the
+reassignment procedure.
 
 ### Build order
 
@@ -545,14 +553,34 @@ is UAT-14 and UAT-15.
    > A completed work order whose counter never zeroed is a flow failure. It shows
    > up nowhere else, so it belongs on the digest.
 
-6. **Condition** — send only if something is actually outstanding (§16)
+6. **Condition** — send if something is outstanding **OR it is Monday** (§16)
 
    > A digest that arrives every day whether or not anything is wrong stops being
    > read within a fortnight. Skipping the clean days is what keeps it meaningful.
+   >
+   > **But silence has to mean one thing, not two.** The flows run on one person's
+   > connections (see `ASSUMPTIONS.md` §8.2). If the digest only ever arrives when
+   > there is a problem, an empty inbox means either "nothing outstanding" or "the
+   > flows died three weeks ago" — and you cannot tell which until something has
+   > already gone wrong.
+   >
+   > Sending **on Mondays regardless** fixes that for the cost of one email a week.
+   > Tuesday to Sunday it stays quiet unless there is something to act on.
 
 7. **Create HTML table** for each section
 8. **Send an email (V2)** and **Teams: Post an adaptive card** to the maintenance
    channel
+
+   On a clean Monday, skip the tables and send the single line:
+
+   ```
+   PM system healthy - nothing outstanding.
+   Counters, triggers and escalations all ran. Next check Monday.
+   ```
+
+   **The rule for whoever reads it: if no digest arrives on a Monday, the flows have
+   stopped.** That sentence belongs in the handover note, not just here — it is the
+   entire early-warning system.
 
 ### Digest layout
 
@@ -581,14 +609,18 @@ Follow `docs/UAT_TEST_CASES.md` in order. The five that must pass before go-live
 | UAT-07 | The 6-month backstop fires for a low-utilisation cell that never reaches 4,000 |
 | UAT-14 | Three of four machines complete and **nothing** resets |
 | UAT-15 | The fourth completes and all five `Cell_Master` fields move together |
-| UAT-19 | A mid-month reset prorates to the hand-calculated figure |
+| UAT-19 | A mid-month reset prorates by working days to 720.00 h |
+| UAT-30a | The Monday heartbeat arrives on a clean week — the only way a stopped flow becomes visible |
 
 ## Monitoring the flows themselves
 
 - **Power Automate → My flows → Analytics** weekly. A flow with a rising failure
   rate is usually a null that only appears with certain data.
-- Set **failure notifications** on all eleven, to the service account's mailbox and
-  a shared one.
-- The digest's reset-failure section is your canary. It catches Flow 5 having
-  half-worked, which is the failure that costs the most and announces itself the
-  least.
+- Set **failure notifications** on all eleven to a **shared mailbox**. The built-in
+  "send me an email if a flow fails" reaches the owner only, which is no use the day
+  the owner's account is the thing that broke.
+- The digest's reset-failure section is your canary for Flow 5 having half-worked,
+  which is the failure that costs the most and announces itself the least.
+- **The Monday heartbeat is your canary for the flows themselves.** No digest on a
+  Monday means they have stopped — most likely a broken connection on the owning
+  account. Check `My flows` for a disabled flow or an "Invalid connection" banner.

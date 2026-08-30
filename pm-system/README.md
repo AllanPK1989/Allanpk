@@ -63,7 +63,7 @@ powerapps/              Phase 2 — specified and costed, not licensed today
 docs/
   IMPLEMENTATION_RUNBOOK.md   step-numbered, start to finish
   ASSUMPTIONS.md              every judgement call, with verified figures
-  UAT_TEST_CASES.md           33 cases
+  UAT_TEST_CASES.md           35 cases
   TECHNICIAN_SOP_1PAGE.md     shop-floor SOP, printable, English + Tamil
   POWERAPPS_LICENCE_CASE.pptx business case for the Power Apps licence request
   DATA_DICTIONARY.md          copy of the input dictionary

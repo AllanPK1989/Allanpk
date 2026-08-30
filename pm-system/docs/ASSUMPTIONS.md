@@ -294,7 +294,7 @@ All eight confirmed by the system owner. Recorded here as the decisions of recor
 | 3 | Is `Actual_Std_Hours` an actual or a capacity figure? | **Capacity** | **Changed.** Proration is now by working days via `Plant_Calendar` (§2.5) |
 | 4 | Is the Tamil label wording right? | **Yes** | "தொடங்கும் முன் ஸ்கேன் செய்யவும்" — approved for print |
 | 5 | Are Power Apps rights available? | **No licence currently** | Path A (Forms) is the go-live route. Canvas app is Phase 2, subject to a licence request — see §8.1 |
-| 6 | Who owns the eleven flows? | **Not yet decided** | Open — see §8.2. Blocks nothing today, but must be settled before go-live |
+| 6 | Who owns the eleven flows? | **An individual account** | Accepted with mitigations — see §8.2. Flow 11 becomes a weekly heartbeat so a silent failure is detectable |
 | 7 | Retention on `Scan_Log` and `Checklist_Response`? | **None — keep everything** | Accepted. Growth and the one real risk are in §8.3 |
 | 8 | Is 4,000 hours right for every cell? | **Held per cell in `PM_Trigger_Hours`** | As built. All eight currently set to 4,000; retune any cell without touching code |
 
@@ -314,25 +314,86 @@ canvas app is licensed later, the payload changes to a deep link and the sticker
 have to be reprinted. That is a known, accepted cost of starting on Forms — it is
 30 labels, not a redesign.
 
-### 8.2 Flow ownership — still open
+### 8.2 Flow ownership — an individual account *(confirmed)*
 
-Recommendation stands: **a licensed service account, not a person.** A flow owned by
-an individual stops the day their licence is removed, and that day arrives without
-notice — a resignation, a role change, a licence audit. The first symptom is a
-counter that never resets, discovered weeks later.
+**Decision: the eleven flows are owned by an individual account, not a service
+account.** No service account is available. This is workable, but it carries a
+specific residual risk that has to be managed rather than ignored, because nothing
+about it is visible until it has already caused damage.
 
-What to ask IT for:
+#### What actually breaks, and why co-owners do not prevent it
 
-- a licensed account, e.g. `svc-pm@<company>.com`, password not expiring, excluded
-  from the joiner/leaver process
-- two named people as **co-owners** of every flow, so neither is a single point of
-  failure
-- failure notifications routed to a **shared mailbox**, not an individual's inbox
+Two different things are attached to a flow, and they fail differently:
 
-If a service account genuinely cannot be provisioned, the fallback is to make all
-eleven flows co-owned by two named people and to put a calendar reminder on the
-month either of them changes role. That is materially worse and should be argued
-against.
+| | Who it belongs to | What happens when that person's licence goes |
+|---|---|---|
+| **Ownership** | The owner(s) — can be several people | Co-owners keep edit rights, so somebody can still get in |
+| **Connections** | The **one account that created each connection** | The connection breaks. Every flow using it fails |
+
+Adding co-owners is worth doing, but be clear about what it buys: **it shortens the
+repair, it does not prevent the failure.** The flows still run on the original
+person's SharePoint, Outlook, Forms, Teams and Approvals connections. The day that
+account is disabled, all eleven stop — and a co-owner then has to notice, go in, and
+re-point every connection to their own account.
+
+So the question is not "can someone fix it" but "**how long before anyone notices**".
+
+#### The five mitigations, in order of value
+
+1. **Add two named co-owners to all eleven flows.** Power Automate → the flow →
+   Share → add both. Do it at build time, not later. Without this, nobody but the
+   owner can even open the flow to see why it stopped.
+
+2. **Make the daily digest a heartbeat.** This is the one that turns a silent
+   failure into a loud one, and it is a change to Flow 11 — see below and
+   `FLOW_SPECS.md`.
+
+3. **Route failure notifications to a shared mailbox.** Power Automate → Settings →
+   *Send me an email if a flow fails* sends to the owner only. Add an explicit
+   failure branch on every SharePoint write that emails a shared address instead.
+
+4. **Export the flows as a package once, after UAT.** Power Automate → Export →
+   Package (.zip), stored next to this repository. If the owning account is deleted
+   outright rather than just unlicensed, the flows go with it, and a package is the
+   difference between a re-import and a two-day rebuild.
+
+5. **Put the reassignment on the offboarding checklist.** Written out below, so
+   whoever picks it up does not have to work it out under pressure.
+
+#### The silent-failure problem, and the fix
+
+Flow 11 was specified to **send only when something is outstanding** — deliberately,
+because a digest that arrives every day regardless stops being read within a
+fortnight.
+
+With an individual account that becomes a real hazard. A silent inbox now means one
+of two things and you cannot tell which:
+
+- nothing is outstanding, or
+- **the flows died and nobody has noticed**
+
+The fix keeps both properties. Flow 11 now sends **on Mondays regardless**, even
+when everything is clean, as a one-line "PM system healthy, nothing outstanding".
+Tuesday to Sunday it stays quiet unless there is something to act on.
+
+The rule for whoever reads it: **if no digest arrives on a Monday, the flows have
+stopped.** That is the whole early-warning system, and it costs one email a week.
+
+#### If the owning account is leaving
+
+Do this *before* the leaving date, not after — once the licence is removed the
+connections are already broken.
+
+1. New owner signs in to Power Automate → **My flows** → **Shared with me**
+2. For each of the eleven flows: open → **Edit** → each connector step shows
+   *"Invalid connection"* or the old owner's name → **Switch / Add new connection**
+   → sign in as the new owner
+3. **Save**, then **Test → Manually** on flows 2, 5 and 11
+4. Re-check the Approvals connection on Flow 7 in particular — approval assignment
+   is the one that fails most quietly
+5. Confirm a Monday heartbeat arrives before considering the handover done
+
+Budget half a day. It is eleven flows and roughly forty connector steps.
 
 ### 8.3 Retention — none, accepted
 

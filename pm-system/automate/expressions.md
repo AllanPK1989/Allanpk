@@ -675,20 +675,60 @@ otherwise go unnoticed:
 WO_Status eq 'Completed' and Reset_Applied eq 0
 ```
 
-Skip the whole send when everything is clean, so the digest keeps meaning
-something:
+Send when there is something outstanding **or** it is Monday, so the digest keeps
+meaning something without silence becoming ambiguous:
+
+```
+or(
+  equals(
+    dayOfWeek(convertFromUtc(utcNow(), 'India Standard Time')),
+    1
+  ),
+  greater(
+    add(add(add(add(
+      length(body('Get_items_overdue_cells')?['value']),
+      length(body('Get_items_open_wo')?['value'])),
+      length(body('Get_items_not_scanned')?['value'])),
+      length(body('Get_items_overdue_abn')?['value'])),
+      length(body('Get_items_reset_failures')?['value'])
+    ),
+    0
+  )
+)
+```
+
+`dayOfWeek` returns 0 for Sunday, so Monday is `1`. Convert to IST first: the flow
+fires at 06:30 IST, which is 01:00 UTC the same day, and testing the UTC day-of-week
+directly would work by luck rather than by design — and stop working the moment
+somebody reschedules the flow an hour earlier.
+
+Note the fifth count. `Get_items_reset_failures` was in the digest's sections but
+missing from this test, so a run where the *only* problem was a completed work order
+that never reset its counter would have been silently skipped — which is precisely
+the failure the section exists to surface.
+
+To vary the body on a clean Monday:
 
 ```
 greater(
-  add(add(add(
+  add(add(add(add(
     length(body('Get_items_overdue_cells')?['value']),
     length(body('Get_items_open_wo')?['value'])),
     length(body('Get_items_not_scanned')?['value'])),
-    length(body('Get_items_overdue_abn')?['value'])
+    length(body('Get_items_overdue_abn')?['value'])),
+    length(body('Get_items_reset_failures')?['value'])
   ),
   0
 )
 ```
+
+True → the full digest with its tables. False → the one-line healthy message.
+
+**Why the heartbeat exists at all.** The flows run on one individual's connections.
+Without a scheduled all-clear, an empty inbox means either "nothing outstanding" or
+"the flows stopped weeks ago", and there is no way to tell them apart until damage
+has already been done. One email a week removes the ambiguity. See
+`docs/ASSUMPTIONS.md` §8.2.
 
 ---
 

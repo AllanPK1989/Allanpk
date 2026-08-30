@@ -1,6 +1,6 @@
 # UAT test cases
 
-33 cases. Work through them in order — later ones depend on state the earlier ones
+35 cases. Work through them in order — later ones depend on state the earlier ones
 create. Record a name and a date against each; an unrecorded test is an untested
 system.
 
@@ -293,6 +293,34 @@ confirm a second reminder does **not** fire.
 
 *Why it matters:* a reminder that fires whether or not the problem was fixed teaches
 people to ignore reminders.
+
+---
+
+### UAT-30a — The Monday heartbeat arrives on a clean week · **CRITICAL**
+1. Clear every outstanding item: no overdue cells, no open work orders, nothing
+   unscanned, no overdue abnormalities, no reset failures.
+2. Run Flow 11 manually on a **Monday**.
+3. Run it again on a **Tuesday** with the same clean state.
+
+**Expected:** Monday sends the one-line *"PM system healthy — nothing outstanding"*.
+Tuesday sends **nothing** and the run history shows a skip.
+
+*Why it matters:* the flows run on one individual's connections. Without a scheduled
+all-clear, an empty inbox means either "nothing outstanding" or "the flows died three
+weeks ago", and nobody can tell which until damage is done. **No Monday digest means
+the flows have stopped** — that is the entire early-warning system, so prove it works
+before go-live.
+
+### UAT-30b — A reset failure alone triggers the digest · **HIGH**
+1. Clear everything else, then set one completed work order to `Reset_Applied = No`.
+2. Run Flow 11 on a **Tuesday** (so the Monday heartbeat is not what sends it).
+
+**Expected:** the digest sends, with the reset-failure section populated.
+
+*Why it matters:* a completed work order whose counter never zeroed is the most
+expensive silent failure in the system, and the send-condition must count it. If the
+digest stays quiet here, `Get_items_reset_failures` is missing from the condition —
+see `expressions.md` §16.
 
 ---
 
