@@ -1,0 +1,64 @@
+{
+  "ListTitle": "Plant_Calendar",
+  "ListUrl": "Lists/Plant_Calendar",
+  "Description": "One row per date. Marks which days the plant runs, so a mid-month PM reset prorates by working days rather than calendar days.",
+  "Template": "GenericList",
+  "EnableVersioning": true,
+  "MajorVersionLimit": 50,
+  "EnableAttachments": false,
+  "TitleColumn": {
+    "Required": false,
+    "Hidden": false,
+    "SetFrom": null,
+    "Note": "Title is populated from the primary key on load so the item has a readable display name and shows up in search. Matching is always done on the explicit key column, never on Title."
+  },
+  "PrimaryKey": null,
+  "IndexedColumns": [
+    "Calendar_Date",
+    "Is_Working_Day"
+  ],
+  "Fields": [
+    {
+      "InternalName": "Calendar_Date",
+      "DisplayName": "Calendar_Date",
+      "Required": true,
+      "Indexed": true,
+      "Type": "DateTime",
+      "DisplayFormat": "DateOnly"
+    },
+    {
+      "InternalName": "Day_Type",
+      "DisplayName": "Day_Type",
+      "Required": true,
+      "Indexed": false,
+      "Type": "Text",
+      "MaxLength": 255
+    },
+    {
+      "InternalName": "Is_Working_Day",
+      "DisplayName": "Is_Working_Day",
+      "Required": true,
+      "Indexed": true,
+      "Type": "Boolean",
+      "DefaultValue": "0"
+    },
+    {
+      "InternalName": "Shift_Count",
+      "DisplayName": "Shift_Count",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Number",
+      "Decimals": 0
+    },
+    {
+      "InternalName": "Remarks",
+      "DisplayName": "Remarks",
+      "Required": false,
+      "Indexed": false,
+      "Type": "Note",
+      "NumberOfLines": 4,
+      "RichText": false,
+      "AppendOnly": false
+    }
+  ]
+}

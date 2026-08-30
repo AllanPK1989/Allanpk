@@ -19,7 +19,8 @@ Power Apps canvas app.
 8. Technicians share one M365 login, so a **mandatory technician dropdown** on every
    form is the entire audit trail.
 9. Every machine carries a **QR sticker** opening that machine's hub.
-10. A PM reset falling mid-month **prorates** that month's hours by calendar days.
+10. A PM reset falling mid-month **prorates** that month's hours by **working
+    days**, read from a plant calendar — standard hours are a capacity figure.
 
 ## What is in the repository
 
@@ -27,7 +28,7 @@ Power Apps canvas app.
 input/                  the three source workbooks and the data dictionary (unmodified)
 
 sharepoint/
-  provision_lists.ps1   creates 15 lists, 219 columns, indexes, 5 libraries
+  provision_lists.ps1   creates 16 lists, 224 columns, indexes, 5 libraries
   apply_views.ps1       12 views + the shop-floor column formatting
   load_data.ps1         batched CSV load with type conversion
   schema/*.json         one schema per list — the source of truth for the scripts
@@ -53,8 +54,8 @@ automate/
   FLOW_SPECS.md         build sheet for all 11 flows, action by action
   expressions.md        every expression, copy-paste ready
 
-powerapps/              (added at your request — the brief originally excluded it)
-  README_PowerApps.md   how it relates to the Forms path, and the licensing caveat
+powerapps/              Phase 2 — specified and costed, not licensed today
+  README_PowerApps.md   how it relates to the Forms path, and the licence position
   CANVAS_APP_BUILD.md   screen-by-screen build sheet
   power_fx_formulas.md  every formula
   app_manifest.json     data sources, screens, globals
@@ -62,8 +63,9 @@ powerapps/              (added at your request — the brief originally excluded
 docs/
   IMPLEMENTATION_RUNBOOK.md   step-numbered, start to finish
   ASSUMPTIONS.md              every judgement call, with verified figures
-  UAT_TEST_CASES.md           32 cases
+  UAT_TEST_CASES.md           33 cases
   TECHNICIAN_SOP_1PAGE.md     shop-floor SOP, printable, English + Tamil
+  POWERAPPS_LICENCE_CASE.pptx business case for the Power Apps licence request
   DATA_DICTIONARY.md          copy of the input dictionary
 
 tools/
@@ -141,13 +143,19 @@ count.
 
 | | **Path A — Forms + list views** | **Path B — Canvas app** |
 |---|---|---|
-| Cost | Included in M365 E3 | Needs Power Apps rights — **confirm before building** |
+| Cost | Included in M365 E3 | Needs a Power Apps licence — **not available today** |
 | Build | ~1 day | ~4–5 days |
 | Offline | No | Yes |
 | Barcode | Phone camera opens the URL | Reader inside the app |
 
 Both write to **identical lists with identical column names**, and the eleven flows
-do not care which produced the row. Go live on Path A and move to Path B later
-without touching the data model, the flows or the report.
+do not care which produced the row.
 
-Decide **before** the first QR print run — the two paths encode a different payload.
+**The system goes live on Path A.** No Power Apps licence is available today, and
+nothing in the data model, the flows or the report depends on the canvas app. Path B
+stays in the repository as a costed Phase 2 spec, with the business case for the
+licence in `docs/POWERAPPS_LICENCE_CASE.pptx`.
+
+Print the stickers against the **SharePoint Machine Hub** URL. If the app is
+licensed later the payload changes and the 30 labels have to be reprinted — a known,
+accepted cost of starting on Forms.

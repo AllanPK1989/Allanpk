@@ -6,6 +6,7 @@
     "Spare_Master",
     "Checklist_Master",
     "Machine_Master",
+    "Plant_Calendar",
     "StdHours_Monthly",
     "PM_WorkOrder",
     "PM_Machine_Task",
@@ -69,6 +70,12 @@
       "SchemaFile": "Machine_Master.json",
       "FieldCount": 18,
       "IndexCount": 4
+    },
+    {
+      "Title": "Plant_Calendar",
+      "SchemaFile": "Plant_Calendar.json",
+      "FieldCount": 5,
+      "IndexCount": 2
     },
     {
       "Title": "StdHours_Monthly",

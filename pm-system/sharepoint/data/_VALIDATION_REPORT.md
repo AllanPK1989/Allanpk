@@ -1,6 +1,6 @@
 # Data Validation Report
 
-Generated: 2026-08-30 09:20
+Generated: 2026-08-30 13:53
 Source: `input`  ->  Output: `sharepoint/data`
 
 **0 error(s), 0 warning(s).**
@@ -18,18 +18,19 @@ A WARN is something worth knowing that does not block the load.
 | 3 | `Spare_Master` | 15 | 13 |
 | 4 | `Checklist_Master` | 51 | 11 |
 | 5 | `Machine_Master` | 30 | 18 |
-| 6 | `StdHours_Monthly` | 96 | 8 |
-| 7 | `PM_WorkOrder` | 51 | 20 |
-| 8 | `PM_Machine_Task` | 193 | 16 |
-| 9 | `Checklist_Response` | 997 | 16 |
-| 10 | `Scan_Log` | 336 | 9 |
-| 11 | `Breakdown_Log` | 88 | 21 |
-| 12 | `Spare_Request` | 64 | 19 |
-| 13 | `Spare_Replaced` | 58 | 17 |
-| 14 | `Abnormality_Log` | 44 | 16 |
-| 15 | `PM_Plan_Calendar` | 55 | 12 |
+| 6 | `Plant_Calendar` | 730 | 5 |
+| 7 | `StdHours_Monthly` | 96 | 8 |
+| 8 | `PM_WorkOrder` | 51 | 20 |
+| 9 | `PM_Machine_Task` | 193 | 16 |
+| 10 | `Checklist_Response` | 997 | 16 |
+| 11 | `Scan_Log` | 336 | 9 |
+| 12 | `Breakdown_Log` | 88 | 21 |
+| 13 | `Spare_Request` | 64 | 19 |
+| 14 | `Spare_Replaced` | 58 | 17 |
+| 15 | `Abnormality_Log` | 44 | 16 |
+| 16 | `PM_Plan_Calendar` | 55 | 12 |
 
-**Total rows: 2,092**
+**Total rows: 2,822**
 
 ## Errors
 

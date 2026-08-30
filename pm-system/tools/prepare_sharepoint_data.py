@@ -149,6 +149,10 @@ TYPES = {
         "Target_Date": "date", "Status": "text", "Closed_Date": "date",
         "Closure_Remarks": "text", "Converted_To_WO": "bool",
     },
+    "Plant_Calendar": {
+        "Calendar_Date": "date", "Day_Type": "text", "Is_Working_Day": "bool",
+        "Shift_Count": "int", "Remarks": "text",
+    },
     "PM_Plan_Calendar": {
         "Plan_ID": "id", "Plan_Month": "month", "Cell_ID": "id", "Cell_Name": "text",
         "Planned_Date": "date", "Planned_Shift": "text", "Planned_Tech_ID": "id",
@@ -176,10 +180,49 @@ SOURCES = {
     "PM_Plan_Calendar":   ("03_PM_Transactions_Dummy.xlsx", "PM_Plan_Calendar"),
 }
 
+# Lists built here rather than read from a workbook.
+GENERATED = {"Plant_Calendar"}
+
+# Plant_Calendar covers the same span as Dim_Date in the Power BI model, so the
+# working-day proration and the report's date table can never disagree about
+# which dates exist.
+CALENDAR_START = dt.date(2025, 4, 1)
+CALENDAR_END = dt.date(2027, 3, 31)
+
+
+def build_plant_calendar():
+    """
+    One row per date, marking whether the plant runs that day.
+
+    This exists because Actual_Std_Hours is a CAPACITY figure. Capacity accrues on
+    working days, not on calendar days, so a PM reset falling mid-month has to be
+    prorated by working days - otherwise a reset landing next to a run of Sundays
+    posts hours the plant was never open to earn.
+
+    Seeded with Sunday as the weekly off and everything else working three shifts.
+    Festival holidays and shutdowns are plant-specific and are NOT guessed here:
+    mark them in the list after loading, or the proration will be wrong by exactly
+    the number of days you did not mark.
+    """
+    rows = []
+    d = CALENDAR_START
+    while d <= CALENDAR_END:
+        sunday = d.weekday() == 6
+        rows.append([
+            d.isoformat(),
+            "Weekly Off" if sunday else "Working",
+            "No" if sunday else "Yes",
+            "0" if sunday else "3",
+            "Seeded: Sunday weekly off. Mark festival holidays and shutdowns here."
+            if sunday else "",
+        ])
+        d += dt.timedelta(days=1)
+    return rows
+
 # Load order matters: masters before the facts that reference them.
 LOAD_ORDER = [
     "Cell_Master", "Technician_Master", "Spare_Master", "Checklist_Master",
-    "Machine_Master", "StdHours_Monthly", "PM_WorkOrder", "PM_Machine_Task",
+    "Machine_Master", "Plant_Calendar", "StdHours_Monthly", "PM_WorkOrder", "PM_Machine_Task",
     "Checklist_Response", "Scan_Log", "Breakdown_Log", "Spare_Request",
     "Spare_Replaced", "Abnormality_Log", "PM_Plan_Calendar",
 ]
@@ -470,6 +513,22 @@ def run_integrity_checks(data):
             err("Cell_Master", "machine-count-mismatch",
                 f"{r[i_cc]}: Machine_Count={declared} but {actual} active machine(s) exist")
 
+    # Every month that reports hours must have working days on the plant calendar.
+    # Without them the proration divides by zero and the flow fails at 2 a.m.
+    cal_working = defaultdict(int)
+    i_cd = col("Plant_Calendar", "Calendar_Date")
+    i_wd = col("Plant_Calendar", "Is_Working_Day")
+    if i_cd is not None and i_wd is not None:
+        for r in rows_of("Plant_Calendar"):
+            if r[i_wd] == "Yes":
+                cal_working[r[i_cd][:7]] += 1
+        for m in sorted({r[col("StdHours_Monthly", "Upload_Month")]
+                         for r in rows_of("StdHours_Monthly")}):
+            if cal_working.get(m, 0) == 0:
+                err("Plant_Calendar", "no-working-days",
+                    f"{m} has std-hours rows but no working days on the plant "
+                    f"calendar - proration would divide by zero")
+
     # A counter above its own trigger with no open work order is an unfired trigger.
     open_wo_cells = {r[col("PM_WorkOrder", "Cell_ID")] for r in rows_of("PM_WorkOrder")
                      if r[i_st] in ("Planned", "In Progress", "Overdue")}
@@ -500,6 +559,10 @@ def main():
     data = {}
 
     for table in LOAD_ORDER:
+        if table in GENERATED:
+            data[table] = {"header": list(TYPES[table]), "rows": build_plant_calendar()}
+            continue
+
         wbfile, sheet = SOURCES[table]
         path = os.path.join(args.input, wbfile)
         if not os.path.exists(path):

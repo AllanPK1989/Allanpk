@@ -429,25 +429,59 @@ def main():
     print("\n" + "=" * 78)
     print("  HAND-WORKED EXAMPLE 3 - Mid-month proration after a PM reset")
     print("=" * 78)
-    print("  Rule: if a cell's PM reset falls inside the month being uploaded, only the")
-    print("  portion of that month's hours AFTER the reset date is posted to the new")
-    print("  counter, prorated by calendar days.\n")
-    print("      posted = Actual_Std_Hours x (days_in_month - day_of_reset) / days_in_month\n")
-    ex_cell, ex_month, ex_hours, ex_reset = "CELL-05", "2026-04", 780.0, dt.date(2026, 4, 2)
-    dim = 30
-    posted = ex_hours * (dim - ex_reset.day) / dim
+    print("  Actual_Std_Hours is a CAPACITY figure, so it accrues on the days the plant")
+    print("  runs. Proration is therefore by WORKING days, read from Plant_Calendar -")
+    print("  not by calendar days, and not by a hard-coded weekday rule.\n")
+    print("      posted = Actual_Std_Hours x working_days_after_reset / working_days_in_month\n")
+
+    plant = load("Plant_Calendar")
+    ex_cell, ex_month, ex_hours = "CELL-05", "2026-04", 780.0
+    ex_reset = dt.date(2026, 4, 2)
+
+    month_days = [p for p in plant if p["Calendar_Date"][:7] == ex_month]
+    working = [date(p["Calendar_Date"]) for p in month_days if yes(p["Is_Working_Day"])]
+    after = [d for d in working if d > ex_reset]
+    posted = ex_hours * len(after) / len(working) if working else 0
+
     print(f"  Worked example - {ex_cell}, month {ex_month}:")
     print(f"    Actual_Std_Hours reported for the month : {ex_hours:,.1f} h")
-    print(f"    PM reset date                           : {ex_reset}  (day {ex_reset.day})")
-    print(f"    Days in month                           : {dim}")
-    print(f"    Days after the reset                    : {dim} - {ex_reset.day} = {dim - ex_reset.day}")
+    print(f"    PM reset date                           : {ex_reset} "
+          f"({ex_reset.strftime('%A')})")
+    print(f"    Calendar days in month                  : {len(month_days)}")
+    print(f"    WORKING days in month                   : {len(working)}")
+    print(f"    Working days strictly after the reset   : {len(after)}")
     print(f"    Posted to the NEW counter               : "
-          f"{ex_hours:,.1f} x {dim - ex_reset.day}/{dim} = {posted:,.2f} h")
+          f"{ex_hours:,.1f} x {len(after)}/{len(working)} = {posted:,.2f} h")
     print(f"    Discarded (belonged to the old cycle)   : {ex_hours - posted:,.2f} h")
-    print(f"\n  Check: {posted:,.2f} + {ex_hours - posted:,.2f} = {ex_hours:,.1f} h - the month is")
+    print(f"\n  Check: {posted:,.2f} + {ex_hours - posted:,.2f} = {ex_hours:,.1f} h - the "
+          f"month is")
     print("  fully accounted for, nothing is lost and nothing is double-counted.")
-    print("\n  Without this rule the whole month's hours land on the new counter and every")
-    print("  cell that resets mid-month runs its next PM early, permanently.")
+
+    dim = len(month_days)
+    cal_based = ex_hours * (dim - ex_reset.day) / dim
+    print(f"\n  For comparison, prorating by CALENDAR days would post "
+          f"{cal_based:,.2f} h -")
+    print(f"  {cal_based - posted:,.2f} h the plant was never open to earn. Small on one")
+    print("  reset; it compounds every cycle, and always in the same direction for a")
+    print("  cell whose PM habitually falls early in the month.")
+
+    print("\n  Without proration at all, the whole month's hours land on the freshly")
+    print("  zeroed counter and every cell resetting mid-month runs its next PM early -")
+    print("  permanently, getting worse each cycle.")
+
+    # Working days per month, so an unmaintained calendar is visible.
+    from collections import Counter as _C
+    wd = _C(p["Calendar_Date"][:7] for p in plant if yes(p["Is_Working_Day"]))
+    months_with_hours = sorted({s["Upload_Month"] for s in std})
+    missing = [m for m in months_with_hours if wd.get(m, 0) == 0]
+    print(f"\n  Plant calendar covers {len(plant)} dates, "
+          f"{sum(wd.values())} working days.")
+    if missing:
+        print(f"  WARNING: no working days recorded for {missing} - proration would "
+              f"divide by zero")
+    else:
+        print(f"  Every month with std hours has working days recorded. "
+              f"Range {min(wd):s} .. {max(wd):s}")
 
     # ------------------------------------------------------------------
     print("\n" + "=" * 78)

@@ -49,44 +49,97 @@ empty(body('Get_items_pending_tasks')?['value'])
 ## 2. Mid-month proration (Flow 1 — the monthly import)
 
 If a cell's PM reset fell inside the month being uploaded, only the portion of the
-month's hours **after** the reset date is posted to the new counter.
+month's hours **after** the reset is posted to the new counter.
 
-The full working expression:
+**Prorated by WORKING days, not calendar days.** `Actual_Std_Hours` is a capacity
+figure, and capacity accrues on the days the plant runs. A reset landing next to a
+run of Sundays would otherwise post hours the plant was never open to earn.
 
 ```
-mul(
+posted = Actual_Std_Hours × (working days after the reset) ÷ (working days in the month)
+```
+
+The two working-day counts come from the `Plant_Calendar` list, not from date
+arithmetic. That is deliberate: no expression can know that the plant shut for
+Pongal, and a hard-coded weekday rule is wrong for four days every January.
+
+### Step 1 — working days in the month
+
+**Get items** on `Plant_Calendar`, rename **`Get items working days month`**:
+
+```
+Is_Working_Day eq 1 and Calendar_Date ge '@{variables('varMonthStart')}' and Calendar_Date le '@{variables('varMonthEnd')}'
+```
+
+```
+varWorkingDaysInMonth : length(body('Get_items_working_days_month')?['value'])
+```
+
+### Step 2 — working days after the reset
+
+**Get items** on `Plant_Calendar`, rename **`Get items working days after reset`**:
+
+```
+Is_Working_Day eq 1 and Calendar_Date gt '@{variables('varResetDate')}' and Calendar_Date le '@{variables('varMonthEnd')}'
+```
+
+`gt`, not `ge`. The reset day itself belongs to the **old** cycle — the PM happened
+on it.
+
+```
+varWorkingDaysAfterReset : length(body('Get_items_working_days_after_reset')?['value'])
+```
+
+### Step 3 — the proration
+
+```
+if(
+  equals(variables('varDayOfReset'), 0),
   float(items('Apply_to_each_row')?['Actual_Std_Hours']),
-  div(
-    float(sub(
-      int(variables('varDaysInMonth')),
-      int(variables('varDayOfReset'))
-    )),
-    float(variables('varDaysInMonth'))
-  )
-)
-```
-
-### The variables it needs
-
-`varDaysInMonth` — days in the month being uploaded. Initialise as Integer:
-
-```
-int(
-  dayOfMonth(
-    addDays(
-      startOfMonth(addToTime(concat(variables('varUploadMonth'),'-01T00:00:00Z'), 1, 'Month')),
-      -1
+  mul(
+    float(items('Apply_to_each_row')?['Actual_Std_Hours']),
+    div(
+      float(variables('varWorkingDaysAfterReset')),
+      float(variables('varWorkingDaysInMonth'))
     )
   )
 )
 ```
 
-That reads as: take the first of the upload month, add one month, step back one
-day, and take that day number. February gives 28 or 29 correctly, without a
-leap-year test anywhere.
+The `if` short-circuits the common case: no reset in this month means the whole
+month's hours post, with no division and no chance of a divide-by-zero.
 
-`varDayOfReset` — the day of the month the reset happened, or `0` when it did not
-fall in this month. Set inside the loop:
+### The supporting variables
+
+`varUploadMonth` — `YYYY-MM` read from the file's first data row:
+
+```
+first(body('List_rows_present_in_a_table')?['value'])?['Upload_Month']
+```
+
+`varMonthStart`:
+
+```
+concat(variables('varUploadMonth'), '-01')
+```
+
+`varMonthEnd`:
+
+```
+formatDateTime(
+  addDays(
+    startOfMonth(addToTime(concat(variables('varUploadMonth'), '-01T00:00:00Z'), 1, 'Month')),
+    -1
+  ),
+  'yyyy-MM-dd'
+)
+```
+
+That reads as: first of the upload month, add a month, step back a day. February
+gives 28 or 29 correctly with no leap-year test anywhere.
+
+`varDayOfReset` — the day of the month the reset happened, or `0` if it did not fall
+in this month. Set inside the loop:
 
 ```
 if(
@@ -102,38 +155,73 @@ if(
 )
 ```
 
-`varUploadMonth` — `YYYY-MM` of the month being reported, read from the file's
-first data row:
+`varResetDate` — the reset date as `yyyy-MM-dd` for the OData filter:
 
 ```
-first(body('List_rows_present_in_a_table')?['value'])?['Upload_Month']
+if(
+  equals(variables('varDayOfReset'), 0),
+  variables('varMonthStart'),
+  formatDateTime(items('Apply_to_each_row')?['Reset_Date'], 'yyyy-MM-dd')
+)
 ```
 
-### Worked example (verified against the dummy data)
+### Guard: no working days on the calendar
+
+If `Plant_Calendar` has not been maintained for this month, the divisor is zero and
+the run fails at 2 a.m. Test before the loop:
+
+```
+equals(variables('varWorkingDaysInMonth'), 0)
+```
+
+If true, email the planner — *"the plant calendar has no working days for
+2026-04; the monthly import cannot prorate"* — and **Terminate → Failed**.
+
+`prepare_sharepoint_data.py` runs the same check at load time, so this should never
+fire in practice. It is here because "should never happen" is not a control.
+
+### Worked example (verified)
 
 CELL-05 reported **780.0 h** for **2026-04**, and its PM reset landed on
-**2026-04-02**.
+**2026-04-02** (a Thursday).
 
 ```
-days in month     = 30
-day of reset      =  2
-days after reset  = 30 - 2 = 28
-posted to counter = 780.0 x 28/30 = 728.00 h
-discarded         = 780.0 - 728.00 = 52.00 h   (belonged to the old cycle)
+April 2026            = 30 calendar days, 4 Sundays  ->  26 working days
+reset 2026-04-02, working days strictly after       ->  24
+
+posted to the NEW counter = 780.0 × 24/26 = 720.00 h
+discarded (old cycle)     = 780.0 − 720.00 =  60.00 h
 ```
 
-728.00 + 52.00 = 780.0. The month is fully accounted for — nothing lost, nothing
+720.00 + 60.00 = 780.0. The month is fully accounted for — nothing lost, nothing
 double-counted.
 
-**Why this rule exists.** Without it the whole month's hours land on the freshly
-zeroed counter, and every cell that resets mid-month runs its next PM early —
-permanently, every cycle, getting worse each time.
+> For comparison, prorating by **calendar** days would post 728.00 h — 8 hours the
+> plant was closed for. Small on one reset; it compounds every cycle, and always in
+> the same direction for a cell whose PM habitually falls early in the month.
 
-**When the reset did not fall in this month**, `varDayOfReset` is 0 and the formula
-gives `hours x 30/30 = hours`. The same expression handles both cases, so there is
-no branch to get wrong.
+**Why this rule exists at all.** Without it the whole month's hours land on the
+freshly zeroed counter, and every cell that resets mid-month runs its next PM
+early — permanently, every cycle, getting worse each time.
 
----
+### If you decide std hours are an EARNED figure after all
+
+If `Actual_Std_Hours` turns out to be earned hours (standard time × units produced)
+rather than capacity, switch back to calendar days: the shift pattern is already
+inside an earned figure, and prorating by working days would apply it twice. The
+change is one expression — replace the two `Get items` counts with:
+
+```
+mul(
+  float(items('Apply_to_each_row')?['Actual_Std_Hours']),
+  div(
+    float(sub(int(variables('varDaysInMonth')), int(variables('varDayOfReset')))),
+    float(variables('varDaysInMonth'))
+  )
+)
+```
+
+and set `varDaysInMonth` to `int(dayOfMonth(variables('varMonthEnd')))`.
 
 ## 3. Adding to the running counter (Flow 1)
 

@@ -75,12 +75,43 @@ block closure.
 a failure leaves a zeroed counter with no `Last_PM_Date`, and nothing downstream can
 distinguish that from a genuine reset.
 
-**2.5 Proration is by calendar days, not working days.**
-`posted = hours × (days_in_month − day_of_reset) / days_in_month`. Calendar days,
-because the standard hours reported are already a measure of actual running — they
-carry the shift pattern in them. Prorating by working days would apply the shift
-pattern twice.
-**CONFIRM** if your std-hours figure is a capacity number rather than an actual.
+**2.5 Proration is by WORKING days.** *(Confirmed: `Actual_Std_Hours` is a capacity
+figure.)*
+
+```
+posted = hours × working_days_after_reset ÷ working_days_in_month
+```
+
+Capacity accrues on the days the plant runs. A reset landing next to a run of
+Sundays would otherwise post hours the plant was never open to earn.
+
+The two counts come from the **`Plant_Calendar`** list, not from date arithmetic —
+no expression can know the plant shut for Pongal, and a hard-coded weekday rule is
+wrong for four days every January.
+
+*Verified:* CELL-05, April 2026, 780 h reported, reset 2026-04-02 → **720.00 h**
+posted (24 of 26 working days). Calendar-day proration would have posted 728.00 h,
+8 hours the plant was closed for. Small on one reset; it compounds every cycle, and
+always in the same direction for a cell whose PM habitually falls early in the month.
+
+*If this is ever revised to an earned figure* (standard time × units produced),
+switch back to calendar days — the shift pattern is already inside an earned number
+and prorating by working days would apply it twice. `expressions.md` §2 carries the
+replacement expression.
+
+**2.5a `Plant_Calendar` is seeded with Sundays off and nothing else.**
+730 rows covering 2025-04-01 to 2027-03-31, three shifts on every non-Sunday.
+Festival holidays and shutdowns are plant-specific and are **not** guessed —
+**mark them in the list after loading**, or the proration is wrong by exactly the
+number of days you did not mark. Pongal, Diwali and the annual shutdown are the ones
+that matter most in Pondicherry.
+Both `prepare_sharepoint_data.py` and Flow 1 fail loudly if a month with reported
+hours has no working days on the calendar.
+
+**2.5b Capacity hours are the correct base for `Availability %`.**
+A side effect of 2.5 worth knowing: availability is
+`(loading time − downtime) / loading time`, and loading time *is* planned/available
+time. A capacity figure is therefore the right denominator, not a compromise.
 
 **2.6 Raw hours are stored; the prorated figure is a posting adjustment.**
 `StdHours_Monthly.Actual_Std_Hours` holds what the cell actually ran. Only the
@@ -252,20 +283,90 @@ into the app is how the two start disagreeing.
 
 ---
 
-## 8. Open questions — **CONFIRM before go-live**
+## 8. Open questions — **ANSWERED**
 
-| # | Question | Default taken |
-|---|---|---|
-| 1 | Should cancelled work orders count against compliance? | Excluded |
-| 2 | Should a skipped machine block cell closure? | No — it closes, flagged partial |
-| 3 | Is `Actual_Std_Hours` an actual or a capacity figure? | Actual — proration is by calendar days |
-| 4 | Is the Tamil label wording right? | "தொடங்கும் முன் ஸ்கேன் செய்யவும்" |
-| 5 | Are seeded Power Apps rights available on your plan? | Assumed yes; Path A works if not |
-| 6 | Who owns the eleven flows? | A service account, not a person |
-| 7 | Retention on `Scan_Log` and `Checklist_Response`? | None — they will grow indefinitely |
-| 8 | Is 4,000 hours right for every cell? | Held per cell in `PM_Trigger_Hours`, all set to 4,000 |
+All eight confirmed by the system owner. Recorded here as the decisions of record.
 
----
+| # | Question | **Decision** | Effect on the build |
+|---|---|---|---|
+| 1 | Should cancelled work orders count against compliance? | **No** | As built — excluded from `PM Due Count` |
+| 2 | Should a skipped machine block cell closure? | **No — closes, flagged partial** | As built. Review `Skip_Reason` monthly |
+| 3 | Is `Actual_Std_Hours` an actual or a capacity figure? | **Capacity** | **Changed.** Proration is now by working days via `Plant_Calendar` (§2.5) |
+| 4 | Is the Tamil label wording right? | **Yes** | "தொடங்கும் முன் ஸ்கேன் செய்யவும்" — approved for print |
+| 5 | Are Power Apps rights available? | **No licence currently** | Path A (Forms) is the go-live route. Canvas app is Phase 2, subject to a licence request — see §8.1 |
+| 6 | Who owns the eleven flows? | **Not yet decided** | Open — see §8.2. Blocks nothing today, but must be settled before go-live |
+| 7 | Retention on `Scan_Log` and `Checklist_Response`? | **None — keep everything** | Accepted. Growth and the one real risk are in §8.3 |
+| 8 | Is 4,000 hours right for every cell? | **Held per cell in `PM_Trigger_Hours`** | As built. All eight currently set to 4,000; retune any cell without touching code |
+
+### 8.1 Power Apps — Phase 2, not now
+
+No Power Apps licence is available today, so **the system goes live on Path A: the
+QR code opens the SharePoint Machine Hub, and the five buttons open pre-filled
+Microsoft Forms.** Everything in the brief works this way. Nothing in the data
+model, the eleven flows or the Power BI report depends on the canvas app.
+
+The `powerapps/` folder stays in the repository as a complete, costed Phase 2 spec.
+`docs/POWERAPPS_LICENCE_CASE.pptx` is the business case for requesting the licence.
+
+**Consequence for the sticker print run:** print the QR labels against the
+**SharePoint Machine Hub** URL, which is what `apply_views.ps1` already emits. If the
+canvas app is licensed later, the payload changes to a deep link and the stickers
+have to be reprinted. That is a known, accepted cost of starting on Forms — it is
+30 labels, not a redesign.
+
+### 8.2 Flow ownership — still open
+
+Recommendation stands: **a licensed service account, not a person.** A flow owned by
+an individual stops the day their licence is removed, and that day arrives without
+notice — a resignation, a role change, a licence audit. The first symptom is a
+counter that never resets, discovered weeks later.
+
+What to ask IT for:
+
+- a licensed account, e.g. `svc-pm@<company>.com`, password not expiring, excluded
+  from the joiner/leaver process
+- two named people as **co-owners** of every flow, so neither is a single point of
+  failure
+- failure notifications routed to a **shared mailbox**, not an individual's inbox
+
+If a service account genuinely cannot be provisioned, the fallback is to make all
+eleven flows co-owned by two named people and to put a calendar reminder on the
+month either of them changes role. That is materially worse and should be argued
+against.
+
+### 8.3 Retention — none, accepted
+
+Keep everything. The growth is real but manageable, and the one thing that will
+actually bite is not disk:
+
+| List | Rows/year (from the sample) | After 5 years |
+|---|---:|---:|
+| `Checklist_Response` | ~1,000 | ~5,000 |
+| `Scan_Log` | ~340 | ~1,700 |
+| `PM_Machine_Task` | ~190 | ~950 |
+| `Breakdown_Log` | ~90 | ~450 |
+| `Plant_Calendar` | 365 | 1,825 |
+
+**`Checklist_Response` reaches the 5,000-item list view threshold in about year
+five.** That is not a storage problem — SharePoint holds 30 million items per list.
+It is a *query* problem: an unindexed filter past 5,000 items throws an error and the
+flow reading it stops working, with no warning, about five years after everyone has
+forgotten how the system was built.
+
+Three things already protect against it, and one is a decision for later:
+
+1. Every column used in a view filter or a flow's `Get items` filter is **indexed**
+   by `provision_lists.ps1`. An indexed filter is not subject to the threshold.
+2. Every view carries a `RowLimit` with paging.
+3. Power BI is import-mode, so the report reads the whole list on refresh and is
+   unaffected.
+4. **Around year four**, extend `Plant_Calendar` past 2027-03-31 and review whether
+   `Scan_Log` should move to an archive list. Put it in the maintenance plan now —
+   it is the kind of task nobody schedules and everybody discovers.
+
+Keeping the history is the right call. `Measured_Value` across successive PMs is what
+turns a checklist into condition monitoring, and that only works if the old readings
+are still there.
 
 ## 9. Verified against the supplied dummy data
 
@@ -321,24 +422,31 @@ Three of eight cells are governed by the **calendar backstop**, not by hours. Th
 the rule earning its keep: CELL-01 at 25% of its trigger would otherwise go
 untouched for over a year.
 
-### 9.3 Hand-worked: mid-month proration
+### 9.3 Hand-worked: mid-month proration (working days)
 
-CELL-05, month **2026-04**, reset on **2026-04-02**:
+CELL-05, month **2026-04**, reset on **2026-04-02** (a Thursday):
 
 ```
-Actual_Std_Hours reported   = 780.0 h
-days in month               = 30
-day of reset                = 2
-days after reset            = 30 − 2 = 28
+Actual_Std_Hours reported   = 780.0 h   (capacity figure)
+calendar days in April 2026 = 30
+Sundays                     =  4        -> 26 working days
+working days after 02 Apr   = 24
 
-posted to the NEW counter   = 780.0 × 28/30 = 728.00 h
-discarded (old cycle)       = 780.0 − 728.00 =  52.00 h
+posted to the NEW counter   = 780.0 x 24/26 = 720.00 h
+discarded (old cycle)       = 780.0 - 720.00 =  60.00 h
 
-check: 728.00 + 52.00 = 780.0 h    the month is fully accounted for
+check: 720.00 + 60.00 = 780.0 h    the month is fully accounted for
 ```
 
-Without this rule the whole 780 h lands on the freshly zeroed counter and the cell
-runs its next PM early — permanently, every cycle, getting worse each time.
+Prorating by **calendar** days would post 728.00 h — 8 hours the plant was never
+open to earn. Small on one reset; it compounds every cycle, and always in the same
+direction for a cell whose PM habitually falls early in the month.
+
+Without proration at all, the whole 780 h lands on the freshly zeroed counter and
+the cell runs its next PM early — permanently, getting worse each cycle.
+
+The plant calendar covers **730 dates and 626 working days**, and every month with
+reported hours has working days recorded.
 
 ### 9.4 All measures, recomputed
 

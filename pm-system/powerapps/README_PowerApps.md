@@ -11,7 +11,7 @@ SharePoint lists and the same flows:
 | Offline | No | Yes, with `SaveData` / `LoadData` |
 | Scanning | The phone camera app opens the URL | Barcode reader control **inside** the app |
 | Checklist | One long form, all items at once | One item at a time, with the acceptance standard on screen |
-| Cost | Included everywhere | Needs Power Apps rights (see below) |
+| Cost | Included everywhere | Needs a Power Apps licence — **not available today** |
 | Build effort | ~1 day | ~4–5 days |
 
 **Both write to the identical lists with identical column names.** The eleven flows
@@ -23,23 +23,43 @@ Keep Path A configured even after Path B is live. When a phone will not install 
 app, or a contractor needs to log one breakdown, the Forms path still works and
 still writes valid data.
 
-## Licensing — check this before you build
+## Status: Phase 2 — not licensed today
 
-A canvas app using **only** the SharePoint connector uses standard connectors, and
-Microsoft 365 plans have historically included seeded Power Apps rights covering
-exactly that. Seeded rights change, and they are the kind of thing that is
-discovered to be wrong after a system is in production.
+**There is no Power Apps licence available at present, so the system goes live on
+Path A (Forms + list views).** Everything the brief asks for works that way.
 
-**Confirm with whoever owns licensing in your organisation before starting**, and
-ask specifically about:
+Nothing in the data model, the eleven flows or the Power BI report depends on this
+app. That is the point of the design — the canvas app is an alternative front end
+over the same lists, not a foundation. It can be added at any time, or never.
 
-- canvas apps over **SharePoint lists only** (no Dataverse, no custom connectors)
-- **Power Apps for Microsoft 365** seeded use rights on your plan
+This folder therefore serves two purposes:
+
+1. **A costed Phase 2 spec**, ready to build the day a licence exists.
+2. **Evidence for the licence request.** `docs/POWERAPPS_LICENCE_CASE.pptx` is the
+   business case; this folder is what it points at when someone asks "what exactly
+   would you build?"
+
+### What to confirm when the licence question is reopened
+
+Nothing here uses a premium connector, Dataverse, or a custom connector — only
+SharePoint and Office 365 Users. Ask specifically about:
+
+- canvas apps over **SharePoint lists only**
+- **Power Apps for Microsoft 365** seeded use rights on your current plan, versus a
+  paid per-app or per-user plan
 - whether the tenant's DLP policy permits SharePoint + Office 365 Users in one app
 
-Nothing in this build uses a premium connector, Dataverse, or a custom connector.
-If the answer comes back that Power Apps is not available, Path A delivers the same
-system.
+Seeded rights change, and they are the kind of thing discovered to be wrong after a
+system is in production — so get the answer in writing before building.
+
+### One decision this forces today
+
+**Print the QR stickers against the SharePoint Machine Hub URL**, which is what
+`apply_views.ps1` emits. If the canvas app is licensed later, the payload becomes a
+deep link and the 30 stickers have to be reprinted.
+
+That is a known, accepted cost of starting on Forms. It is 30 labels and an hour on
+the shop floor, not a redesign.
 
 ## Files here
 

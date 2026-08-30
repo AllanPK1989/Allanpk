@@ -13,7 +13,7 @@ the mistakes get caught, and both are tempting to rush.
 
 | Need | Detail |
 |---|---|
-| SharePoint site | A dedicated team site. **Do not** use an existing one — this creates 15 lists and 5 libraries |
+| SharePoint site | A dedicated team site. **Do not** use an existing one — this creates 16 lists and 5 libraries |
 | Permissions | Site Owner on that site |
 | Licences | Microsoft 365 E3 or better. Power Automate and Forms are included |
 | Service account | e.g. `svc-pm@yourcompany.com`, licensed, password not expiring. **All eleven flows are built under this account** |
@@ -76,7 +76,7 @@ cd sharepoint
 ```
 
 Nothing is changed. It prints every list, every column and every index it would
-create. Read it. Confirm 15 lists, 219 columns, 5 libraries.
+create. Read it. Confirm 16 lists, 224 columns, 5 libraries.
 
 **2.3** Run it for real:
 
@@ -109,7 +109,7 @@ settings**, click `Cell_ID`, and look at the URL. It must end `Field=Cell_ID`,
 .\load_data.ps1 -SiteUrl "https://<tenant>.sharepoint.com/sites/Maintenance" -WhatIf
 ```
 
-Expect **2,092 rows, 0 conversion problems**.
+Expect **2,822 rows, 0 conversion problems** (730 of them the plant calendar).
 
 **3.2** Load:
 
@@ -125,6 +125,19 @@ Expect **2,092 rows, 0 conversion problems**.
 
 **3.4** Spot-check five rows in `Cell_Master`: dates are real dates, `Active` is a
 tick not the text "Yes", `Cum_Std_Hours_Since_PM` is a number.
+
+**3.5 Mark your holidays in `Plant_Calendar`.** It is seeded with Sundays off and
+nothing else. Festival holidays and the annual shutdown are plant-specific and were
+deliberately **not** guessed.
+
+> `Actual_Std_Hours` is a capacity figure, so a mid-month PM reset prorates by
+> **working** days. Every holiday you do not mark is a day the proration thinks the
+> plant was running. Pongal, Diwali and the annual shutdown are the ones that matter
+> most in Pondicherry.
+
+Open `Plant_Calendar`, filter to the next twelve months, and set `Day_Type` to
+`Holiday` or `Shutdown` and `Is_Working_Day` to No on those dates. Do it before the
+first monthly upload, and again each December for the year ahead.
 
 ---
 
@@ -316,7 +329,7 @@ and set the SharePoint credentials under **Data source credentials**.
 
 ## Step 8 — UAT (1 day)
 
-Work through `docs/UAT_TEST_CASES.md` in order. All 32 cases, recorded, with a name
+Work through `docs/UAT_TEST_CASES.md` in order. All 33 cases, recorded, with a name
 and a date against each.
 
 **Do not shorten this step.** The five that must pass before go-live:
@@ -372,6 +385,8 @@ the most moving parts and the one nobody will remember in a year.
 | Monthly | Review `Breakdowns After PM (7d)` — is the PM working? | Manager |
 | Quarterly | Review `Trigger_Type` split. Mostly Calendar Backstop means 4,000 is too high | Manager |
 | Quarterly | Review `Min_Stock` against `Stock_At_Request` history | Stores |
+| Each December | Mark next year's holidays and shutdown in `Plant_Calendar` | Planner |
+| Year 4 | Extend `Plant_Calendar` past 2027-03-31; review `Scan_Log` archiving | IT |
 
 **Freezing the plan on the 25th is what makes adherence honest.** Without a frozen
 plan you can only measure "did we do it", never "did we do it when we said we would",
@@ -387,6 +402,8 @@ and the second question is the one production actually cares about.
 | Two work orders for the same cell | Flow 2's open-WO check is missing or misconfigured | Cancel one; fix the condition |
 | Monthly upload rejected | That month already exists | Check `StdHours_Monthly` for the existing rows |
 | Counter jumped by a whole month after a mid-month PM | Proration not applied | Check `Reset_Date` is populated and in the uploaded month |
+| Monthly import fails "divide by zero" or terminates naming a month | `Plant_Calendar` has no working days for that month | Add the month's dates and mark working days |
+| Proration posts slightly too many hours | Holidays not marked in `Plant_Calendar` | Mark them; the divisor counts only working days |
 | Scan opens a blank hub | `QR_Payload_URL` points at a renamed or deleted view | Re-run `apply_views.ps1`, update the column, reprint |
 | Power BI shows blank columns after repointing | Mangled column internal names | Recreate the columns from field XML |
 | Flow fails with "cannot convert null" | A null number in arithmetic | Wrap in `float(coalesce(x, 0))` |
@@ -397,7 +414,8 @@ and the second question is the one production actually cares about.
 
 ## Handover checklist
 
-- [ ] All 15 lists created, row counts reconciled against `_ROW_COUNTS.csv`
+- [ ] All 16 lists created, row counts reconciled against `_ROW_COUNTS.csv`
+- [ ] `Plant_Calendar` holidays and shutdowns marked for the next 12 months
 - [ ] Column internal names verified unmangled on at least three lists
 - [ ] 12 views created; Machine Hub renders the five buttons on a phone
 - [ ] 5 Forms built, technician dropdown mandatory on all five
@@ -406,8 +424,8 @@ and the second question is the one production actually cares about.
 - [ ] All 11 flows built, owned by the service account, failure alerts on
 - [ ] Concurrency off on flows 1 and 5
 - [ ] Power BI published, refresh scheduled, credentials set
-- [ ] All 32 UAT cases passed and recorded
+- [ ] All 33 UAT cases passed and recorded
 - [ ] SOP printed and laminated at each cell
 - [ ] Technicians and supervisors trained
-- [ ] `ASSUMPTIONS.md` §8 — all eight open questions answered
+- [ ] `ASSUMPTIONS.md` §8 — flow ownership (§8.2) settled with IT
 - [ ] First monthly upload run with someone watching

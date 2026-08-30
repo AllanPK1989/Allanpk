@@ -49,12 +49,16 @@ the month.
 ### Actions in order
 
 1. **Initialize variable** `varUploadMonth` (String), value empty
-2. **Initialize variable** `varDaysInMonth` (Integer), value `0`
-3. **Initialize variable** `varDayOfReset` (Integer), value `0`
-4. **Initialize variable** `varProratedHours` (Float), value `0`
-5. **Initialize variable** `varValidCells` (Array), value `[]`
-6. **Initialize variable** `varBadRows` (Array), value `[]`
-7. **Initialize variable** `varSummary` (Array), value `[]`
+2. **Initialize variable** `varMonthStart` (String), value empty
+3. **Initialize variable** `varMonthEnd` (String), value empty
+4. **Initialize variable** `varWorkingDaysInMonth` (Integer), value `0`
+5. **Initialize variable** `varWorkingDaysAfterReset` (Integer), value `0`
+6. **Initialize variable** `varDayOfReset` (Integer), value `0`
+7. **Initialize variable** `varResetDate` (String), value empty
+8. **Initialize variable** `varProratedHours` (Float), value `0`
+9. **Initialize variable** `varValidCells` (Array), value `[]`
+10. **Initialize variable** `varBadRows` (Array), value `[]`
+11. **Initialize variable** `varSummary` (Array), value `[]`
 
 8. **Excel Online (Business) → List rows present in a table**
    - Location: SharePoint site · Library: `StdHours_Inbox`
@@ -69,8 +73,21 @@ the month.
 9. **Set variable** `varUploadMonth` →
    `first(body('List_rows_present_in_a_table')?['value'])?['Upload_Month']`
 
-10. **Set variable** `varDaysInMonth` → the days-in-month expression
-    (`expressions.md` §2)
+10. **Set variable** `varMonthStart` and `varMonthEnd` (`expressions.md` §2)
+
+10a. **Get items** — rename **`Get items working days month`**
+    - List `Plant_Calendar`
+    - Filter: `Is_Working_Day eq 1 and Calendar_Date ge '@{variables('varMonthStart')}' and Calendar_Date le '@{variables('varMonthEnd')}'`
+    - **Set variable** `varWorkingDaysInMonth` = `length(body('Get_items_working_days_month')?['value'])`
+
+10b. **Condition** — *plant calendar guard*
+    - `equals(variables('varWorkingDaysInMonth'), 0)` is equal to `true`
+    - **If yes:** email the planner that the plant calendar has no working days for
+      this month, then **Terminate → Failed**.
+
+    > `Actual_Std_Hours` is a capacity figure, so proration divides by working days.
+    > An unmaintained calendar makes that divisor zero and the run dies at 2 a.m.
+    > with an unhelpful message. Fail loudly and early instead.
 
 11. **Get items** — rename **`Get items existing month`**
     - List `StdHours_Monthly`
@@ -108,8 +125,18 @@ the month.
     1. **Get items** — rename **`Get item cell`**
        - `Cell_Master`, filter `Cell_ID eq '@{items('Apply_to_each_row')?['Cell_ID']}'`
     2. **Set variable** `varDayOfReset` → the reset-day expression (§2)
-    3. **Set variable** `varProratedHours` → the proration expression (§2)
-    4. **Create item** in `StdHours_Monthly`:
+    3. **Set variable** `varResetDate` → §2
+    4. **Get items** — rename **`Get items working days after reset`**
+       - `Plant_Calendar`, filter
+         `Is_Working_Day eq 1 and Calendar_Date gt '@{variables('varResetDate')}' and Calendar_Date le '@{variables('varMonthEnd')}'`
+       - **Set variable** `varWorkingDaysAfterReset` =
+         `length(body('Get_items_working_days_after_reset')?['value'])`
+
+       > `gt`, not `ge`. The reset day belongs to the **old** cycle — the PM happened
+       > on it.
+
+    5. **Set variable** `varProratedHours` → the proration expression (§2)
+    6. **Create item** in `StdHours_Monthly`:
 
        | Field | Value |
        |---|---|
@@ -124,10 +151,11 @@ the month.
        > the truth about what the cell ran. Storing the adjusted number would
        > corrupt the three-month average and the whole forecast with it.
 
-    5. **Update item** on `Cell_Master` — the counter:
+    7. **Update item** on `Cell_Master` — the counter:
        - `Cum_Std_Hours_Since_PM` → the add expression (§3)
        - `Avg_Monthly_Std_Hours_L3M` → the rolling average (§10)
-    6. **Append to array** `varSummary` — cell, raw hours, prorated hours, new counter
+    8. **Append to array** `varSummary` — cell, raw hours, working days used,
+       prorated hours, new counter
 
 18. **Move file** → `StdHours_Archive`
 
@@ -140,8 +168,11 @@ the month.
 ### Test it
 
 Upload a month for a cell whose reset fell mid-month and check the posted figure
-against the hand-worked example in `expressions.md` §2. Then upload the same file
-again and confirm it is rejected.
+against the hand-worked example in `expressions.md` §2 — **720.00 h**, not 780 and
+not 728. Then upload the same file again and confirm it is rejected.
+
+Also blank out a month of `Plant_Calendar` and confirm the flow terminates as Failed
+with a message naming the month, rather than dividing by zero.
 
 ---
 

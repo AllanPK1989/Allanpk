@@ -112,6 +112,7 @@ PRIMARY_KEY = {
     "Breakdown_Log": "BD_ID", "Spare_Request": "Req_ID",
     "Spare_Replaced": "Repl_ID", "Abnormality_Log": "Abn_ID",
     "PM_Plan_Calendar": "Plan_ID",
+    "Plant_Calendar": None,
 }
 
 # Mandatory everywhere. Business rule 8: technicians share one M365 login, so
@@ -139,6 +140,7 @@ ALSO_REQUIRED = {
     "Spare_Replaced": ["Spare_Code", "Qty_Used"],
     "Abnormality_Log": ["Machine_ID", "Category", "Severity", "Status"],
     "PM_Plan_Calendar": ["Plan_Month", "Cell_ID", "Planned_Date"],
+    "Plant_Calendar": ["Calendar_Date", "Is_Working_Day", "Day_Type"],
 }
 
 # Indexed columns. SharePoint allows 20 indexes per list; every column used in a
@@ -163,6 +165,7 @@ INDEXES = {
     "Spare_Replaced": ["Source_Ref", "Machine_ID", "Spare_Code", "Replaced_DateTime"],
     "Abnormality_Log": ["Machine_ID", "Cell_ID", "Status", "Severity", "Target_Date"],
     "PM_Plan_Calendar": ["Plan_Month", "Cell_ID", "Adherence_Status", "Planned_Date"],
+    "Plant_Calendar": ["Calendar_Date", "Is_Working_Day"],
 }
 
 DESCRIPTIONS = {
@@ -181,6 +184,7 @@ DESCRIPTIONS = {
     "Spare_Replaced": "Parts actually fitted, with failure mode and cost.",
     "Abnormality_Log": "Conditions found that are not yet failures.",
     "PM_Plan_Calendar": "The frozen monthly plan. Adherence is measured against this, not against the work order.",
+    "Plant_Calendar": "One row per date. Marks which days the plant runs, so a mid-month PM reset prorates by working days rather than calendar days.",
 }
 
 LIBRARIES = [

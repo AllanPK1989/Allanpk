@@ -1,6 +1,6 @@
 # UAT test cases
 
-32 cases. Work through them in order — later ones depend on state the earlier ones
+33 cases. Work through them in order — later ones depend on state the earlier ones
 create. Record a name and a date against each; an unrecorded test is an untested
 system.
 
@@ -19,9 +19,9 @@ corrupt data to prove a guard works.
 
 ### UAT-01 — Lists are created with correct types · **CRITICAL**
 1. Run `provision_lists.ps1 -WhatIf`, then for real.
-2. Open each of the 15 lists → **List settings**.
+2. Open each of the 16 lists → **List settings**.
 
-**Expected:** 15 lists, 219 columns. Every Choice column shows its real values from
+**Expected:** 16 lists, 224 columns. Every Choice column shows its real values from
 the dictionary, not free text. Dates are Date-only or Date-and-Time as specified.
 Yes/No columns are Boolean, not text.
 
@@ -38,7 +38,7 @@ expression and every model reference, and the breakage is silent.
 1. Run `load_data.ps1`.
 2. Compare every list's item count against `sharepoint/data/_ROW_COUNTS.csv`.
 
-**Expected:** exact match. 2,092 rows total.
+**Expected:** exact match. 2,822 rows total, of which 730 are the plant calendar.
 
 ### UAT-04 — Validator rejects a bad row · **HIGH**
 1. In a copy of the source workbook, change one `Spare_Replaced.Total_Cost_INR` to a
@@ -180,21 +180,37 @@ escalation fire. The cell cannot close and the counter cannot reset.
 
 ## D. Monthly hours and proration
 
-### UAT-19 — Mid-month reset prorates correctly · **CRITICAL**
-1. Set `CELL-05` `Reset_Date` to `2026-04-02`, counter `0`.
-2. Upload April 2026 with `Actual_Std_Hours = 780`.
+### UAT-19 — Mid-month reset prorates by WORKING days · **CRITICAL**
+1. Confirm `Plant_Calendar` has April 2026 loaded with Sundays marked as non-working.
+2. Set `CELL-05` `Reset_Date` to `2026-04-02`, counter `0`.
+3. Upload April 2026 with `Actual_Std_Hours = 780`.
 
 **Expected:**
 ```
-days in month 30, day of reset 2, days after 28
-posted = 780 × 28/30 = 728.00
-counter = 728.00   (NOT 780)
+April 2026: 30 calendar days, 4 Sundays  ->  26 working days
+working days strictly after 02 Apr       ->  24
+posted  = 780 × 24/26 = 720.00
+counter = 720.00      (NOT 780, and NOT 728)
 ```
+
+`720`, not `728`. If you get 728 the flow is still prorating by calendar days and
+`Actual_Std_Hours` is a **capacity** figure — capacity does not accrue on a Sunday.
+
 `StdHours_Monthly.Actual_Std_Hours` stores **780** — the raw figure. Only the counter
 increment is prorated.
 
-*Why it matters:* without this, every cell resetting mid-month runs its next PM
-early, permanently, getting worse each cycle.
+*Why it matters:* without proration at all, every cell resetting mid-month runs its
+next PM early, permanently, getting worse each cycle.
+
+### UAT-19a — An unmaintained plant calendar fails loudly · **HIGH**
+1. Delete or unmark every working day for one month in `Plant_Calendar`.
+2. Upload that month.
+
+**Expected:** flow **terminates as Failed** with an email naming the month. It must
+**not** divide by zero, and must **not** silently post the full month's hours.
+
+*Why it matters:* the divisor comes from a list a human maintains. "Somebody will
+remember to add the holidays" is not a control.
 
 ### UAT-20 — No reset in the month means no proration · **HIGH**
 1. Upload a month for a cell whose last reset was two months ago.

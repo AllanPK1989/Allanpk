@@ -11,3 +11,8 @@ cache.abf
 
 # Generated label images are committed on purpose (they are a deliverable),
 # but the working folder Desktop creates next to a .pbip is not.
+
+# npm working files for the deck generator
+node_modules/
+package-lock.json
+package.json
