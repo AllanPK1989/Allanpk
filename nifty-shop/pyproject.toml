@@ -1,0 +1,40 @@
+[project]
+name = "nifty-shop"
+version = "0.1.0"
+description = "RSI-Filtered Nifty Shop — personal-use cash equity system on Firstock"
+requires-python = ">=3.12,<3.13"
+dependencies = ["pydantic>=2.9"]
+
+[dependency-groups]
+dev = ["pytest>=8.3", "mypy>=1.13", "ruff>=0.8"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/nifty_shop"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src", "tests"]
+warn_unreachable = true
+plugins = ["pydantic.mypy"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+# BLE = flake8-blind-except, enforcing the spec's "no bare except".
+# TRY = tryceratops, catching swallowed exceptions.
+# DTZ = flake8-datetimez, making a naive datetime.now() a lint error.
+select = ["E", "F", "I", "N", "UP", "B", "A", "C4", "SIM", "ARG", "PTH", "RUF", "BLE", "TRY", "DTZ"]
+# Specific, actionable exception messages are worth more here than TRY003.
+ignore = ["TRY003"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
