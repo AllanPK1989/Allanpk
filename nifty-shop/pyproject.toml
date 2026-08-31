@@ -3,10 +3,19 @@ name = "nifty-shop"
 version = "0.1.0"
 description = "RSI-Filtered Nifty Shop — personal-use cash equity system on Firstock"
 requires-python = ">=3.12,<3.13"
-dependencies = ["pydantic>=2.9"]
+dependencies = [
+    "pydantic>=2.9",
+    "pyotp>=2.10.0",
+    "requests>=2.34.2",
+]
 
 [dependency-groups]
-dev = ["pytest>=8.3", "mypy>=1.13", "ruff>=0.8"]
+dev = [
+    "pytest>=8.3",
+    "mypy>=1.13",
+    "ruff>=0.8",
+    "types-requests>=2.33.0.20260712",
+]
 
 [build-system]
 requires = ["hatchling"]
