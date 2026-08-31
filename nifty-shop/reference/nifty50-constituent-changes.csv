@@ -1,0 +1,20 @@
+# Nifty 50 point-in-time constituent changes.
+#
+# EMPTY ON PURPOSE. Rows must be transcribed from NSE Indices press releases.
+# Nothing here may be written from memory or inference: a wrong row produces a
+# better-looking backtest and is otherwise invisible (risk R-02).
+#
+# One row per symbol per reconstitution. Blank lines and # comments are ignored.
+#
+#   effective_from  ISO date the change took effect (not the announcement date)
+#   symbol          NSE trading symbol as it appeared in the bhavcopy on that date
+#   action          ADD or DROP
+#   source          the specific press release, e.g. "NSE Indices PR 2021-03-05"
+#
+# Example of the shape (NOT real data, do not uncomment):
+#   2021-04-01,SOMENAME,DROP,NSE Indices PR 2021-03-05
+#   2021-04-01,OTHERNAME,ADD,NSE Indices PR 2021-03-05
+#
+# Validate after every editing session:
+#   uv run python -m nifty_shop.universe_audit
+effective_from,symbol,action,source

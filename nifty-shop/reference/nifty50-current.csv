@@ -1,0 +1,12 @@
+# Today's Nifty 50 membership, the anchor the rewind starts from.
+#
+# EMPTY ON PURPOSE. Fetch on the VPS from
+#   https://nsearchives.nseindia.com/content/indices/ind_nifty50list.csv
+# and transcribe the Symbol column below, one per line.
+#
+# Record the date you fetched it on the declaration line below. Any change dated
+# later than that date is rejected, because the rewind cannot start from a list
+# that predates the change it is undoing.
+#
+# as_of,2026-01-01
+symbol
