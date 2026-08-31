@@ -61,8 +61,8 @@ powerapps/              Phase 2 — specified and costed, not licensed today
   app_manifest.json     data sources, screens, globals
 
 docs/
-  STEP_BY_STEP_GUIDE.md       START HERE if you are building it
-  HANDOVER.md                 START HERE if you are taking it over
+  STEP_BY_STEP_GUIDE.md/.docx START HERE if you are building it
+  HANDOVER.md/.docx           START HERE if you are taking it over
   IMPLEMENTATION_RUNBOOK.md   step-numbered, start to finish
   ASSUMPTIONS.md              every judgement call, with verified figures
   UAT_TEST_CASES.md           35 cases
@@ -90,6 +90,14 @@ the eight decisions of record, the one live risk and how it is managed, who does
 ongoing, and how to prove it still works.
 
 Both point at `docs/IMPLEMENTATION_RUNBOOK.md` for the fine print.
+
+Word versions of both are in `docs/` alongside the markdown. Regenerate after any
+edit so they cannot drift from the source:
+
+```bash
+node tools/build_docx.js docs/STEP_BY_STEP_GUIDE.md
+node tools/build_docx.js docs/HANDOVER.md
+```
 
 ## Quick start
 
