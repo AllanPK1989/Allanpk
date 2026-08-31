@@ -116,3 +116,23 @@ and virtualenv. Nothing outside that directory is touched.
 **L: Medium · I: Critical.**
 **Mitigation:** `.env` is gitignored; `.env.example` names keys and carries no values,
 enforced by a test. Tokens, keys and session IDs are never logged, including in traces.
+
+---
+
+## Phase 2 assumptions that are not yet verified against real data
+
+This environment's egress policy denies `nseindia.com`, so none of the following has
+been checked against a real download. Each is written to **fail loudly** rather than
+degrade quietly, and one run on the VPS resolves all of them.
+
+| Assumption | If wrong, what happens |
+|---|---|
+| Legacy bhavcopy header names (`SYMBOL`, `SERIES`, `TIMESTAMP`, `CLOSE`, `PREVCLOSE`, `ISIN`) | `UnknownBhavcopyLayoutError`, naming the headers actually seen. One fixture fixes it. |
+| Current bhavdata header names (`DATE1`, `CLOSE_PRICE`, `PREV_CLOSE`, …) | Same. The parser is name-driven, so it cannot silently read the wrong column. |
+| Archive URL shapes for both eras | Every date reports `absent`, which would show up immediately as an empty calendar. |
+| `LAYOUT_CUTOVER = 2016-01-01` | Nothing breaks: a 404 on the expected layout falls back to the other, and the report records which layout actually served each date, so one full run reveals the true boundary. |
+
+**The one that would not fail loudly** is a bhavcopy whose header names match but whose
+*meaning* has changed — for example `CLOSE_PRICE` becoming a settlement price. Nothing
+in the code can detect that. The Phase 2 indicator validation gate against an
+independent reference is the only defence, which is another reason it is a hard stop.
