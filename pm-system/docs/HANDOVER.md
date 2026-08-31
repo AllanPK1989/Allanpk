@@ -112,7 +112,15 @@ model, the flows or the report depends on the canvas app.
 
 ## 4. Going live — the five days
 
-Follow `docs/IMPLEMENTATION_RUNBOOK.md` step by step. The shape of it:
+Two guides, same journey:
+
+- **`docs/STEP_BY_STEP_GUIDE.md`** — plain English, stage by stage, every command
+  written out, no assumed SharePoint or Power BI knowledge. **Give this to whoever
+  is doing the build.**
+- **`docs/IMPLEMENTATION_RUNBOOK.md`** — the same steps with the full technical
+  detail. Go here when the guide is not specific enough.
+
+The shape of it:
 
 | Day | Step | What happens |
 |---|---|---|
@@ -273,7 +281,8 @@ automate/
 
 powerapps/              Phase 2 — specified and costed, not licensed
 docs/
-  IMPLEMENTATION_RUNBOOK.md   step-numbered, start to finish
+  STEP_BY_STEP_GUIDE.md       plain-English build walkthrough
+  IMPLEMENTATION_RUNBOOK.md   the same steps, full technical detail
   ASSUMPTIONS.md              every judgement call, with verified figures
   UAT_TEST_CASES.md           35 cases
   TECHNICIAN_SOP_1PAGE.md     print, laminate, put at every cell

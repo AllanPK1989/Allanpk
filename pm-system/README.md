@@ -61,7 +61,8 @@ powerapps/              Phase 2 — specified and costed, not licensed today
   app_manifest.json     data sources, screens, globals
 
 docs/
-  HANDOVER.md                 START HERE - the single handover summary
+  STEP_BY_STEP_GUIDE.md       START HERE if you are building it
+  HANDOVER.md                 START HERE if you are taking it over
   IMPLEMENTATION_RUNBOOK.md   step-numbered, start to finish
   ASSUMPTIONS.md              every judgement call, with verified figures
   UAT_TEST_CASES.md           35 cases
@@ -80,10 +81,15 @@ tools/
 
 ## Start here
 
-**`docs/HANDOVER.md`** — the single document that covers everything: what the system
-does, what is built, the eight decisions of record, how to go live, the one live
-risk and how it is managed, who does what ongoing, and how to prove it still works.
-Read that first; everything else is detail it points at.
+**Building it?** → **`docs/STEP_BY_STEP_GUIDE.md`** — the plain-English walkthrough,
+stage by stage, with every command written out and no assumed SharePoint or Power BI
+knowledge. Start here if you are the one doing the work.
+
+**Taking it over?** → **`docs/HANDOVER.md`** — what the system does, what is built,
+the eight decisions of record, the one live risk and how it is managed, who does what
+ongoing, and how to prove it still works.
+
+Both point at `docs/IMPLEMENTATION_RUNBOOK.md` for the fine print.
 
 ## Quick start
 
