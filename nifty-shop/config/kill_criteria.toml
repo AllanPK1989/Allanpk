@@ -1,0 +1,15 @@
+# Machine-readable mirror of
+# docs/kill-criteria/2026-08-31-pre-registered-kill-criteria.md
+# Frozen after the first baseline backtest run. Changes require a dated commit.
+registered_on = "2026-08-31"
+strictness = "strict"
+allocated_capital_inr = 1000000
+
+[kc1_book_drawdown]
+max_drawdown_pct = 20.0
+
+[kc2_zero_exit_stretch]
+max_sessions = 40
+
+[kc3_peak_capital]
+max_pct_of_allocated = 80.0
