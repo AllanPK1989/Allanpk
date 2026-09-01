@@ -16,6 +16,7 @@ dev = [
     "ruff>=0.8",
     "types-requests>=2.33.0.20260712",
     "ta>=0.11.0",
+    "pandas-stubs>=3.0.5.260730",
 ]
 
 [build-system]
@@ -31,6 +32,12 @@ strict = true
 files = ["src", "tests"]
 warn_unreachable = true
 plugins = ["pydantic.mypy"]
+
+# `ta` ships no py.typed marker. It is a dev-only cross-check oracle, never
+# imported by src/, so its types are irrelevant to the shipped code.
+[[tool.mypy.overrides]]
+module = ["ta.*"]
+ignore_missing_imports = true
 
 [tool.ruff]
 line-length = 100

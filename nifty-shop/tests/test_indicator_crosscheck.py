@@ -40,7 +40,7 @@ def synthetic_closes(seed: int, count: int = 600) -> list[float]:
 def test_rsi_agrees_with_an_independent_library_after_warmup(seed: int) -> None:
     closes = synthetic_closes(seed)
     mine = wilder_rsi(closes, period=PERIOD)
-    theirs = RSIIndicator(pd.Series(closes), window=PERIOD).rsi().tolist()
+    theirs: list[float] = [float(v) for v in RSIIndicator(pd.Series(closes), window=PERIOD).rsi()]
 
     ours_last = mine[-1]
     assert ours_last is not None
@@ -52,7 +52,7 @@ def test_rsi_agrees_across_the_whole_settled_series(seed: int) -> None:
     """Not just the final bar: every reading past the warm-up must agree."""
     closes = synthetic_closes(seed)
     mine = wilder_rsi(closes, period=PERIOD)
-    theirs = RSIIndicator(pd.Series(closes), window=PERIOD).rsi().tolist()
+    theirs: list[float] = [float(v) for v in RSIIndicator(pd.Series(closes), window=PERIOD).rsi()]
 
     for index in range(200, len(closes)):
         assert mine[index] is not None
@@ -64,7 +64,7 @@ def test_the_two_seeds_converge_which_is_why_warmup_is_required() -> None:
     200-bar warm-up, rather than the number being an unexplained constant."""
     closes = synthetic_closes(2024)
     mine = wilder_rsi(closes, period=PERIOD)
-    theirs = RSIIndicator(pd.Series(closes), window=PERIOD).rsi().tolist()
+    theirs: list[float] = [float(v) for v in RSIIndicator(pd.Series(closes), window=PERIOD).rsi()]
 
     def gap(index: int) -> float:
         value = mine[index]
@@ -81,7 +81,7 @@ def test_the_two_seeds_converge_which_is_why_warmup_is_required() -> None:
 def test_sma_agrees_with_pandas_rolling_mean(seed: int) -> None:
     closes = synthetic_closes(seed)
     mine = sma(closes, period=50)
-    theirs = pd.Series(closes).rolling(window=50).mean().tolist()
+    theirs = [float(v) for v in pd.Series(closes).rolling(window=50).mean()]
 
     for index in range(49, len(closes)):
         assert mine[index] is not None
