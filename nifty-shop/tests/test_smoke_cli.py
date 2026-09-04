@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 from nifty_shop.smoke import MissingCredentialsError, build_client, credentials_from_env
@@ -66,3 +68,59 @@ def test_totp_provider_generates_a_six_digit_code() -> None:
     code = creds.totp_provider()
     assert len(code) == 6
     assert code.isdigit()
+
+
+# --- .env loading, so the same commands work on Windows and Linux -----------------
+
+def test_dotenv_values_are_loaded(tmp_path: Path) -> None:
+    from nifty_shop.smoke import load_dotenv
+
+    env_file = tmp_path / ".env"
+    env_file.write_text("FIRSTOCK_USER_ID=AB1234\nEXPECTED_EGRESS_IP=203.0.113.7\n")
+    assert load_dotenv(env_file, {}) == {
+        "FIRSTOCK_USER_ID": "AB1234",
+        "EXPECTED_EGRESS_IP": "203.0.113.7",
+    }
+
+
+def test_dotenv_ignores_comments_and_blank_lines(tmp_path: Path) -> None:
+    from nifty_shop.smoke import load_dotenv
+
+    env_file = tmp_path / ".env"
+    env_file.write_text("# a comment\n\nFIRSTOCK_API_KEY=abc\n\n# another\n")
+    assert load_dotenv(env_file, {}) == {"FIRSTOCK_API_KEY": "abc"}
+
+
+def test_dotenv_strips_quotes_and_whitespace(tmp_path: Path) -> None:
+    """Notepad users quote values; a quoted TOTP secret would fail authentication."""
+    from nifty_shop.smoke import load_dotenv
+
+    env_file = tmp_path / ".env"
+    env_file.write_text('FIRSTOCK_PASSWORD="hunter2"\nFIRSTOCK_VENDOR_CODE= AB1234_U \n')
+    loaded = load_dotenv(env_file, {})
+    assert loaded["FIRSTOCK_PASSWORD"] == "hunter2"
+    assert loaded["FIRSTOCK_VENDOR_CODE"] == "AB1234_U"
+
+
+def test_a_real_environment_variable_wins_over_the_file(tmp_path: Path) -> None:
+    """An exported value is more deliberate than a file left lying around."""
+    from nifty_shop.smoke import load_dotenv
+
+    env_file = tmp_path / ".env"
+    env_file.write_text("FIRSTOCK_USER_ID=FROM_FILE\n")
+    assert load_dotenv(env_file, {"FIRSTOCK_USER_ID": "FROM_ENV"})["FIRSTOCK_USER_ID"] == "FROM_ENV"
+
+
+def test_a_missing_dotenv_is_not_an_error(tmp_path: Path) -> None:
+    from nifty_shop.smoke import load_dotenv
+
+    assert load_dotenv(tmp_path / "absent", {"A": "B"}) == {"A": "B"}
+
+
+def test_a_line_without_an_equals_sign_is_reported(tmp_path: Path) -> None:
+    from nifty_shop.smoke import load_dotenv
+
+    env_file = tmp_path / ".env"
+    env_file.write_text("FIRSTOCK_USER_ID AB1234\n")
+    with pytest.raises(ValueError, match="line 1"):
+        load_dotenv(env_file, {})

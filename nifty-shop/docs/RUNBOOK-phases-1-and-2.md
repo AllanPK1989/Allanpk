@@ -1,17 +1,41 @@
 # Runbook — completing Phase 1 and Phase 2
 
-Everything below runs **on the VPS**, which has the whitelisted static IP and
-unrestricted egress. None of it can run in the build environment, where NSE, NSE
-Indices, TradingView and Firstock are all blocked by egress policy.
+## Which machine runs what
+
+| | Machine | Why |
+|---|---|---|
+| **Phase 1** (broker) | **The VPS only** | Orders may only originate from the static IP whitelisted with Firstock. Your laptop's IP is not that address, and the preflight will refuse to start. |
+| **Phase 2** (data, fixtures) | **Any machine with internet** | NSE archives and TradingView have no IP restriction. A Windows laptop is fine. |
+
+Neither can run in the build environment, where NSE, NSE Indices, TradingView and
+Firstock are all blocked by egress policy.
 
 Total time: Phase 1 is about 30 minutes. Phase 2 is a few hours, most of it waiting for
 a download.
 
 ---
 
-## One-time setup
+## One-time setup — Windows (PowerShell)
+
+```powershell
+cd $HOME
+git clone https://github.com/AllanPK1989/Allanpk.git
+cd Allanpk\nifty-shop
+
+# install uv if you do not have it, then reopen PowerShell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+uv python install 3.12
+uv sync
+uv run pytest -m "not validation_gate"
+```
+
+If `git` is missing: `winget install --id Git.Git -e`, then reopen PowerShell.
+
+## One-time setup — Linux VPS (bash)
 
 ```bash
+cd ~
 git clone https://github.com/AllanPK1989/Allanpk.git
 cd Allanpk/nifty-shop
 curl -LsSf https://astral.sh/uv/install.sh | sh     # if uv is not installed
@@ -20,7 +44,7 @@ uv sync
 uv run pytest -m "not validation_gate"
 ```
 
-**Checkpoint:** `250 passed`. If not, stop and send me the output.
+**Checkpoint (either platform):** `256 passed`. If not, stop and send me the output.
 
 ---
 
@@ -37,26 +61,32 @@ several interfaces, this is the one that matters — it is what the broker sees.
 
 ## Step 2. Create the credentials file
 
+Linux:
+
 ```bash
-cp .env.example .env
-nano .env
+cp .env.example .env && nano .env && chmod 600 .env
+```
+
+Windows:
+
+```powershell
+Copy-Item .env.example .env
+notepad .env
 ```
 
 Fill in all seven values. `EXPECTED_EGRESS_IP` is the address from Step 1.
 `FIRSTOCK_TOTP_SECRET` is the **base32 seed** from when you set up 2FA, not a six-digit
 code — the system generates a fresh code per login, because the broker rejects a reused
-one.
-
-```bash
-chmod 600 .env
-```
+one. Do not wrap values in quotes.
 
 `.env` is gitignored. Never commit it.
 
 ## Step 3. Run the read-only smoke check
 
-```bash
-set -a && source .env && set +a
+The same command on both platforms — `.env` is read automatically, so there is no
+`source` step and nothing to export:
+
+```
 uv run python -m nifty_shop.smoke
 ```
 
@@ -83,7 +113,7 @@ responses instead of assumptions.
 | Message | Cause |
 |---|---|
 | `egress IP mismatch` | The VPS is leaving by a different address than you whitelisted. |
-| `EXPECTED_EGRESS_IP is not configured` | Step 2 not done, or `source .env` not run. |
+| `EXPECTED_EGRESS_IP is not configured` | Step 2 not done, or you are not in the `nifty-shop` directory. |
 | `missing or blank environment variables` | It names exactly which ones. |
 | `live mode refused` | You set `mode: live`. Leave it on paper. |
 | `reported failure: ...` | The broker rejected it. Usually a stale TOTP or a wrong vendor code. |
@@ -161,10 +191,13 @@ One command per symbol/date. It pairs your reference numbers with the exact clos
 series this project computes from:
 
 ```bash
-uv run python -m nifty_shop.download fixture \
-  --symbol RELIANCE --as-of 2026-01-15 \
-  --rsi 41.83 --sma 1290.44 \
-  --source "TradingView NSE:RELIANCE 1D, captured 2026-09-01"
+uv run python -m nifty_shop.download fixture --symbol RELIANCE --as-of 2026-01-15 --rsi 41.83 --sma 1290.44 --source "TradingView NSE:RELIANCE 1D, captured 2026-09-04"
+```
+
+(That is one line, so it works unchanged in PowerShell and bash. On Linux you can split
+it with trailing backslashes; in PowerShell use backticks.)
+
+```
 ```
 
 Repeat for all 15. Each writes a JSON file into `tests/fixtures/reference/`.

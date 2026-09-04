@@ -18,6 +18,7 @@ import urllib.request
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from pathlib import Path
 
 from nifty_shop.broker.client import FirstockClient
 from nifty_shop.broker.errors import BrokerError
@@ -29,6 +30,8 @@ from nifty_shop.preflight import (
 )
 from nifty_shop.redaction import redact
 from nifty_shop.session import IST, SessionManager
+
+DOTENV_PATH = Path(__file__).resolve().parents[2] / ".env"
 
 REQUIRED_VARS = (
     "FIRSTOCK_USER_ID",
@@ -44,6 +47,31 @@ EGRESS_IP_URL = "https://checkip.amazonaws.com"
 
 class MissingCredentialsError(Exception):
     """A required environment variable is absent or blank."""
+
+
+def load_dotenv(path: Path, env: Mapping[str, str]) -> dict[str, str]:
+    """Overlay a .env file onto the process environment.
+
+    PowerShell has no equivalent of `source .env`, so loading it here is what makes the
+    same commands work on Windows and Linux. A value already present in the real
+    environment wins: exporting one is more deliberate than a file left lying around.
+    """
+    merged = dict(env)
+    if not path.is_file():
+        return merged
+
+    for number, raw in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        if "=" not in line:
+            raise ValueError(f"{path.name} line {number} has no '=': {line!r}")
+        key, _, value = line.partition("=")
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if key and key not in merged:
+            merged[key] = value
+    return merged
 
 
 @dataclass(frozen=True)
@@ -140,4 +168,4 @@ def run(env: Mapping[str, str], fetch_ip: Callable[[], str] = _fetch_egress_ip) 
 
 
 if __name__ == "__main__":
-    sys.exit(run(os.environ))
+    sys.exit(run(load_dotenv(DOTENV_PATH, os.environ)))
