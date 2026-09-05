@@ -154,7 +154,7 @@ timedatectl                       # confirm NTP is active and synchronised
 curl -LsSf https://astral.sh/uv/install.sh | sh
 source $HOME/.local/bin/env
 
-git clone https://github.com/AllanPK1989/Allanpk.git
+git clone -b claude/new-session-25mo85 https://github.com/AllanPK1989/Allanpk.git
 cd Allanpk/nifty-shop
 uv python install 3.12
 uv sync

@@ -15,11 +15,20 @@ a download.
 
 ---
 
+> **The branch matters.** The repository's default branch is
+> `claude/3d-animation-design-skill-rg7n36`, an unrelated project with no `nifty-shop/`
+> directory. A plain `git clone` lands there and `cd nifty-shop` then fails. The `-b`
+> flag below checks out the right branch. If you already cloned without it:
+>
+> ```
+> cd ~/Allanpk && git checkout claude/new-session-25mo85 && cd nifty-shop
+> ```
+
 ## One-time setup — Windows (PowerShell)
 
 ```powershell
 cd $HOME
-git clone https://github.com/AllanPK1989/Allanpk.git
+git clone -b claude/new-session-25mo85 https://github.com/AllanPK1989/Allanpk.git
 cd Allanpk\nifty-shop
 
 # install uv if you do not have it, then reopen PowerShell
@@ -36,7 +45,7 @@ If `git` is missing: `winget install --id Git.Git -e`, then reopen PowerShell.
 
 ```bash
 cd ~
-git clone https://github.com/AllanPK1989/Allanpk.git
+git clone -b claude/new-session-25mo85 https://github.com/AllanPK1989/Allanpk.git
 cd Allanpk/nifty-shop
 curl -LsSf https://astral.sh/uv/install.sh | sh     # if uv is not installed
 uv python install 3.12
