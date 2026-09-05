@@ -98,7 +98,23 @@ thinking about whether the whole thing is worth running.
      Python and nothing else, and makes outbound calls only.
    - Plan: the smallest (1 GB RAM is plenty)
 3. **Networking → Create static IP → attach to the instance.** Do not skip this.
-4. Note the address. **Send it to Firstock for whitelisting now.**
+4. Note the address — the **public IPv4**, not the private one.
+
+   Lightsail shows both. The private IPv4 (`172.`, `10.` or `192.168.`) exists only
+   inside AWS's network so Firstock can never see it; whitelisting it silently
+   achieves nothing and costs another round trip with the broker to discover.
+
+   Confirm what the outside world actually sees before sending anything, by SSHing in
+   and running:
+
+   ```bash
+   curl -s https://checkip.amazonaws.com
+   ```
+
+   That output must match the static public IP in the console. It is also the exact
+   check this system's preflight performs, so a match here means Phase 1 will start.
+
+   **Then send that address to Firstock for whitelisting.**
 5. Connect over SSH (Lightsail's browser terminal works, or download the key and use
    `ssh -i key.pem ubuntu@<ip>`).
 
