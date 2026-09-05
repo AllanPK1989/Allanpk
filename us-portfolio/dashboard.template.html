@@ -1,0 +1,827 @@
+<title>Consolidated US Book</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* ── tokens ─────────────────────────────────────────────────────────────── */
+:root{
+  --bg:#F4F2ED; --surface:#FFFFFF; --surface-2:#EBE8E0; --surface-3:#E2DED4;
+  --ink:#1A1C21; --ink-2:#4E5259; --ink-3:#7E838B;
+  --rule:#DCD7CC; --rule-2:#C8C2B4;
+  --accent:#8A5D14; --accent-ink:#6E4A0F; --accent-soft:#F2E7D0;
+  --pos:#0B7D4E; --neg:#C03A2B; --warn:#B4801C;
+  --pos-soft:#E1F0E7; --neg-soft:#F8E4E1; --warn-soft:#F7EBD3;
+  --shadow:0 1px 2px rgba(26,28,33,.05), 0 6px 20px -12px rgba(26,28,33,.18);
+  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --disp:"Bricolage Grotesque","IBM Plex Sans",system-ui,sans-serif;
+  --maxw:1240px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#14161A; --surface:#1B1E23; --surface-2:#22262C; --surface-3:#2A2F36;
+    --ink:#E9E5DC; --ink-2:#A6ABB3; --ink-3:#767C85;
+    --rule:#2C3138; --rule-2:#3A4048;
+    --accent:#D9A94E; --accent-ink:#E6BC69; --accent-soft:#2E2617;
+    --pos:#2FA377; --neg:#D8635A; --warn:#C9A23A;
+    --pos-soft:#16281F; --neg-soft:#2C1B19; --warn-soft:#2A2417;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -14px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14161A; --surface:#1B1E23; --surface-2:#22262C; --surface-3:#2A2F36;
+  --ink:#E9E5DC; --ink-2:#A6ABB3; --ink-3:#767C85;
+  --rule:#2C3138; --rule-2:#3A4048;
+  --accent:#D9A94E; --accent-ink:#E6BC69; --accent-soft:#2E2617;
+  --pos:#2FA377; --neg:#D8635A; --warn:#C9A23A;
+  --pos-soft:#16281F; --neg-soft:#2C1B19; --warn-soft:#2A2417;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -14px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);
+  font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px 72px}
+h1,h2,h3{font-family:var(--disp);text-wrap:balance;margin:0;letter-spacing:-.015em}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.pos{color:var(--pos)} .neg{color:var(--neg)}
+a{color:var(--accent-ink)}
+
+/* ── masthead ───────────────────────────────────────────────────────────── */
+.mast{border-bottom:1px solid var(--rule);background:var(--surface);
+  position:sticky;top:0;z-index:40;box-shadow:var(--shadow)}
+.mast-in{max-width:var(--maxw);margin:0 auto;padding:14px 20px;
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;gap:1px;margin-right:auto}
+.brand h1{font-size:19px;font-weight:800}
+.brand .sub{font-size:11.5px;color:var(--ink-3);letter-spacing:.06em;
+  text-transform:uppercase;font-weight:600}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;
+  border-radius:999px;font-size:11.5px;font-weight:600;letter-spacing:.04em;
+  border:1px solid var(--rule-2);background:var(--surface-2);color:var(--ink-2);
+  font-family:var(--mono);text-transform:uppercase}
+.badge .dot{width:7px;height:7px;border-radius:50%;background:var(--ink-3);flex:none}
+.badge.live{background:var(--pos-soft);border-color:var(--pos);color:var(--pos)}
+.badge.live .dot{background:var(--pos);animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@media (prefers-reduced-motion:reduce){.badge.live .dot{animation:none}}
+button{font:inherit;cursor:pointer}
+.btn{padding:7px 14px;border-radius:8px;border:1px solid var(--rule-2);
+  background:var(--surface-2);color:var(--ink);font-weight:600;font-size:12.5px}
+.btn:hover{background:var(--surface-3);border-color:var(--accent)}
+.btn:focus-visible,select:focus-visible,.tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn[disabled]{opacity:.5;cursor:default}
+
+/* ── hero numbers ───────────────────────────────────────────────────────── */
+.hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
+  gap:22px;padding:30px 0 8px;align-items:start}
+@media(max-width:860px){.hero{grid-template-columns:1fr}}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-3);font-family:var(--mono)}
+.big{font-family:var(--disp);font-size:clamp(38px,6.4vw,60px);font-weight:800;
+  line-height:1;letter-spacing:-.03em;margin:8px 0 4px;font-variant-numeric:tabular-nums}
+.hero-sub{display:flex;gap:20px;flex-wrap:wrap;align-items:baseline;
+  font-size:13px;color:var(--ink-2)}
+.hero-sub b{font-family:var(--mono);font-weight:600;color:var(--ink)}
+.acct-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:560px){.acct-grid{grid-template-columns:1fr}}
+.acct{background:var(--surface);border:1px solid var(--rule);border-radius:10px;
+  padding:13px 14px;display:flex;flex-direction:column;gap:2px}
+.acct .nm{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--ink-3);font-family:var(--mono)}
+.acct .v{font-family:var(--mono);font-size:19px;font-weight:600;letter-spacing:-.02em}
+.acct .p{font-family:var(--mono);font-size:12px;font-weight:500}
+.acct .bar{height:3px;border-radius:2px;background:var(--surface-3);margin-top:7px;overflow:hidden}
+.acct .bar i{display:block;height:100%;background:var(--accent)}
+
+/* ── sections ───────────────────────────────────────────────────────────── */
+section{margin-top:44px;scroll-margin-top:76px}
+.shead{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+  padding-bottom:10px;border-bottom:2px solid var(--ink);margin-bottom:18px}
+.shead h2{font-size:22px;font-weight:700}
+.shead p{margin:0;color:var(--ink-2);font-size:13px;max-width:62ch}
+.note{color:var(--ink-2);font-size:13px;max-width:70ch;margin:0 0 16px}
+
+/* ── call cards ─────────────────────────────────────────────────────────── */
+.calls{display:flex;flex-direction:column;gap:12px}
+.call{background:var(--surface);border:1px solid var(--rule);border-radius:12px;
+  display:grid;grid-template-columns:44px minmax(0,1fr);overflow:hidden}
+.call .rank{background:var(--surface-2);border-right:1px solid var(--rule);
+  display:flex;align-items:center;justify-content:center;font-family:var(--mono);
+  font-size:15px;font-weight:600;color:var(--ink-3)}
+.call.t1{border-color:var(--pos);box-shadow:var(--shadow)}
+.call.t1 .rank{background:var(--pos-soft);color:var(--pos);border-right-color:var(--pos)}
+.call-in{padding:15px 17px;display:flex;flex-direction:column;gap:11px;min-width:0}
+.call-top{display:flex;align-items:baseline;gap:11px;flex-wrap:wrap}
+.tkr{font-family:var(--mono);font-size:17px;font-weight:600;letter-spacing:-.01em}
+.co{color:var(--ink-2);font-size:13.5px}
+.chip{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.05em;
+  text-transform:uppercase;padding:3px 8px;border-radius:5px;
+  background:var(--surface-2);color:var(--ink-2);border:1px solid var(--rule-2)}
+.chip.buy{background:var(--pos-soft);color:var(--pos);border-color:var(--pos)}
+.chip.warn{background:var(--warn-soft);color:var(--warn);border-color:var(--warn)}
+.chip.sell{background:var(--neg-soft);color:var(--neg);border-color:var(--neg)}
+.chip.own{background:var(--accent-soft);color:var(--accent-ink);border-color:var(--accent)}
+.why{margin:0;font-size:13.5px;color:var(--ink-2);max-width:78ch}
+.mathline{display:flex;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:11.5px;
+  color:var(--ink-3);padding-top:2px;border-top:1px dashed var(--rule);padding-top:9px}
+.mathline b{color:var(--ink);font-weight:600}
+
+/* ── the 52-week range bar (the recurring instrument) ───────────────────── */
+.rb{--l:0%;--t:0%;position:relative;height:30px;padding-top:11px}
+.rb .track{position:relative;height:6px;border-radius:3px;background:var(--surface-3);
+  border:1px solid var(--rule)}
+.rb .zone{position:absolute;top:0;bottom:0;left:0;width:40%;
+  background:var(--pos-soft);border-radius:3px 0 0 3px}
+.rb .now{position:absolute;top:50%;left:var(--l);width:12px;height:12px;
+  margin:-6px 0 0 -6px;border-radius:50%;background:var(--accent);
+  border:2px solid var(--surface);box-shadow:0 0 0 1px var(--accent)}
+.rb .tgt{position:absolute;top:50%;left:var(--t);width:2px;height:16px;
+  margin:-8px 0 0 -1px;background:var(--ink-2)}
+.rb .tgt::after{content:"";position:absolute;top:-5px;left:-3px;
+  border-left:4px solid transparent;border-right:4px solid transparent;
+  border-top:5px solid var(--ink-2)}
+.rb .lab{position:absolute;top:0;font-family:var(--mono);font-size:10px;color:var(--ink-3)}
+.rb .lab.lo{left:0} .rb .lab.hi{right:0}
+
+/* ── tables ─────────────────────────────────────────────────────────────── */
+.tools{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+select{font:inherit;font-size:12.5px;padding:6px 10px;border-radius:8px;
+  border:1px solid var(--rule-2);background:var(--surface);color:var(--ink)}
+.tab{padding:6px 13px;border-radius:8px;border:1px solid var(--rule-2);
+  background:var(--surface);color:var(--ink-2);font-size:12.5px;font-weight:600}
+.tab[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tblwrap{overflow-x:auto;border:1px solid var(--rule);border-radius:12px;background:var(--surface)}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:900px}
+th,td{padding:9px 12px;text-align:right;white-space:nowrap;
+  border-bottom:1px solid var(--rule)}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;
+  background:var(--surface);z-index:1}
+th{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--ink-3);font-family:var(--mono);background:var(--surface-2);
+  position:sticky;top:0;z-index:2;cursor:pointer;user-select:none}
+th:first-child{z-index:3;background:var(--surface-2)}
+th[aria-sort]{color:var(--accent-ink)}
+tbody tr:hover td{background:var(--surface-2)}
+tbody tr:hover td:first-child{background:var(--surface-2)}
+tbody tr:last-child td{border-bottom:none}
+td.n{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.tk{font-family:var(--mono);font-weight:600}
+.tk small{display:block;font-family:var(--sans);font-weight:400;font-size:11px;
+  color:var(--ink-3);letter-spacing:0}
+.mini{width:112px}
+
+/* ── valuation map ──────────────────────────────────────────────────────── */
+.map{background:var(--surface);border:1px solid var(--rule);border-radius:12px;
+  padding:16px;overflow-x:auto}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:var(--ink-2)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;
+  vertical-align:-1px}
+#tip{position:fixed;pointer-events:none;opacity:0;transition:opacity .12s;
+  background:var(--surface);border:1px solid var(--rule-2);border-radius:8px;
+  padding:9px 11px;font-size:12px;box-shadow:var(--shadow);z-index:90;max-width:250px}
+#tip b{font-family:var(--mono)}
+
+/* ── panels ─────────────────────────────────────────────────────────────── */
+.panels{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:16px 18px}
+.panel h3{font-size:14px;font-weight:700;margin-bottom:10px}
+.panel ul{margin:0;padding-left:17px;font-size:13px;color:var(--ink-2)}
+.panel li{margin-bottom:7px}
+.panel li b{color:var(--ink)}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:6px 0;
+  border-bottom:1px dashed var(--rule);font-size:13px}
+.kv:last-child{border-bottom:none}
+.kv span{color:var(--ink-2)} .kv b{font-family:var(--mono);font-weight:600}
+.alert{border-left:3px solid var(--warn);background:var(--warn-soft);
+  padding:13px 16px;border-radius:0 10px 10px 0;font-size:13.5px;color:var(--ink)}
+.alert b{font-weight:700}
+footer{margin-top:52px;padding-top:20px;border-top:1px solid var(--rule);
+  font-size:12px;color:var(--ink-3);max-width:80ch}
+footer p{margin:0 0 9px}
+code{font-family:var(--mono);font-size:.92em;background:var(--surface-2);
+  padding:1px 5px;border-radius:4px}
+</style>
+
+<div class="mast"><div class="mast-in">
+  <div class="brand">
+    <h1>Consolidated US Book</h1>
+    <div class="sub" id="asof">—</div>
+  </div>
+  <span class="badge" id="feed"><span class="dot"></span><span id="feedtxt">Snapshot</span></span>
+  <button class="btn" id="refresh">Refresh quotes</button>
+  <button class="btn" id="themebtn" title="Toggle light / dark">Theme</button>
+</div></div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div>
+      <div class="eyebrow">Consolidated market value · 3 accounts</div>
+      <div class="big num" id="totVal">—</div>
+      <div class="hero-sub">
+        <span>Invested <b id="totCost">—</b></span>
+        <span>Unrealised <b id="totPl">—</b></span>
+        <span>≈ <b id="totInr">—</b></span>
+      </div>
+    </div>
+    <div class="acct-grid" id="accts"></div>
+  </div>
+
+  <section id="calls">
+    <div class="shead">
+      <h2>Today's calls</h2>
+      <p>Ranked on valuation first, entry quality second. Every line shows the arithmetic behind it.</p>
+    </div>
+    <div class="alert" id="headline"></div>
+    <div class="tools" style="margin-top:16px">
+      <button class="tab" data-side="buy" aria-pressed="true">Buy &amp; accumulate</button>
+      <button class="tab" data-side="sell" aria-pressed="false">Trim &amp; avoid</button>
+    </div>
+    <div class="calls" id="callList"></div>
+  </section>
+
+  <section id="map">
+    <div class="shead">
+      <h2>Valuation map</h2>
+      <p>Earnings multiple against upside to consensus, on a log axis. Cheap with room to run sits upper-left; expensive and fully priced sits lower-right.</p>
+    </div>
+    <div class="map">
+      <svg id="scatter" role="img" aria-label="Forward P/E versus upside to consensus target"></svg>
+      <div class="legend">
+        <span><i style="background:var(--pos)"></i>Buy / accumulate</span>
+        <span><i style="background:var(--warn)"></i>Hold</span>
+        <span><i style="background:var(--neg)"></i>Trim / avoid</span>
+        <span style="color:var(--ink-3)">Marker size = position value · hollow = watchlist only</span>
+      </div>
+      <p class="note" id="mapnote" style="margin:10px 0 0;font-size:12px"></p>
+    </div>
+  </section>
+
+  <section id="holdings">
+    <div class="shead">
+      <h2>Holdings</h2>
+      <p>27 positions consolidated across the three accounts. Click any column to sort.</p>
+    </div>
+    <div class="tools">
+      <button class="tab" data-acct="all" aria-pressed="true">All accounts</button>
+      <button class="tab" data-acct="vested_1" aria-pressed="false">Vested · VSCH000079</button>
+      <button class="tab" data-acct="vested_2" aria-pressed="false">Vested · 2</button>
+      <button class="tab" data-acct="ibkr" aria-pressed="false">IBKR</button>
+    </div>
+    <div class="tblwrap"><table id="hold"><thead></thead><tbody></tbody></table></div>
+  </section>
+
+  <section id="watch">
+    <div class="shead">
+      <h2>Watchlist</h2>
+      <p>Every holding plus the nine names you asked to track. Sorted by the combined valuation-and-entry score.</p>
+    </div>
+    <div class="tools">
+      <select id="wfilter">
+        <option value="all">Every name (33)</option>
+        <option value="held">Held only (27)</option>
+        <option value="new">Watchlist additions only</option>
+        <option value="buy">Buy-rated only</option>
+      </select>
+    </div>
+    <div class="tblwrap"><table id="wl"><thead></thead><tbody></tbody></table></div>
+  </section>
+
+  <section id="risk">
+    <div class="shead"><h2>Concentration &amp; risk</h2></div>
+    <div class="panels" id="riskPanels"></div>
+  </section>
+
+  <section id="method">
+    <div class="shead"><h2>How the scores are built</h2></div>
+    <div class="panels">
+      <div class="panel">
+        <h3>Valuation score</h3>
+        <ul>
+          <li><b>40%</b> upside to consensus 12-month target.</li>
+          <li><b>40%</b> forward P/E against the sector median (30.4× semis, 19.9× software, 22× mega-cap).</li>
+          <li><b>20%</b> position inside the 52-week range — lower scores better.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>Entry score</h3>
+        <ul>
+          <li>Peaks for a pullback of <b>12–35%</b> off the 52-week high: deep enough to matter, not yet a broken chart.</li>
+          <li>Penalises names within <b>5%</b> of the high (no margin of safety) and beyond <b>50%</b> off it (falling knife).</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>What the score can't see</h3>
+        <ul>
+          <li>Cyclical peak earnings — a low P/E on top-of-cycle EPS reads as cheap and is not. <b>MU is the live example.</b></li>
+          <li>Balance-sheet risk. <b>CRWV</b> scores well and carries $51.6bn of debt.</li>
+          <li>Consensus targets drift toward the price. Treat them as a crowd estimate, not a valuation.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p><b>Data.</b> Positions come from the three statements dated 5 Sep 2026 — the Vested PDF (VSCH000079), the second Vested holdings table, and the IBKR open-positions report. Prices, 52-week ranges, multiples and consensus targets were gathered from public sources on the same date; <code>data/SOURCES.md</code> lists them. Where a figure could not be confirmed it is marked <i>low confidence</i> in the watchlist table rather than guessed.</p>
+    <p><b>Live quotes.</b> Opened from your own machine, the page refreshes prices and draws 200-day history from public endpoints, then recomputes every value, weight and score. Inside a published Artifact the browser blocks those calls, so it falls back to the 5 Sep snapshot and the badge reads <i>Snapshot</i>.</p>
+    <p><b>Not investment advice.</b> This is analysis for your own decision-making, not a recommendation from a SEBI-registered investment adviser. Consensus targets are other people's opinions. As an Indian resident, gains here are taxable in India — foreign equity is taxed at slab rates if held under 24 months and 12.5% LTCG beyond that, and Schedule FA reporting applies. Position sizes assume you are not investing an emergency fund or borrowed money.</p>
+  </footer>
+</div>
+<div id="tip" role="status" aria-live="polite"></div>
+<script id="book" type="application/json">__DATA__</script>
+<script>
+(() => {
+"use strict";
+const BOOK = JSON.parse(document.getElementById("book").textContent);
+const $ = s => document.querySelector(s);
+const el = (t, c, x) => { const n = document.createElement(t);
+  if (c) n.className = c; if (x != null) n.textContent = x; return n; };
+const addCls = (n, c) => { if (c) n.classList.add(c); };
+
+/* ── formatting ───────────────────────────────────────────────────────── */
+const usd = (v, d = 2) => v == null ? "—" : (v < 0 ? "-$" : "$") +
+  Math.abs(v).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+const usd0 = v => usd(v, 0);
+const pct = (v, d = 1) => v == null ? "—" : (v > 0 ? "+" : "") + v.toFixed(d) + "%";
+const inr = v => v == null ? "—" : "₹" + (v / 1e5).toFixed(2) + " L";
+const sign = v => v == null ? "" : v >= 0 ? "pos" : "neg";
+const x1 = v => v == null ? "—" : v.toFixed(1) + "×";
+
+/* Verdict → visual tier. Status colour, always paired with the verdict text. */
+const TIER = v =>
+  /TRIM|AVOID|DO NOT ADD/.test(v) ? "sell" :
+  /BUY|ACCUMULATE|DIP/.test(v) ? "buy" : "warn";
+
+/* ── live quotes ──────────────────────────────────────────────────────────
+   Runs in the viewer's browser. Works when the file is opened locally; a
+   published Artifact's CSP blocks these hosts, so we fall back to the
+   snapshot and say so rather than pretending the numbers are live.        */
+const PROXY = "https://query1.finance.yahoo.com/v8/finance/chart/";
+async function fetchOne(t) {
+  const r = await fetch(`${PROXY}${encodeURIComponent(t)}?range=1y&interval=1d`,
+    { mode: "cors", cache: "no-store" });
+  if (!r.ok) throw new Error(r.status);
+  const j = await r.json(), res = j?.chart?.result?.[0];
+  if (!res) throw new Error("shape");
+  const q = res.indicators?.quote?.[0] || {};
+  const closes = (q.close || []).filter(v => typeof v === "number");
+  return {
+    px: res.meta?.regularMarketPrice ?? closes.at(-1),
+    prev: res.meta?.chartPreviousClose,
+    lo: res.meta?.fiftyTwoWeekLow, hi: res.meta?.fiftyTwoWeekHigh,
+    hist: closes.slice(-260)
+  };
+}
+const sma = (a, n) => a.length < n ? null : a.slice(-n).reduce((s, v) => s + v, 0) / n;
+function rsi(a, n = 14) {
+  if (a.length < n + 1) return null;
+  let g = 0, l = 0;
+  for (let i = a.length - n; i < a.length; i++) {
+    const d = a[i] - a[i - 1]; d >= 0 ? g += d : l -= d;
+  }
+  if (l === 0) return 100;
+  return 100 - 100 / (1 + (g / n) / (l / n));
+}
+
+let LIVE = false;
+async function refresh() {
+  const btn = $("#refresh");
+  btn.disabled = true; btn.textContent = "Fetching…";
+  const tickers = BOOK.universe.map(r => r.ticker);
+  const results = await Promise.allSettled(tickers.map(fetchOne));
+  let ok = 0;
+  results.forEach((r, i) => {
+    if (r.status !== "fulfilled" || !r.value.px) return;
+    ok++;
+    const row = BOOK.universe[i], q = r.value;
+    row.px = q.px;
+    row.day_pct = q.prev ? (q.px / q.prev - 1) * 100 : null;
+    if (q.lo) row.lo = q.lo; if (q.hi) row.hi = q.hi;
+    if (q.hist?.length > 20) {
+      row.hist = q.hist;
+      row.sma50 = sma(q.hist, 50); row.sma200 = sma(q.hist, 200);
+      row.rsi = rsi(q.hist);
+    }
+  });
+  if (ok >= tickers.length * 0.6) { LIVE = true; recompute(); }
+  $("#feed").className = "badge" + (LIVE ? " live" : "");
+  $("#feedtxt").textContent = LIVE
+    ? `Live · ${ok}/${tickers.length} · ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+    : "Snapshot · 5 Sep 2026";
+  btn.disabled = false; btn.textContent = LIVE ? "Refresh quotes" : "Retry live quotes";
+  if (!LIVE) btn.title = "Live quotes need the page opened from your own machine — a published Artifact blocks the request.";
+  render();
+}
+
+/* Re-derive everything that depends on price, so a live refresh is honest
+   all the way down to the weights and the scores, not just the top line. */
+function recompute() {
+  const byT = Object.fromEntries(BOOK.universe.map(r => [r.ticker, r]));
+  let tv = 0, tc = 0;
+  for (const acc of BOOK.accounts) {
+    let v = 0, c = 0;
+    for (const h of acc.holdings) {
+      h.price = byT[h.ticker].px;
+      h.value = h.shares * h.price;
+      h.pl = h.value - h.cost_basis;
+      h.pl_pct = (h.value / h.cost_basis - 1) * 100;
+      v += h.value; c += h.cost_basis;
+    }
+    acc.value = v; acc.cost = c; acc.pl = v - c; acc.pl_pct = (v / c - 1) * 100;
+    tv += v; tc += c;
+  }
+  BOOK.totals.value = tv; BOOK.totals.cost = tc;
+  BOOK.totals.pl = tv - tc; BOOK.totals.pl_pct = (tv / tc - 1) * 100;
+  BOOK.totals.value_inr = tv * BOOK.usdinr;
+  for (const r of BOOK.universe) {
+    if (!r.held) continue;
+    r.value = r.shares * r.px;
+    r.pl = r.value - r.cost_basis;
+    r.pl_pct = (r.value / r.cost_basis - 1) * 100;
+    r.weight = r.value / tv * 100;
+  }
+  for (const r of BOOK.universe) {
+    if (r.tgt) r.upside_pct = (r.tgt / r.px - 1) * 100;
+    if (r.lo && r.hi && r.hi > r.lo) {
+      r.range_pct = (r.px - r.lo) / (r.hi - r.lo) * 100;
+      r.off_high_pct = (1 - r.px / r.hi) * 100;
+    }
+  }
+}
+
+/* ── the 52-week range bar ────────────────────────────────────────────── */
+function rangeBar(r) {
+  const d = el("div", "rb");
+  if (r.lo == null || r.hi == null || r.hi <= r.lo) {
+    d.append(el("div", "lab lo", "no 52-week range"));
+    return d;
+  }
+  const p = v => Math.max(0, Math.min(100, (v - r.lo) / (r.hi - r.lo) * 100));
+  d.style.setProperty("--l", p(r.px) + "%");
+  const track = el("div", "track");
+  track.append(el("div", "zone"));
+  if (r.tgt) {
+    d.style.setProperty("--t", p(r.tgt) + "%");
+    const t = el("div", "tgt");
+    t.title = `Consensus target ${usd(r.tgt)}`;
+    track.append(t);
+  }
+  const now = el("div", "now");
+  now.title = `Now ${usd(r.px)}`;
+  track.append(now);
+  d.append(el("div", "lab lo", usd0(r.lo)), el("div", "lab hi", usd0(r.hi)), track);
+  return d;
+}
+
+/* ── header + accounts ────────────────────────────────────────────────── */
+function renderTop() {
+  const t = BOOK.totals;
+  $("#asof").textContent = `Statements 5 Sep 2026 · ${t.positions} positions · ${t.tickers_tracked} tracked`;
+  $("#totVal").textContent = usd0(t.value);
+  $("#totCost").textContent = usd0(t.cost);
+  const pl = $("#totPl");
+  pl.textContent = `${usd0(t.pl)} (${pct(t.pl_pct)})`;
+  pl.className = sign(t.pl);
+  $("#totInr").textContent = inr(t.value * BOOK.usdinr) + ` @ ₹${BOOK.usdinr}`;
+
+  const g = $("#accts"); g.textContent = "";
+  for (const a of BOOK.accounts) {
+    const c = el("div", "acct");
+    c.append(el("div", "nm", a.label));
+    c.append(el("div", "v num", usd0(a.value)));
+    const p = el("div", "p num", `${usd0(a.pl)}  ${pct(a.pl_pct)}`);
+    p.classList.add(sign(a.pl)); c.append(p);
+    const bar = el("div", "bar"), fill = el("i");
+    fill.style.width = (a.value / BOOK.totals.value * 100).toFixed(1) + "%";
+    bar.append(fill); c.append(bar);
+    g.append(c);
+  }
+}
+
+/* ── calls ────────────────────────────────────────────────────────────── */
+let side = "buy";
+function renderCalls() {
+  const want = side === "buy" ? "buy" : "sell";
+  const rows = BOOK.universe
+    .filter(r => TIER(r.verdict) === want)
+    .sort((a, b) => want === "buy" ? b.combined - a.combined : a.combined - b.combined);
+
+  const list = $("#callList"); list.textContent = "";
+  rows.forEach((r, i) => {
+    const card = el("div", "call" + (i < 3 && want === "buy" ? " t1" : ""));
+    card.append(el("div", "rank", String(i + 1)));
+    const box = el("div", "call-in");
+
+    const top = el("div", "call-top");
+    top.append(el("span", "tkr", r.ticker), el("span", "co", r.name));
+    top.append(el("span", "chip " + TIER(r.verdict), r.verdict));
+    if (r.held) top.append(el("span", "chip own",
+      `held ${usd0(r.value)} · ${r.weight.toFixed(1)}%`));
+    box.append(top);
+    box.append(el("p", "why", r.why));
+    box.append(rangeBar(r));
+
+    const m = el("div", "mathline");
+    const bit = (k, v, cls) => {
+      const s = el("span"); s.append(k + " ");
+      const b = el("b", cls || "", v); s.append(b); return s;
+    };
+    m.append(bit("price", usd(r.px)));
+    if (r.tgt) m.append(bit("target", `${usd0(r.tgt)} · ${pct(r.upside_pct)}`, sign(r.upside_pct)));
+    if (r.fpe) m.append(bit("fwd P/E", x1(r.fpe)));
+    if (r.off_high_pct != null) m.append(bit("off high", `-${r.off_high_pct.toFixed(0)}%`));
+    if (r.held) m.append(bit("your cost", `${usd(r.avg_cost)} · ${pct(r.pl_pct)}`, sign(r.pl)));
+    m.append(bit("score", `${r.val_score.toFixed(0)} val / ${r.entry_score.toFixed(0)} entry`));
+    if (r.rsi != null) m.append(bit("RSI14", r.rsi.toFixed(0)));
+    if (r.sma200 != null) m.append(bit("vs 200d",
+      pct((r.px / r.sma200 - 1) * 100), sign(r.px - r.sma200)));
+    if (r.conf === "low") m.append(bit("confidence", "low"));
+    box.append(m);
+    card.append(box); list.append(card);
+  });
+}
+
+/* ── holdings table ───────────────────────────────────────────────────── */
+let acct = "all", hsort = { k: "value", dir: -1 };
+const HCOLS = [
+  ["ticker", "Position", r => tkCell(r)],
+  ["shares", "Shares", r => r.shares.toFixed(4)],
+  ["avg_cost", "Avg cost", r => usd(r.avg_cost)],
+  ["px", "Price", r => usd(r.px)],
+  ["value", "Value", r => usd(r.value)],
+  ["weight", "Weight", r => r.weight.toFixed(2) + "%"],
+  ["pl", "Unrealised", r => usd(r.pl), r => sign(r.pl)],
+  ["pl_pct", "Return", r => pct(r.pl_pct), r => sign(r.pl_pct)],
+  ["off_high_pct", "Off high", r => r.off_high_pct == null ? "—" : "-" + r.off_high_pct.toFixed(0) + "%"],
+  ["range_pct", "52-wk range", r => rangeBar(r), null, "mini"],
+  ["verdict", "Call", r => el("span", "chip " + TIER(r.verdict), r.verdict)]
+];
+function tkCell(r) {
+  const d = el("div", "tk", r.ticker);
+  d.append(el("small", "", r.name));
+  return d;
+}
+function accountRows() {
+  if (acct === "all") return BOOK.universe.filter(r => r.held);
+  const a = BOOK.accounts.find(x => x.id === acct);
+  const byT = Object.fromEntries(BOOK.universe.map(r => [r.ticker, r]));
+  return a.holdings.map(h => Object.assign({}, byT[h.ticker], {
+    shares: h.shares, avg_cost: h.avg_cost, value: h.value,
+    cost_basis: h.cost_basis, pl: h.pl, pl_pct: h.pl_pct,
+    weight: h.value / a.value * 100
+  }));
+}
+function renderHoldings() {
+  const rows = accountRows().sort((a, b) => {
+    const x = a[hsort.k], y = b[hsort.k];
+    if (typeof x === "string") return hsort.dir * x.localeCompare(y);
+    return hsort.dir * ((x ?? -1e9) - (y ?? -1e9));
+  });
+  buildTable($("#hold"), HCOLS, rows, hsort, k => { 
+    hsort = { k, dir: hsort.k === k ? -hsort.dir : -1 }; renderHoldings(); });
+}
+
+/* ── watchlist table ──────────────────────────────────────────────────── */
+let wfilter = "all", wsort = { k: "combined", dir: -1 };
+const WCOLS = [
+  ["ticker", "Name", r => tkCell(r)],
+  ["theme", "Theme", r => r.theme],
+  ["px", "Price", r => usd(r.px)],
+  ["fpe", "Fwd P/E", r => x1(r.fpe)],
+  ["tgt", "Target", r => r.tgt ? usd0(r.tgt) : "—"],
+  ["upside_pct", "Upside", r => pct(r.upside_pct), r => sign(r.upside_pct)],
+  ["off_high_pct", "Off high", r => r.off_high_pct == null ? "—" : "-" + r.off_high_pct.toFixed(0) + "%"],
+  ["range_pct", "52-wk range", r => rangeBar(r), null, "mini"],
+  ["val_score", "Val", r => r.val_score.toFixed(0)],
+  ["entry_score", "Entry", r => r.entry_score.toFixed(0)],
+  ["combined", "Score", r => r.combined.toFixed(0)],
+  ["verdict", "Call", r => el("span", "chip " + TIER(r.verdict), r.verdict)],
+  ["conf", "Conf.", r => r.conf]
+];
+function renderWatch() {
+  let rows = BOOK.universe.slice();
+  if (wfilter === "held") rows = rows.filter(r => r.held);
+  if (wfilter === "new") rows = rows.filter(r => !r.held);
+  if (wfilter === "buy") rows = rows.filter(r => TIER(r.verdict) === "buy");
+  rows.sort((a, b) => {
+    const x = a[wsort.k], y = b[wsort.k];
+    if (typeof x === "string") return wsort.dir * x.localeCompare(y);
+    return wsort.dir * ((x ?? -1e9) - (y ?? -1e9));
+  });
+  buildTable($("#wl"), WCOLS, rows, wsort, k => {
+    wsort = { k, dir: wsort.k === k ? -wsort.dir : -1 }; renderWatch(); });
+}
+
+function buildTable(tbl, cols, rows, srt, onSort) {
+  const thead = tbl.tHead, tbody = tbl.tBodies[0];
+  thead.textContent = ""; tbody.textContent = "";
+  const tr = el("tr");
+  for (const [k, label] of cols) {
+    const th = el("th", "", label);
+    if (srt.k === k) th.setAttribute("aria-sort", srt.dir < 0 ? "descending" : "ascending");
+    th.tabIndex = 0;
+    th.addEventListener("click", () => onSort(k));
+    th.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSort(k); } });
+    tr.append(th);
+  }
+  thead.append(tr);
+  for (const r of rows) {
+    const row = el("tr");
+    for (const [, , fn, cls, extra] of cols) {
+      const td = el("td", "n" + (extra ? " " + extra : ""));
+      if (cls) addCls(td, cls(r));
+      const v = fn(r);
+      v instanceof Node ? td.append(v) : td.textContent = v;
+      row.append(td);
+    }
+    tbody.append(row);
+  }
+}
+
+/* ── valuation map ────────────────────────────────────────────────────── */
+function renderMap() {
+  const svg = $("#scatter");
+  const W = 900, H = 430, ml = 58, mr = 22, mt = 18, mb = 52;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.setAttribute("width", "100%");
+  svg.style.minWidth = "620px";
+  svg.textContent = "";
+  const NS = "http://www.w3.org/2000/svg";
+  const mk = (t, a) => { const n = document.createElementNS(NS, t);
+    for (const k in a) n.setAttribute(k, a[k]); return n; };
+
+  BOOK.universe.forEach(r => {
+    r.pe_used = r.fpe ?? r.tpe ?? null;
+    r.pe_basis = r.fpe ? "forward" : r.tpe ? "trailing" : null;
+  });
+  const pts = BOOK.universe.filter(r => r.pe_used != null && r.upside_pct != null);
+  const dropped = BOOK.universe.filter(r => r.pe_used == null || r.upside_pct == null);
+  // Multiples run 12x to 192x, so a linear axis buries 25 of 28 names in the
+  // left third. Log spacing gives the 12-50x band the room the decisions need.
+  const xLo = 9, xHi = 210, yMin = -10, yMax = 80;
+  const lg = Math.log, span = lg(xHi) - lg(xLo);
+  const X = v => ml + (lg(Math.max(xLo, Math.min(v, xHi))) - lg(xLo)) / span * (W - ml - mr);
+  const Y = v => mt + (yMax - Math.max(yMin, Math.min(v, yMax))) / (yMax - yMin) * (H - mt - mb);
+
+  // grid + axes, drawn to the same scale the marks use
+  for (const gx of [10, 15, 20, 30, 50, 80, 130, 200]) {
+    svg.append(mk("line", { x1: X(gx), y1: mt, x2: X(gx), y2: H - mb,
+      stroke: "var(--rule)", "stroke-width": 1 }));
+    const t = mk("text", { x: X(gx), y: H - mb + 18, "text-anchor": "middle",
+      fill: "var(--ink-3)", "font-size": 11, "font-family": "var(--mono)" });
+    t.textContent = gx + "×"; svg.append(t);
+  }
+  for (const gy of [-10, 0, 20, 40, 60, 80]) {
+    svg.append(mk("line", { x1: ml, y1: Y(gy), x2: W - mr, y2: Y(gy),
+      stroke: gy === 0 ? "var(--rule-2)" : "var(--rule)",
+      "stroke-width": gy === 0 ? 1.5 : 1 }));
+    const t = mk("text", { x: ml - 9, y: Y(gy) + 4, "text-anchor": "end",
+      fill: "var(--ink-3)", "font-size": 11, "font-family": "var(--mono)" });
+    t.textContent = (gy > 0 ? "+" : "") + gy + "%"; svg.append(t);
+  }
+  const ax = mk("text", { x: (ml + W - mr) / 2, y: H - 12, "text-anchor": "middle",
+    fill: "var(--ink-2)", "font-size": 12, "font-weight": 600 });
+  ax.textContent = "P/E — forward where reported, otherwise trailing  →  more expensive";
+  svg.append(ax);
+  const ay = mk("text", { x: 14, y: (mt + H - mb) / 2, "text-anchor": "middle",
+    fill: "var(--ink-2)", "font-size": 12, "font-weight": 600,
+    transform: `rotate(-90 14 ${(mt + H - mb) / 2})` });
+  ay.textContent = "Upside to consensus  →"; svg.append(ay);
+
+  const maxV = Math.max(...pts.map(p => p.value || 0), 1);
+  const tip = $("#tip");
+  const placed = [];                       // label boxes already on the canvas
+  const fits = b => !placed.some(o =>
+    b.x < o.x + o.w && b.x + b.w > o.x && b.y < o.y + o.h && b.y + b.h > o.y);
+  for (const p of pts) {
+    const tier = TIER(p.verdict);
+    const col = tier === "buy" ? "var(--pos)" : tier === "sell" ? "var(--neg)" : "var(--warn)";
+    const r = p.held ? 6 + Math.sqrt((p.value || 0) / maxV) * 13 : 6;
+    const c = mk("circle", { cx: X(p.pe_used), cy: Y(p.upside_pct), r,
+      fill: p.held ? col : "none", stroke: col, "stroke-width": p.held ? 1.5 : 2,
+      "fill-opacity": .5, "vector-effect": "non-scaling-stroke" });
+    c.style.cursor = "pointer";
+    const show = e => {
+      tip.innerHTML = `<b>${p.ticker}</b> ${p.name}<br>` +
+        `${p.pe_basis} P/E <b>${x1(p.pe_used)}</b> · upside <b>${pct(p.upside_pct)}</b><br>` +
+        (p.held ? `Held <b>${usd0(p.value)}</b> (${p.weight.toFixed(1)}%)<br>` : `Watchlist only<br>`) +
+        `<span style="color:var(--ink-2)">${p.verdict}</span>`;
+      tip.style.opacity = 1;
+      const pad = 14;
+      tip.style.left = Math.min(e.clientX + pad, innerWidth - 266) + "px";
+      tip.style.top = Math.max(8, e.clientY - 70) + "px";
+    };
+    c.addEventListener("mousemove", show);
+    c.addEventListener("mouseenter", show);
+    c.addEventListener("mouseleave", () => tip.style.opacity = 0);
+    svg.append(c);
+
+    // direct-label the ones that carry the story, so identity is never colour alone
+    if (p.combined >= 62 || p.combined <= 34 || (p.value || 0) > maxV * .5) {
+      const w = p.ticker.length * 7.4, h = 13, cx = X(p.pe_used), cy = Y(p.upside_pct);
+      const above = { x: cx - w / 2, y: cy - r - 5 - h, w, h };
+      const below = { x: cx - w / 2, y: cy + r + 4, w, h };
+      const box = fits(above) ? above : fits(below) ? below : null;
+      if (box) {
+        placed.push(box);
+        const t = mk("text", { x: cx, y: box.y + h - 2, "text-anchor": "middle",
+          fill: "var(--ink)", "font-size": 11, "font-weight": 600,
+          "font-family": "var(--mono)" });
+        t.textContent = p.ticker; svg.append(t);
+      }
+    }
+  }
+  $("#mapnote").textContent = dropped.length
+    ? `${dropped.length} names are off this chart — ${dropped.map(r => r.ticker).join(", ")} — `
+      + "because they are loss-making, are index funds, or carry no published consensus target. "
+      + "A P/E axis cannot place them; judge those on the range bars instead."
+    : "";
+}
+
+/* ── risk panels ──────────────────────────────────────────────────────── */
+function renderRisk() {
+  const held = BOOK.universe.filter(r => r.held).sort((a, b) => b.weight - a.weight);
+  const top5 = held.slice(0, 5).reduce((s, r) => s + r.weight, 0);
+  const themes = {};
+  for (const r of held) themes[r.theme] = (themes[r.theme] || 0) + r.weight;
+  const themeRows = Object.entries(themes).sort((a, b) => b[1] - a[1]);
+  const aiish = ["AI semis", "Semi equipment", "Memory", "AI infra", "Semi ETF"]
+    .reduce((s, k) => s + (themes[k] || 0), 0);
+  const dup = held.filter(r => Object.keys(r.accounts || {}).length > 1);
+
+  const g = $("#riskPanels"); g.textContent = "";
+  const panel = (title, node) => {
+    const p = el("div", "panel"); p.append(el("h3", "", title)); p.append(node); g.append(p);
+  };
+  const kvlist = rows => {
+    const d = el("div");
+    for (const [k, v] of rows) {
+      const r = el("div", "kv"); r.append(el("span", "", k), el("b", "", v)); d.append(r);
+    }
+    return d;
+  };
+  panel("Concentration", kvlist([
+    ["Top 5 positions", top5.toFixed(1) + "% of book"],
+    ["Largest single name", `${held[0].ticker} · ${held[0].weight.toFixed(1)}%`],
+    ["Semis + AI infrastructure", aiish.toFixed(1) + "%"],
+    ["Positions held in 2+ accounts", `${dup.length} of ${held.length}`],
+    ["Names with a loss", held.filter(r => r.pl < 0).length]
+  ]));
+  panel("Where the money sits", kvlist(
+    themeRows.map(([k, v]) => [k, v.toFixed(1) + "%"])));
+
+  const ul = el("ul");
+  const li = h => { const n = el("li"); n.innerHTML = h; ul.append(n); };
+  li(`<b>One bet, three wrappers.</b> The same names repeat across all three accounts — ${dup.length} of ${held.length} positions are duplicated. Diversification across brokers is not diversification across risk.`);
+  li(`<b>${aiish.toFixed(0)}% of the book is one theme.</b> Semis, memory, semi-cap equipment and AI infrastructure move on the same capex cycle. A single spending pause hits all of it at once.`);
+  li(`<b>MU alone is ${(held.find(r => r.ticker === "MU")?.weight || 0).toFixed(1)}% at a +${(held.find(r => r.ticker === "MU")?.pl_pct || 0).toFixed(0)}% gain.</b> That position is the largest single source of both return and drawdown risk in the book.`);
+  li(`<b>Currency is a second bet.</b> The whole book is USD-denominated against INR liabilities. The rupee is down ~7% over twelve months, which has flattered these returns in rupee terms.`);
+  li(`<b>Crypto beta is stacked.</b> IBIT, BITQ and BLOK are three expressions of one exposure; BITQ and BLOK overlap almost completely.`);
+  panel("What the numbers say", ul);
+}
+
+/* ── headline ─────────────────────────────────────────────────────────── */
+function renderHeadline() {
+  const buys = BOOK.universe.filter(r => TIER(r.verdict) === "buy")
+    .sort((a, b) => b.combined - a.combined).slice(0, 3).map(r => r.ticker);
+  const mu = BOOK.universe.find(r => r.ticker === "MU");
+  $("#headline").innerHTML =
+    `<b>Today:</b> the best valuation-plus-entry combinations are ` +
+    `<b>${buys.join("</b>, <b>")}</b>. The single most consequential decision in the book is not a ` +
+    `purchase — it is <b>MU</b>, up ${mu.pl_pct.toFixed(0)}% and now ${mu.weight.toFixed(1)}% of the ` +
+    `consolidated portfolio on a 12.5× multiple applied to peak-cycle earnings.`;
+}
+
+/* ── wiring ───────────────────────────────────────────────────────────── */
+function render() {
+  renderTop(); renderHeadline(); renderCalls();
+  renderHoldings(); renderWatch(); renderMap(); renderRisk();
+}
+document.querySelectorAll("[data-side]").forEach(b =>
+  b.addEventListener("click", () => {
+    side = b.dataset.side;
+    document.querySelectorAll("[data-side]").forEach(o =>
+      o.setAttribute("aria-pressed", String(o === b)));
+    renderCalls();
+  }));
+document.querySelectorAll("[data-acct]").forEach(b =>
+  b.addEventListener("click", () => {
+    acct = b.dataset.acct;
+    document.querySelectorAll("[data-acct]").forEach(o =>
+      o.setAttribute("aria-pressed", String(o === b)));
+    renderHoldings();
+  }));
+$("#wfilter").addEventListener("change", e => { wfilter = e.target.value; renderWatch(); });
+$("#refresh").addEventListener("click", refresh);
+$("#themebtn").addEventListener("click", () => {
+  const cur = document.documentElement.getAttribute("data-theme");
+  const dark = cur ? cur === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+  renderMap();
+});
+addEventListener("resize", () => renderMap());
+
+render();          // paint the snapshot immediately — the page is never empty
+refresh();         // then try for live prices
+})();
+</script>
