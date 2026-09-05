@@ -90,6 +90,12 @@ thinking about whether the whole thing is worth running.
    - Region: **Mumbai, ap-south-1**
    - Platform: Linux/Unix
    - Blueprint: **OS Only → Ubuntu 24.04 LTS**
+
+     Lightsail offers "Apps + OS" alongside "OS Only". **Choose OS Only.** The
+     Apps blueprints preinstall a web stack (WordPress, LAMP, Node.js, Nginx) that
+     this project never uses, listening on public ports, on the one machine holding
+     broker credentials. That is attack surface for no benefit. This system needs
+     Python and nothing else, and makes outbound calls only.
    - Plan: the smallest (1 GB RAM is plenty)
 3. **Networking → Create static IP → attach to the instance.** Do not skip this.
 4. Note the address. **Send it to Firstock for whitelisting now.**
