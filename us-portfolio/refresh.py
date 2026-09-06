@@ -9,9 +9,35 @@ dashboard. Run this before the open, or whenever you want the book marked.
 No API key and no dependencies beyond the standard library. If a ticker fails
 it keeps the previous value and says so — it never silently invents a price.
 """
-import argparse, json, re, pathlib, sys, urllib.request, urllib.error
+import argparse, datetime, json, re, pathlib, sys, urllib.request, urllib.error
 
 HERE = pathlib.Path(__file__).parent
+
+# NYSE full-day closures for 2026. Advisory only: a date missing from this list
+# just costs one wasted fetch, it never blocks a refresh you asked for.
+HOLIDAYS_2026 = {
+    "2026-01-01", "2026-01-19", "2026-02-16", "2026-04-03", "2026-05-25",
+    "2026-06-19", "2026-07-03", "2026-09-07", "2026-11-26", "2026-12-25",
+}
+
+
+def last_session(today=None):
+    """Most recent date US equities actually traded, on or before today."""
+    d = today or datetime.date.today()
+    for _ in range(10):
+        if d.weekday() < 5 and d.isoformat() not in HOLIDAYS_2026:
+            return d
+        d -= datetime.timedelta(days=1)
+    return d
+
+
+def next_session(today=None):
+    d = (today or datetime.date.today()) + datetime.timedelta(days=1)
+    for _ in range(10):
+        if d.weekday() < 5 and d.isoformat() not in HOLIDAYS_2026:
+            return d
+        d += datetime.timedelta(days=1)
+    return d
 SRC = HERE / "build_data.py"
 UA = {"User-Agent": "Mozilla/5.0 (portfolio-dashboard refresh)"}
 CHART = "https://query1.finance.yahoo.com/v8/finance/chart/{}?range=1y&interval=1d"
@@ -31,9 +57,26 @@ def quote(ticker):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--force", action="store_true",
+                    help="fetch even when the file already holds the latest close")
     args = ap.parse_args()
 
     src = SRC.read_text()
+
+    # Don't fire 33 requests at a closed market for prices we already hold.
+    held = re.search(r'AS_OF = "([\d-]+)"', src)
+    last = last_session()
+    today = datetime.date.today()
+    if held and not args.force:
+        have = held.group(1)
+        if have >= last.isoformat():
+            print(f"Already current. The last US session closed "
+                  f"{last:%a %d %b %Y}; this file holds {have}.")
+            if today != last:
+                print(f"Markets are shut today ({today:%a %d %b}); "
+                      f"they reopen {next_session():%a %d %b %Y}.")
+            print("Nothing to fetch. Use --force to refresh anyway.")
+            return 0
     # entries are column-aligned, so the colon may be followed by padding
     tickers = re.findall(r'^ "([A-Z]+)":\s*M\(', src, re.M)
     print(f"refreshing {len(tickers)} tickers\n")

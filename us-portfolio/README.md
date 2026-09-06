@@ -40,9 +40,14 @@ it works offline, and tells you plainly that the numbers are not live.
 To bake fresh prices into the committed files without a browser:
 
 ```bash
-python3 refresh.py     # rewrites prices in build_data.py, rebuilds both pages
-python3 refresh.py --dry-run
+python3 refresh.py            # rewrites prices in build_data.py, rebuilds both pages
+python3 refresh.py --dry-run  # show what would change, write nothing
+python3 refresh.py --force    # fetch even if the file already holds the last close
 ```
+
+It checks the market calendar first and will not fire 33 requests at a closed
+market for prices it already holds — it tells you when the last session closed
+and when the next one opens instead.
 
 Neither script needs an API key or a third-party package. Any ticker that fails
 keeps its previous value and is listed at the end — nothing is ever invented.
