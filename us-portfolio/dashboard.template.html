@@ -230,7 +230,7 @@ code{font-family:var(--mono);font-size:.92em;background:var(--surface-2);
   <section id="calls">
     <div class="shead">
       <h2>Today's calls</h2>
-      <p>Ranked on valuation first, entry quality second. Every line shows the arithmetic behind it.</p>
+      <p>Ranked on valuation first, entry quality second. Every line shows the arithmetic behind it. The numbers are live; the written reasoning is dated, and any call whose price has moved more than 5% since it was written is flagged.</p>
     </div>
     <div class="alert" id="diag" hidden style="margin-bottom:12px"></div>
     <div class="alert" id="headline"></div>
@@ -602,6 +602,10 @@ function renderCalls() {
     top.append(el("span", "chip " + TIER(r.verdict), r.verdict));
     if (r.held) top.append(el("span", "chip own",
       `held ${usd0(r.value)} · ${r.weight.toFixed(1)}%`));
+    // the prose was written at r.ref_px; if price has run away from it, say so
+    if (r.drift_pct != null && Math.abs(r.drift_pct) >= 5)
+      top.append(el("span", "chip warn",
+        `price ${r.drift_pct > 0 ? "up" : "down"} ${Math.abs(r.drift_pct).toFixed(0)}% since this call`));
     box.append(top);
     box.append(el("p", "why", r.why));
     box.append(rangeBar(r));

@@ -1,6 +1,6 @@
 {
  "as_of": "2026-09-05",
- "generated": "2026-09-06T14:15:36+00:00",
+ "generated": "2026-09-06T14:46:01+00:00",
  "usdinr": 94.38,
  "totals": {
   "value": 53767.41,
@@ -788,7 +788,7 @@
    "conf": "high",
    "note": "18.6x forward is the cheapest this franchise has looked in years \u2014 but it sits 3% off its high.",
    "val_score": 75.7,
-   "entry_score": 25,
+   "entry_score": 25.0,
    "combined": 55.4,
    "verdict": "BUY THE DIP",
    "why": "18.6x forward is genuinely cheap, but it sits 3% off the high. Wait for <$210.",
@@ -1446,7 +1446,7 @@
    "conf": "high",
    "note": "EUV monopoly, but 39.8x forward is 31% above the semi median and the stock is 4% off its high.",
    "val_score": 37.7,
-   "entry_score": 25,
+   "entry_score": 25.0,
    "combined": 32.6,
    "verdict": "WATCH",
    "why": "Fine business, wrong price: 39.8x forward and 4% off the high. Revisit under ~$1,450.",

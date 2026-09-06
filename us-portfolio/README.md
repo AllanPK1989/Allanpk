@@ -7,7 +7,8 @@ valuation-driven buy calls.
 **27 positions · 33 tickers tracked · $53,767 market value on $33,011 invested (+62.9%)**
 
 ```
-serve.py                  run this — serves the dashboard with live quotes working
+webapp/                   the live web app — run this (see webapp/README.md)
+serve.py                  minimal stdlib-only alternative to the web app
 dashboard.local.html      standalone page, for reading the snapshot offline
 dashboard.html            the same page in the form the Artifact service wraps
 build_data.py             the dataset and the scoring model; regenerates both pages
@@ -20,10 +21,20 @@ data/SOURCES.md           where every number came from, and how splits were reso
 ## Daily use
 
 ```bash
-python3 serve.py       # → http://localhost:8000, with working live quotes
+cd webapp && ./run.sh      # → http://localhost:8000
 ```
 
-That is the one command you need. The badge turns **Live**, prices and 52-week
+That is the one command you need. It runs the web app: the server fetches
+quotes and the page polls it, so prices keep updating on their own. See
+`webapp/README.md` for the API, configuration and deployment.
+
+`serve.py` in this folder is the older single-file version — it still works and
+has no dependencies, but the web app supersedes it:
+
+```bash
+python3 serve.py       # minimal alternative, stdlib only
+```
+ The badge turns **Live**, prices and 52-week
 ranges refresh, and the 50/200-day and RSI figures are computed from a year of
 fetched history.
 

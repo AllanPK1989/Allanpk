@@ -10,7 +10,11 @@ market     : prices / 52-week ranges / multiples / consensus targets gathered
 
 Run:  python3 build_data.py     ->  data/portfolio.json
 """
-import json, datetime, pathlib
+import json, datetime, pathlib, sys
+
+# The scoring model is shared with the web app so the two can never disagree.
+sys.path.insert(0, str(pathlib.Path(__file__).parent / "webapp"))
+from app import analytics                                    # noqa: E402
 
 AS_OF = "2026-09-05"
 USDINR = 94.38
@@ -144,70 +148,13 @@ MARKET = {
 }
 
 # ---------------------------------------------------------------- scoring
-SECTOR_MEDIAN_FPE = {
-    "AI semis": 30.4, "Semi equipment": 30.4, "Memory": 30.4, "Semi turnaround": 30.4,
-    "Semi ETF": 30.4, "Software": 19.9, "Cyber": 19.9, "Mega-cap": 22.0,
-    "Consumer tech": 22.0, "AI infra": 30.0, "Intl e-commerce": 22.0,
-    "Space": 30.0, "Nuclear / defense": 25.0, "Crypto": None,
-}
-
-def clamp(x, lo=0.0, hi=100.0):
-    return max(lo, min(hi, x))
-
 def score(t, m):
-    """Return (valuation 0-100, entry 0-100, components dict).
+    """Thin wrapper over the shared model, kept so the assembly below reads the
+    same as it did when the scoring lived here."""
+    r = analytics.score(m["px"], m["lo"], m["hi"], m["fpe"], m["tgt"], m["theme"])
+    comp = {k: r[k] for k in ("upside_pct", "fpe_prem_pct", "range_pct", "off_high_pct")}
+    return r["val_score"], r["entry_score"], comp
 
-    valuation : how much cheaper than fair the name looks
-    entry     : how good today's price is as an entry point
-    Higher is better on both. Components are exposed so the page can show the math.
-    """
-    px, lo, hi, fpe, tgt = m["px"], m["lo"], m["hi"], m["fpe"], m["tgt"]
-    comp = {}
-
-    # --- valuation leg 1: upside to consensus target (0-100, 40% weight)
-    if tgt:
-        up = (tgt / px - 1) * 100
-        comp["upside_pct"] = round(up, 1)
-        s_up = clamp(50 + up * 1.6)          # 0% upside -> 50, +30% -> 98
-    else:
-        up, s_up = None, 50.0
-        comp["upside_pct"] = None
-
-    # --- valuation leg 2: forward P/E vs sector median (40%)
-    med = SECTOR_MEDIAN_FPE.get(m["theme"])
-    if fpe and med:
-        prem = (fpe / med - 1) * 100          # negative = cheaper than sector
-        comp["fpe_prem_pct"] = round(prem, 1)
-        s_pe = clamp(50 - prem * 0.9)         # -40% premium -> 86, +80% -> 0
-    else:
-        prem, s_pe = None, 50.0
-        comp["fpe_prem_pct"] = None
-
-    # --- valuation leg 3: position in the 52-week range (20%)
-    if lo and hi and hi > lo:
-        rng = (px - lo) / (hi - lo) * 100
-        comp["range_pct"] = round(rng, 1)
-        comp["off_high_pct"] = round((1 - px / hi) * 100, 1)
-        s_rng = clamp(100 - rng)               # lower in the range scores better
-    else:
-        rng, s_rng = None, 50.0
-        comp["range_pct"] = comp["off_high_pct"] = None
-
-    valuation = round(0.40 * s_up + 0.40 * s_pe + 0.20 * s_rng, 1)
-
-    # --- entry quality: reward a real pullback, penalise both extremes
-    # Best entries sit 12-35% off the high: deep enough to matter, not a broken chart.
-    if comp["off_high_pct"] is not None:
-        oh = comp["off_high_pct"]
-        if oh < 5:      s_entry = 25          # extended, no margin of safety
-        elif oh < 12:   s_entry = 45 + (oh - 5) * 4.3
-        elif oh <= 35:  s_entry = 75 + (oh - 12) * 1.1     # the sweet spot
-        elif oh <= 50:  s_entry = 100 - (oh - 35) * 2.7    # getting broken
-        else:           s_entry = 55 - (oh - 50) * 1.2     # falling knife
-        entry = round(clamp(s_entry), 1)
-    else:
-        entry = 50.0
-    return valuation, entry, comp
 
 # hand-set verdicts: the score ranks, judgement decides. Both are shown.
 VERDICT = {
@@ -277,7 +224,7 @@ for tkr, m in MARKET.items():
     verdict, why = VERDICT[tkr]
     rec = dict(ticker=tkr, held=held, **{k: m[k] for k in
                ("name","theme","px","lo","hi","fpe","tpe","tgt","conf","note")},
-               val_score=v, entry_score=e, combined=round(0.6*v + 0.4*e, 1),
+               val_score=v, entry_score=e, combined=round(0.6 * v + 0.4 * e, 1),
                verdict=verdict, why=why, **comp)
     if held:
         p = positions[tkr]
