@@ -76,6 +76,28 @@ docker run -p 8000:8000 -e APP_TOKEN=$(openssl rand -hex 16) us-book
 
 ---
 
+## Getting live prices on Render
+
+The first deploy came back with every price marked *reference*, because Yahoo
+answers `429 Too Many Requests` and Stooq `404` to Render's egress IPs. That is
+an IP reputation problem, not a rate you can back off from — Yahoo refused the
+*first* request, not the thirty-third.
+
+The fix is a keyed source:
+
+1. Sign up free at <https://finnhub.io/register> (60 calls a minute, no card)
+2. Render → your service → **Environment** → add `FINNHUB_API_KEY`
+3. Save. Render redeploys, and the badge turns **Live**.
+
+Without a key the dashboard still works — it shows the statement close, says so
+in the strip under the headline, and every value and score stays consistent with
+the price shown. It simply is not live.
+
+Finnhub's free quote endpoint returns price and previous close but no history,
+so the 52-week ranges keep coming from the reference data and the RSI and
+moving-average figures only appear when Yahoo answers — which it generally does
+from a home connection, and generally does not from a datacentre.
+
 ## Checking it worked
 
 ```bash
@@ -86,9 +108,21 @@ curl https://<your-host>/api/health          # open, no token needed
 {"ok": true, "market": {"phase": "closed", ...}, "quotes": {"cached_tickers": 33, ...}}
 ```
 
-`ok: false` with `cached_tickers: 0` means the host cannot reach either quote
-source. The app still serves the statement close and labels it — check
-`last_error` in that response for the reason.
+`ok` reports whether the app can serve, not whether quotes are flowing —
+a blocked feed shows as `"degraded": true` with `ok: true`, and `quotes.providers`
+names each source and why it is resting:
+
+```json
+{"ok": true, "degraded": true,
+ "detail": "serving the reference close — no quote source reachable",
+ "quotes": {"providers": [{"name": "yahoo", "available": false,
+                           "resting_for": 847.2, "status": "33/33 refused (429/403)"}]}}
+```
+
+An earlier version answered `503` here whenever no quote had been fetched, and
+Render killed the deploy after fifteen minutes of failed health checks even
+though every page was serving correctly. Health is liveness now; feed quality is
+in the body.
 
 ## What deployment does not fix
 

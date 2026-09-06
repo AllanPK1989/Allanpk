@@ -4,10 +4,10 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app import main
-from app.providers import Quote
+from app.providers import Provider, Quote
 
 
-class Stub:
+class Stub(Provider):
     name = "stub"
     def __init__(self, prices): self.prices = prices
     async def fetch(self, client, tickers):
@@ -62,12 +62,29 @@ def test_market_state_is_reported(client):
     assert m["poll_seconds"] > 0
 
 
-def test_health_reports_unhealthy_with_an_empty_cache(client):
+def test_health_stays_green_when_no_quote_source_is_reachable(client):
+    """Regression: this returned 503, and Render killed a deploy over it. A
+    blocked feed is a degraded feed, not a dead service — the app still serves
+    every page from the reference close."""
     main.quotes._cache.clear()
     r = client.get("/api/health")
-    assert r.status_code == 503 and r.json()["ok"] is False
+    assert r.status_code == 200, "a degraded feed must not fail the platform health check"
+    body = r.json()
+    assert body["ok"] is True
+    assert body["degraded"] is True
+    assert "reference close" in body["detail"]
+
+
+def test_health_reports_undegraded_once_quotes_arrive(client):
     client.get("/api/portfolio")
-    assert client.get("/api/health").json()["ok"] is True
+    body = client.get("/api/health").json()
+    assert body["ok"] is True and body["degraded"] is False
+    assert body["detail"] == "serving live quotes"
+
+
+def test_head_on_root_is_allowed(client):
+    """Platform port probes send HEAD; a 405 there reads as a broken service."""
+    assert client.head("/").status_code == 200
 
 
 def test_refresh_bypasses_the_cache(client):

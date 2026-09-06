@@ -90,11 +90,105 @@ async def test_yahoo_empty_result_yields_no_quote_rather_than_an_exception():
 
 @pytest.mark.asyncio
 async def test_stooq_parses_csv_and_skips_unpriced_rows():
-    csv = ("Symbol,Date,Time,Open,High,Low,Close\n"
-           "aapl.us,2026-09-04,22:00:05,315.0,321.0,314.0,319.97\n"
-           "zzzz.us,N/D,N/D,N/D,N/D,N/D,N/D\n")
-    transport = httpx.MockTransport(lambda r: httpx.Response(200, text=csv))
-    async with httpx.AsyncClient(transport=transport) as client:
+    head = "Symbol,Date,Time,Open,High,Low,Close,Volume\n"
+
+    def handler(request):
+        sym = str(request.url).split("s=")[1].split("&")[0]
+        if sym.startswith("aapl"):
+            return httpx.Response(200, text=head +
+                                  "aapl.us,2026-09-04,22:00:05,315.0,321.0,314.0,319.97,1000\n")
+        return httpx.Response(200, text=head + "zzzz.us,N/D,N/D,N/D,N/D,N/D,N/D,N/D\n")
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
         got = await StooqProvider().fetch(client, ["AAPL", "ZZZZ"])
     assert got["AAPL"].price == 319.97
-    assert "ZZZZ" not in got
+    assert "ZZZZ" not in got, "an unpriced row must not become a fabricated quote"
+
+
+# ---- the failures seen on the first real deploy ---------------------------
+
+@pytest.mark.asyncio
+async def test_a_blanket_429_puts_the_provider_to_sleep():
+    """Yahoo answered 429 to the first request from the datacentre, not the
+    thirty-third. Retrying it every poll just burns the budget."""
+    calls = {"n": 0}
+
+    def handler(request):
+        calls["n"] += 1
+        return httpx.Response(429, json={})
+
+    p = YahooProvider()
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as c:
+        assert await p.fetch(c, ["AAPL", "MSFT", "GOOGL"]) == {}
+    assert not p.available, "a fully blocked provider must cool off"
+    assert "429" in p.last_status
+    before = calls["n"]
+
+    svc = QuoteService([p])
+    await svc.get(["AAPL"])
+    assert calls["n"] == before, "a resting provider must not be called again"
+    assert "resting" in (svc.last_error or "")
+
+
+@pytest.mark.asyncio
+async def test_a_resting_provider_is_skipped_but_the_chain_continues():
+    dead = YahooProvider()
+    dead.rest(600, "blocked")
+    live = Stub("live", ["AAPL"])
+    got = await QuoteService([dead, live]).get(["AAPL"])
+    assert got["AAPL"].source == "live"
+
+
+@pytest.mark.asyncio
+async def test_stooq_requests_one_symbol_at_a_time():
+    """The comma-separated form answers 404, which is why the deploy saw no
+    prices from the fallback either."""
+    seen = []
+
+    def handler(request):
+        seen.append(str(request.url))
+        return httpx.Response(200, text=(
+            "Symbol,Date,Time,Open,High,Low,Close,Volume\n"
+            "aapl.us,2026-09-04,22:00:05,315.0,321.0,314.0,319.97,1000\n"))
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as c:
+        got = await StooqProvider().fetch(c, ["AAPL", "MSFT"])
+    assert len(seen) == 2, "one request per symbol"
+    assert all("," not in u.split("s=")[1].split("&")[0] for u in seen)
+    assert all("&h&" in u for u in seen), "h is a valueless flag, not h="
+    assert got["AAPL"].price == 319.97
+
+
+@pytest.mark.asyncio
+async def test_finnhub_parses_a_quote_and_rests_on_a_bad_key():
+    from app.providers import FinnhubProvider
+    ok = httpx.MockTransport(lambda r: httpx.Response(200, json={"c": 319.97, "pc": 328.2}))
+    async with httpx.AsyncClient(transport=ok) as c:
+        got = await FinnhubProvider("k").fetch(c, ["AAPL"])
+    assert got["AAPL"].price == 319.97
+    assert round(got["AAPL"].day_pct, 2) == -2.51
+
+    p = FinnhubProvider("bad")
+    bad = httpx.MockTransport(lambda r: httpx.Response(401, json={}))
+    async with httpx.AsyncClient(transport=bad) as c:
+        assert await p.fetch(c, ["AAPL"]) == {}
+    assert not p.available and "key rejected" in p.last_status
+
+
+@pytest.mark.asyncio
+async def test_finnhub_joins_the_chain_only_with_a_key(monkeypatch):
+    from app import providers as pv
+    monkeypatch.delenv("FINNHUB_API_KEY", raising=False)
+    assert [p.name for p in pv.default_providers()] == ["yahoo", "stooq"]
+    monkeypatch.setenv("FINNHUB_API_KEY", "abc")
+    assert [p.name for p in pv.default_providers()] == ["yahoo", "finnhub", "stooq"]
+
+
+@pytest.mark.asyncio
+async def test_health_lists_each_provider_and_why_it_is_resting():
+    p = YahooProvider()
+    p.rest(300, "429 from this IP")
+    h = QuoteService([p]).health()
+    entry = h["providers"][0]
+    assert entry["name"] == "yahoo" and entry["available"] is False
+    assert entry["resting_for"] > 0 and "429" in entry["status"]

@@ -8,6 +8,7 @@ Routes
 """
 from __future__ import annotations
 
+import asyncio
 import logging
 import os
 import pathlib
@@ -37,15 +38,24 @@ quotes = QuoteService(ttl=CACHE_TTL)
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-    """Warm the cache so the first page load is already priced. A failure here
-    is not fatal — the app serves reference prices and says so."""
+    """Warm the cache in the background.
+
+    Warming inline used to hold up startup for as long as the quote hosts took
+    to refuse 33 requests, which delayed readiness on a cold start. The app can
+    serve from the reference data immediately, so it does.
+    """
+    task = None
     if not os.environ.get("SKIP_WARMUP"):
-        try:
-            got = await quotes.get(book.tickers)
-            log.info("warm-up: %d/%d quotes", len(got), len(book.tickers))
-        except Exception as e:                            # noqa: BLE001
-            log.warning("warm-up failed, serving reference prices: %s", e)
+        async def warm():
+            try:
+                got = await quotes.get(book.tickers)
+                log.info("warm-up: %d/%d quotes", len(got), len(book.tickers))
+            except Exception as e:                        # noqa: BLE001
+                log.warning("warm-up failed, serving reference prices: %s", e)
+        task = asyncio.create_task(warm())
     yield
+    if task and not task.done():
+        task.cancel()
 
 
 app = FastAPI(title="Consolidated US Book", docs_url="/api/docs",
@@ -99,13 +109,26 @@ async def api_refresh():
 
 @app.get("/api/health")
 async def api_health():
-    m = calendar_us.status()
+    """Liveness, not feed quality.
+
+    This previously answered 503 whenever no quote had been fetched, which is
+    what failed the first Render deploy: the quote hosts refuse that egress IP,
+    so health never went green and the platform killed a service that was in
+    fact serving every page correctly. A degraded feed is reported in the body
+    and the page says so on screen; it is not an unhealthy service. Only a book
+    that will not load is.
+    """
+    healthy = bool(book.base.get("universe"))
     h = quotes.health()
-    ok = h["cached_tickers"] > 0
-    return JSONResponse({"ok": ok, "market": m, "quotes": h,
-                         "reference_date": book.base["as_of"],
-                         "tickers": len(book.tickers)},
-                        status_code=200 if ok else 503)
+    return JSONResponse(
+        {"ok": healthy,
+         "degraded": h["cached_tickers"] == 0,
+         "detail": ("serving live quotes" if h["cached_tickers"]
+                    else "serving the reference close — no quote source reachable"),
+         "market": calendar_us.status(), "quotes": h,
+         "reference_date": book.base["as_of"],
+         "tickers": len(book.tickers)},
+        status_code=200 if healthy else 503)
 
 
 @app.get("/favicon.ico", include_in_schema=False)
@@ -119,8 +142,10 @@ async def favicon():
         headers={"Cache-Control": "public, max-age=86400"})
 
 
-@app.get("/", dependencies=[Depends(require_token)])
+@app.api_route("/", methods=["GET", "HEAD"], dependencies=[Depends(require_token)])
 async def index():
+    # HEAD as well as GET: platform port probes use it, and a 405 there reads
+    # as a broken service.
     return FileResponse(STATIC / "index.html")
 
 

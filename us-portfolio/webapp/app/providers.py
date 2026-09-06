@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import asyncio
 import csv
+import os
 import io
 import logging
 import time
@@ -51,6 +52,21 @@ class Quote:
 
 class Provider:
     name = "base"
+    needs_key = False
+    cooldown_until: float = 0.0
+    last_status: str = ""
+
+    @property
+    def available(self) -> bool:
+        return time.time() >= self.cooldown_until
+
+    def rest(self, seconds: float, why: str) -> None:
+        """Stop asking a source that has hard-blocked us. Yahoo answers 429 to
+        the first request from a datacentre IP, not the thirty-third, so
+        slowing down does not help — only backing off does."""
+        self.cooldown_until = time.time() + seconds
+        self.last_status = why
+        log.warning("%s cooling off %.0fs: %s", self.name, seconds, why)
 
     async def fetch(self, client: httpx.AsyncClient,
                     tickers: list[str]) -> dict[str, Quote]:
@@ -85,14 +101,28 @@ class YahooProvider(Provider):
                      closes=closes, source=self.name, fetched_at=time.time())
 
     async def fetch(self, client, tickers):
+        sem = asyncio.Semaphore(6)
+        blocked = 0
+
         async def guarded(t):
-            try:
-                return await self._one(client, t)
-            except Exception as e:                       # noqa: BLE001
-                log.debug("yahoo %s: %s", t, e)
+            nonlocal blocked
+            async with sem:
+                try:
+                    return await self._one(client, t)
+                except httpx.HTTPStatusError as e:
+                    if e.response.status_code in (429, 401, 403):
+                        blocked += 1
+                    log.debug("yahoo %s: %s", t, e)
+                except Exception as e:                   # noqa: BLE001
+                    log.debug("yahoo %s: %s", t, e)
                 return None
+
         results = await asyncio.gather(*(guarded(t) for t in tickers))
-        return {q.ticker: q for q in results if q}
+        got = {q.ticker: q for q in results if q}
+        if not got and blocked:
+            # every request refused: this IP is blocked, not merely throttled
+            self.rest(900, f"{blocked}/{len(tickers)} refused (429/403)")
+        return got
 
 
 class StooqProvider(Provider):
@@ -102,28 +132,112 @@ class StooqProvider(Provider):
     name = "stooq"
     URL = "https://stooq.com/q/l/"
 
+    async def _one(self, client, t) -> Quote | None:
+        # one symbol per request: the comma-separated form answers 404.
+        # `h` is a valueless flag, so it is appended to the URL rather than
+        # passed as a param, which would render it as an empty `h=`.
+        r = await client.get(f"{self.URL}?s={t.lower()}.us&f=sd2t2ohlcv&h&e=csv",
+                             headers={"User-Agent": UA})
+        r.raise_for_status()
+        for row in csv.DictReader(io.StringIO(r.text)):
+            close, openp = row.get("Close"), row.get("Open")
+            if close in (None, "", "N/D"):
+                return None
+            return Quote(ticker=t, price=float(close),
+                         prev_close=float(openp) if openp not in (None, "", "N/D") else None,
+                         source=self.name, fetched_at=time.time())
+        return None
+
     async def fetch(self, client, tickers):
-        out: dict[str, Quote] = {}
-        for i in range(0, len(tickers), 20):
-            batch = tickers[i:i + 20]
-            syms = ",".join(f"{t.lower()}.us" for t in batch)
-            try:
-                r = await client.get(self.URL,
-                                     params={"s": syms, "f": "sd2t2ohlc", "h": "", "e": "csv"},
-                                     headers={"User-Agent": UA})
-                r.raise_for_status()
-                for row in csv.DictReader(io.StringIO(r.text)):
-                    sym = (row.get("Symbol") or "").split(".")[0].upper()
-                    close = row.get("Close")
-                    openp = row.get("Open")
-                    if not sym or close in (None, "", "N/D"):
-                        continue
-                    out[sym] = Quote(ticker=sym, price=float(close),
-                                     prev_close=float(openp) if openp not in (None, "", "N/D") else None,
-                                     source=self.name, fetched_at=time.time())
-            except Exception as e:                       # noqa: BLE001
-                log.debug("stooq batch %s: %s", batch, e)
-        return out
+        sem = asyncio.Semaphore(4)
+        blocked = 0
+
+        async def guarded(t):
+            nonlocal blocked
+            async with sem:
+                try:
+                    return await self._one(client, t)
+                except httpx.HTTPStatusError as e:
+                    if e.response.status_code in (403, 404, 429):
+                        blocked += 1
+                    log.debug("stooq %s: %s", t, e)
+                except Exception as e:                   # noqa: BLE001
+                    log.debug("stooq %s: %s", t, e)
+                return None
+
+        results = await asyncio.gather(*(guarded(t) for t in tickers))
+        got = {q.ticker: q for q in results if q}
+        if not got and blocked:
+            self.rest(900, f"{blocked}/{len(tickers)} refused")
+        return got
+
+
+class FinnhubProvider(Provider):
+    """Keyed, and the one that actually answers from a datacentre.
+
+    Yahoo and Stooq both refuse Render's egress IPs. Finnhub's free tier allows
+    60 calls a minute from anywhere; get a key at finnhub.io/register and set
+    FINNHUB_API_KEY. The free quote endpoint returns price and previous close
+    but no history, so the 52-week range and the indicators keep coming from
+    the reference data — which the page labels.
+    """
+    name = "finnhub"
+    needs_key = True
+    URL = "https://finnhub.io/api/v1/quote"
+
+    def __init__(self, api_key: str):
+        self.api_key = api_key
+
+    async def _one(self, client, t) -> Quote | None:
+        r = await client.get(self.URL, params={"symbol": t, "token": self.api_key})
+        r.raise_for_status()
+        d = r.json()
+        price = d.get("c")
+        if not price:                     # unknown symbol comes back as 0
+            return None
+        return Quote(ticker=t, price=float(price),
+                     prev_close=d.get("pc") or None,
+                     source=self.name, fetched_at=time.time())
+
+    async def fetch(self, client, tickers):
+        sem = asyncio.Semaphore(8)        # stay inside 60/min
+        blocked = 0
+
+        async def guarded(t):
+            nonlocal blocked
+            async with sem:
+                try:
+                    return await self._one(client, t)
+                except httpx.HTTPStatusError as e:
+                    if e.response.status_code in (401, 403):
+                        blocked = -1      # a bad key will never fix itself
+                    elif e.response.status_code == 429:
+                        blocked += 1
+                    log.debug("finnhub %s: %s", t, e)
+                except Exception as e:                   # noqa: BLE001
+                    log.debug("finnhub %s: %s", t, e)
+                return None
+
+        results = await asyncio.gather(*(guarded(t) for t in tickers))
+        got = {q.ticker: q for q in results if q}
+        if not got:
+            if blocked == -1:
+                self.rest(3600, "key rejected (401/403) — check FINNHUB_API_KEY")
+            elif blocked:
+                self.rest(300, "rate limited (429)")
+        return got
+
+
+def default_providers() -> list[Provider]:
+    """Yahoo first — only it returns the history the indicators need. Finnhub
+    next when a key is present, because it is the one that answers from a
+    datacentre. Stooq last, free but flaky."""
+    chain: list[Provider] = [YahooProvider()]
+    key = os.environ.get("FINNHUB_API_KEY", "").strip()
+    if key:
+        chain.append(FinnhubProvider(key))
+    chain.append(StooqProvider())
+    return chain
 
 
 class QuoteService:
@@ -134,7 +248,7 @@ class QuoteService:
     """
 
     def __init__(self, providers: list[Provider] | None = None, ttl: float = 60.0):
-        self.providers = providers if providers is not None else [YahooProvider(), StooqProvider()]
+        self.providers = providers if providers is not None else default_providers()
         self.ttl = ttl
         self._cache: dict[str, Quote] = {}
         self._lock = asyncio.Lock()
@@ -162,6 +276,9 @@ class QuoteService:
                 for p in self.providers:
                     if not missing:
                         break
+                    if not p.available:
+                        errors.append(f"{p.name}: resting ({p.last_status})")
+                        continue
                     try:
                         got = await p.fetch(client, missing)
                     except Exception as e:               # noqa: BLE001
@@ -181,8 +298,15 @@ class QuoteService:
     def health(self) -> dict:
         now = time.time()
         ages = [now - q.fetched_at for q in self._cache.values()]
+        now_t = time.time()
         return {
-            "providers": [p.name for p in self.providers],
+            "providers": [
+                {"name": p.name,
+                 "available": p.available,
+                 "resting_for": round(max(0.0, p.cooldown_until - now_t), 1) or None,
+                 "status": p.last_status or "ok"}
+                for p in self.providers
+            ],
             "cached_tickers": len(self._cache),
             "oldest_seconds": round(max(ages), 1) if ages else None,
             "newest_seconds": round(min(ages), 1) if ages else None,

@@ -21,10 +21,12 @@ never go live. This app fetches server-side, where those rules do not apply.
 
 ## What it does
 
-- **Two independent quote sources, tried in order.** Yahoo first, because it
-  returns a year of daily closes and the 50/200-day averages and RSI are
-  computed from that real history. Stooq second — price only, no key — so a
-  change at the first source degrades the app instead of breaking it.
+- **Three quote sources, tried in order, each with a cooldown.** Yahoo first,
+  because only it returns a year of daily closes for the moving averages and
+  RSI. Finnhub next when `FINNHUB_API_KEY` is set — the one that answers from a
+  datacentre, where Yahoo and Stooq both refuse. Stooq last. A source that
+  hard-blocks us is rested for a quarter of an hour rather than retried on
+  every poll, and `/api/health` names which are resting and why.
 - **Never silently stale.** Every response says how many names are priced,
   which source answered, and how old the data is. If both sources fail, the
   last good prices are served and marked stale; if none were ever fetched, the
@@ -53,6 +55,7 @@ Copy `.env.example`. Every value has a working default.
 
 | | |
 |---|---|
+| `FINNHUB_API_KEY` | free key from finnhub.io; needed for live quotes on a deployed host |
 | `QUOTE_TTL` | seconds a quote is reused before refetching (default 60) |
 | `APP_TOKEN` | shared secret; empty means no auth |
 | `PORT` | listen port (container hosts set this) |
