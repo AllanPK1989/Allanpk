@@ -73,7 +73,7 @@
 <text x="388.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">SHEET</text>
 <text x="388.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">13 / 13</text>
 <text x="402.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">REV</text>
-<text x="402.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">0</text>
+<text x="402.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">1</text>
 <text x="16.00" y="12.50" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="4.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">I/O SCHEDULE &amp; BILL OF MATERIALS</text>
 <text x="16.00" y="17.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">MELSEC iQ-F FX5U-32MT/ES  -  16 digital inputs, 16 digital outputs</text>
 <line x1="16.00" y1="19.60" x2="408.00" y2="19.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
@@ -305,11 +305,11 @@
 <text x="96.40" y="180.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">AUDIBLE ALARM - hooter, 24 V DC, 85 dB</text>
 <line x1="20.00" y1="177.00" x2="205.00" y2="177.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <text x="26.50" y="185.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">Y12</text>
-<text x="40.00" y="185.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="40.00" y="185.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">330</text>
 <text x="53.50" y="185.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
-<text x="61.40" y="185.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-</text>
+<text x="61.40" y="185.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-KA4</text>
 <text x="86.00" y="185.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
-<text x="96.40" y="185.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">SPARE</text>
+<text x="96.40" y="185.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">DOOR ALARM relay - volt-free contact to -X1:50 / -X1:51</text>
 <line x1="20.00" y1="182.00" x2="205.00" y2="182.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <rect x="20.00" y="187.00" width="185.00" height="5.00" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
 <text x="26.50" y="190.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">Y13</text>
@@ -359,13 +359,13 @@
 <rect x="216.00" y="33.00" width="174.00" height="5.40" rx="0" fill="#e8e8e8" stroke="#000" stroke-width="0.3"/>
 <text x="217.40" y="36.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">#</text>
 <text x="225.40" y="36.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">TAG</text>
-<line x1="224.00" y1="33.00" x2="224.00" y2="200.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="224.00" y1="33.00" x2="224.00" y2="211.20" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <text x="247.40" y="36.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">DESCRIPTION</text>
-<line x1="246.00" y1="33.00" x2="246.00" y2="200.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="246.00" y1="33.00" x2="246.00" y2="211.20" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <text x="333.40" y="36.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">TYPE / MAKE</text>
-<line x1="332.00" y1="33.00" x2="332.00" y2="200.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="332.00" y1="33.00" x2="332.00" y2="211.20" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <text x="381.40" y="36.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">QTY</text>
-<line x1="380.00" y1="33.00" x2="380.00" y2="200.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="380.00" y1="33.00" x2="380.00" y2="211.20" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <text x="220.00" y="42.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
 <text x="225.40" y="42.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-Q1</text>
 <text x="247.40" y="42.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">MCCB 4P 63 A, Icu 25 kA, adj. 40-63 A</text>
@@ -484,10 +484,10 @@
 <text x="385.00" y="134.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
 <line x1="216.00" y1="130.20" x2="390.00" y2="130.20" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <text x="220.00" y="139.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">19</text>
-<text x="225.40" y="139.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-KA1..-KA3</text>
+<text x="225.40" y="139.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-KA1..-KA4</text>
 <text x="247.40" y="139.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Interposing relay 24 V DC coil, 1 c/o 6 A, socket</text>
 <text x="333.40" y="139.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">e.g. Finder 40.52 + socket</text>
-<text x="385.00" y="139.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">3</text>
+<text x="385.00" y="139.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">4</text>
 <line x1="216.00" y1="135.60" x2="390.00" y2="135.60" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <rect x="216.00" y="141.00" width="174.00" height="5.40" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
 <text x="220.00" y="144.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">20</text>
@@ -556,18 +556,31 @@
 <line x1="216.00" y1="189.60" x2="390.00" y2="189.60" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <rect x="216.00" y="195.00" width="174.00" height="5.40" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
 <text x="220.00" y="198.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">30</text>
-<text x="225.40" y="198.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-</text>
-<text x="247.40" y="198.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">DIN rail, trunking 40x60, earthing bar, labels, ferrules</text>
-<text x="333.40" y="198.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">consumables</text>
+<text x="225.40" y="198.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-A1</text>
+<text x="247.40" y="198.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">SD memory card 2 GB for the FX5U data logging function</text>
+<text x="333.40" y="198.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Mitsubishi NZ1MEM-2GBSD</text>
 <text x="385.00" y="198.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
 <line x1="216.00" y1="195.00" x2="390.00" y2="195.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
-<rect x="216.00" y="33.00" width="174.00" height="167.40" rx="0" fill="none" stroke="#000" stroke-width="0.3"/>
-<line x1="224.00" y1="33.00" x2="224.00" y2="200.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
-<line x1="246.00" y1="33.00" x2="246.00" y2="200.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
-<line x1="332.00" y1="33.00" x2="332.00" y2="200.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
-<line x1="380.00" y1="33.00" x2="380.00" y2="200.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="220.00" y="204.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">31</text>
+<text x="225.40" y="204.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-A3</text>
+<text x="247.40" y="204.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">GOT battery for the real-time clock and alarm history</text>
+<text x="333.40" y="204.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Mitsubishi GT11-50BAT</text>
+<text x="385.00" y="204.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<line x1="216.00" y1="200.40" x2="390.00" y2="200.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="216.00" y="205.80" width="174.00" height="5.40" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="220.00" y="209.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">32</text>
+<text x="225.40" y="209.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-</text>
+<text x="247.40" y="209.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">DIN rail, trunking 40x60, earthing bar, labels, ferrules</text>
+<text x="333.40" y="209.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">consumables</text>
+<text x="385.00" y="209.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<line x1="216.00" y1="205.80" x2="390.00" y2="205.80" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="216.00" y="33.00" width="174.00" height="178.20" rx="0" fill="none" stroke="#000" stroke-width="0.3"/>
+<line x1="224.00" y1="33.00" x2="224.00" y2="211.20" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="246.00" y1="33.00" x2="246.00" y2="211.20" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="332.00" y1="33.00" x2="332.00" y2="211.20" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="380.00" y1="33.00" x2="380.00" y2="211.20" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <text x="20.00" y="222.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.3000000000000003" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">NOTES:</text>
-<text x="20.00" y="226.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">1.  I/O count used:  16 of 16 digital inputs (0 spare),  10 of 16 digital outputs (6 spare).</text>
+<text x="20.00" y="226.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">1.  I/O count used:  16 of 16 digital inputs (0 spare),  11 of 16 digital outputs (5 spare).</text>
 <text x="20.00" y="229.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">     The input card is full.  If any further input is needed - for example a second door switch, a per-slot</text>
 <text x="20.00" y="233.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">     load sensor or an airflow proving switch - add an FX5-16EX/ES input extension block on the right of the</text>
 <text x="20.00" y="236.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">     CPU; no rewiring of the existing inputs is needed.</text>

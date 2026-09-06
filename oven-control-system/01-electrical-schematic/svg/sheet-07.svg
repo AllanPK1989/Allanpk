@@ -73,17 +73,17 @@
 <text x="388.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">SHEET</text>
 <text x="388.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">07 / 13</text>
 <text x="402.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">REV</text>
-<text x="402.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">0</text>
+<text x="402.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">1</text>
 <text x="16.00" y="12.50" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="4.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">PLC -A1 : DIGITAL OUTPUTS Y0 - Y17</text>
 <text x="16.00" y="17.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">MELSEC iQ-F  FX5U-32MT/ES  -  transistor SINK outputs, 24 V DC, 0.5 A per point</text>
 <line x1="16.00" y1="19.60" x2="408.00" y2="19.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
-<rect x="24.00" y="28.00" width="66.00" height="151.00" rx="0" fill="none" stroke="#000" stroke-width="0.5"/>
+<rect x="24.00" y="28.00" width="66.00" height="162.00" rx="0" fill="none" stroke="#000" stroke-width="0.5"/>
 <text x="57.00" y="34.50" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="3.4" fill="#000" text-anchor="middle" font-weight="bold" font-style="normal">-A1</text>
 <text x="57.00" y="38.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">MELSEC iQ-F</text>
 <text x="57.00" y="42.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">FX5U-32MT/ES</text>
 <text x="57.00" y="45.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">16 DI / 16 DO</text>
 <text x="57.00" y="49.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">transistor sink</text>
-<line x1="220.00" y1="46.00" x2="220.00" y2="155.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<line x1="220.00" y1="46.00" x2="220.00" y2="166.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
 <line x1="220.00" y1="46.00" x2="220.00" y2="36.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
 <polygon points="220.00,33.60 226.00,33.60 229.00,36.00 226.00,38.40 220.00,38.40" fill="none" stroke="#000" stroke-width="0.3" stroke-linejoin="round" stroke-linecap="round"/>
 <text x="230.50" y="36.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">+24 V bus, wire 200, ex -F11 / -F13   (SHEET 05)</text>
@@ -253,29 +253,63 @@
 <line x1="164.00" y1="151.00" x2="220.00" y2="151.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
 <circle cx="220.00" cy="151.00" r="0.70" fill="#000" stroke="#000" stroke-width="0"/>
 <text x="232.00" y="151.90" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">AUDIBLE ALARM - hooter, 24 V DC, 85 dB</text>
-<line x1="90.00" y1="166.00" x2="94.00" y2="166.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
-<rect x="82.50" y="164.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
-<text x="86.25" y="167.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">COM0</text>
-<line x1="94.00" y1="166.00" x2="206.00" y2="166.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
-<line x1="206.00" y1="166.00" x2="206.00" y2="184.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
-<text x="97.00" y="164.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">wire 201</text>
-<line x1="90.00" y1="175.00" x2="94.00" y2="175.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
-<rect x="82.50" y="173.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
-<text x="86.25" y="176.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">COM1</text>
-<line x1="94.00" y1="175.00" x2="206.00" y2="175.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
-<line x1="206.00" y1="175.00" x2="206.00" y2="184.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
-<text x="97.00" y="173.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">wire 201</text>
-<line x1="206.00" y1="184.00" x2="206.00" y2="190.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
-<polygon points="201.50,189.60 207.50,189.60 210.50,192.00 207.50,194.40 201.50,194.40" fill="none" stroke="#000" stroke-width="0.3" stroke-linejoin="round" stroke-linecap="round"/>
-<text x="212.00" y="192.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal"></text>
-<text x="214.00" y="193.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">0 V bus, wire 201  (SHEET 05)</text>
-<rect x="300.00" y="186.00" width="100.00" height="30.00" rx="0" fill="none" stroke="#000" stroke-width="0.18" stroke-dasharray="2,1.6"/>
-<text x="301.50" y="184.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.2" fill="#000" text-anchor="start" font-weight="normal" font-style="italic">SPARE OUTPUTS</text>
-<text x="303.00" y="194.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Y12, Y13, Y14, Y15, Y16, Y17 are not used.</text>
-<text x="303.00" y="198.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Terminals are wired out to -X1:70...-X1:73 so</text>
-<text x="303.00" y="202.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">that four of them can be commissioned later</text>
-<text x="303.00" y="206.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">without opening the PLC wiring - e.g. per-slot</text>
-<text x="303.00" y="210.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">indication lamps for the six oven slots.</text>
+<line x1="90.00" y1="162.00" x2="94.00" y2="162.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="82.50" y="160.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="86.25" y="163.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">Y12</text>
+<line x1="94.00" y1="162.00" x2="152.00" y2="162.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<text x="110.00" y="160.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">330</text>
+<text x="132.00" y="159.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="middle" font-weight="normal" font-style="italic">direct</text>
+<line x1="152.00" y1="162.00" x2="153.50" y2="162.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<line x1="162.50" y1="162.00" x2="164.00" y2="162.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="153.50" y="158.50" width="9.00" height="7.00" rx="0" fill="none" stroke="#000" stroke-width="0.3"/>
+<text x="153.10" y="157.70" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="end" font-weight="normal" font-style="normal">A1</text>
+<text x="162.90" y="157.70" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">A2</text>
+<text x="150.00" y="160.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="end" font-weight="bold" font-style="normal">-KA4</text>
+<line x1="164.00" y1="162.00" x2="220.00" y2="162.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<circle cx="220.00" cy="162.00" r="0.70" fill="#000" stroke="#000" stroke-width="0"/>
+<text x="232.00" y="162.90" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">DOOR ALARM relay - volt-free contact to -X1:50 / -X1:51</text>
+<line x1="90.00" y1="177.00" x2="94.00" y2="177.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="82.50" y="175.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="86.25" y="178.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">COM0</text>
+<line x1="94.00" y1="177.00" x2="206.00" y2="177.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<line x1="206.00" y1="177.00" x2="206.00" y2="195.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<text x="97.00" y="175.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">wire 201</text>
+<line x1="90.00" y1="186.00" x2="94.00" y2="186.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="82.50" y="184.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="86.25" y="187.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">COM1</text>
+<line x1="94.00" y1="186.00" x2="206.00" y2="186.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<line x1="206.00" y1="186.00" x2="206.00" y2="195.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<text x="97.00" y="184.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">wire 201</text>
+<line x1="206.00" y1="195.00" x2="206.00" y2="201.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<polygon points="201.50,200.60 207.50,200.60 210.50,203.00 207.50,205.40 201.50,205.40" fill="none" stroke="#000" stroke-width="0.3" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="212.00" y="203.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal"></text>
+<text x="214.00" y="204.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">0 V bus, wire 201  (SHEET 05)</text>
+<rect x="290.00" y="176.00" width="108.00" height="34.00" rx="0" fill="none" stroke="#000" stroke-width="0.18" stroke-dasharray="2,1.6"/>
+<text x="291.50" y="174.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.2" fill="#000" text-anchor="start" font-weight="normal" font-style="italic">-KA4  DOOR ALARM - VOLT-FREE OUTPUT</text>
+<circle cx="304.00" cy="190.00" r="1.30" fill="#fff" stroke="#000" stroke-width="0.3"/>
+<text x="304.00" y="187.70" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.9" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">50</text>
+<line x1="304.00" y1="190.00" x2="324.00" y2="190.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<line x1="324.00" y1="190.00" x2="325.60" y2="190.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<line x1="330.40" y1="190.00" x2="332.00" y2="190.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<line x1="330.40" y1="190.00" x2="325.40" y2="186.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<text x="328.00" y="184.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.2" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">11-14</text>
+<text x="328.00" y="196.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="bold" font-style="normal">-KA4</text>
+<line x1="332.00" y1="190.00" x2="352.00" y2="190.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<circle cx="352.00" cy="190.00" r="1.30" fill="#fff" stroke="#000" stroke-width="0.3"/>
+<text x="352.00" y="187.70" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.9" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">51</text>
+<text x="295.00" y="184.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">-X1</text>
+<line x1="352.00" y1="190.00" x2="364.00" y2="190.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<polygon points="364.00,187.60 370.00,187.60 373.00,190.00 370.00,192.40 364.00,192.40" fill="none" stroke="#000" stroke-width="0.3" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="374.50" y="190.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal"></text>
+<text x="358.00" y="203.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">to the remote / plant alarm annunciator</text>
+<text x="358.00" y="206.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">volt-free, 250 V AC 6 A max, cable -W8</text>
+<rect x="290.00" y="216.00" width="108.00" height="30.00" rx="0" fill="none" stroke="#000" stroke-width="0.18" stroke-dasharray="2,1.6"/>
+<text x="291.50" y="214.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.2" fill="#000" text-anchor="start" font-weight="normal" font-style="italic">SPARE OUTPUTS</text>
+<text x="293.00" y="224.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Y13, Y14, Y15, Y16, Y17 are not used.  Y13 - Y16</text>
+<text x="293.00" y="228.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">are wired out to -X1:70...-X1:73 so they can be</text>
+<text x="293.00" y="232.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">commissioned later - e.g. per-slot indication</text>
+<text x="293.00" y="236.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">lamps for the six oven slots - without opening</text>
+<text x="293.00" y="240.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">the PLC wiring.</text>
 <text x="24.00" y="226.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.3000000000000003" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">NOTES:</text>
 <text x="24.00" y="230.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">1.  Outputs are transistor SINK type.  The load is connected between +24 V (wire 200) and the Y terminal; the</text>
 <text x="24.00" y="233.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">     output transistor completes the circuit to 0 V through COM0 / COM1.  Never connect a load between a Y</text>
@@ -287,4 +321,8 @@
 <text x="24.00" y="254.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">4.  Contactor coils are 230 V AC and are NOT driven directly from the PLC - see sheet 08.</text>
 <text x="24.00" y="257.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">5.  -H5 COMMON ALARM is flashed by the program (1 s on / 1 s off) while an alarm is unacknowledged and is</text>
 <text x="24.00" y="260.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">     steady once accepted with -S5.  The hooter -B4 silences on -S5 but the lamp stays on until the cause clears.</text>
+<text x="24.00" y="264.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">6.  Y12 / -KA4 is the DOOR ALARM output.  It is energised by either of the door-signal watchdog conditions -</text>
+<text x="24.00" y="267.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">     a chattering door switch, or no 'door closed' signal for 10 minutes - and gives a volt-free changeover</text>
+<text x="24.00" y="271.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">     contact on -X1:50 / -X1:51 for a remote annunciator.  The program also flashes -H4 DOOR OPEN for this</text>
+<text x="24.00" y="274.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">     condition, so a faulty door switch is distinguishable at the panel from a door that is simply open.</text>
 </svg>

@@ -175,7 +175,7 @@ def sheet13():
             align=["middle", "start", "start", "start", "middle"])
 
     s.notes(20, 222, [
-        "1.  I/O count used:  16 of 16 digital inputs (0 spare),  10 of 16 digital outputs (6 spare).",
+        "1.  I/O count used:  16 of 16 digital inputs (0 spare),  11 of 16 digital outputs (5 spare).",
         "     The input card is full.  If any further input is needed - for example a second door switch, a per-slot",
         "     load sensor or an airflow proving switch - add an FX5-16EX/ES input extension block on the right of the",
         "     CPU; no rewiring of the existing inputs is needed.",

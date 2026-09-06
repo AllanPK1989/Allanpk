@@ -5,7 +5,7 @@ DWG = "OVN-2026-01"
 
 
 def new(num, title, sub=None):
-    s = Sheet(num, title, DWG)
+    s = Sheet(num, title, DWG, rev="1")
     s.frame()
     s.header(sub)
     return s
@@ -38,6 +38,9 @@ def sheet01():
         ("PLC", "MELSEC iQ-F  FX5U-32MT/ES  (16 DI / 16 DO, sink)"),
         ("HMI", "GOT2000  GT2107-WTBD  7\" TFT, 24 V DC, Ethernet"),
         ("PLC <-> HMI link", "Ethernet 100BASE-TX, MELSOFT connection"),
+        ("Door watchdog", "Chatter or no 'door closed' signal for 10 min"),
+        ("", "-> alarm + volt-free output Y12 / -KA4"),
+        ("Data logging", "FX5U SD card, 7-day rolling history, CSV"),
         ("Enclosure", "Wall-mounted 800 x 600 x 250 mm, IP54, RAL 7035"),
         ("Standards", "IEC 60204-1, IEC 61439-1/-2, IS 8623"),
     ]
@@ -54,20 +57,26 @@ def sheet01():
     s.line(x, yy + 1.6, x + 128, yy + 1.6, w=LW_THIN)
     yy += 6.4
     funcs = [
-        "a)  Blower 1 / Blower 2 start-stop from panel push-buttons and from HMI.",
+        "a)  Blower 1 / Blower 2 start-stop from panel push-buttons and from the HMI.",
         "b)  Door interlock: blowers stop while the door is open, heater stays ON;",
         "     blowers restart automatically when the door is closed again.",
         "c)  Heater contactor -K3 follows the PID controller demand signal (X6),",
         "     gated by PLC permissives (E-stop, overloads, high-limit, no fault).",
-        "d)  Heat-up watchdog alarm: demand ON continuously for > preset time",
-        "     without the controller dropping out  =>  'FAILURE TO REACH SETPOINT'.",
-        "e)  Six independent retentive 2-hour slot timers (slot 1...6). Once started",
-        "     a timer runs to 02:00:00 and can only then be reset. Early reset needs",
-        "     a maintenance password (HMI security level 2).",
-        "f)  Door open / door close event counters (separate, resettable).",
-        "g)  Lots loaded / lots unloaded counters derived from slot-timer",
-        "     start / reset events, with a mismatch indication.",
-        "h)  Password-protected manual test mode for blowers and heater (level 2).",
+        "d)  Heat-up watchdog alarm: the demand contact X6 stays closed continuously",
+        "     for longer than the preset time, i.e. the oven never reaches set point",
+        "     and the controller never drops out  =>  'FAILURE TO REACH SETPOINT'.",
+        "e)  Door-signal watchdog: a chattering door switch, or no 'door closed'",
+        "     signal for 10 minutes, raises an alarm and energises the volt-free",
+        "     remote alarm output Y12 / -KA4 on terminals -X1:50 / -X1:51.",
+        "f)  Six independent retentive 2-hour slot timers (slot 1...6). Once started",
+        "     a timer runs to 02:00:00 and can only then be reset. An earlier reset",
+        "     needs the maintenance password (HMI security level 2).",
+        "g)  Door open / door close event counters, separate and resettable.",
+        "h)  Lots loaded / lots unloaded counters derived from slot-timer start and",
+        "     reset events, with a mismatch indication.",
+        "i)  Password-protected manual test of the blowers and the heater (level 2).",
+        "j)  Alarm and event history logged to the FX5U SD card, 7 days rolling,",
+        "     exportable to a USB stick from the HMI.",
     ]
     for f in funcs:
         ind = (len(f) - len(f.lstrip())) * 0.85
@@ -159,6 +168,16 @@ def sheet01():
         "10. Ratings shown are for the assumed loads listed in section 1.  Confirm motor nameplate FLC and heater element",
         "     rating on site and adjust -Q2/-Q3 settings, -F1/-F2/-F3 overload settings and cable sizes accordingly.",
     ]
+    s.text(x, 212, "6.  REVISION HISTORY", 3.0, weight="bold")
+    s.line(x, 213.6, x + 128, 213.6, w=LW_THIN)
+    s.table(x, 216, [(12, "REV"), (22, "DATE"), (74, "DESCRIPTION"), (20, "BY")], [
+        ["0", "2026-09-06", "First issue - schematic for review", "CLAUDE"],
+        ["1", "2026-09-06", "Door-signal watchdog alarm output", "CLAUDE"],
+        ["", "", "Y12 / -KA4 added; single maintenance", ""],
+        ["", "", "password level; 7-day data logging to", ""],
+        ["", "", "the SD card in the FX5U", ""],
+    ], rh=5.0, align=["middle", "middle", "start", "middle"])
+
     yy = ny + 6.0
     for n in notes:
         ind = (len(n) - len(n.lstrip())) * 0.85

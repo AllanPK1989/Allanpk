@@ -333,14 +333,28 @@ def sheet07():
     xref(s, RAIL_X - 18.5, y0 + n * pitch + 30, "", "right")
     s.text(RAIL_X - 6, y0 + n * pitch + 31, "0 V bus, wire 201  (SHEET 05)", 2.0)
 
+    # -KA4 volt-free door-alarm output detail
+    sx, sy = 290, 176
+    s.dashbox(sx, sy, 108, 34, "-KA4  DOOR ALARM - VOLT-FREE OUTPUT")
+    s.terminal(sx + 14, sy + 14, "50", lp="above", tsize=1.9)
+    s.line(sx + 14, sy + 14, sx + 34, sy + 14, w=LW_MED)
+    s.c_no_h(sx + 34, sy + 14, tag="11-14")
+    s.text(sx + 38, sy + 20.4, "-KA4", 2.0, "middle", weight="bold")
+    s.line(sx + 42, sy + 14, sx + 62, sy + 14, w=LW_MED)
+    s.terminal(sx + 62, sy + 14, "51", lp="above", tsize=1.9)
+    s.text(sx + 5, sy + 8, "-X1", 2.1, weight="bold")
+    s.line(sx + 62, sy + 14, sx + 74, sy + 14, w=LW_MED)
+    xref(s, sx + 74, sy + 14, "", "right")
+    s.text(sx + 68, sy + 27, "to the remote / plant alarm annunciator", 1.95, "middle")
+    s.text(sx + 68, sy + 30.6, "volt-free, 250 V AC 6 A max, cable -W8", 1.95, "middle")
+
     # spare outputs note
-    sx = 300
-    s.dashbox(sx, 186, 100, 30, "SPARE OUTPUTS")
-    s.text(sx + 3, 194, "Y12, Y13, Y14, Y15, Y16, Y17 are not used.", 2.0)
-    s.text(sx + 3, 198, "Terminals are wired out to -X1:70...-X1:73 so", 2.0)
-    s.text(sx + 3, 202, "that four of them can be commissioned later", 2.0)
-    s.text(sx + 3, 206, "without opening the PLC wiring - e.g. per-slot", 2.0)
-    s.text(sx + 3, 210, "indication lamps for the six oven slots.", 2.0)
+    s.dashbox(290, 216, 108, 30, "SPARE OUTPUTS")
+    s.text(293, 224, "Y13, Y14, Y15, Y16, Y17 are not used.  Y13 - Y16", 2.0)
+    s.text(293, 228, "are wired out to -X1:70...-X1:73 so they can be", 2.0)
+    s.text(293, 232, "commissioned later - e.g. per-slot indication", 2.0)
+    s.text(293, 236, "lamps for the six oven slots - without opening", 2.0)
+    s.text(293, 240, "the PLC wiring.", 2.0)
 
     s.notes(BX, 226, [
         "1.  Outputs are transistor SINK type.  The load is connected between +24 V (wire 200) and the Y terminal; the",
@@ -353,6 +367,10 @@ def sheet07():
         "4.  Contactor coils are 230 V AC and are NOT driven directly from the PLC - see sheet 08.",
         "5.  -H5 COMMON ALARM is flashed by the program (1 s on / 1 s off) while an alarm is unacknowledged and is",
         "     steady once accepted with -S5.  The hooter -B4 silences on -S5 but the lamp stays on until the cause clears.",
+        "6.  Y12 / -KA4 is the DOOR ALARM output.  It is energised by either of the door-signal watchdog conditions -",
+        "     a chattering door switch, or no 'door closed' signal for 10 minutes - and gives a volt-free changeover",
+        "     contact on -X1:50 / -X1:51 for a remote annunciator.  The program also flashes -H4 DOOR OPEN for this",
+        "     condition, so a faulty door switch is distinguishable at the panel from a door that is simply open.",
     ], w=0)
     return s
 
@@ -605,7 +623,7 @@ def sheet09():
     s.line(180, HY + 8, 180, HY + 16, w=LW_MED)
 
     # ---------- settings table ----------
-    tx, ty = 250, 156
+    tx, ty = 250, 150
     s.text(tx, ty - 3, "COMMISSIONING SETTINGS", 2.6, weight="bold")
     rows = [
         ["-A2  input type", "K thermocouple, 0 - 400 C"],
@@ -617,6 +635,9 @@ def sheet09():
         ["-B3  trip setting", "SV + 30 C, or 250 C, whichever is lower"],
         ["-B3  reset", "manual, at the panel, after investigation"],
         ["PLC  heat-up watchdog", "60 min, adjustable 10 - 240 min on the HMI"],
+        ["PLC  door-signal watchdog", "10 min without a 'door closed' signal on X5"],
+        ["PLC  door chatter detect", "8 or more transitions of X5 within 10 s"],
+        ["PLC  history retention", "7 days rolling, CSV on the FX5U SD card"],
     ]
     s.table(tx, ty, [(44, "PARAMETER"), (104, "SETTING")], rows, rh=5.6, zebra="#f4f4f4")
 
@@ -742,17 +763,18 @@ def sheet10():
         ["B-1200", "COUNTERS - door, lots", "0"],
         ["B-1300", "ALARMS - live & history", "0"],
         ["B-1400", "MANUAL TEST - blowers, heater", "2"],
-        ["B-1500", "SETTINGS - watchdog, presets", "1"],
+        ["B-1500", "SETTINGS - watchdog, presets", "2"],
         ["B-1600", "PASSWORD / LOGIN", "0"],
         ["B-1700", "TIMER EARLY RESET", "2"],
-        ["B-1800", "COUNTER RESET", "1"],
+        ["B-1800", "COUNTER RESET", "2"],
+        ["B-1900", "HISTORY - log view & USB export", "0"],
     ]
     s.table(sx, 100, [(24, "SCREEN"), (76, "TITLE"), (32, "SEC. LEVEL")], scr,
             rh=5.2, zebra="#f4f4f4", align=["start", "start", "middle"])
-    s.text(sx, 162, "Security level 0 = operator (no login),  1 = supervisor,", 2.0)
-    s.text(sx, 165.6, "2 = maintenance technician (password protected).", 2.0)
+    s.text(sx, 168, "Security level 0 = operator, no login required.", 2.0)
+    s.text(sx, 171.6, "Level 2 = maintenance technician, password protected.", 2.0)
 
-    s.notes(268, 178, [
+    s.notes(268, 180, [
         "1.  The HMI is powered from -F12 and is NOT",
         "     interrupted by the emergency stop, so",
         "     alarms and the timer values stay visible.",
@@ -764,7 +786,11 @@ def sheet10():
         "3.  The GOT battery (GT11-50BAT) is fitted for",
         "     the real-time clock used by the alarm and",
         "     the operation-log time stamps.",
-        "4.  Door cut-outs to be made before painting;",
+        "4.  The 7-day alarm and event history is written",
+        "     as CSV to the SD card in the FX5U, using the",
+        "     CPU data-logging function, and is exported",
+        "     to a USB stick from screen B-1900.",
+        "5.  Door cut-outs to be made before painting;",
         "     use the gaskets supplied to keep IP54.",
     ], title="NOTES:")
     return s

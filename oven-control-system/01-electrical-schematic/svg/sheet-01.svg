@@ -73,7 +73,7 @@
 <text x="388.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">SHEET</text>
 <text x="388.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">01 / 13</text>
 <text x="402.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">REV</text>
-<text x="402.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">0</text>
+<text x="402.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">1</text>
 <text x="16.00" y="12.50" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="4.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">COVER SHEET, DRAWING INDEX &amp; LEGEND</text>
 <text x="16.00" y="17.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Electric batch oven - 18 kW heater bank, 2 x recirculation blowers, PLC / HMI control retrofit</text>
 <line x1="16.00" y1="19.60" x2="408.00" y2="19.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
@@ -108,26 +108,37 @@
 <text x="50.00" y="88.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">GOT2000  GT2107-WTBD  7" TFT, 24 V DC, Ethernet</text>
 <text x="17.00" y="91.90" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">PLC &lt;-&gt; HMI link</text>
 <text x="50.00" y="91.90" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Ethernet 100BASE-TX, MELSOFT connection</text>
-<text x="17.00" y="95.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">Enclosure</text>
-<text x="50.00" y="95.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Wall-mounted 800 x 600 x 250 mm, IP54, RAL 7035</text>
-<text x="17.00" y="99.70" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">Standards</text>
-<text x="50.00" y="99.70" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">IEC 60204-1, IEC 61439-1/-2, IS 8623</text>
-<text x="16.00" y="106.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="3.0" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">2.  CONTROL FUNCTIONS IMPLEMENTED IN THE PLC</text>
-<line x1="16.00" y1="108.20" x2="144.00" y2="108.20" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
-<text x="17.00" y="113.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">a)  Blower 1 / Blower 2 start-stop from panel push-buttons and from HMI.</text>
-<text x="17.00" y="116.70" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">b)  Door interlock: blowers stop while the door is open, heater stays ON;</text>
-<text x="21.25" y="120.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">blowers restart automatically when the door is closed again.</text>
-<text x="17.00" y="124.10" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">c)  Heater contactor -K3 follows the PID controller demand signal (X6),</text>
-<text x="21.25" y="127.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">gated by PLC permissives (E-stop, overloads, high-limit, no fault).</text>
-<text x="17.00" y="131.50" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">d)  Heat-up watchdog alarm: demand ON continuously for &gt; preset time</text>
-<text x="21.25" y="135.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">without the controller dropping out  =&gt;  'FAILURE TO REACH SETPOINT'.</text>
-<text x="17.00" y="138.90" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">e)  Six independent retentive 2-hour slot timers (slot 1...6). Once started</text>
-<text x="21.25" y="142.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">a timer runs to 02:00:00 and can only then be reset. Early reset needs</text>
-<text x="21.25" y="146.30" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">a maintenance password (HMI security level 2).</text>
-<text x="17.00" y="150.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">f)  Door open / door close event counters (separate, resettable).</text>
-<text x="17.00" y="153.70" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">g)  Lots loaded / lots unloaded counters derived from slot-timer</text>
-<text x="21.25" y="157.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">start / reset events, with a mismatch indication.</text>
-<text x="17.00" y="161.10" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">h)  Password-protected manual test mode for blowers and heater (level 2).</text>
+<text x="17.00" y="95.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">Door watchdog</text>
+<text x="50.00" y="95.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Chatter or no 'door closed' signal for 10 min</text>
+<text x="50.00" y="99.70" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-&gt; alarm + volt-free output Y12 / -KA4</text>
+<text x="17.00" y="103.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">Data logging</text>
+<text x="50.00" y="103.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">FX5U SD card, 7-day rolling history, CSV</text>
+<text x="17.00" y="107.50" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">Enclosure</text>
+<text x="50.00" y="107.50" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Wall-mounted 800 x 600 x 250 mm, IP54, RAL 7035</text>
+<text x="17.00" y="111.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">Standards</text>
+<text x="50.00" y="111.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">IEC 60204-1, IEC 61439-1/-2, IS 8623</text>
+<text x="16.00" y="118.30" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="3.0" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">2.  CONTROL FUNCTIONS IMPLEMENTED IN THE PLC</text>
+<line x1="16.00" y1="119.90" x2="144.00" y2="119.90" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="17.00" y="124.70" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">a)  Blower 1 / Blower 2 start-stop from panel push-buttons and from the HMI.</text>
+<text x="17.00" y="128.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">b)  Door interlock: blowers stop while the door is open, heater stays ON;</text>
+<text x="21.25" y="132.10" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">blowers restart automatically when the door is closed again.</text>
+<text x="17.00" y="135.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">c)  Heater contactor -K3 follows the PID controller demand signal (X6),</text>
+<text x="21.25" y="139.50" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">gated by PLC permissives (E-stop, overloads, high-limit, no fault).</text>
+<text x="17.00" y="143.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">d)  Heat-up watchdog alarm: the demand contact X6 stays closed continuously</text>
+<text x="21.25" y="146.90" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">for longer than the preset time, i.e. the oven never reaches set point</text>
+<text x="21.25" y="150.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">and the controller never drops out  =&gt;  'FAILURE TO REACH SETPOINT'.</text>
+<text x="17.00" y="154.30" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">e)  Door-signal watchdog: a chattering door switch, or no 'door closed'</text>
+<text x="21.25" y="158.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">signal for 10 minutes, raises an alarm and energises the volt-free</text>
+<text x="21.25" y="161.70" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">remote alarm output Y12 / -KA4 on terminals -X1:50 / -X1:51.</text>
+<text x="17.00" y="165.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">f)  Six independent retentive 2-hour slot timers (slot 1...6). Once started</text>
+<text x="21.25" y="169.10" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">a timer runs to 02:00:00 and can only then be reset. An earlier reset</text>
+<text x="21.25" y="172.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">needs the maintenance password (HMI security level 2).</text>
+<text x="17.00" y="176.50" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">g)  Door open / door close event counters, separate and resettable.</text>
+<text x="17.00" y="180.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">h)  Lots loaded / lots unloaded counters derived from slot-timer start and</text>
+<text x="21.25" y="183.90" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">reset events, with a mismatch indication.</text>
+<text x="17.00" y="187.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">i)  Password-protected manual test of the blowers and the heater (level 2).</text>
+<text x="17.00" y="191.30" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">j)  Alarm and event history logged to the FX5U SD card, 7 days rolling,</text>
+<text x="21.25" y="195.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">exportable to a USB stick from the HMI.</text>
 <text x="152.00" y="27.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="3.0" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">3.  DRAWING INDEX</text>
 <line x1="152.00" y1="28.60" x2="268.00" y2="28.60" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <rect x="152.00" y="31.00" width="116.00" height="5.20" rx="0" fill="#e8e8e8" stroke="#000" stroke-width="0.3"/>
@@ -313,6 +324,45 @@
 <text x="365.00" y="166.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Terminal / protective earth</text>
 <text x="152.00" y="175.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="3.0" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">5.  NOTES</text>
 <line x1="152.00" y1="176.60" x2="402.00" y2="176.60" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="16.00" y="212.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="3.0" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">6.  REVISION HISTORY</text>
+<line x1="16.00" y1="213.60" x2="144.00" y2="213.60" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="16.00" y="216.00" width="128.00" height="5.00" rx="0" fill="#e8e8e8" stroke="#000" stroke-width="0.3"/>
+<text x="17.40" y="219.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">REV</text>
+<text x="29.40" y="219.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">DATE</text>
+<line x1="28.00" y1="216.00" x2="28.00" y2="246.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="51.40" y="219.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">DESCRIPTION</text>
+<line x1="50.00" y1="216.00" x2="50.00" y2="246.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="125.40" y="219.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">BY</text>
+<line x1="124.00" y1="216.00" x2="124.00" y2="246.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="22.00" y="224.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">0</text>
+<text x="39.00" y="224.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">2026-09-06</text>
+<text x="51.40" y="224.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">First issue - schematic for review</text>
+<text x="134.00" y="224.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">CLAUDE</text>
+<line x1="16.00" y1="221.00" x2="144.00" y2="221.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="22.00" y="229.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<text x="39.00" y="229.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">2026-09-06</text>
+<text x="51.40" y="229.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Door-signal watchdog alarm output</text>
+<text x="134.00" y="229.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">CLAUDE</text>
+<line x1="16.00" y1="226.00" x2="144.00" y2="226.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="22.00" y="234.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal"></text>
+<text x="39.00" y="234.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal"></text>
+<text x="51.40" y="234.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Y12 / -KA4 added; single maintenance</text>
+<text x="134.00" y="234.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal"></text>
+<line x1="16.00" y1="231.00" x2="144.00" y2="231.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="22.00" y="239.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal"></text>
+<text x="39.00" y="239.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal"></text>
+<text x="51.40" y="239.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">password level; 7-day data logging to</text>
+<text x="134.00" y="239.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal"></text>
+<line x1="16.00" y1="236.00" x2="144.00" y2="236.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="22.00" y="244.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal"></text>
+<text x="39.00" y="244.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal"></text>
+<text x="51.40" y="244.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">the SD card in the FX5U</text>
+<text x="134.00" y="244.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal"></text>
+<line x1="16.00" y1="241.00" x2="144.00" y2="241.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="16.00" y="216.00" width="128.00" height="30.00" rx="0" fill="none" stroke="#000" stroke-width="0.3"/>
+<line x1="28.00" y1="216.00" x2="28.00" y2="246.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="50.00" y1="216.00" x2="50.00" y2="246.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="124.00" y1="216.00" x2="124.00" y2="246.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <text x="152.00" y="181.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">1.  All wiring to IEC 60204-1.  Power conductors 1100 V grade PVC copper, control conductors 1.5 mm2 black,</text>
 <text x="156.25" y="184.50" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">24 V DC control conductors 1.0 mm2 dark blue, protective conductor green/yellow, neutral light blue.</text>
 <text x="152.00" y="188.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">2.  All field wiring terminates on terminal strip -X1 / -X2.  No field cable is landed directly on a device.</text>
