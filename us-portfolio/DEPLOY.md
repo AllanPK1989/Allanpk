@@ -80,6 +80,28 @@ docker run -p 8000:8000 -e APP_TOKEN=$(openssl rand -hex 16) us-book
 
 ---
 
+## If the page rejects your token
+
+The two secrets are easy to swap. `APP_TOKEN` opens the page; `FINNHUB_API_KEY`
+fetches prices and is never typed into the browser.
+
+`/api/health` needs no token and says what the server has:
+
+```bash
+curl https://us-book.onrender.com/api/health | python3 -m json.tool
+```
+```json
+"config": {"app_token_set": true, "app_token_length": 32, "finnhub_key_set": false}
+```
+
+- `app_token_length` not matching what you are pasting means it is the wrong
+  secret — a Finnhub key is about 40 characters.
+- `app_token_set: false` means the service has no token at all, so the page
+  should not be asking; check you are on the right service.
+
+Whitespace is trimmed from both sides, so a trailing newline picked up while
+copying is not the problem.
+
 ## Getting live prices on Render
 
 The first deploy came back with every price marked *reference*, because Yahoo

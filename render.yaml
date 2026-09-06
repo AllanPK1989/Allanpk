@@ -23,6 +23,13 @@ services:
       # dashboard is open to anyone who finds the URL.
       - key: APP_TOKEN
         generateValue: true
+      # sync: false means Render prompts for this when the blueprint is applied
+      # and leaves it blank rather than committing a value. Get a free key at
+      # finnhub.io/register — it is what makes quotes live from a datacentre,
+      # where Yahoo and Stooq both refuse. Left empty the app still runs and
+      # shows the statement close, labelled.
+      - key: FINNHUB_API_KEY
+        sync: false
       - key: QUOTE_TTL
         value: "60"
       - key: LOG_LEVEL

@@ -30,7 +30,11 @@ log = logging.getLogger("portfolio")
 
 STATIC = pathlib.Path(__file__).resolve().parent.parent / "static"
 CACHE_TTL = float(os.environ.get("QUOTE_TTL", "60"))
-APP_TOKEN = os.environ.get("APP_TOKEN") or ""
+# .strip(): a value pasted into a hosting dashboard often carries a trailing
+# newline or space, and an exact compare then rejects the right token with no
+# way to see why.
+APP_TOKEN = (os.environ.get("APP_TOKEN") or "").strip()
+FINNHUB_SET = bool((os.environ.get("FINNHUB_API_KEY") or "").strip())
 
 book = Book()
 quotes = QuoteService(ttl=CACHE_TTL)
@@ -68,7 +72,7 @@ def require_token(x_app_token: str | None = Header(default=None),
     from the internet; without it every route is open."""
     if not APP_TOKEN:
         return
-    supplied = x_app_token or token or ""
+    supplied = (x_app_token or token or "").strip()
     if not secrets.compare_digest(supplied, APP_TOKEN):
         raise HTTPException(status_code=401, detail="bad or missing token")
 
@@ -129,6 +133,12 @@ async def api_health():
     return JSONResponse(
         {"ok": healthy,
          "degraded": h["cached_tickers"] == 0,
+         # Enough to diagnose a rejected token without disclosing it. The
+         # length separates "I pasted nothing" from "I pasted the wrong
+         # secret" — a Finnhub key and an APP_TOKEN are different lengths.
+         "config": {"app_token_set": bool(APP_TOKEN),
+                    "app_token_length": len(APP_TOKEN) or None,
+                    "finnhub_key_set": FINNHUB_SET},
          "detail": ("serving live quotes" if h["cached_tickers"]
                     else "serving the reference close — no quote source reachable"),
          "market": calendar_us.status(), "quotes": h,

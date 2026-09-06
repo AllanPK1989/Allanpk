@@ -747,9 +747,12 @@ function askForToken(wrong) {
       'box-shadow:var(--shadow)">' +
       '<h2 style="font-family:var(--disp);font-size:19px;margin:0 0 8px">' +
       'This dashboard is private</h2>' +
-      '<p style="margin:0 0 16px;color:var(--ink-2);font-size:13.5px;line-height:1.55">' +
-      'It needs the access token. On Render it is under your service &rarr; ' +
+      '<p style="margin:0 0 14px;color:var(--ink-2);font-size:13.5px;line-height:1.55">' +
+      'It needs the access token \u2014 on Render, your service &rarr; ' +
       '<b>Environment</b> &rarr; <code>APP_TOKEN</code>.</p>' +
+      '<p style="margin:0 0 16px;color:var(--ink-3);font-size:12.5px;line-height:1.5">' +
+      'Not the Finnhub key. <code>FINNHUB_API_KEY</code> fetches prices and is ' +
+      'never typed here; <code>APP_TOKEN</code> is what opens this page.</p>' +
       '<input id="tok" type="password" autocomplete="current-password" ' +
       'placeholder="Paste the token" style="width:100%;padding:9px 11px;' +
       'font-family:var(--mono);font-size:13px;border:1px solid var(--rule-2);' +
@@ -766,7 +769,8 @@ function askForToken(wrong) {
       if (!r.ok) {
         const err = box.querySelector("#tokerr");
         err.hidden = false;
-        err.textContent = "That token was not accepted. Check it against APP_TOKEN.";
+        err.textContent = "That was not accepted. It should be APP_TOKEN from "
+          + "Render's Environment tab \u2014 not the Finnhub key.";
         return;
       }
       try { localStorage.setItem(KEY, v); } catch { /* private window */ }
@@ -779,7 +783,8 @@ function askForToken(wrong) {
   }
   const err = box.querySelector("#tokerr");
   err.hidden = !wrong;
-  if (wrong) err.textContent = "That token was not accepted. Check it against APP_TOKEN.";
+  if (wrong) err.textContent = "The stored token was rejected. Paste APP_TOKEN "
+    + "from Render's Environment tab.";
 }
 
 function setFeed(live, text, title) {

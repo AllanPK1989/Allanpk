@@ -151,3 +151,22 @@ def test_auth_endpoint_validates_a_token_without_returning_data(monkeypatch):
         assert c.get("/api/auth", headers={"X-App-Token": "nope"}).status_code == 401
         good = c.get("/api/auth", headers={"X-App-Token": "s3cret"})
         assert good.status_code == 200 and good.json() == {"ok": True}
+
+
+def test_a_token_with_stray_whitespace_is_still_accepted(monkeypatch):
+    """A value pasted into a hosting dashboard often carries a trailing
+    newline; an exact compare rejected the right token with no way to see why."""
+    monkeypatch.setattr(main, "APP_TOKEN", "s3cret")
+    with TestClient(main.app) as c:
+        assert c.get("/api/auth", headers={"X-App-Token": " s3cret\n"}).status_code == 200
+        assert c.get("/api/auth?token=s3cret%20").status_code == 200
+        assert c.get("/api/auth", headers={"X-App-Token": "s3cre"}).status_code == 401
+
+
+def test_health_says_what_is_configured_without_disclosing_it(monkeypatch):
+    monkeypatch.setattr(main, "APP_TOKEN", "s3cret-value")
+    monkeypatch.setattr(main, "FINNHUB_SET", True)
+    with TestClient(main.app) as c:
+        cfg = c.get("/api/health").json()["config"]
+    assert cfg == {"app_token_set": True, "app_token_length": 12, "finnhub_key_set": True}
+    assert "s3cret-value" not in str(cfg)
