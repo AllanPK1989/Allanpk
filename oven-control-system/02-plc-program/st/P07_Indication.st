@@ -7,9 +7,10 @@
    the lamp test.
 
    LOCAL LABEL REQUIRED IN THIS POU - declare it before converting:
-       Label Name  i      Class  VAR      Data Type  Word [Signed]
-   Without it the build reports "Undefined label is used" on all 11
+       Label Name  idx    Class  VAR      Data Type  Word [Signed]
+   Without it the build reports "Undefined label is used" on all 15
    lines that reference the loop counter.
+   The name must NOT be 'i' - GX Works3 rejects it as a reserved word.
    ============================================================================= *)
 
 (* -- 1. pilot lamps ---------------------------------------------------------- *)
@@ -30,19 +31,29 @@ Y7  := gLampTest
 Y10 := gLampTest OR gAnySlotRunning;                            (* -H6 white  *)
 
 (* -- 2. slot display registers ----------------------------------------------- *)
-FOR i := 1 TO 6 DO
-    gSlotH[i] := DINT_TO_INT(gSlotElapsed[i] / DINT#3600);
-    gSlotM[i] := DINT_TO_INT((gSlotElapsed[i] MOD DINT#3600) / DINT#60);
-    gSlotS[i] := DINT_TO_INT(gSlotElapsed[i] MOD DINT#60);
+FOR idx := 1 TO 6 DO
+    gSlotH[idx] := DINT_TO_INT(gSlotElapsed[idx] / DINT#3600);
+    gSlotM[idx] := DINT_TO_INT((gSlotElapsed[idx] MOD DINT#3600) / DINT#60);
+    gSlotS[idx] := DINT_TO_INT(gSlotElapsed[idx] MOD DINT#60);
 
-    IF gSlotElapsed[i] >= gSetSlotTargetS THEN
-        gSlotRemainMin[i] := 0;
-        gSlotPct[i]       := 100;
+    (* state word for the HMI: 0 = empty, 1 = curing, 2 = complete.
+       One Word Lamp per slot tile instead of three overlaid bit lamps. *)
+    IF gSlotComplete[idx] THEN
+        gSlotState[idx] := 2;
+    ELSIF gSlotRunning[idx] THEN
+        gSlotState[idx] := 1;
     ELSE
-        gSlotRemainMin[i] :=
-            DINT_TO_INT((gSetSlotTargetS - gSlotElapsed[i] + DINT#59) / DINT#60);
-        gSlotPct[i] :=
-            DINT_TO_INT(gSlotElapsed[i] * DINT#100 / gSetSlotTargetS);
+        gSlotState[idx] := 0;
+    END_IF;
+
+    IF gSlotElapsed[idx] >= gSetSlotTargetS THEN
+        gSlotRemainMin[idx] := 0;
+        gSlotPct[idx]       := 100;
+    ELSE
+        gSlotRemainMin[idx] :=
+            DINT_TO_INT((gSetSlotTargetS - gSlotElapsed[idx] + DINT#59) / DINT#60);
+        gSlotPct[idx] :=
+            DINT_TO_INT(gSlotElapsed[idx] * DINT#100 / gSetSlotTargetS);
     END_IF;
 END_FOR;
 

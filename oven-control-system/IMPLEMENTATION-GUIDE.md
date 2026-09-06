@@ -150,11 +150,15 @@ Three blocks use a loop counter. Without it they will not compile.
 
 | Program block | Label | Class | Data Type | Lines that need it |
 |---------------|-------|-------|-----------|--------------------|
-| `P05_SlotTimers` | `i` | VAR | Word [Signed] | 30 |
-| `P06_Alarms` | `i` | VAR | Word [Signed] | 4 |
-| `P07_Indication` | `i` | VAR | Word [Signed] | 11 |
+| `P05_SlotTimers` | `idx` | VAR | Word [Signed] | 34 |
+| `P06_Alarms` | `idx` | VAR | Word [Signed] | 6 |
+| `P07_Indication` | `idx` | VAR | Word [Signed] | 15 |
 
 Pick **Word [Signed]** from the Data Type dropdown — do not type `INT`.
+
+The name is **`idx`**, not `i`. GX Works3 rejects a label called `i` with
+*"Label name is incorrect. 'i' is reserved word."* — it is reserved for index
+notation. The ST files use `idx` throughout to match.
 
 A POU's local variables live in the label editor pane, not in the code, so
 there is no `VAR ... END_VAR` block in the program body to paste. These three
@@ -291,6 +295,11 @@ separately, in writing. Also set a project password:
 ---
 
 # Part C — GT Designer3: building the HMI project
+
+> **A separate, much fuller document covers this part object by object:**
+> `03-hmi-program/OVN-2026-01_GT-Designer3-Build-Guide.pdf` — 14 pages, with a
+> recipe for every object type, the exact dialogue fields, and a screen-by-screen
+> build list. Use that at the keyboard; use Part C below as the overview.
 
 ## C.1 Create the project
 
@@ -475,7 +484,8 @@ proved end to end.
 | *"No imported information found in the file"* | The plain `.csv` was imported. MELSOFT reads UTF-16 tab-delimited only | Paste from `global_labels.xlsx` instead, or import `global_labels_GXW3.txt` (B.2) |
 | Import runs but cells are flagged red | Column set differs by GX Works3 release | Export a blank template and send it over; or just use the paste method (B.2) |
 | Type errors on `+ DINT#1` lines | Block pasted incompletely | Re-paste the whole `.st` file |
-| *"Undefined label is used"*, many errors, all in `P05_SlotTimers`, `P06_Alarms` or `P07_Indication` | The local label `i` is not declared in that POU. 30, 4 and 11 lines respectively use it, so one missing row makes dozens of errors | Add the one row per POU (B.4). Errors confined to these three blocks mean the global labels imported correctly |
+| *"Undefined label is used"*, many errors, all in `P05_SlotTimers`, `P06_Alarms` or `P07_Indication` | The local label `idx` is not declared in that POU. 34, 6 and 15 lines respectively use it, so one missing row makes dozens of errors | Add the one row per POU (B.4). Errors confined to these three blocks mean the global labels imported correctly |
+| *"Label name is incorrect. 'i' is reserved word"* | A local label was named `i` | Rename it to `idx` — that is what the ST expects (B.4) |
 | *"Undefined label is used"* in **every** POU including `P00_Common` | The global labels did not import | B.2 |
 | Counters and timers zero after a power cut | Latch range not set | B.6, then re-prove with B.13 |
 | Passcodes revert to 2468 / 1357 | Same cause — `M4022` is not latched | B.6 |

@@ -11,6 +11,7 @@ before anyone opens the software.
 
 | Path | What it is |
 |------|-----------|
+| `OVN-2026-01_GT-Designer3-Build-Guide.pdf` | **How to build it** — 14 pages, a recipe per object type, exact dialogue fields, screen by screen |
 | `OVN-2026-01_HMI-Screen-Design.pdf` | **All ten screens at true 800 × 480**, one per page |
 | `screens/out/*.png` | The same screens as images, 2× for reviewing on a monitor |
 | `screens/*.py` | The renderer. Every object registers itself as it is drawn, so the schedule below cannot drift from the design. |

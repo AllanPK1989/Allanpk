@@ -10,9 +10,10 @@
    single bit-device alarm block.
 
    LOCAL LABEL REQUIRED IN THIS POU - declare it before converting:
-       Label Name  i      Class  VAR      Data Type  Word [Signed]
-   Without it the build reports "Undefined label is used" on all 4
+       Label Name  idx    Class  VAR      Data Type  Word [Signed]
+   Without it the build reports "Undefined label is used" on all 6
    lines that reference the loop counter.
+   The name must NOT be 'i' - GX Works3 rejects it as a reserved word.
    ============================================================================= *)
 
 (* -- 1. contactor feedback, 1 s disagreement filter ------------------------- *)
@@ -56,14 +57,14 @@ gAlmCurePaused := gSlotTimersPaused;
 gAnyAlarm  := FALSE;
 gAlarmNew  := FALSE;
 
-FOR i := 0 TO 15 DO
-    IF gAlmBits[i] THEN
+FOR idx := 0 TO 15 DO
+    IF gAlmBits[idx] THEN
         gAnyAlarm := TRUE;
-        IF NOT gAlmMem[i] THEN
+        IF NOT gAlmMem[idx] THEN
             gAlarmNew := TRUE;          (* a NEW alarm, even if others stand *)
         END_IF;
     END_IF;
-    gAlmMem[i] := gAlmBits[i];
+    gAlmMem[idx] := gAlmBits[idx];
 END_FOR;
 
 (* -- 4. unacknowledged latch ------------------------------------------------ *)

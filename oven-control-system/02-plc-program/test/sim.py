@@ -491,6 +491,10 @@ class Oven:
         self.Y11 = self.gHooter
 
     def _p07(self, sm413):
+        self.gSlotState = [0] * 7
+        for k in range(1, 7):
+            self.gSlotState[k] = (2 if self.gSlotComplete[k]
+                                  else (1 if self.gSlotRunning[k] else 0))
         self.Y3 = self.gLampTest or self.gBl1Out
         self.Y4 = self.gLampTest or self.gBl2Out
         self.Y5 = self.gLampTest or self.gHtrOut

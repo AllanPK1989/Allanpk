@@ -157,6 +157,7 @@ L = [
     ("gSlotS",            INT, "D52", 6, "slot 1-6 elapsed seconds"),
     ("gSlotRemainMin",    INT, "D58", 6, "slot 1-6 remaining minutes"),
     ("gSlotPct",          INT, "D64", 6, "slot 1-6 progress percent"),
+    ("gSlotState",        INT, "D70", 6, "slot 1-6 state: 0 empty, 1 curing, 2 complete"),
 
     # ---------------- latched words ----------------
     ("gSlotElapsed",      DINT,"D4000", 6, "LATCH slot 1-6 elapsed seconds"),

@@ -202,6 +202,17 @@ def test_slot_timers():
     check("early reset written to the event log with the minutes elapsed",
           len(ev) == 1 and ev[0][3] == 45, f"got {ev}")
 
+    t("12b. The HMI slot state word tracks the two state bits")
+    o = Oven(); o.run(2)
+    check("all slots read EMPTY at rest", all(o.gSlotState[k] == 0 for k in range(1, 7)))
+    o.gHmiSlotStart[3] = True; o.run(2)
+    check("started slot reads CURING", o.gSlotState[3] == 1)
+    check("its neighbours still EMPTY", o.gSlotState[2] == 0 and o.gSlotState[4] == 0)
+    o.run(2 * 60 * 60 + 5)
+    check("finished slot reads COMPLETE", o.gSlotState[3] == 2)
+    o.gHmiSlotReset[3] = True; o.run(2)
+    check("reset slot returns to EMPTY", o.gSlotState[3] == 0)
+
     t("13. Six slots are independent")
     o = Oven(); o.run(2)
     for s in (1, 3, 5):                      # started in the SAME scan

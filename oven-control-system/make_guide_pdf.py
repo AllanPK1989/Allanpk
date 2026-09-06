@@ -10,8 +10,8 @@ from reportlab.platypus import (BaseDocTemplate, PageTemplate, Frame, Paragraph,
                                 PageBreak, HRFlowable)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SRC = os.path.join(HERE, "IMPLEMENTATION-GUIDE.md")
-OUT = os.path.join(HERE, "OVN-2026-01_Implementation-Guide.pdf")
+SRC = os.environ.get("GUIDE_SRC", os.path.join(HERE, "IMPLEMENTATION-GUIDE.md"))
+OUT = os.environ.get("GUIDE_OUT", os.path.join(HERE, "OVN-2026-01_Implementation-Guide.pdf"))
 
 INK, DIM, RULE = colors.HexColor("#14181D"), colors.HexColor("#5B636E"), colors.HexColor("#C2C8CF")
 ACCENT, CRIT = colors.HexColor("#1D5C86"), colors.HexColor("#B5342A")
@@ -182,17 +182,17 @@ def deco(canv, doc):
     canv.setFont("Helvetica-Bold", 7.5); canv.setFillColor(DIM)
     canv.drawString(21 * mm, 286 * mm, "OVN-2026-01   OVEN CONTROL PANEL")
     canv.setFont("Helvetica", 7.5)
-    canv.drawRightString(189 * mm, 286 * mm, "IMPLEMENTATION GUIDE   Rev 3   06-09-2026")
+    canv.drawRightString(189 * mm, 286 * mm, os.environ.get("GUIDE_HDR", "IMPLEMENTATION GUIDE   Rev 3   06-09-2026"))
     canv.line(21 * mm, 17 * mm, 189 * mm, 17 * mm)
-    canv.drawString(21 * mm, 12.5 * mm,
-                    "GX Works3  +  GT Designer3   |   FX5U-32MT/ES  +  GT2107-WTBD")
+    canv.drawString(21 * mm, 12.5 * mm, os.environ.get("GUIDE_FTR",
+                    "GX Works3  +  GT Designer3   |   FX5U-32MT/ES  +  GT2107-WTBD"))
     canv.drawRightString(189 * mm, 12.5 * mm, f"Page {doc.page}")
     canv.restoreState()
 
 
 doc = BaseDocTemplate(OUT, pagesize=A4, leftMargin=21 * mm, rightMargin=21 * mm,
                       topMargin=24 * mm, bottomMargin=22 * mm,
-                      title="OVN-2026-01 Implementation Guide",
+                      title=os.environ.get("GUIDE_TITLE", "OVN-2026-01 Implementation Guide"),
                       author="Oven control panel project")
 doc.addPageTemplates([PageTemplate(id="n", frames=[Frame(
     21 * mm, 22 * mm, 168 * mm, 253 * mm, id="f",

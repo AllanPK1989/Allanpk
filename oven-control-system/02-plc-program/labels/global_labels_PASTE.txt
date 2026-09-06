@@ -134,6 +134,7 @@ gSlotM	Word [Signed](1..6)	VAR_GLOBAL	D46		slot 1-6 elapsed minutes
 gSlotS	Word [Signed](1..6)	VAR_GLOBAL	D52		slot 1-6 elapsed seconds
 gSlotRemainMin	Word [Signed](1..6)	VAR_GLOBAL	D58		slot 1-6 remaining minutes
 gSlotPct	Word [Signed](1..6)	VAR_GLOBAL	D64		slot 1-6 progress percent
+gSlotState	Word [Signed](1..6)	VAR_GLOBAL	D70		slot 1-6 state: 0 empty, 1 curing, 2 complete
 gSlotElapsed	Double Word [Signed](1..6)	VAR_GLOBAL	D4000		LATCH slot 1-6 elapsed seconds
 gCntDoorOpen	Double Word [Signed]	VAR_GLOBAL	D4020		LATCH door opened count
 gCntDoorClose	Double Word [Signed]	VAR_GLOBAL	D4022		LATCH door closed count

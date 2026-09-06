@@ -23,9 +23,10 @@
    counter. Any non-zero value raises the mismatch indication.
 
    LOCAL LABEL REQUIRED IN THIS POU - declare it before converting:
-       Label Name  i      Class  VAR      Data Type  Word [Signed]
-   Without it the build reports "Undefined label is used" on all 30
+       Label Name  idx    Class  VAR      Data Type  Word [Signed]
+   Without it the build reports "Undefined label is used" on all 34
    lines that reference the loop counter.
+   The name must NOT be 'i' - GX Works3 rejects it as a reserved word.
    ============================================================================= *)
 
 (* -- 0. may the cure timers advance? ---------------------------------------- *)
@@ -40,66 +41,66 @@ gSlotRunPermit := gEStopOK
 
 gSlotsActive := 0;
 
-FOR i := 1 TO 6 DO
+FOR idx := 1 TO 6 DO
 
     (* -- 1. start ----------------------------------------------------------- *)
-    IF gHmiSlotStart[i] THEN
-        gHmiSlotStart[i] := FALSE;
-        IF NOT gSlotRunning[i] AND NOT gSlotComplete[i] THEN
-            gSlotRunning[i] := TRUE;
-            gSlotElapsed[i] := DINT#0;
+    IF gHmiSlotStart[idx] THEN
+        gHmiSlotStart[idx] := FALSE;
+        IF NOT gSlotRunning[idx] AND NOT gSlotComplete[idx] THEN
+            gSlotRunning[idx] := TRUE;
+            gSlotElapsed[idx] := DINT#0;
             gCntLotsLoaded  := gCntLotsLoaded + DINT#1;
-            gEventCode  := 10 + i;                  (* 11..16 slot started *)
-            gEventParam := i;
+            gEventCode  := 10 + idx;                  (* 11..16 slot started *)
+            gEventParam := idx;
             gEventValue := 0;
             gEventPulse := TRUE;
         END_IF;
     END_IF;
 
     (* -- 2. run ------------------------------------------------------------- *)
-    IF gSlotRunning[i] AND NOT gSlotComplete[i] THEN
+    IF gSlotRunning[idx] AND NOT gSlotComplete[idx] THEN
         IF gTick1s AND (NOT gSetSlotGated OR gSlotRunPermit) THEN
-            gSlotElapsed[i] := gSlotElapsed[i] + DINT#1;
+            gSlotElapsed[idx] := gSlotElapsed[idx] + DINT#1;
         END_IF;
-        IF gSlotElapsed[i] >= gSetSlotTargetS THEN
-            gSlotComplete[i] := TRUE;
-            gEventCode  := 20 + i;                  (* 21..26 slot complete *)
-            gEventParam := i;
+        IF gSlotElapsed[idx] >= gSetSlotTargetS THEN
+            gSlotComplete[idx] := TRUE;
+            gEventCode  := 20 + idx;                  (* 21..26 slot complete *)
+            gEventParam := idx;
             gEventValue := 0;
             gEventPulse := TRUE;
         END_IF;
     END_IF;
 
     (* -- 3. reset ----------------------------------------------------------- *)
-    IF gHmiSlotReset[i] THEN
-        gHmiSlotReset[i] := FALSE;
+    IF gHmiSlotReset[idx] THEN
+        gHmiSlotReset[idx] := FALSE;
 
-        IF gSlotComplete[i] THEN
+        IF gSlotComplete[idx] THEN
             (* normal reset at the end of the cure - counts as an unload *)
-            gSlotRunning[i]  := FALSE;
-            gSlotComplete[i] := FALSE;
-            gSlotElapsed[i]  := 0;
+            gSlotRunning[idx]  := FALSE;
+            gSlotComplete[idx] := FALSE;
+            gSlotElapsed[idx]  := 0;
             gCntLotsUnloaded := gCntLotsUnloaded + DINT#1;
-            gEventCode  := 30 + i;                  (* 31..36 normal reset *)
-            gEventParam := i;
+            gEventCode  := 30 + idx;                  (* 31..36 normal reset *)
+            gEventParam := idx;
             gEventValue := 0;
             gEventPulse := TRUE;
 
-        ELSIF gSlotRunning[i] AND gMaintLoggedIn THEN
+        ELSIF gSlotRunning[idx] AND gMaintLoggedIn THEN
             (* EARLY RESET - MAINTENANCE passcode only, NOT an unload *)
-            gEventValue      := DINT_TO_INT(gSlotElapsed[i] / DINT#60);
-            gSlotRunning[i]  := FALSE;
-            gSlotComplete[i] := FALSE;
-            gSlotElapsed[i]  := 0;
+            gEventValue      := DINT_TO_INT(gSlotElapsed[idx] / DINT#60);
+            gSlotRunning[idx]  := FALSE;
+            gSlotComplete[idx] := FALSE;
+            gSlotElapsed[idx]  := 0;
             gCntEarlyReset   := gCntEarlyReset + DINT#1;
-            gEventCode  := 40 + i;                  (* 41..46 EARLY reset *)
-            gEventParam := i;
+            gEventCode  := 40 + idx;                  (* 41..46 EARLY reset *)
+            gEventParam := idx;
             gEventPulse := TRUE;
         END_IF;
     END_IF;
 
     (* -- 4. running-slot tally ---------------------------------------------- *)
-    IF gSlotRunning[i] THEN
+    IF gSlotRunning[idx] THEN
         gSlotsActive := gSlotsActive + 1;
     END_IF;
 
