@@ -321,5 +321,17 @@ tpl = pathlib.Path(__file__).parent / "dashboard.template.html"
 if tpl.exists():
     html = tpl.read_text().replace("__DATA__", json.dumps(out, separators=(",", ":")))
     dash = pathlib.Path(__file__).parent / "dashboard.html"
-    dash.write_text(html)
+    dash.write_text(html)          # artifact form: the service wraps this
     print(f"wrote {dash}  ({dash.stat().st_size:,} bytes)")
+
+    # Standalone form for opening or serving locally. The artifact wrapper
+    # supplies a doctype, charset and viewport; a local file has none, and
+    # without the charset the browser decodes UTF-8 as Latin-1.
+    local = pathlib.Path(__file__).parent / "dashboard.local.html"
+    local.write_text(
+        '<!doctype html>\n<html lang="en">\n<head>\n'
+        '<meta charset="utf-8">\n'
+        '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+        '<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>\n'
+        '</head>\n<body>\n' + html + '\n</body>\n</html>\n')
+    print(f"wrote {local}  ({local.stat().st_size:,} bytes)")

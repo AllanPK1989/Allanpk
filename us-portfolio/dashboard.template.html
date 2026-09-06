@@ -232,6 +232,7 @@ code{font-family:var(--mono);font-size:.92em;background:var(--surface-2);
       <h2>Today's calls</h2>
       <p>Ranked on valuation first, entry quality second. Every line shows the arithmetic behind it.</p>
     </div>
+    <div class="alert" id="diag" hidden style="margin-bottom:12px"></div>
     <div class="alert" id="headline"></div>
     <div class="tools" style="margin-top:16px">
       <button class="tab" data-side="buy" aria-pressed="true">Buy &amp; accumulate</button>
@@ -323,7 +324,7 @@ code{font-family:var(--mono);font-size:.92em;background:var(--surface-2);
 
   <footer>
     <p><b>Data.</b> Positions come from the three statements dated 5 Sep 2026 — the Vested PDF (VSCH000079), the second Vested holdings table, and the IBKR open-positions report. Prices, 52-week ranges, multiples and consensus targets were gathered from public sources on the same date; <code>data/SOURCES.md</code> lists them. Where a figure could not be confirmed it is marked <i>low confidence</i> in the watchlist table rather than guessed.</p>
-    <p><b>Live quotes.</b> Opened from your own machine, the page refreshes prices and draws 200-day history from public endpoints, then recomputes every value, weight and score. Inside a published Artifact the browser blocks those calls, so it falls back to the 5 Sep snapshot and the badge reads <i>Snapshot</i>.</p>
+    <p><b>Live quotes.</b> A browser page cannot fetch a quote API on its own: opened as a file it sends <code>Origin: null</code> and the quote host refuses it, and inside a published Artifact the content policy blocks the request before it leaves. Run <code>python3 serve.py</code> in this folder instead — it serves the page on <code>localhost</code> and fetches quotes server-side, where those rules do not apply. The badge then reads <i>Live</i> and the 50/200-day and RSI figures are computed from a year of fetched history. Everywhere else the page shows the 5 Sep snapshot and says so.</p>
     <p><b>Not investment advice.</b> This is analysis for your own decision-making, not a recommendation from a SEBI-registered investment adviser. Consensus targets are other people's opinions. As an Indian resident, gains here are taxable in India — foreign equity is taxed at slab rates if held under 24 months and 12.5% LTCG beyond that, and Schedule FA reporting applies. Position sizes assume you are not investing an emergency fund or borrowed money.</p>
   </footer>
 </div>
@@ -353,24 +354,138 @@ const TIER = v =>
   /BUY|ACCUMULATE|DIP/.test(v) ? "buy" : "warn";
 
 /* ── live quotes ──────────────────────────────────────────────────────────
-   Runs in the viewer's browser. Works when the file is opened locally; a
-   published Artifact's CSP blocks these hosts, so we fall back to the
-   snapshot and say so rather than pretending the numbers are live.        */
-const PROXY = "https://query1.finance.yahoo.com/v8/finance/chart/";
-async function fetchOne(t) {
-  const r = await fetch(`${PROXY}${encodeURIComponent(t)}?range=1y&interval=1d`,
-    { mode: "cors", cache: "no-store" });
-  if (!r.ok) throw new Error(r.status);
-  const j = await r.json(), res = j?.chart?.result?.[0];
-  if (!res) throw new Error("shape");
-  const q = res.indicators?.quote?.[0] || {};
-  const closes = (q.close || []).filter(v => typeof v === "number");
-  return {
-    px: res.meta?.regularMarketPrice ?? closes.at(-1),
-    prev: res.meta?.chartPreviousClose,
-    lo: res.meta?.fiftyTwoWeekLow, hi: res.meta?.fiftyTwoWeekHigh,
-    hist: closes.slice(-260)
-  };
+   A browser page cannot reach a quote API by itself:
+     · served from file://  the Origin is null and the quote host rejects it
+     · inside an Artifact   the page's CSP blocks the request before it is sent
+   Neither is fixable here. So the page first asks its OWN origin for
+   /api/quote, which serve.py answers by fetching upstream server-side where
+   CORS does not apply. If that route is absent we still try direct, because it
+   costs nothing — and when both fail we say which one failed and why, rather
+   than showing a stale number as if it were live.                          */
+const DIRECT = "https://query1.finance.yahoo.com/v8/finance/chart/";
+const norm = res => {
+  const meta = res.meta || {};
+  const closes = ((res.indicators?.quote?.[0] || {}).close || [])
+    .filter(v => typeof v === "number");
+  return { px: meta.regularMarketPrice ?? closes.at(-1), prev: meta.chartPreviousClose,
+           lo: meta.fiftyTwoWeekLow, hi: meta.fiftyTwoWeekHigh, hist: closes.slice(-260) };
+};
+
+/* Is a local proxy answering on this origin? */
+async function haveProxy() {
+  if (!location.protocol.startsWith("http")) return false;
+  try {
+    const r = await fetch("/api/quote?t=AAPL", { cache: "no-store" });
+    if (!r.ok) return false;
+    const j = await r.json();
+    return !!(j && j.quotes);
+  } catch { return false; }
+}
+
+async function viaProxy(tickers) {
+  const qs = tickers.map(t => "t=" + encodeURIComponent(t)).join("&");
+  const r = await fetch("/api/quote?" + qs, { cache: "no-store" });
+  if (!r.ok) throw new Error("proxy HTTP " + r.status);
+  const j = await r.json();
+  const out = {};
+  for (const [t, q] of Object.entries(j.quotes || {})) out[t] = q;
+  return { out, errors: j.errors || {} };
+}
+
+async function viaDirect(tickers) {
+  const out = {}, errors = {};
+  const results = await Promise.allSettled(tickers.map(async t => {
+    const r = await fetch(`${DIRECT}${encodeURIComponent(t)}?range=1y&interval=1d`,
+      { mode: "cors", cache: "no-store" });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const j = await r.json();
+    const res = j?.chart?.result?.[0];
+    if (!res) throw new Error("unexpected response shape");
+    return [t, norm(res)];
+  }));
+  results.forEach((r, i) => {
+    if (r.status === "fulfilled" && r.value[1].px) out[r.value[0]] = r.value[1];
+    else errors[tickers[i]] = r.reason ? String(r.reason.message || r.reason) : "blocked";
+  });
+  return { out, errors };
+}
+
+let LIVE = false;
+function setFeed(state, text, title) {
+  const b = $("#feed");
+  b.className = "badge" + (state === "live" ? " live" : "");
+  $("#feedtxt").textContent = text;
+  b.title = title || "";
+}
+
+async function refresh() {
+  const btn = $("#refresh");
+  btn.disabled = true; btn.textContent = "Fetching\u2026";
+  setFeed("", "Fetching\u2026");
+  const tickers = BOOK.universe.map(r => r.ticker);
+
+  let got = {}, errors = {}, route = "";
+  try {
+    if (await haveProxy()) {
+      route = "local proxy";
+      ({ out: got, errors } = await viaProxy(tickers));
+    } else {
+      route = "direct";
+      ({ out: got, errors } = await viaDirect(tickers));
+    }
+  } catch (e) {
+    errors.__ = String(e.message || e);
+  }
+
+  const n = Object.keys(got).length;
+  if (n) {
+    for (const row of BOOK.universe) {
+      const q = got[row.ticker];
+      if (!q || !q.px) continue;
+      row.px = q.px;
+      row.day_pct = q.prev ? (q.px / q.prev - 1) * 100 : null;
+      if (q.lo) row.lo = q.lo;
+      if (q.hi) row.hi = q.hi;
+      if (q.hist && q.hist.length > 20) {
+        row.hist = q.hist;
+        row.sma50 = sma(q.hist, 50); row.sma200 = sma(q.hist, 200);
+        row.rsi = rsi(q.hist);
+      }
+    }
+    recompute();
+  }
+  LIVE = n >= tickers.length * 0.6;
+
+  if (LIVE) {
+    setFeed("live", `Live \u00b7 ${n}/${tickers.length} \u00b7 ` +
+      new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      `Quotes fetched via ${route}.`);
+    $("#diag").hidden = true;
+  } else {
+    const why = location.protocol === "file:"
+      ? "This page is open as a file:// document, so the browser sends Origin: null and the quote host refuses it."
+      : !location.protocol.startsWith("http")
+        ? "This page is running inside a sandbox whose content policy blocks outside requests."
+        : route === "direct"
+          ? "No local quote proxy is answering on this origin. The direct request was then blocked \u2014 a published Artifact's content policy forbids outside requests, and browsers refuse cross-origin quote calls that carry no permissive CORS header."
+          : "The local proxy is answering, but it could not reach the quote host.";
+    setFeed("", `Snapshot \u00b7 ${BOOK.as_of}`, why);
+    const d = $("#diag");
+    d.hidden = false;
+    const sample = Object.entries(errors).slice(0, 3)
+      .map(([t, e]) => `${t === "__" ? "request" : t}: ${e}`).join(" \u00b7 ");
+    d.innerHTML =
+      `<b>Live quotes unavailable \u2014 showing the ${BOOK.as_of} snapshot.</b> ${why}` +
+      `<br>To get live prices, run the dashboard from a terminal in this folder:` +
+      `<br><code>python3 serve.py</code>` +
+      `<br>That serves the page on <code>http://localhost:8000</code> and fetches quotes server-side, ` +
+      `where the browser's cross-origin rules do not apply. ` +
+      `Or run <code>python3 refresh.py</code> to rewrite the snapshot without a browser.` +
+      (sample ? `<br><span style="color:var(--ink-3)">Reported: ${sample}</span>` : "");
+  }
+  btn.disabled = false;
+  btn.textContent = LIVE ? "Refresh quotes" : "Retry live quotes";
+  render();
 }
 const sma = (a, n) => a.length < n ? null : a.slice(-n).reduce((s, v) => s + v, 0) / n;
 function rsi(a, n = 14) {
@@ -381,36 +496,6 @@ function rsi(a, n = 14) {
   }
   if (l === 0) return 100;
   return 100 - 100 / (1 + (g / n) / (l / n));
-}
-
-let LIVE = false;
-async function refresh() {
-  const btn = $("#refresh");
-  btn.disabled = true; btn.textContent = "Fetching…";
-  const tickers = BOOK.universe.map(r => r.ticker);
-  const results = await Promise.allSettled(tickers.map(fetchOne));
-  let ok = 0;
-  results.forEach((r, i) => {
-    if (r.status !== "fulfilled" || !r.value.px) return;
-    ok++;
-    const row = BOOK.universe[i], q = r.value;
-    row.px = q.px;
-    row.day_pct = q.prev ? (q.px / q.prev - 1) * 100 : null;
-    if (q.lo) row.lo = q.lo; if (q.hi) row.hi = q.hi;
-    if (q.hist?.length > 20) {
-      row.hist = q.hist;
-      row.sma50 = sma(q.hist, 50); row.sma200 = sma(q.hist, 200);
-      row.rsi = rsi(q.hist);
-    }
-  });
-  if (ok >= tickers.length * 0.6) { LIVE = true; recompute(); }
-  $("#feed").className = "badge" + (LIVE ? " live" : "");
-  $("#feedtxt").textContent = LIVE
-    ? `Live · ${ok}/${tickers.length} · ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
-    : "Snapshot · 5 Sep 2026";
-  btn.disabled = false; btn.textContent = LIVE ? "Refresh quotes" : "Retry live quotes";
-  if (!LIVE) btn.title = "Live quotes need the page opened from your own machine — a published Artifact blocks the request.";
-  render();
 }
 
 /* Re-derive everything that depends on price, so a live refresh is honest

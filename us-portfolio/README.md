@@ -7,9 +7,11 @@ valuation-driven buy calls.
 **27 positions · 33 tickers tracked · $53,767 market value on $33,011 invested (+62.9%)**
 
 ```
-dashboard.html            open this — the whole dashboard, one self-contained file
-build_data.py             the dataset and the scoring model; regenerates the dashboard
-refresh.py                pulls live quotes, rewrites prices, rebuilds
+serve.py                  run this — serves the dashboard with live quotes working
+dashboard.local.html      standalone page, for reading the snapshot offline
+dashboard.html            the same page in the form the Artifact service wraps
+build_data.py             the dataset and the scoring model; regenerates both pages
+refresh.py                rewrites prices into build_data.py without a browser
 dashboard.template.html   page source, with the data injected at build time
 data/portfolio.json       the generated dataset
 data/SOURCES.md           where every number came from, and how splits were resolved
@@ -18,19 +20,32 @@ data/SOURCES.md           where every number came from, and how splits were reso
 ## Daily use
 
 ```bash
-python3 refresh.py     # fetch live prices, rewrite build_data.py, rebuild dashboard.html
-open dashboard.html
+python3 serve.py       # → http://localhost:8000, with working live quotes
 ```
 
-`refresh.py` needs no API key and no third-party packages. Any ticker that fails
-keeps its previous value and is listed at the end — it never invents a price.
-`--dry-run` shows what would change without writing.
+That is the one command you need. The badge turns **Live**, prices and 52-week
+ranges refresh, and the 50/200-day and RSI figures are computed from a year of
+fetched history.
 
-The dashboard also refreshes itself: opened from your own machine it fetches
-quotes and a year of history in the browser, recomputes every value, weight and
-score, and draws the 50/200-day and RSI readings from real data. The badge in the
-header reads **Live** when that succeeds. Published as an Artifact the browser
-blocks those requests, so it falls back to the 5 Sep snapshot and says **Snapshot**.
+**Why a server rather than just opening the file.** A browser page cannot reach a
+quote API by itself. Opened as `file://` it sends `Origin: null` and the quote
+host rejects it; inside a published Artifact the page's content policy blocks the
+request before it is sent. Neither is fixable from the page. `serve.py` fetches
+quotes itself, server-side, where cross-origin rules do not apply, and the page
+calls `/api/quote` on its own origin.
+
+Open `dashboard.local.html` directly if you just want to read the last snapshot —
+it works offline, and tells you plainly that the numbers are not live.
+
+To bake fresh prices into the committed files without a browser:
+
+```bash
+python3 refresh.py     # rewrites prices in build_data.py, rebuilds both pages
+python3 refresh.py --dry-run
+```
+
+Neither script needs an API key or a third-party package. Any ticker that fails
+keeps its previous value and is listed at the end — nothing is ever invented.
 
 ## What the page shows
 
