@@ -1,0 +1,158 @@
+gTick100ms	Bit	VAR_GLOBAL	M0		1 scan pulse every 100 ms
+gTick100msMem	Bit	VAR_GLOBAL	M1		edge memory for SM409
+gTick1s	Bit	VAR_GLOBAL	M2		1 scan pulse every 1 s
+gTick1sMem	Bit	VAR_GLOBAL	M3		edge memory for SM412
+gHeartbeat	Bit	VAR_GLOBAL	M4		1 s heartbeat for the HMI watchdog
+gEStopOK	Bit	VAR_GLOBAL	M5		X0  -S0 emergency stop released
+gBl1StopOK	Bit	VAR_GLOBAL	M6		X2  -S2 stop PB not pressed
+gBl2StopOK	Bit	VAR_GLOBAL	M7		X4  -S4 stop PB not pressed
+gPidOK	Bit	VAR_GLOBAL	M8		X7  -A2 AL1 controller healthy
+gHighLimitOK	Bit	VAR_GLOBAL	M9		X13 -B3 high-limit thermostat healthy
+gDoorClosed	Bit	VAR_GLOBAL	M10		X5  -B1 door closed, raw
+gHeatDemand	Bit	VAR_GLOBAL	M11		X6  -A2 OUT1 calling for heat
+gBl1OlTrip	Bit	VAR_GLOBAL	M12		X10 -F1 overload tripped
+gBl2OlTrip	Bit	VAR_GLOBAL	M13		X11 -F2 overload tripped
+gHtrOlTrip	Bit	VAR_GLOBAL	M14		X12 -F3 overload tripped
+gK1Closed	Bit	VAR_GLOBAL	M15		X14 -K1 contactor closed
+gK2Closed	Bit	VAR_GLOBAL	M16		X15 -K2 contactor closed
+gK3Closed	Bit	VAR_GLOBAL	M17		X16 -K3 contactor closed
+gLampTest	Bit	VAR_GLOBAL	M18		X17 -S5 held = lamp test
+gAcceptMem	Bit	VAR_GLOBAL	M19		edge memory for -S5
+gAcceptEdge	Bit	VAR_GLOBAL	M20		rising edge of -S5
+gAlarmAcceptPulse	Bit	VAR_GLOBAL	M21		alarm accept, panel or HMI
+gBl1Permit	Bit	VAR_GLOBAL	M22		blower 1 permissive
+gBl2Permit	Bit	VAR_GLOBAL	M23		blower 2 permissive
+gHtrPermit	Bit	VAR_GLOBAL	M24		heater permissive
+gSlotRunPermit	Bit	VAR_GLOBAL	M25		slot timers may advance (optional gating)
+gBl1StartMem	Bit	VAR_GLOBAL	M26		edge memory for -S1
+gBl2StartMem	Bit	VAR_GLOBAL	M27		edge memory for -S3
+gBl1StartEdge	Bit	VAR_GLOBAL	M28		rising edge of -S1
+gBl2StartEdge	Bit	VAR_GLOBAL	M29		rising edge of -S3
+gBl1RunReq	Bit	VAR_GLOBAL	M30		blower 1 run request, held over a door open
+gBl2RunReq	Bit	VAR_GLOBAL	M31		blower 2 run request, held over a door open
+gBl1Out	Bit	VAR_GLOBAL	M32		blower 1 output state
+gBl2Out	Bit	VAR_GLOBAL	M33		blower 2 output state
+gHtrCmd	Bit	VAR_GLOBAL	M34		heater command after anti-chatter
+gHtrOut	Bit	VAR_GLOBAL	M35		heater output state
+gDoorMem	Bit	VAR_GLOBAL	M36		edge memory, raw door
+gDoorCloseEdge	Bit	VAR_GLOBAL	M37		raw door closing edge
+gDoorOpenEdge	Bit	VAR_GLOBAL	M38		raw door opening edge
+gDoorClosedStable	Bit	VAR_GLOBAL	M39		door closed continuously for 1 s
+gDoorOK	Bit	VAR_GLOBAL	M40		blower interlock permissive
+gDoorDeb	Bit	VAR_GLOBAL	M41		door state, 1 s debounce both ways
+gDoorDebMem	Bit	VAR_GLOBAL	M42		edge memory, debounced door
+gDoorDebCloseEdge	Bit	VAR_GLOBAL	M43		debounced door closing edge
+gDoorDebOpenEdge	Bit	VAR_GLOBAL	M44		debounced door opening edge
+gDoorAlarm	Bit	VAR_GLOBAL	M45		any door-signal watchdog alarm
+gAlmDoorNotClosedMem	Bit	VAR_GLOBAL	M46		edge memory for event logging
+gAlmHeatUpMem	Bit	VAR_GLOBAL	M47		edge memory for event logging
+gAnySlotRunning	Bit	VAR_GLOBAL	M48		one or more slot timers running
+gAnyAlarm	Bit	VAR_GLOBAL	M49		any alarm present
+gAlarmNew	Bit	VAR_GLOBAL	M50		a new alarm appeared this scan
+gAlarmUnack	Bit	VAR_GLOBAL	M51		alarm not yet accepted
+gHooter	Bit	VAR_GLOBAL	M52		hooter demand
+gManualMode	Bit	VAR_GLOBAL	M53		manual test mode active
+gManualPermit	Bit	VAR_GLOBAL	M54		manual test conditions satisfied
+gManBl1	Bit	VAR_GLOBAL	M55		manual blower 1 demand
+gManBl2	Bit	VAR_GLOBAL	M56		manual blower 2 demand
+gManHtr	Bit	VAR_GLOBAL	M57		manual heater demand
+gMaintLoggedIn	Bit	VAR_GLOBAL	M58		MAINTENANCE role logged in
+gEventPulse	Bit	VAR_GLOBAL	M59		1 scan event trigger for SD logging
+gQualityLoggedIn	Bit	VAR_GLOBAL	M60		QUALITY role logged in
+gLockoutActive	Bit	VAR_GLOBAL	M61		login locked out after failed attempts
+gSlotTimersPaused	Bit	VAR_GLOBAL	M62		cure timers held - oven not fit to cure
+gSlotPausedMem	Bit	VAR_GLOBAL	M63		edge memory for the pause event
+gAlmBits	Bit(0..15)	VAR_GLOBAL	M700		alarm block, overlays the named alarms
+gAlmEStop	Bit	VAR_GLOBAL	M700		ALM 0  emergency stop operated
+gAlmBl1Ol	Bit	VAR_GLOBAL	M701		ALM 1  blower 1 overload tripped
+gAlmBl2Ol	Bit	VAR_GLOBAL	M702		ALM 2  blower 2 overload tripped
+gAlmHtrOl	Bit	VAR_GLOBAL	M703		ALM 3  heater overload tripped
+gAlmHighLimit	Bit	VAR_GLOBAL	M704		ALM 4  high-limit thermostat tripped
+gAlmPidFault	Bit	VAR_GLOBAL	M705		ALM 5  PID alarm or sensor break
+gAlmHeatUp	Bit	VAR_GLOBAL	M706		ALM 6  failure to reach setpoint
+gAlmDoorChatter	Bit	VAR_GLOBAL	M707		ALM 7  door signal pulsating
+gAlmDoorNotClosed	Bit	VAR_GLOBAL	M708		ALM 8  no door closed signal
+gAlmK1Fault	Bit	VAR_GLOBAL	M709		ALM 9  -K1 feedback disagrees
+gAlmK2Fault	Bit	VAR_GLOBAL	M710		ALM 10 -K2 feedback disagrees
+gAlmK3Fault	Bit	VAR_GLOBAL	M711		ALM 11 -K3 feedback disagrees
+gAlmLotMismatch	Bit	VAR_GLOBAL	M712		ALM 12 lots loaded / unloaded mismatch
+gAlmCurePaused	Bit	VAR_GLOBAL	M713		ALM 13 cure timers paused, oven not fit
+gAlmMem	Bit(0..15)	VAR_GLOBAL	M720		previous scan alarm block
+gHmiSlotStart	Bit(1..6)	VAR_GLOBAL	M800		HMI start, slot 1-6
+gHmiSlotReset	Bit(1..6)	VAR_GLOBAL	M810		HMI reset, slot 1-6
+gHmiBl1Start	Bit	VAR_GLOBAL	M820		HMI blower 1 start
+gHmiBl1Stop	Bit	VAR_GLOBAL	M821		HMI blower 1 stop
+gHmiBl2Start	Bit	VAR_GLOBAL	M822		HMI blower 2 start
+gHmiBl2Stop	Bit	VAR_GLOBAL	M823		HMI blower 2 stop
+gHmiAlarmAccept	Bit	VAR_GLOBAL	M824		HMI alarm accept
+gHmiResetDoorCnt	Bit	VAR_GLOBAL	M825		HMI reset door counters
+gHmiResetLotCnt	Bit	VAR_GLOBAL	M826		HMI reset lot counters
+gHmiManualReq	Bit	VAR_GLOBAL	M827		HMI enter manual test
+gHmiManualExit	Bit	VAR_GLOBAL	M828		HMI exit manual test
+gHmiMaintLoginReq	Bit	VAR_GLOBAL	M829		HMI login attempt, MAINTENANCE
+gHmiLogout	Bit	VAR_GLOBAL	M830		HMI log out
+gHmiActivity	Bit	VAR_GLOBAL	M831		GOT screen touch, resets the logout timer
+gHmiManBl1	Bit	VAR_GLOBAL	M832		HMI manual blower 1, momentary
+gHmiManBl2	Bit	VAR_GLOBAL	M833		HMI manual blower 2, momentary
+gHmiManHtr	Bit	VAR_GLOBAL	M834		HMI manual heater, momentary
+gHmiQualityLoginReq	Bit	VAR_GLOBAL	M835		HMI login attempt, QUALITY
+gSlotRunning	Bit(1..6)	VAR_GLOBAL	M4000		LATCH slot 1-6 occupied / timing
+gSlotComplete	Bit(1..6)	VAR_GLOBAL	M4008		LATCH slot 1-6 reached 2 hours
+gSetHtrNeedsAir	Bit	VAR_GLOBAL	M4020		LATCH option: heater needs a blower running
+gSetSlotGated	Bit	VAR_GLOBAL	M4021		LATCH option: slot timers pause on a fault
+gDefaultsWritten	Bit	VAR_GLOBAL	M4022		LATCH settings have been initialised
+gHtrMinOnAcc	Word [Signed]	VAR_GLOBAL	D0		heater minimum ON elapsed, s
+gHtrMinOffAcc	Word [Signed]	VAR_GLOBAL	D1		heater minimum OFF elapsed, s
+gDoorStableAcc	Word [Signed]	VAR_GLOBAL	D2		door stable-closed filter, 100 ms units
+gDoorDebAcc	Word [Signed]	VAR_GLOBAL	D3		door debounce filter, 100 ms units
+gChatterCount	Word [Signed]	VAR_GLOBAL	D4		door transitions in the current window
+gChatterWinAcc	Word [Signed]	VAR_GLOBAL	D5		chatter window elapsed, s
+gK1FbAcc	Word [Signed]	VAR_GLOBAL	D6		-K1 feedback disagreement, 100 ms units
+gK2FbAcc	Word [Signed]	VAR_GLOBAL	D7		-K2 feedback disagreement, 100 ms units
+gK3FbAcc	Word [Signed]	VAR_GLOBAL	D8		-K3 feedback disagreement, 100 ms units
+gManualTmoAcc	Word [Signed]	VAR_GLOBAL	D9		manual test elapsed, s
+gMaintTmoAcc	Word [Signed]	VAR_GLOBAL	D10		maintenance login idle time, s
+gSlotsActive	Word [Signed]	VAR_GLOBAL	D11		number of slots currently running
+gEventCode	Word [Signed]	VAR_GLOBAL	D12		event code for the SD log
+gEventParam	Word [Signed]	VAR_GLOBAL	D13		event parameter, usually the slot number
+gEventValue	Word [Signed]	VAR_GLOBAL	D14		event value, e.g. minutes cut short
+gHeatUpAcc	Word [Signed]	VAR_GLOBAL	D15		heat demand held, s
+gHeatUpMin	Word [Signed]	VAR_GLOBAL	D16		heat demand held, min, for the HMI
+gDoorOpenAcc	Word [Signed]	VAR_GLOBAL	D17		no door closed signal, s
+gDoorOpenMin	Word [Signed]	VAR_GLOBAL	D18		no door closed signal, min, for the HMI
+gTotHtrRunH	Word [Signed]	VAR_GLOBAL	D19		heater running hours, for the HMI
+gTotBl1RunH	Word [Signed]	VAR_GLOBAL	D20		blower 1 running hours, for the HMI
+gTotBl2RunH	Word [Signed]	VAR_GLOBAL	D21		blower 2 running hours, for the HMI
+gQualityTmoAcc	Word [Signed]	VAR_GLOBAL	D22		quality login idle time, s
+gFailedAttempts	Word [Signed]	VAR_GLOBAL	D23		consecutive failed login attempts
+gLockoutAcc	Word [Signed]	VAR_GLOBAL	D26		login lockout remaining, s
+gHmiPasscodeEntry	Word [Signed]	VAR_GLOBAL	D27		passcode typed on the HMI, cleared after use
+gActiveRole	Word [Signed]	VAR_GLOBAL	D28		0 none, 1 maintenance, 2 quality
+gLotsUnaccounted	Double Word [Signed]	VAR_GLOBAL	D24		loaded - unloaded - running = the discrepancy
+gSlotH	Word [Signed](1..6)	VAR_GLOBAL	D40		slot 1-6 elapsed hours
+gSlotM	Word [Signed](1..6)	VAR_GLOBAL	D46		slot 1-6 elapsed minutes
+gSlotS	Word [Signed](1..6)	VAR_GLOBAL	D52		slot 1-6 elapsed seconds
+gSlotRemainMin	Word [Signed](1..6)	VAR_GLOBAL	D58		slot 1-6 remaining minutes
+gSlotPct	Word [Signed](1..6)	VAR_GLOBAL	D64		slot 1-6 progress percent
+gSlotElapsed	Double Word [Signed](1..6)	VAR_GLOBAL	D4000		LATCH slot 1-6 elapsed seconds
+gCntDoorOpen	Double Word [Signed]	VAR_GLOBAL	D4020		LATCH door opened count
+gCntDoorClose	Double Word [Signed]	VAR_GLOBAL	D4022		LATCH door closed count
+gCntLotsLoaded	Double Word [Signed]	VAR_GLOBAL	D4024		LATCH lots loaded (slot starts)
+gCntLotsUnloaded	Double Word [Signed]	VAR_GLOBAL	D4026		LATCH lots unloaded (normal resets)
+gCntEarlyReset	Double Word [Signed]	VAR_GLOBAL	D4028		LATCH early resets by maintenance
+gTotHtrRunS	Double Word [Signed]	VAR_GLOBAL	D4030		LATCH heater running seconds
+gTotBl1RunS	Double Word [Signed]	VAR_GLOBAL	D4032		LATCH blower 1 running seconds
+gTotBl2RunS	Double Word [Signed]	VAR_GLOBAL	D4034		LATCH blower 2 running seconds
+gSetHeatUpWdMin	Word [Signed]	VAR_GLOBAL	D4100		SET heat-up watchdog, min (10-240)
+gSetDoorWdSec	Word [Signed]	VAR_GLOBAL	D4101		SET door watchdog, s (60-1800)
+gSetChatterCnt	Word [Signed]	VAR_GLOBAL	D4102		SET chatter transition count (4-50)
+gSetChatterWinS	Word [Signed]	VAR_GLOBAL	D4103		SET chatter window, s (5-60)
+gSetHtrMinOnS	Word [Signed]	VAR_GLOBAL	D4104		SET heater minimum ON, s (5-120)
+gSetHtrMinOffS	Word [Signed]	VAR_GLOBAL	D4105		SET heater minimum OFF, s (5-120)
+gSetManualTmoS	Word [Signed]	VAR_GLOBAL	D4106		SET manual test auto-exit, s
+gSetLoginTmoS	Word [Signed]	VAR_GLOBAL	D4107		SET level 2 auto-logout, s
+gSetSlotTargetS	Double Word [Signed]	VAR_GLOBAL	D4108		SET slot cure time, s (default 7200)
+gSetMaintCode	Word [Signed]	VAR_GLOBAL	D4110		SET MAINTENANCE passcode - change at commissioning
+gSetQualityCode	Word [Signed]	VAR_GLOBAL	D4111		SET QUALITY passcode - change at commissioning
+gSetMaxAttempts	Word [Signed]	VAR_GLOBAL	D4112		SET failed logins before lockout (default 3)
+gSetLockoutS	Word [Signed]	VAR_GLOBAL	D4113		SET lockout duration, s (default 300)

@@ -263,12 +263,56 @@ def check():
     return ok
 
 
-if __name__ == "__main__":
-    here = os.path.dirname(os.path.abspath(__file__))
+HEADER = ["Label Name", "Data Type", "Class", "Assign (Device/Label)",
+          "Constant", "Comment"]
+
+
+def emit(here):
+    r = rows()
+
+    # 1. comma CSV, for reading in Excel or a text editor
     with open(os.path.join(here, "global_labels.csv"), "w", newline="") as f:
         w = csv.writer(f)
-        w.writerow(["Label Name", "Data Type", "Class", "Assign (Device/Label)",
-                    "Constant", "Comment"])
-        w.writerows(rows())
-    print(f"global_labels.csv written: {len(L)} labels")
+        w.writerow(HEADER)
+        w.writerows(r)
+
+    # 2. UTF-16LE tab-delimited with a BOM and CRLF line endings.
+    #    This is the format GX Works3 itself exports, and the only one its
+    #    label importer reliably reads. A comma-delimited ASCII file is parsed
+    #    but yields no rows - "No imported information found in the file."
+    with open(os.path.join(here, "global_labels_GXW3.txt"), "w",
+              encoding="utf-16", newline="") as f:
+        f.write("\t".join(HEADER) + "\r\n")
+        for row in r:
+            f.write("\t".join(row) + "\r\n")
+
+    # 3. Tab-separated, NO header, for pasting straight into the label grid.
+    #    Bypasses the importer altogether - the most reliable route.
+    with open(os.path.join(here, "global_labels_PASTE.txt"), "w",
+              encoding="utf-8", newline="") as f:
+        for row in r:
+            f.write("\t".join(row) + "\r\n")
+
+    # 4. Excel workbook, same columns, for select-all and copy.
+    try:
+        from openpyxl import Workbook
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Global Labels"
+        ws.append(HEADER)
+        for row in r:
+            ws.append(row)
+        for col, wid in zip("ABCDEF", (24, 26, 14, 22, 10, 56)):
+            ws.column_dimensions[col].width = wid
+        ws.freeze_panes = "A2"
+        wb.save(os.path.join(here, "global_labels.xlsx"))
+        return 4
+    except ImportError:
+        return 3
+
+
+if __name__ == "__main__":
+    here = os.path.dirname(os.path.abspath(__file__))
+    n = emit(here)
+    print(f"{len(L)} labels written in {n} formats")
     sys.exit(0 if check() else 1)

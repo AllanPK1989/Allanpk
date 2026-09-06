@@ -47,6 +47,8 @@ def inline(t):
     t = t.replace("—", "&#8212;").replace("–", "&#8211;").replace("→", "&#8594;")
     t = t.replace("×", "&#215;").replace("’", "&#8217;").replace("“", '"').replace("”", '"')
     t = t.replace("≥", "&#8805;")
+    for a, b in (("├──", "+--"), ("└──", "\\--"), ("│", "|"), ("─", "-")):
+        t = t.replace(a, b)
     for tick in ("[ ]",):
         t = t.replace(tick, "&#9744;")
     return t

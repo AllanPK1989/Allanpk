@@ -30,7 +30,10 @@ oven-control-system/
 │   └── OVN-2026-01_...Electrical-Schematic.pdf   13 A3 sheets, Rev 3
 ├── 02-plc-program/
 │   ├── st/P00_Common.st … P07_Indication.st      the program, 8 blocks
-│   ├── labels/global_labels.csv                  158 global labels
+│   ├── labels/global_labels.xlsx                 158 labels, paste into GX Works3
+│   ├── labels/global_labels_PASTE.txt            same, tab-separated, no header
+│   ├── labels/global_labels_GXW3.txt             same, UTF-16 for the importer
+│   ├── labels/global_labels.csv                  same, for reading only
 │   ├── labels/device_comments_xy.csv             X/Y comments
 │   ├── docs/cpu-parameters.md                    every parameter to set
 │   ├── docs/functional-description.md            what the program does and why
@@ -65,23 +68,67 @@ oven-control-system/
 3. `OK`. GX Works3 creates a scan program called `MAIN`.
 4. `Project → Save As` → `OVN-2026-01_PLC.gx3`
 
-## B.2 Import the global labels
+## B.2 Get the 158 global labels into the project
+
+Four files are supplied for this. **Method 1 works everywhere — use it first.**
+
+| File | For |
+|------|-----|
+| `global_labels.xlsx` | **Method 1**, clipboard paste. Excel workbook. |
+| `global_labels_PASTE.txt` | **Method 1** without Excel. Tab-separated, no header. |
+| `global_labels_GXW3.txt` | **Method 2**, the file importer. UTF-16 tab-delimited. |
+| `global_labels.csv` | Reading and diffing only. **Do not import this one.** |
+
+> If you import the plain `.csv` GX Works3 answers *"No imported information
+> found in the file."* It is not a corrupt file and the columns are not wrong.
+> MELSOFT's label importer only reads **UTF-16, tab-delimited** — the format
+> its own export writes. A comma-delimited ASCII file parses to zero rows.
+
+### Method 1 — paste into the grid (recommended)
+
+Bypasses the importer completely. Under two minutes.
 
 1. Navigation window → `Label → Global Label → Global1`
-2. **Export a blank template first**: with the empty label editor open, use the
-   CSV export command and save it somewhere. This shows you the exact column
-   order your GX Works3 release expects.
-3. Open both that template and `labels/global_labels.csv` in a text editor or
-   Excel. Our columns are:
+2. Open **`global_labels.xlsx`** (or `global_labels_PASTE.txt` in Notepad)
+3. Select the **data rows only — not the header** — and copy
+   - In Excel: click row 2, `Ctrl+Shift+End`, `Ctrl+C`
+   - In Notepad: `Ctrl+A`, `Ctrl+C` (that file has no header)
+4. In GX Works3, click the **Label Name cell of row 1** — the first editable
+   cell, not the grey row-number column
+5. `Ctrl+V`
+6. Confirm **158 rows**, and that no cell is flagged red
 
-   `Label Name, Data Type, Class, Assign (Device/Label), Constant, Comment`
+The columns arrive in the grid's own order:
+`Label Name`, `Data Type`, `Class`, `Assign (Device/Label)`, `Constant`, `Comment`
 
-   If the template's order differs, reorder our columns to match, then save.
-4. Back in the label editor, use the CSV import command and select the file.
-5. Confirm **158 labels** are listed and no cell is flagged in red.
+### Method 2 — the file importer
 
-> Column order is the single most common import failure. It is not worth
-> guessing — export the template and match it.
+Only if you would rather not paste.
+
+1. In the Global Label editor choose the import command
+2. Select **`global_labels_GXW3.txt`** — the UTF-16 file, **not the .csv**
+3. At *"Import the content of specified file"* click **Yes**
+4. Confirm 158 rows
+
+If this still reports nothing imported, your GX Works3 release wants a
+slightly different column set. Export a blank template from the same dialogue,
+send it over, and the file will be regenerated to match it exactly. Do not
+spend time hand-editing — Method 1 is faster than diagnosing it.
+
+### Check the paste landed properly
+
+Spot-check three rows that exercise the awkward data types:
+
+| Label | Data Type | Assign |
+|-------|-----------|--------|
+| `gTick100ms` | `Bit` | `M0` |
+| `gSlotElapsed` | `Double Word [Signed](1..6)` | `D4000` |
+| `gAlmBits` | `Bit(0..15)` | `M700` |
+
+`gAlmBits` and `gAlmMem` are **arrays that deliberately overlay** the named
+alarm labels at M700 and M720. Two names for one device is intended — the
+array lets the summary loop in `P06_Alarms` stay short, and lets the GOT watch
+the block as one alarm range. GX Works3 will not object.
 
 ## B.3 Create the eight program blocks
 
@@ -417,7 +464,8 @@ proved end to end.
 
 | Symptom | Cause | Fix |
 |---------|-------|-----|
-| Label import rejected or cells red | Column order differs by GX Works3 release | Export a blank template, match its columns, re-import (B.2) |
+| *"No imported information found in the file"* | The plain `.csv` was imported. MELSOFT reads UTF-16 tab-delimited only | Paste from `global_labels.xlsx` instead, or import `global_labels_GXW3.txt` (B.2) |
+| Import runs but cells are flagged red | Column set differs by GX Works3 release | Export a blank template and send it over; or just use the paste method (B.2) |
 | Type errors on `+ DINT#1` lines | Block pasted incompletely | Re-paste the whole `.st` file |
 | `P05/P06/P07` will not compile | Missing local label `i` | Add it (B.4) |
 | Counters and timers zero after a power cut | Latch range not set | B.6, then re-prove with B.13 |
