@@ -1,0 +1,355 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420.0mm" height="297.0mm" viewBox="0 0 420.0 297.0">
+<rect x="0" y="0" width="420.0" height="297.0" fill="#ffffff"/>
+<rect x="0" y="0" width="420.0" height="297.0" fill="#fff"/>
+<rect x="12.00" y="6.00" width="402.00" height="285.00" rx="0" fill="none" stroke="#000" stroke-width="0.5"/>
+<rect x="14.00" y="8.00" width="398.00" height="281.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="37.12" y="7.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<text x="37.12" y="290.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<text x="87.38" y="7.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">2</text>
+<text x="87.38" y="290.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">2</text>
+<line x1="62.25" y1="6.00" x2="62.25" y2="8.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="62.25" y1="289.00" x2="62.25" y2="291.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="137.62" y="7.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">3</text>
+<text x="137.62" y="290.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">3</text>
+<line x1="112.50" y1="6.00" x2="112.50" y2="8.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="112.50" y1="289.00" x2="112.50" y2="291.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="187.88" y="7.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">4</text>
+<text x="187.88" y="290.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">4</text>
+<line x1="162.75" y1="6.00" x2="162.75" y2="8.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="162.75" y1="289.00" x2="162.75" y2="291.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="238.12" y="7.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">5</text>
+<text x="238.12" y="290.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">5</text>
+<line x1="213.00" y1="6.00" x2="213.00" y2="8.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="213.00" y1="289.00" x2="213.00" y2="291.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="288.38" y="7.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">6</text>
+<text x="288.38" y="290.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">6</text>
+<line x1="263.25" y1="6.00" x2="263.25" y2="8.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="263.25" y1="289.00" x2="263.25" y2="291.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="338.62" y="7.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">7</text>
+<text x="338.62" y="290.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">7</text>
+<line x1="313.50" y1="6.00" x2="313.50" y2="8.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="313.50" y1="289.00" x2="313.50" y2="291.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="388.88" y="7.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">8</text>
+<text x="388.88" y="290.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">8</text>
+<line x1="363.75" y1="6.00" x2="363.75" y2="8.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="363.75" y1="289.00" x2="363.75" y2="291.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="13.00" y="41.62" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">A</text>
+<text x="413.00" y="41.62" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">A</text>
+<text x="13.00" y="112.88" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">B</text>
+<text x="413.00" y="112.88" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">B</text>
+<line x1="12.00" y1="77.25" x2="14.00" y2="77.25" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="412.00" y1="77.25" x2="414.00" y2="77.25" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="13.00" y="184.12" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">C</text>
+<text x="413.00" y="184.12" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">C</text>
+<line x1="12.00" y1="148.50" x2="14.00" y2="148.50" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="412.00" y1="148.50" x2="414.00" y2="148.50" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="13.00" y="255.38" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">D</text>
+<text x="413.00" y="255.38" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">D</text>
+<line x1="12.00" y1="219.75" x2="14.00" y2="219.75" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="412.00" y1="219.75" x2="414.00" y2="219.75" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="256.00" y="259.00" width="156.00" height="30.00" rx="0" fill="#fff" stroke="#000" stroke-width="0.3"/>
+<line x1="256.00" y1="267.00" x2="412.00" y2="267.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="256.00" y1="277.00" x2="412.00" y2="277.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="256.00" y1="283.00" x2="412.00" y2="283.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="360.00" y1="277.00" x2="360.00" y2="289.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="386.00" y1="277.00" x2="386.00" y2="289.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="360.00" y1="259.00" x2="360.00" y2="267.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="258.00" y="262.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">PROJECT</text>
+<text x="258.00" y="265.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.7" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">OVEN CONTROL PANEL - HEATER + 2 BLOWER</text>
+<text x="362.00" y="262.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">CLIENT / LOCATION</text>
+<text x="362.00" y="265.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.2" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-</text>
+<text x="258.00" y="270.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">SHEET TITLE</text>
+<text x="258.00" y="275.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="3.4" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">PLC -A1 : CPU SUPPLY &amp; DIGITAL INPUTS X0 - X17</text>
+<text x="258.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">DRAWN</text>
+<text x="278.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">CLAUDE</text>
+<text x="258.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">CHECKED</text>
+<text x="278.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-</text>
+<text x="308.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">DATE</text>
+<text x="322.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">2026-09-06</text>
+<text x="308.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">SCALE</text>
+<text x="322.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">NTS</text>
+<text x="362.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">DRAWING No.</text>
+<text x="362.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">OVN-2026-01</text>
+<text x="388.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">SHEET</text>
+<text x="388.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">06 / 13</text>
+<text x="402.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">REV</text>
+<text x="402.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">0</text>
+<text x="16.00" y="12.50" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="4.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">PLC -A1 : CPU SUPPLY &amp; DIGITAL INPUTS X0 - X17</text>
+<text x="16.00" y="17.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">MELSEC iQ-F  FX5U-32MT/ES  -  sink input wiring (S/S = +24 V)</text>
+<line x1="16.00" y1="19.60" x2="408.00" y2="19.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="24.00" y="28.00" width="66.00" height="182.00" rx="0" fill="none" stroke="#000" stroke-width="0.5"/>
+<text x="57.00" y="34.50" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="3.4" fill="#000" text-anchor="middle" font-weight="bold" font-style="normal">-A1</text>
+<text x="57.00" y="38.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">MELSEC iQ-F</text>
+<text x="57.00" y="42.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">FX5U-32MT/ES</text>
+<text x="57.00" y="45.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">16 DI / 16 DO</text>
+<text x="57.00" y="49.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">transistor sink</text>
+<line x1="90.00" y1="34.00" x2="94.00" y2="34.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="82.50" y="32.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="86.25" y="35.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">S/S</text>
+<line x1="94.00" y1="34.00" x2="218.00" y2="34.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<line x1="218.00" y1="34.00" x2="218.00" y2="28.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<polygon points="218.00,25.60 224.00,25.60 227.00,28.00 224.00,30.40 218.00,30.40" fill="none" stroke="#000" stroke-width="0.3" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="228.50" y="28.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">+24 V bus, wire 200, ex -F10   (SHEET 05)</text>
+<text x="97.00" y="32.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">wire 200</text>
+<line x1="218.00" y1="42.00" x2="218.00" y2="210.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<line x1="218.00" y1="210.00" x2="218.00" y2="216.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<polygon points="213.50,215.60 219.50,215.60 222.50,218.00 219.50,220.40 213.50,220.40" fill="none" stroke="#000" stroke-width="0.3" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="224.00" y="218.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal"></text>
+<text x="226.00" y="219.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">0 V bus, wire 201   (SHEET 05)</text>
+<text x="136.00" y="42.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="bold" font-style="normal">-X1</text>
+<text x="154.00" y="42.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.2" fill="#000" text-anchor="end" font-weight="bold" font-style="normal">DEVICE / CONTACT</text>
+<text x="230.00" y="42.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.2" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">FUNCTION</text>
+<text x="112.00" y="42.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.2" fill="#000" text-anchor="middle" font-weight="bold" font-style="normal">WIRE</text>
+<line x1="90.00" y1="52.00" x2="94.00" y2="52.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="82.50" y="50.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="86.25" y="53.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X0</text>
+<line x1="94.00" y1="52.00" x2="156.00" y2="52.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<text x="112.00" y="50.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">220</text>
+<circle cx="136.00" cy="52.00" r="1.30" fill="#fff" stroke="#000" stroke-width="0.3"/>
+<text x="136.00" y="49.70" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.9" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">20</text>
+<g transform="rotate(-90 156.00 52.00)"><line x1="156.00" y1="52.00" x2="156.00" y2="53.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="58.40" x2="156.00" y2="60.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="58.40" x2="159.40" y2="53.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="158.20" y1="52.20" x2="160.60" y2="54.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="157.70" y1="55.90" x2="162.10" y2="55.90" stroke="#000" stroke-width="0.18" stroke-linecap="round" stroke-dasharray="0.8,0.8"/><line x1="162.10" y1="55.90" x2="162.10" y2="53.80" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><path d="M 160.10 53.80 A 2.20 2.20 0 0 1 164.10 53.80" fill="none" stroke="#000" stroke-width="0.3"/></g>
+<text x="154.00" y="50.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="end" font-weight="bold" font-style="normal">-S0</text>
+<text x="154.00" y="55.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.85" fill="#000" text-anchor="end" font-weight="normal" font-style="normal">11-12</text>
+<line x1="164.00" y1="52.00" x2="218.00" y2="52.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<circle cx="218.00" cy="52.00" r="0.70" fill="#000" stroke="#000" stroke-width="0"/>
+<text x="230.00" y="52.90" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">EMERGENCY STOP - healthy (NC, fail-safe)</text>
+<text x="230.00" y="56.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="start" font-weight="normal" font-style="italic">panel door</text>
+<line x1="90.00" y1="62.00" x2="94.00" y2="62.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="82.50" y="60.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="86.25" y="63.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X1</text>
+<line x1="94.00" y1="62.00" x2="156.00" y2="62.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<text x="112.00" y="60.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">221</text>
+<circle cx="136.00" cy="62.00" r="1.30" fill="#fff" stroke="#000" stroke-width="0.3"/>
+<text x="136.00" y="59.70" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.9" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">21</text>
+<g transform="rotate(-90 156.00 62.00)"><line x1="156.00" y1="62.00" x2="156.00" y2="63.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="68.40" x2="156.00" y2="70.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="68.40" x2="159.40" y2="63.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="157.70" y1="65.90" x2="161.30" y2="65.90" stroke="#000" stroke-width="0.18" stroke-linecap="round" stroke-dasharray="0.8,0.8"/><line x1="161.30" y1="65.90" x2="161.30" y2="63.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="159.90" y1="63.40" x2="162.70" y2="63.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/></g>
+<text x="154.00" y="60.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="end" font-weight="bold" font-style="normal">-S1</text>
+<text x="154.00" y="65.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.85" fill="#000" text-anchor="end" font-weight="normal" font-style="normal">13-14</text>
+<line x1="164.00" y1="62.00" x2="218.00" y2="62.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<circle cx="218.00" cy="62.00" r="0.70" fill="#000" stroke="#000" stroke-width="0"/>
+<text x="230.00" y="62.90" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">BLOWER 1  START push-button</text>
+<text x="230.00" y="66.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="start" font-weight="normal" font-style="italic">panel door</text>
+<line x1="90.00" y1="72.00" x2="94.00" y2="72.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="82.50" y="70.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="86.25" y="73.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X2</text>
+<line x1="94.00" y1="72.00" x2="156.00" y2="72.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<text x="112.00" y="70.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">222</text>
+<circle cx="136.00" cy="72.00" r="1.30" fill="#fff" stroke="#000" stroke-width="0.3"/>
+<text x="136.00" y="69.70" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.9" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">22</text>
+<g transform="rotate(-90 156.00 72.00)"><line x1="156.00" y1="72.00" x2="156.00" y2="73.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="78.40" x2="156.00" y2="80.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="78.40" x2="159.40" y2="73.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="158.20" y1="72.20" x2="160.60" y2="74.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="157.70" y1="75.90" x2="162.10" y2="75.90" stroke="#000" stroke-width="0.18" stroke-linecap="round" stroke-dasharray="0.8,0.8"/><line x1="162.10" y1="75.90" x2="162.10" y2="73.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="160.70" y1="73.40" x2="163.50" y2="73.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/></g>
+<text x="154.00" y="70.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="end" font-weight="bold" font-style="normal">-S2</text>
+<text x="154.00" y="75.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.85" fill="#000" text-anchor="end" font-weight="normal" font-style="normal">11-12</text>
+<line x1="164.00" y1="72.00" x2="218.00" y2="72.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<circle cx="218.00" cy="72.00" r="0.70" fill="#000" stroke="#000" stroke-width="0"/>
+<text x="230.00" y="72.90" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">BLOWER 1  STOP push-button (NC, fail-safe)</text>
+<text x="230.00" y="76.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="start" font-weight="normal" font-style="italic">panel door</text>
+<line x1="90.00" y1="82.00" x2="94.00" y2="82.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="82.50" y="80.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="86.25" y="83.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X3</text>
+<line x1="94.00" y1="82.00" x2="156.00" y2="82.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<text x="112.00" y="80.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">223</text>
+<circle cx="136.00" cy="82.00" r="1.30" fill="#fff" stroke="#000" stroke-width="0.3"/>
+<text x="136.00" y="79.70" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.9" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">23</text>
+<g transform="rotate(-90 156.00 82.00)"><line x1="156.00" y1="82.00" x2="156.00" y2="83.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="88.40" x2="156.00" y2="90.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="88.40" x2="159.40" y2="83.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="157.70" y1="85.90" x2="161.30" y2="85.90" stroke="#000" stroke-width="0.18" stroke-linecap="round" stroke-dasharray="0.8,0.8"/><line x1="161.30" y1="85.90" x2="161.30" y2="83.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="159.90" y1="83.40" x2="162.70" y2="83.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/></g>
+<text x="154.00" y="80.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="end" font-weight="bold" font-style="normal">-S3</text>
+<text x="154.00" y="85.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.85" fill="#000" text-anchor="end" font-weight="normal" font-style="normal">13-14</text>
+<line x1="164.00" y1="82.00" x2="218.00" y2="82.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<circle cx="218.00" cy="82.00" r="0.70" fill="#000" stroke="#000" stroke-width="0"/>
+<text x="230.00" y="82.90" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">BLOWER 2  START push-button</text>
+<text x="230.00" y="86.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="start" font-weight="normal" font-style="italic">panel door</text>
+<line x1="90.00" y1="92.00" x2="94.00" y2="92.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="82.50" y="90.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="86.25" y="93.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X4</text>
+<line x1="94.00" y1="92.00" x2="156.00" y2="92.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<text x="112.00" y="90.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">224</text>
+<circle cx="136.00" cy="92.00" r="1.30" fill="#fff" stroke="#000" stroke-width="0.3"/>
+<text x="136.00" y="89.70" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.9" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">24</text>
+<g transform="rotate(-90 156.00 92.00)"><line x1="156.00" y1="92.00" x2="156.00" y2="93.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="98.40" x2="156.00" y2="100.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="98.40" x2="159.40" y2="93.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="158.20" y1="92.20" x2="160.60" y2="94.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="157.70" y1="95.90" x2="162.10" y2="95.90" stroke="#000" stroke-width="0.18" stroke-linecap="round" stroke-dasharray="0.8,0.8"/><line x1="162.10" y1="95.90" x2="162.10" y2="93.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="160.70" y1="93.40" x2="163.50" y2="93.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/></g>
+<text x="154.00" y="90.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="end" font-weight="bold" font-style="normal">-S4</text>
+<text x="154.00" y="95.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.85" fill="#000" text-anchor="end" font-weight="normal" font-style="normal">11-12</text>
+<line x1="164.00" y1="92.00" x2="218.00" y2="92.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<circle cx="218.00" cy="92.00" r="0.70" fill="#000" stroke="#000" stroke-width="0"/>
+<text x="230.00" y="92.90" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">BLOWER 2  STOP push-button (NC, fail-safe)</text>
+<text x="230.00" y="96.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="start" font-weight="normal" font-style="italic">panel door</text>
+<line x1="90.00" y1="102.00" x2="94.00" y2="102.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="82.50" y="100.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="86.25" y="103.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X5</text>
+<line x1="94.00" y1="102.00" x2="156.00" y2="102.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<text x="112.00" y="100.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">225</text>
+<circle cx="136.00" cy="102.00" r="1.30" fill="#fff" stroke="#000" stroke-width="0.3"/>
+<text x="136.00" y="99.70" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.9" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">01</text>
+<g transform="rotate(-90 156.00 102.00)"><line x1="156.00" y1="102.00" x2="156.00" y2="103.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="108.40" x2="156.00" y2="110.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="108.40" x2="159.40" y2="103.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="157.70" y1="105.90" x2="161.90" y2="105.90" stroke="#000" stroke-width="0.18" stroke-linecap="round" stroke-dasharray="0.8,0.8"/><line x1="161.90" y1="105.90" x2="161.90" y2="104.20" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><circle cx="161.90" cy="103.30" r="0.90" fill="none" stroke="#000" stroke-width="0.3"/></g>
+<text x="154.00" y="100.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="end" font-weight="bold" font-style="normal">-B1</text>
+<text x="154.00" y="105.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.85" fill="#000" text-anchor="end" font-weight="normal" font-style="normal">13-14</text>
+<line x1="164.00" y1="102.00" x2="218.00" y2="102.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<circle cx="218.00" cy="102.00" r="0.70" fill="#000" stroke="#000" stroke-width="0"/>
+<text x="230.00" y="102.90" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">OVEN DOOR CLOSED - position switch</text>
+<text x="230.00" y="106.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="start" font-weight="normal" font-style="italic">oven door</text>
+<line x1="90.00" y1="112.00" x2="94.00" y2="112.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="82.50" y="110.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="86.25" y="113.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X6</text>
+<line x1="94.00" y1="112.00" x2="156.00" y2="112.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<text x="112.00" y="110.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">226</text>
+<circle cx="136.00" cy="112.00" r="1.30" fill="#fff" stroke="#000" stroke-width="0.3"/>
+<text x="136.00" y="109.70" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.9" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">30</text>
+<g transform="rotate(-90 156.00 112.00)"><line x1="156.00" y1="112.00" x2="156.00" y2="113.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="118.40" x2="156.00" y2="120.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="118.40" x2="159.40" y2="113.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/></g>
+<text x="154.00" y="110.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="end" font-weight="bold" font-style="normal">-A2</text>
+<text x="154.00" y="115.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.85" fill="#000" text-anchor="end" font-weight="normal" font-style="normal">OUT1</text>
+<line x1="164.00" y1="112.00" x2="218.00" y2="112.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<circle cx="218.00" cy="112.00" r="0.70" fill="#000" stroke="#000" stroke-width="0"/>
+<text x="230.00" y="112.90" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">TEMP CONTROLLER heat demand (volt-free)</text>
+<text x="230.00" y="116.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="start" font-weight="normal" font-style="italic">panel</text>
+<line x1="90.00" y1="122.00" x2="94.00" y2="122.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="82.50" y="120.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="86.25" y="123.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X7</text>
+<line x1="94.00" y1="122.00" x2="156.00" y2="122.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<text x="112.00" y="120.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">227</text>
+<circle cx="136.00" cy="122.00" r="1.30" fill="#fff" stroke="#000" stroke-width="0.3"/>
+<text x="136.00" y="119.70" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.9" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">31</text>
+<g transform="rotate(-90 156.00 122.00)"><line x1="156.00" y1="122.00" x2="156.00" y2="123.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="128.40" x2="156.00" y2="130.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="128.40" x2="159.40" y2="123.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="158.20" y1="122.20" x2="160.60" y2="124.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/></g>
+<text x="154.00" y="120.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="end" font-weight="bold" font-style="normal">-A2</text>
+<text x="154.00" y="125.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.85" fill="#000" text-anchor="end" font-weight="normal" font-style="normal">AL1</text>
+<line x1="164.00" y1="122.00" x2="218.00" y2="122.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<circle cx="218.00" cy="122.00" r="0.70" fill="#000" stroke="#000" stroke-width="0"/>
+<text x="230.00" y="122.90" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">TEMP CONTROLLER alarm / sensor break (NC = healthy)</text>
+<text x="230.00" y="126.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="start" font-weight="normal" font-style="italic">panel</text>
+<line x1="90.00" y1="132.00" x2="94.00" y2="132.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="82.50" y="130.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="86.25" y="133.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X10</text>
+<line x1="94.00" y1="132.00" x2="156.00" y2="132.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<text x="112.00" y="130.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">228</text>
+<text x="136.00" y="129.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="middle" font-weight="normal" font-style="italic">direct</text>
+<g transform="rotate(-90 156.00 132.00)"><line x1="156.00" y1="132.00" x2="156.00" y2="133.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="138.40" x2="156.00" y2="140.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="138.40" x2="159.40" y2="133.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/></g>
+<text x="154.00" y="130.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="end" font-weight="bold" font-style="normal">-F1</text>
+<text x="154.00" y="135.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.85" fill="#000" text-anchor="end" font-weight="normal" font-style="normal">97-98</text>
+<line x1="164.00" y1="132.00" x2="218.00" y2="132.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<circle cx="218.00" cy="132.00" r="0.70" fill="#000" stroke="#000" stroke-width="0"/>
+<text x="230.00" y="132.90" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">BLOWER 1 overload TRIPPED</text>
+<text x="230.00" y="136.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="start" font-weight="normal" font-style="italic">panel</text>
+<line x1="90.00" y1="142.00" x2="94.00" y2="142.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="82.50" y="140.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="86.25" y="143.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X11</text>
+<line x1="94.00" y1="142.00" x2="156.00" y2="142.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<text x="112.00" y="140.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">229</text>
+<text x="136.00" y="139.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="middle" font-weight="normal" font-style="italic">direct</text>
+<g transform="rotate(-90 156.00 142.00)"><line x1="156.00" y1="142.00" x2="156.00" y2="143.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="148.40" x2="156.00" y2="150.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="148.40" x2="159.40" y2="143.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/></g>
+<text x="154.00" y="140.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="end" font-weight="bold" font-style="normal">-F2</text>
+<text x="154.00" y="145.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.85" fill="#000" text-anchor="end" font-weight="normal" font-style="normal">97-98</text>
+<line x1="164.00" y1="142.00" x2="218.00" y2="142.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<circle cx="218.00" cy="142.00" r="0.70" fill="#000" stroke="#000" stroke-width="0"/>
+<text x="230.00" y="142.90" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">BLOWER 2 overload TRIPPED</text>
+<text x="230.00" y="146.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="start" font-weight="normal" font-style="italic">panel</text>
+<line x1="90.00" y1="152.00" x2="94.00" y2="152.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="82.50" y="150.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="86.25" y="153.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X12</text>
+<line x1="94.00" y1="152.00" x2="156.00" y2="152.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<text x="112.00" y="150.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">230</text>
+<text x="136.00" y="149.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="middle" font-weight="normal" font-style="italic">direct</text>
+<g transform="rotate(-90 156.00 152.00)"><line x1="156.00" y1="152.00" x2="156.00" y2="153.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="158.40" x2="156.00" y2="160.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="158.40" x2="159.40" y2="153.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/></g>
+<text x="154.00" y="150.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="end" font-weight="bold" font-style="normal">-F3</text>
+<text x="154.00" y="155.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.85" fill="#000" text-anchor="end" font-weight="normal" font-style="normal">97-98</text>
+<line x1="164.00" y1="152.00" x2="218.00" y2="152.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<circle cx="218.00" cy="152.00" r="0.70" fill="#000" stroke="#000" stroke-width="0"/>
+<text x="230.00" y="152.90" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">HEATER overload TRIPPED</text>
+<text x="230.00" y="156.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="start" font-weight="normal" font-style="italic">panel</text>
+<line x1="90.00" y1="162.00" x2="94.00" y2="162.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="82.50" y="160.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="86.25" y="163.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X13</text>
+<line x1="94.00" y1="162.00" x2="156.00" y2="162.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<text x="112.00" y="160.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">231</text>
+<circle cx="136.00" cy="162.00" r="1.30" fill="#fff" stroke="#000" stroke-width="0.3"/>
+<text x="136.00" y="159.70" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.9" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">05</text>
+<g transform="rotate(-90 156.00 162.00)"><line x1="156.00" y1="162.00" x2="156.00" y2="163.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="168.40" x2="156.00" y2="170.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="168.40" x2="159.40" y2="163.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="158.20" y1="162.20" x2="160.60" y2="164.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/></g>
+<text x="154.00" y="160.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="end" font-weight="bold" font-style="normal">-B3</text>
+<text x="154.00" y="165.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.85" fill="#000" text-anchor="end" font-weight="normal" font-style="normal">C2</text>
+<line x1="164.00" y1="162.00" x2="218.00" y2="162.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<circle cx="218.00" cy="162.00" r="0.70" fill="#000" stroke="#000" stroke-width="0"/>
+<text x="230.00" y="162.90" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">HIGH-LIMIT THERMOSTAT healthy (NC = healthy)</text>
+<text x="230.00" y="166.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="start" font-weight="normal" font-style="italic">oven</text>
+<line x1="90.00" y1="172.00" x2="94.00" y2="172.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="82.50" y="170.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="86.25" y="173.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X14</text>
+<line x1="94.00" y1="172.00" x2="156.00" y2="172.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<text x="112.00" y="170.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">232</text>
+<text x="136.00" y="169.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="middle" font-weight="normal" font-style="italic">direct</text>
+<g transform="rotate(-90 156.00 172.00)"><line x1="156.00" y1="172.00" x2="156.00" y2="173.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="178.40" x2="156.00" y2="180.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="178.40" x2="159.40" y2="173.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/></g>
+<text x="154.00" y="170.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="end" font-weight="bold" font-style="normal">-K1</text>
+<text x="154.00" y="175.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.85" fill="#000" text-anchor="end" font-weight="normal" font-style="normal">13-14</text>
+<line x1="164.00" y1="172.00" x2="218.00" y2="172.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<circle cx="218.00" cy="172.00" r="0.70" fill="#000" stroke="#000" stroke-width="0"/>
+<text x="230.00" y="172.90" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">BLOWER 1 contactor closed - feedback</text>
+<text x="230.00" y="176.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="start" font-weight="normal" font-style="italic">panel</text>
+<line x1="90.00" y1="182.00" x2="94.00" y2="182.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="82.50" y="180.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="86.25" y="183.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X15</text>
+<line x1="94.00" y1="182.00" x2="156.00" y2="182.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<text x="112.00" y="180.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">233</text>
+<text x="136.00" y="179.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="middle" font-weight="normal" font-style="italic">direct</text>
+<g transform="rotate(-90 156.00 182.00)"><line x1="156.00" y1="182.00" x2="156.00" y2="183.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="188.40" x2="156.00" y2="190.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="188.40" x2="159.40" y2="183.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/></g>
+<text x="154.00" y="180.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="end" font-weight="bold" font-style="normal">-K2</text>
+<text x="154.00" y="185.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.85" fill="#000" text-anchor="end" font-weight="normal" font-style="normal">13-14</text>
+<line x1="164.00" y1="182.00" x2="218.00" y2="182.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<circle cx="218.00" cy="182.00" r="0.70" fill="#000" stroke="#000" stroke-width="0"/>
+<text x="230.00" y="182.90" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">BLOWER 2 contactor closed - feedback</text>
+<text x="230.00" y="186.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="start" font-weight="normal" font-style="italic">panel</text>
+<line x1="90.00" y1="192.00" x2="94.00" y2="192.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="82.50" y="190.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="86.25" y="193.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X16</text>
+<line x1="94.00" y1="192.00" x2="156.00" y2="192.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<text x="112.00" y="190.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">234</text>
+<text x="136.00" y="189.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="middle" font-weight="normal" font-style="italic">direct</text>
+<g transform="rotate(-90 156.00 192.00)"><line x1="156.00" y1="192.00" x2="156.00" y2="193.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="198.40" x2="156.00" y2="200.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="198.40" x2="159.40" y2="193.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/></g>
+<text x="154.00" y="190.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="end" font-weight="bold" font-style="normal">-K3</text>
+<text x="154.00" y="195.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.85" fill="#000" text-anchor="end" font-weight="normal" font-style="normal">13-14</text>
+<line x1="164.00" y1="192.00" x2="218.00" y2="192.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<circle cx="218.00" cy="192.00" r="0.70" fill="#000" stroke="#000" stroke-width="0"/>
+<text x="230.00" y="192.90" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">HEATER contactor closed - feedback</text>
+<text x="230.00" y="196.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="start" font-weight="normal" font-style="italic">panel</text>
+<line x1="90.00" y1="202.00" x2="94.00" y2="202.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="82.50" y="200.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="86.25" y="203.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X17</text>
+<line x1="94.00" y1="202.00" x2="156.00" y2="202.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<text x="112.00" y="200.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">235</text>
+<circle cx="136.00" cy="202.00" r="1.30" fill="#fff" stroke="#000" stroke-width="0.3"/>
+<text x="136.00" y="199.70" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.9" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">33</text>
+<g transform="rotate(-90 156.00 202.00)"><line x1="156.00" y1="202.00" x2="156.00" y2="203.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="208.40" x2="156.00" y2="210.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="208.40" x2="159.40" y2="203.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="157.70" y1="205.90" x2="161.30" y2="205.90" stroke="#000" stroke-width="0.18" stroke-linecap="round" stroke-dasharray="0.8,0.8"/><line x1="161.30" y1="205.90" x2="161.30" y2="203.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="159.90" y1="203.40" x2="162.70" y2="203.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/></g>
+<text x="154.00" y="200.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="end" font-weight="bold" font-style="normal">-S5</text>
+<text x="154.00" y="205.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.85" fill="#000" text-anchor="end" font-weight="normal" font-style="normal">13-14</text>
+<line x1="164.00" y1="202.00" x2="218.00" y2="202.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<circle cx="218.00" cy="202.00" r="0.70" fill="#000" stroke="#000" stroke-width="0"/>
+<text x="230.00" y="202.90" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">LAMP TEST / ALARM ACCEPT push-button</text>
+<text x="230.00" y="206.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.8" fill="#000" text-anchor="start" font-weight="normal" font-style="italic">panel door</text>
+<text x="296.00" y="218.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">-A1  CPU POWER SUPPLY</text>
+<line x1="320.00" y1="222.00" x2="324.00" y2="222.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="324.00" y="220.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="327.75" y="223.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">L</text>
+<line x1="320.00" y1="222.00" x2="302.00" y2="222.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<text x="326.00" y="219.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">100</text>
+<polygon points="302.00,219.60 296.00,219.60 293.00,222.00 296.00,224.40 302.00,224.40" fill="none" stroke="#000" stroke-width="0.3" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="291.50" y="222.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="end" font-weight="normal" font-style="normal"></text>
+<line x1="320.00" y1="230.00" x2="324.00" y2="230.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="324.00" y="228.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="327.75" y="231.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">N</text>
+<line x1="320.00" y1="230.00" x2="302.00" y2="230.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<text x="326.00" y="227.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">190</text>
+<polygon points="302.00,227.60 296.00,227.60 293.00,230.00 296.00,232.40 302.00,232.40" fill="none" stroke="#000" stroke-width="0.3" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="291.50" y="230.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="end" font-weight="normal" font-style="normal"></text>
+<line x1="320.00" y1="238.00" x2="324.00" y2="238.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<rect x="324.00" y="236.00" width="7.50" height="4.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="327.75" y="239.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">PE</text>
+<line x1="320.00" y1="238.00" x2="302.00" y2="238.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<text x="326.00" y="235.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">PE</text>
+<polygon points="302.00,235.60 296.00,235.60 293.00,238.00 296.00,240.40 302.00,240.40" fill="none" stroke="#000" stroke-width="0.3" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="291.50" y="238.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="end" font-weight="normal" font-style="normal"></text>
+<text x="334.00" y="224.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">230 V AC ex -F5  (SHEET 05)</text>
+<text x="334.00" y="228.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">PE to panel earth bar -PE1</text>
+<text x="24.00" y="220.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.3000000000000003" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">NOTES:</text>
+<text x="24.00" y="224.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">1.  SINK input wiring: terminal S/S is tied to +24 V.  The internal input circuit sources current out of each X</text>
+<text x="24.00" y="227.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">     terminal; the field contact completes the circuit to 0 V.  A closed field contact = input ON.</text>
+<text x="24.00" y="231.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">2.  Fail-safe contacts:  -S0 (E-stop), -S2 / -S4 (stop push-buttons) and -B3 (high-limit) are wired normally</text>
+<text x="24.00" y="234.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">     CLOSED, so the PLC sees the input go OFF on a broken wire, a loose terminal or a device failure, and the</text>
+<text x="24.00" y="237.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">     program then takes the safe action.  The PLC program must therefore treat X0, X2, X4 and X13 as ACTIVE-LOW.</text>
+<text x="24.00" y="241.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">3.  Overload trip contacts -F1 / -F2 / -F3 (97-98) are wired normally OPEN so that the input is ON only when</text>
+<text x="24.00" y="244.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">     that overload has actually tripped - this gives an unambiguous alarm on the HMI.</text>
+<text x="24.00" y="248.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">4.  Contactor feedback inputs X14 / X15 / X16 let the program detect a welded or a failed-to-close contactor:</text>
+<text x="24.00" y="251.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">     if the feedback does not agree with the commanded output within 1 s, a contactor fault alarm is raised.</text>
+</svg>

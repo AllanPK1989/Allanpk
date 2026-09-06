@@ -1,0 +1,578 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420.0mm" height="297.0mm" viewBox="0 0 420.0 297.0">
+<rect x="0" y="0" width="420.0" height="297.0" fill="#ffffff"/>
+<rect x="0" y="0" width="420.0" height="297.0" fill="#fff"/>
+<rect x="12.00" y="6.00" width="402.00" height="285.00" rx="0" fill="none" stroke="#000" stroke-width="0.5"/>
+<rect x="14.00" y="8.00" width="398.00" height="281.00" rx="0" fill="none" stroke="#000" stroke-width="0.18"/>
+<text x="37.12" y="7.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<text x="37.12" y="290.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<text x="87.38" y="7.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">2</text>
+<text x="87.38" y="290.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">2</text>
+<line x1="62.25" y1="6.00" x2="62.25" y2="8.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="62.25" y1="289.00" x2="62.25" y2="291.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="137.62" y="7.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">3</text>
+<text x="137.62" y="290.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">3</text>
+<line x1="112.50" y1="6.00" x2="112.50" y2="8.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="112.50" y1="289.00" x2="112.50" y2="291.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="187.88" y="7.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">4</text>
+<text x="187.88" y="290.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">4</text>
+<line x1="162.75" y1="6.00" x2="162.75" y2="8.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="162.75" y1="289.00" x2="162.75" y2="291.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="238.12" y="7.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">5</text>
+<text x="238.12" y="290.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">5</text>
+<line x1="213.00" y1="6.00" x2="213.00" y2="8.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="213.00" y1="289.00" x2="213.00" y2="291.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="288.38" y="7.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">6</text>
+<text x="288.38" y="290.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">6</text>
+<line x1="263.25" y1="6.00" x2="263.25" y2="8.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="263.25" y1="289.00" x2="263.25" y2="291.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="338.62" y="7.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">7</text>
+<text x="338.62" y="290.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">7</text>
+<line x1="313.50" y1="6.00" x2="313.50" y2="8.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="313.50" y1="289.00" x2="313.50" y2="291.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="388.88" y="7.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">8</text>
+<text x="388.88" y="290.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">8</text>
+<line x1="363.75" y1="6.00" x2="363.75" y2="8.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="363.75" y1="289.00" x2="363.75" y2="291.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="13.00" y="41.62" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">A</text>
+<text x="413.00" y="41.62" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">A</text>
+<text x="13.00" y="112.88" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">B</text>
+<text x="413.00" y="112.88" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">B</text>
+<line x1="12.00" y1="77.25" x2="14.00" y2="77.25" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="412.00" y1="77.25" x2="414.00" y2="77.25" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="13.00" y="184.12" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">C</text>
+<text x="413.00" y="184.12" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">C</text>
+<line x1="12.00" y1="148.50" x2="14.00" y2="148.50" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="412.00" y1="148.50" x2="414.00" y2="148.50" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="13.00" y="255.38" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">D</text>
+<text x="413.00" y="255.38" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.4" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">D</text>
+<line x1="12.00" y1="219.75" x2="14.00" y2="219.75" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="412.00" y1="219.75" x2="414.00" y2="219.75" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="256.00" y="259.00" width="156.00" height="30.00" rx="0" fill="#fff" stroke="#000" stroke-width="0.3"/>
+<line x1="256.00" y1="267.00" x2="412.00" y2="267.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="256.00" y1="277.00" x2="412.00" y2="277.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="256.00" y1="283.00" x2="412.00" y2="283.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="360.00" y1="277.00" x2="360.00" y2="289.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="386.00" y1="277.00" x2="386.00" y2="289.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="360.00" y1="259.00" x2="360.00" y2="267.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="258.00" y="262.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">PROJECT</text>
+<text x="258.00" y="265.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.7" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">OVEN CONTROL PANEL - HEATER + 2 BLOWER</text>
+<text x="362.00" y="262.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">CLIENT / LOCATION</text>
+<text x="362.00" y="265.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.2" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-</text>
+<text x="258.00" y="270.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">SHEET TITLE</text>
+<text x="258.00" y="275.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="3.4" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">I/O SCHEDULE &amp; BILL OF MATERIALS</text>
+<text x="258.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">DRAWN</text>
+<text x="278.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">CLAUDE</text>
+<text x="258.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">CHECKED</text>
+<text x="278.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-</text>
+<text x="308.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">DATE</text>
+<text x="322.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">2026-09-06</text>
+<text x="308.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">SCALE</text>
+<text x="322.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">NTS</text>
+<text x="362.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">DRAWING No.</text>
+<text x="362.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">OVN-2026-01</text>
+<text x="388.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">SHEET</text>
+<text x="388.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">13 / 13</text>
+<text x="402.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">REV</text>
+<text x="402.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">0</text>
+<text x="16.00" y="12.50" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="4.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">I/O SCHEDULE &amp; BILL OF MATERIALS</text>
+<text x="16.00" y="17.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">MELSEC iQ-F FX5U-32MT/ES  -  16 digital inputs, 16 digital outputs</text>
+<line x1="16.00" y1="19.60" x2="408.00" y2="19.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
+<text x="20.00" y="30.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.8" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">DIGITAL INPUTS</text>
+<rect x="20.00" y="33.00" width="185.00" height="5.00" rx="0" fill="#e8e8e8" stroke="#000" stroke-width="0.3"/>
+<text x="21.40" y="36.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">ADDR</text>
+<text x="34.40" y="36.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">WIRE</text>
+<line x1="33.00" y1="33.00" x2="33.00" y2="118.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="48.40" y="36.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">-X1</text>
+<line x1="47.00" y1="33.00" x2="47.00" y2="118.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="61.40" y="36.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">DEVICE</text>
+<line x1="60.00" y1="33.00" x2="60.00" y2="118.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="78.40" y="36.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">CONTACT</text>
+<line x1="77.00" y1="33.00" x2="77.00" y2="118.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="96.40" y="36.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">DESCRIPTION</text>
+<line x1="95.00" y1="33.00" x2="95.00" y2="118.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="26.50" y="41.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X0</text>
+<text x="40.00" y="41.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">220</text>
+<text x="53.50" y="41.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">20</text>
+<text x="61.40" y="41.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-S0</text>
+<text x="86.00" y="41.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">11-12</text>
+<text x="96.40" y="41.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">EMERGENCY STOP - healthy (NC, fail-safe)</text>
+<line x1="20.00" y1="38.00" x2="205.00" y2="38.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="20.00" y="43.00" width="185.00" height="5.00" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="26.50" y="46.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X1</text>
+<text x="40.00" y="46.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">221</text>
+<text x="53.50" y="46.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">21</text>
+<text x="61.40" y="46.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-S1</text>
+<text x="86.00" y="46.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">13-14</text>
+<text x="96.40" y="46.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">BLOWER 1  START push-button</text>
+<line x1="20.00" y1="43.00" x2="205.00" y2="43.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="26.50" y="51.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X2</text>
+<text x="40.00" y="51.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">222</text>
+<text x="53.50" y="51.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">22</text>
+<text x="61.40" y="51.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-S2</text>
+<text x="86.00" y="51.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">11-12</text>
+<text x="96.40" y="51.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">BLOWER 1  STOP push-button (NC, fail-safe)</text>
+<line x1="20.00" y1="48.00" x2="205.00" y2="48.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="20.00" y="53.00" width="185.00" height="5.00" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="26.50" y="56.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X3</text>
+<text x="40.00" y="56.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">223</text>
+<text x="53.50" y="56.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">23</text>
+<text x="61.40" y="56.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-S3</text>
+<text x="86.00" y="56.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">13-14</text>
+<text x="96.40" y="56.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">BLOWER 2  START push-button</text>
+<line x1="20.00" y1="53.00" x2="205.00" y2="53.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="26.50" y="61.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X4</text>
+<text x="40.00" y="61.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">224</text>
+<text x="53.50" y="61.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">24</text>
+<text x="61.40" y="61.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-S4</text>
+<text x="86.00" y="61.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">11-12</text>
+<text x="96.40" y="61.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">BLOWER 2  STOP push-button (NC, fail-safe)</text>
+<line x1="20.00" y1="58.00" x2="205.00" y2="58.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="20.00" y="63.00" width="185.00" height="5.00" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="26.50" y="66.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X5</text>
+<text x="40.00" y="66.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">225</text>
+<text x="53.50" y="66.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">01</text>
+<text x="61.40" y="66.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-B1</text>
+<text x="86.00" y="66.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">13-14</text>
+<text x="96.40" y="66.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">OVEN DOOR CLOSED - position switch</text>
+<line x1="20.00" y1="63.00" x2="205.00" y2="63.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="26.50" y="71.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X6</text>
+<text x="40.00" y="71.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">226</text>
+<text x="53.50" y="71.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">30</text>
+<text x="61.40" y="71.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-A2</text>
+<text x="86.00" y="71.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">OUT1</text>
+<text x="96.40" y="71.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">TEMP CONTROLLER heat demand (volt-free)</text>
+<line x1="20.00" y1="68.00" x2="205.00" y2="68.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="20.00" y="73.00" width="185.00" height="5.00" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="26.50" y="76.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X7</text>
+<text x="40.00" y="76.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">227</text>
+<text x="53.50" y="76.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">31</text>
+<text x="61.40" y="76.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-A2</text>
+<text x="86.00" y="76.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">AL1</text>
+<text x="96.40" y="76.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">TEMP CONTROLLER alarm / sensor break (NC = healthy)</text>
+<line x1="20.00" y1="73.00" x2="205.00" y2="73.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="26.50" y="81.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X10</text>
+<text x="40.00" y="81.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">228</text>
+<text x="53.50" y="81.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="61.40" y="81.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-F1</text>
+<text x="86.00" y="81.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">97-98</text>
+<text x="96.40" y="81.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">BLOWER 1 overload TRIPPED</text>
+<line x1="20.00" y1="78.00" x2="205.00" y2="78.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="20.00" y="83.00" width="185.00" height="5.00" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="26.50" y="86.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X11</text>
+<text x="40.00" y="86.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">229</text>
+<text x="53.50" y="86.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="61.40" y="86.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-F2</text>
+<text x="86.00" y="86.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">97-98</text>
+<text x="96.40" y="86.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">BLOWER 2 overload TRIPPED</text>
+<line x1="20.00" y1="83.00" x2="205.00" y2="83.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="26.50" y="91.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X12</text>
+<text x="40.00" y="91.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">230</text>
+<text x="53.50" y="91.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="61.40" y="91.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-F3</text>
+<text x="86.00" y="91.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">97-98</text>
+<text x="96.40" y="91.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">HEATER overload TRIPPED</text>
+<line x1="20.00" y1="88.00" x2="205.00" y2="88.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="20.00" y="93.00" width="185.00" height="5.00" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="26.50" y="96.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X13</text>
+<text x="40.00" y="96.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">231</text>
+<text x="53.50" y="96.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">05</text>
+<text x="61.40" y="96.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-B3</text>
+<text x="86.00" y="96.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">C2</text>
+<text x="96.40" y="96.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">HIGH-LIMIT THERMOSTAT healthy (NC = healthy)</text>
+<line x1="20.00" y1="93.00" x2="205.00" y2="93.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="26.50" y="101.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X14</text>
+<text x="40.00" y="101.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">232</text>
+<text x="53.50" y="101.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="61.40" y="101.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-K1</text>
+<text x="86.00" y="101.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">13-14</text>
+<text x="96.40" y="101.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">BLOWER 1 contactor closed - feedback</text>
+<line x1="20.00" y1="98.00" x2="205.00" y2="98.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="20.00" y="103.00" width="185.00" height="5.00" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="26.50" y="106.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X15</text>
+<text x="40.00" y="106.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">233</text>
+<text x="53.50" y="106.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="61.40" y="106.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-K2</text>
+<text x="86.00" y="106.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">13-14</text>
+<text x="96.40" y="106.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">BLOWER 2 contactor closed - feedback</text>
+<line x1="20.00" y1="103.00" x2="205.00" y2="103.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="26.50" y="111.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X16</text>
+<text x="40.00" y="111.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">234</text>
+<text x="53.50" y="111.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="61.40" y="111.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-K3</text>
+<text x="86.00" y="111.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">13-14</text>
+<text x="96.40" y="111.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">HEATER contactor closed - feedback</text>
+<line x1="20.00" y1="108.00" x2="205.00" y2="108.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="20.00" y="113.00" width="185.00" height="5.00" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="26.50" y="116.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">X17</text>
+<text x="40.00" y="116.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">235</text>
+<text x="53.50" y="116.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">33</text>
+<text x="61.40" y="116.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-S5</text>
+<text x="86.00" y="116.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">13-14</text>
+<text x="96.40" y="116.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">LAMP TEST / ALARM ACCEPT push-button</text>
+<line x1="20.00" y1="113.00" x2="205.00" y2="113.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="20.00" y="33.00" width="185.00" height="85.00" rx="0" fill="none" stroke="#000" stroke-width="0.3"/>
+<line x1="33.00" y1="33.00" x2="33.00" y2="118.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="47.00" y1="33.00" x2="47.00" y2="118.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="60.00" y1="33.00" x2="60.00" y2="118.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="77.00" y1="33.00" x2="77.00" y2="118.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="95.00" y1="33.00" x2="95.00" y2="118.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="20.00" y="124.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.8" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">DIGITAL OUTPUTS</text>
+<rect x="20.00" y="127.00" width="185.00" height="5.00" rx="0" fill="#e8e8e8" stroke="#000" stroke-width="0.3"/>
+<text x="21.40" y="130.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">ADDR</text>
+<text x="34.40" y="130.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">WIRE</text>
+<line x1="33.00" y1="127.00" x2="33.00" y2="212.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="48.40" y="130.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">-X1</text>
+<line x1="47.00" y1="127.00" x2="47.00" y2="212.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="61.40" y="130.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">DEVICE</text>
+<line x1="60.00" y1="127.00" x2="60.00" y2="212.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="78.40" y="130.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">COLOUR</text>
+<line x1="77.00" y1="127.00" x2="77.00" y2="212.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="96.40" y="130.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">DESCRIPTION</text>
+<line x1="95.00" y1="127.00" x2="95.00" y2="212.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="26.50" y="135.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">Y0</text>
+<text x="40.00" y="135.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">320</text>
+<text x="53.50" y="135.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="61.40" y="135.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-KA1</text>
+<text x="86.00" y="135.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="96.40" y="135.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Interposing relay  -&gt;  -K1  BLOWER 1 contactor</text>
+<line x1="20.00" y1="132.00" x2="205.00" y2="132.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="20.00" y="137.00" width="185.00" height="5.00" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="26.50" y="140.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">Y1</text>
+<text x="40.00" y="140.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">321</text>
+<text x="53.50" y="140.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="61.40" y="140.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-KA2</text>
+<text x="86.00" y="140.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="96.40" y="140.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Interposing relay  -&gt;  -K2  BLOWER 2 contactor</text>
+<line x1="20.00" y1="137.00" x2="205.00" y2="137.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="26.50" y="145.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">Y2</text>
+<text x="40.00" y="145.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">322</text>
+<text x="53.50" y="145.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="61.40" y="145.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-KA3</text>
+<text x="86.00" y="145.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="96.40" y="145.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Interposing relay  -&gt;  -K3  HEATER contactor</text>
+<line x1="20.00" y1="142.00" x2="205.00" y2="142.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="20.00" y="147.00" width="185.00" height="5.00" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="26.50" y="150.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">Y3</text>
+<text x="40.00" y="150.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">323</text>
+<text x="53.50" y="150.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">40</text>
+<text x="61.40" y="150.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-H1</text>
+<text x="86.00" y="150.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">GREEN</text>
+<text x="96.40" y="150.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">BLOWER 1 RUNNING</text>
+<line x1="20.00" y1="147.00" x2="205.00" y2="147.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="26.50" y="155.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">Y4</text>
+<text x="40.00" y="155.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">324</text>
+<text x="53.50" y="155.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">41</text>
+<text x="61.40" y="155.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-H2</text>
+<text x="86.00" y="155.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">GREEN</text>
+<text x="96.40" y="155.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">BLOWER 2 RUNNING</text>
+<line x1="20.00" y1="152.00" x2="205.00" y2="152.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="20.00" y="157.00" width="185.00" height="5.00" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="26.50" y="160.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">Y5</text>
+<text x="40.00" y="160.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">325</text>
+<text x="53.50" y="160.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">42</text>
+<text x="61.40" y="160.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-H3</text>
+<text x="86.00" y="160.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">RED</text>
+<text x="96.40" y="160.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">HEATER ON</text>
+<line x1="20.00" y1="157.00" x2="205.00" y2="157.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="26.50" y="165.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">Y6</text>
+<text x="40.00" y="165.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">326</text>
+<text x="53.50" y="165.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">43</text>
+<text x="61.40" y="165.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-H4</text>
+<text x="86.00" y="165.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">AMBER</text>
+<text x="96.40" y="165.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">OVEN DOOR OPEN</text>
+<line x1="20.00" y1="162.00" x2="205.00" y2="162.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="20.00" y="167.00" width="185.00" height="5.00" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="26.50" y="170.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">Y7</text>
+<text x="40.00" y="170.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">327</text>
+<text x="53.50" y="170.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">44</text>
+<text x="61.40" y="170.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-H5</text>
+<text x="86.00" y="170.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">RED</text>
+<text x="96.40" y="170.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">COMMON ALARM (flashing)</text>
+<line x1="20.00" y1="167.00" x2="205.00" y2="167.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="26.50" y="175.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">Y10</text>
+<text x="40.00" y="175.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">328</text>
+<text x="53.50" y="175.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">45</text>
+<text x="61.40" y="175.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-H6</text>
+<text x="86.00" y="175.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">WHITE</text>
+<text x="96.40" y="175.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">CYCLE RUNNING - one or more slot timers active</text>
+<line x1="20.00" y1="172.00" x2="205.00" y2="172.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="20.00" y="177.00" width="185.00" height="5.00" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="26.50" y="180.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">Y11</text>
+<text x="40.00" y="180.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">329</text>
+<text x="53.50" y="180.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">46</text>
+<text x="61.40" y="180.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-B4</text>
+<text x="86.00" y="180.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="96.40" y="180.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">AUDIBLE ALARM - hooter, 24 V DC, 85 dB</text>
+<line x1="20.00" y1="177.00" x2="205.00" y2="177.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="26.50" y="185.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">Y12</text>
+<text x="40.00" y="185.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="53.50" y="185.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="61.40" y="185.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-</text>
+<text x="86.00" y="185.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="96.40" y="185.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">SPARE</text>
+<line x1="20.00" y1="182.00" x2="205.00" y2="182.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="20.00" y="187.00" width="185.00" height="5.00" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="26.50" y="190.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">Y13</text>
+<text x="40.00" y="190.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="53.50" y="190.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="61.40" y="190.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-</text>
+<text x="86.00" y="190.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="96.40" y="190.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">SPARE</text>
+<line x1="20.00" y1="187.00" x2="205.00" y2="187.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="26.50" y="195.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">Y14</text>
+<text x="40.00" y="195.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="53.50" y="195.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="61.40" y="195.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-</text>
+<text x="86.00" y="195.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="96.40" y="195.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">SPARE</text>
+<line x1="20.00" y1="192.00" x2="205.00" y2="192.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="20.00" y="197.00" width="185.00" height="5.00" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="26.50" y="200.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">Y15</text>
+<text x="40.00" y="200.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="53.50" y="200.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="61.40" y="200.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-</text>
+<text x="86.00" y="200.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="96.40" y="200.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">SPARE</text>
+<line x1="20.00" y1="197.00" x2="205.00" y2="197.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="26.50" y="205.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">Y16</text>
+<text x="40.00" y="205.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="53.50" y="205.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="61.40" y="205.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-</text>
+<text x="86.00" y="205.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="96.40" y="205.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">SPARE</text>
+<line x1="20.00" y1="202.00" x2="205.00" y2="202.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="20.00" y="207.00" width="185.00" height="5.00" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="26.50" y="210.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">Y17</text>
+<text x="40.00" y="210.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="53.50" y="210.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="61.40" y="210.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-</text>
+<text x="86.00" y="210.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
+<text x="96.40" y="210.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">SPARE</text>
+<line x1="20.00" y1="207.00" x2="205.00" y2="207.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="20.00" y="127.00" width="185.00" height="85.00" rx="0" fill="none" stroke="#000" stroke-width="0.3"/>
+<line x1="33.00" y1="127.00" x2="33.00" y2="212.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="47.00" y1="127.00" x2="47.00" y2="212.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="60.00" y1="127.00" x2="60.00" y2="212.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="77.00" y1="127.00" x2="77.00" y2="212.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="95.00" y1="127.00" x2="95.00" y2="212.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="216.00" y="30.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.8" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">BILL OF MATERIALS</text>
+<rect x="216.00" y="33.00" width="174.00" height="5.40" rx="0" fill="#e8e8e8" stroke="#000" stroke-width="0.3"/>
+<text x="217.40" y="36.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">#</text>
+<text x="225.40" y="36.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">TAG</text>
+<line x1="224.00" y1="33.00" x2="224.00" y2="200.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="247.40" y="36.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">DESCRIPTION</text>
+<line x1="246.00" y1="33.00" x2="246.00" y2="200.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="333.40" y="36.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">TYPE / MAKE</text>
+<line x1="332.00" y1="33.00" x2="332.00" y2="200.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="381.40" y="36.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">QTY</text>
+<line x1="380.00" y1="33.00" x2="380.00" y2="200.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="220.00" y="42.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<text x="225.40" y="42.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-Q1</text>
+<text x="247.40" y="42.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">MCCB 4P 63 A, Icu 25 kA, adj. 40-63 A</text>
+<text x="333.40" y="42.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Mitsubishi NF63-CV 4P 63A</text>
+<text x="385.00" y="42.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<line x1="216.00" y1="38.40" x2="390.00" y2="38.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="216.00" y="43.80" width="174.00" height="5.40" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="220.00" y="47.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">2</text>
+<text x="225.40" y="47.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-Q2/-Q3</text>
+<text x="247.40" y="47.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Motor protection circuit breaker 3P 2.5-4 A</text>
+<text x="333.40" y="47.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Schneider GV2ME08</text>
+<text x="385.00" y="47.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">2</text>
+<line x1="216.00" y1="43.80" x2="390.00" y2="43.80" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="220.00" y="53.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">3</text>
+<text x="225.40" y="53.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-Q4</text>
+<text x="247.40" y="53.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">MCB 3P 40 A C-curve 10 kA</text>
+<text x="333.40" y="53.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Mitsubishi BH-DN 3P C40</text>
+<text x="385.00" y="53.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<line x1="216.00" y1="49.20" x2="390.00" y2="49.20" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="216.00" y="54.60" width="174.00" height="5.40" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="220.00" y="58.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">4</text>
+<text x="225.40" y="58.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-Q5</text>
+<text x="247.40" y="58.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">MCB 2P 6 A C-curve</text>
+<text x="333.40" y="58.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Mitsubishi BH-DN 2P C6</text>
+<text x="385.00" y="58.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<line x1="216.00" y1="54.60" x2="390.00" y2="54.60" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="220.00" y="63.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">5</text>
+<text x="225.40" y="63.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-Q6</text>
+<text x="247.40" y="63.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">MCB 1P 4 A C-curve</text>
+<text x="333.40" y="63.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Mitsubishi BH-DN 1P C4</text>
+<text x="385.00" y="63.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<line x1="216.00" y1="60.00" x2="390.00" y2="60.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="216.00" y="65.40" width="174.00" height="5.40" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="220.00" y="69.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">6</text>
+<text x="225.40" y="69.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-Q7</text>
+<text x="247.40" y="69.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">RCBO 2P 6 A, 30 mA</text>
+<text x="333.40" y="69.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Mitsubishi BV-DN 2P C6</text>
+<text x="385.00" y="69.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<line x1="216.00" y1="65.40" x2="390.00" y2="65.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="220.00" y="74.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">7</text>
+<text x="225.40" y="74.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-K1/-K2</text>
+<text x="247.40" y="74.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Contactor 9 A AC-3, 230 V AC coil, 1NO+1NC aux</text>
+<text x="333.40" y="74.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Mitsubishi S-T10 + UT-AX</text>
+<text x="385.00" y="74.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">2</text>
+<line x1="216.00" y1="70.80" x2="390.00" y2="70.80" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="216.00" y="76.20" width="174.00" height="5.40" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="220.00" y="80.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">8</text>
+<text x="225.40" y="80.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-K3</text>
+<text x="247.40" y="80.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Contactor 40 A AC-1, 230 V AC coil, 1NO+1NC aux</text>
+<text x="333.40" y="80.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Mitsubishi S-T21 + UT-AX</text>
+<text x="385.00" y="80.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<line x1="216.00" y1="76.20" x2="390.00" y2="76.20" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="220.00" y="85.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">9</text>
+<text x="225.40" y="85.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-F1/-F2</text>
+<text x="247.40" y="85.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Thermal overload relay 2.5-4 A, class 10A</text>
+<text x="333.40" y="85.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Mitsubishi TH-T18 3.6A</text>
+<text x="385.00" y="85.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">2</text>
+<line x1="216.00" y1="81.60" x2="390.00" y2="81.60" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="216.00" y="87.00" width="174.00" height="5.40" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="220.00" y="90.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">10</text>
+<text x="225.40" y="90.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-F3</text>
+<text x="247.40" y="90.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Thermal overload relay 23-32 A, class 10A</text>
+<text x="333.40" y="90.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Mitsubishi TH-T25 29A</text>
+<text x="385.00" y="90.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<line x1="216.00" y1="87.00" x2="390.00" y2="87.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="220.00" y="96.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">11</text>
+<text x="225.40" y="96.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-T1</text>
+<text x="247.40" y="96.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Control transformer 415/230 V, 500 VA, screened</text>
+<text x="333.40" y="96.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">IEC 61558-2-6</text>
+<text x="385.00" y="96.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<line x1="216.00" y1="92.40" x2="390.00" y2="92.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="216.00" y="97.80" width="174.00" height="5.40" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="220.00" y="101.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">12</text>
+<text x="225.40" y="101.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-G1</text>
+<text x="247.40" y="101.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">SMPS 230 V AC / 24 V DC, 5 A, 120 W, DIN rail</text>
+<text x="333.40" y="101.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Mean Well NDR-120-24</text>
+<text x="385.00" y="101.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<line x1="216.00" y1="97.80" x2="390.00" y2="97.80" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="220.00" y="107.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">13</text>
+<text x="225.40" y="107.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-A1</text>
+<text x="247.40" y="107.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">PLC CPU  MELSEC iQ-F  FX5U-32MT/ES</text>
+<text x="333.40" y="107.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Mitsubishi FX5U-32MT/ES</text>
+<text x="385.00" y="107.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<line x1="216.00" y1="103.20" x2="390.00" y2="103.20" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="216.00" y="108.60" width="174.00" height="5.40" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="220.00" y="112.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">14</text>
+<text x="225.40" y="112.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-A3</text>
+<text x="247.40" y="112.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">HMI  GOT2000  GT2107-WTBD  7" TFT 800x480</text>
+<text x="333.40" y="112.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Mitsubishi GT2107-WTBD</text>
+<text x="385.00" y="112.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<line x1="216.00" y1="108.60" x2="390.00" y2="108.60" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="220.00" y="117.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">15</text>
+<text x="225.40" y="117.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-A2</text>
+<text x="247.40" y="117.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">PID temperature controller 96x96, universal input,</text>
+<text x="333.40" y="117.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Yokogawa UT35A / equiv.</text>
+<text x="385.00" y="117.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<line x1="216.00" y1="114.00" x2="390.00" y2="114.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="216.00" y="119.40" width="174.00" height="5.40" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="220.00" y="123.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">16</text>
+<text x="225.40" y="123.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-B2</text>
+<text x="247.40" y="123.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Thermocouple type K, 6 mm x 300 mm, Inconel sheath</text>
+<text x="333.40" y="123.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">with compensating cable</text>
+<text x="385.00" y="123.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<line x1="216.00" y1="119.40" x2="390.00" y2="119.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="220.00" y="128.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">17</text>
+<text x="225.40" y="128.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-B3</text>
+<text x="247.40" y="128.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Safety high-limit thermostat, 2 x NC, manual reset</text>
+<text x="333.40" y="128.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">e.g. JUMO STB, 0-400 C</text>
+<text x="385.00" y="128.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<line x1="216.00" y1="124.80" x2="390.00" y2="124.80" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="216.00" y="130.20" width="174.00" height="5.40" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="220.00" y="134.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">18</text>
+<text x="225.40" y="134.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-B1</text>
+<text x="247.40" y="134.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Position switch, roller lever, 1NO+1NC, IP67</text>
+<text x="333.40" y="134.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">e.g. Schneider XCKN</text>
+<text x="385.00" y="134.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<line x1="216.00" y1="130.20" x2="390.00" y2="130.20" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="220.00" y="139.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">19</text>
+<text x="225.40" y="139.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-KA1..-KA3</text>
+<text x="247.40" y="139.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Interposing relay 24 V DC coil, 1 c/o 6 A, socket</text>
+<text x="333.40" y="139.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">e.g. Finder 40.52 + socket</text>
+<text x="385.00" y="139.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">3</text>
+<line x1="216.00" y1="135.60" x2="390.00" y2="135.60" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="216.00" y="141.00" width="174.00" height="5.40" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="220.00" y="144.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">20</text>
+<text x="225.40" y="144.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-S0</text>
+<text x="247.40" y="144.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Emergency stop, 40 mm mushroom, twist release, 2NC</text>
+<text x="333.40" y="144.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">22 mm, IP66</text>
+<text x="385.00" y="144.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<line x1="216.00" y1="141.00" x2="390.00" y2="141.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="220.00" y="150.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">21</text>
+<text x="225.40" y="150.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-S1..-S4</text>
+<text x="247.40" y="150.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Push-button 22 mm, flush, 1NO or 1NC</text>
+<text x="333.40" y="150.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">green x2 / red x2</text>
+<text x="385.00" y="150.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">4</text>
+<line x1="216.00" y1="146.40" x2="390.00" y2="146.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="216.00" y="151.80" width="174.00" height="5.40" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="220.00" y="155.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">22</text>
+<text x="225.40" y="155.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-S5</text>
+<text x="247.40" y="155.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Push-button 22 mm, blue, 1NO</text>
+<text x="333.40" y="155.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">lamp test / alarm accept</text>
+<text x="385.00" y="155.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<line x1="216.00" y1="151.80" x2="390.00" y2="151.80" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="220.00" y="161.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">23</text>
+<text x="225.40" y="161.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-H1..-H6</text>
+<text x="247.40" y="161.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Pilot lamp 22 mm LED 24 V DC</text>
+<text x="333.40" y="161.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">2 green, 2 red, 1 amber, 1 white</text>
+<text x="385.00" y="161.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">6</text>
+<line x1="216.00" y1="157.20" x2="390.00" y2="157.20" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="216.00" y="162.60" width="174.00" height="5.40" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="220.00" y="166.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">24</text>
+<text x="225.40" y="166.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-B4</text>
+<text x="247.40" y="166.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Alarm hooter 24 V DC, 85 dB</text>
+<text x="333.40" y="166.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">22 mm or surface</text>
+<text x="385.00" y="166.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<line x1="216.00" y1="162.60" x2="390.00" y2="162.60" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="220.00" y="171.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">25</text>
+<text x="225.40" y="171.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-X1</text>
+<text x="247.40" y="171.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Terminal block 2.5 mm2 screw / spring, grey</text>
+<text x="333.40" y="171.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">with end plates and markers</text>
+<text x="385.00" y="171.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">45</text>
+<line x1="216.00" y1="168.00" x2="390.00" y2="168.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="216.00" y="173.40" width="174.00" height="5.40" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="220.00" y="177.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">26</text>
+<text x="225.40" y="177.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-X2</text>
+<text x="247.40" y="177.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Terminal block 10 mm2, grey + green/yellow PE</text>
+<text x="333.40" y="177.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">with end plates and markers</text>
+<text x="385.00" y="177.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">12</text>
+<line x1="216.00" y1="173.40" x2="390.00" y2="173.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="220.00" y="182.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">27</text>
+<text x="225.40" y="182.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-W5</text>
+<text x="247.40" y="182.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Ethernet patch cord CAT5e SF/UTP, 1 m, RJ45</text>
+<text x="333.40" y="182.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">industrial rated</text>
+<text x="385.00" y="182.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<line x1="216.00" y1="178.80" x2="390.00" y2="178.80" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="216.00" y="184.20" width="174.00" height="5.40" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="220.00" y="188.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">28</text>
+<text x="225.40" y="188.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-</text>
+<text x="247.40" y="188.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Enclosure 800 x 600 x 250 mm, IP54, RAL 7035</text>
+<text x="333.40" y="188.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">wall mounting, with gland plate</text>
+<text x="385.00" y="188.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<line x1="216.00" y1="184.20" x2="390.00" y2="184.20" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="220.00" y="193.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">29</text>
+<text x="225.40" y="193.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-</text>
+<text x="247.40" y="193.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Panel light, 6 A socket, thermostat + filter fan 100 m3/h</text>
+<text x="333.40" y="193.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-</text>
+<text x="385.00" y="193.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<line x1="216.00" y1="189.60" x2="390.00" y2="189.60" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="216.00" y="195.00" width="174.00" height="5.40" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
+<text x="220.00" y="198.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">30</text>
+<text x="225.40" y="198.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-</text>
+<text x="247.40" y="198.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">DIN rail, trunking 40x60, earthing bar, labels, ferrules</text>
+<text x="333.40" y="198.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">consumables</text>
+<text x="385.00" y="198.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.95" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">1</text>
+<line x1="216.00" y1="195.00" x2="390.00" y2="195.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="216.00" y="33.00" width="174.00" height="167.40" rx="0" fill="none" stroke="#000" stroke-width="0.3"/>
+<line x1="224.00" y1="33.00" x2="224.00" y2="200.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="246.00" y1="33.00" x2="246.00" y2="200.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="332.00" y1="33.00" x2="332.00" y2="200.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="380.00" y1="33.00" x2="380.00" y2="200.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="20.00" y="222.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.3000000000000003" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">NOTES:</text>
+<text x="20.00" y="226.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">1.  I/O count used:  16 of 16 digital inputs (0 spare),  10 of 16 digital outputs (6 spare).</text>
+<text x="20.00" y="229.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">     The input card is full.  If any further input is needed - for example a second door switch, a per-slot</text>
+<text x="20.00" y="233.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">     load sensor or an airflow proving switch - add an FX5-16EX/ES input extension block on the right of the</text>
+<text x="20.00" y="236.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">     CPU; no rewiring of the existing inputs is needed.</text>
+<text x="20.00" y="239.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">2.  Quantities in the bill of materials exclude consumables (ferrules, cable ties, glands, labels, wire).</text>
+<text x="20.00" y="243.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">3.  Equivalent devices from another manufacturer may be substituted provided the ratings, the utilisation</text>
+<text x="20.00" y="246.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">     category and the terminal arrangement are the same, and the substitution is recorded on the as-built.</text>
+<text x="20.00" y="250.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">4.  All settings marked 'set to ...' on sheets 03, 04 and 09 must be recorded on the commissioning sheet.</text>
+</svg>
