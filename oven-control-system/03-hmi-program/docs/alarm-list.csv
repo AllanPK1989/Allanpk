@@ -1,0 +1,15 @@
+Alarm No,Device,Alarm message,Level,Group,Operator action
+0,M700,EMERGENCY STOP OPERATED,HIGH,SAFETY,"Release -S0, find out why it was hit, then restart from the push-buttons."
+1,M701,BLOWER 1 OVERLOAD TRIPPED,HIGH,MOTOR,Reset -F1 at the panel. Check the motor and the impeller before restarting.
+2,M702,BLOWER 2 OVERLOAD TRIPPED,HIGH,MOTOR,Reset -F2 at the panel. Check the motor and the impeller before restarting.
+3,M703,HEATER OVERLOAD TRIPPED,HIGH,HEATER,Reset -F3. Check the elements for a failed or shorted leg before restarting.
+4,M704,HIGH-LIMIT THERMOSTAT TRIPPED,HIGH,HEATER,The oven has overheated. Investigate BEFORE resetting -B3 by hand at the panel.
+5,M705,TEMPERATURE CONTROLLER ALARM / SENSOR BREAK,HIGH,HEATER,Check the thermocouple -B2 and its compensating cable. The heater is inhibited.
+6,M706,FAILURE TO REACH SETPOINT,MEDIUM,PROCESS,"Heat has been demanded without a break for longer than the watchdog. Check for a failed element, a stuck contactor, a low sensor reading or a door left open."
+7,M707,DOOR SIGNAL PULSATING,HIGH,DOOR,"The door switch -B1 is chattering. Blowers are held off. Check the switch, its alignment and its wiring, then accept the alarm with the door closed."
+8,M708,NO DOOR CLOSED SIGNAL,HIGH,DOOR,"Either the door has been open for longer than the watchdog, or the door switch wiring is broken. Close the door; if the alarm stays, check -X1:01 / -X1:02."
+9,M709,BLOWER 1 CONTACTOR FEEDBACK FAULT,HIGH,SAFETY,-K1 does not agree with its command. It may be welded closed. Isolate before working on the blower - the motor may be live.
+10,M710,BLOWER 2 CONTACTOR FEEDBACK FAULT,HIGH,SAFETY,-K2 does not agree with its command. It may be welded closed. Isolate before working on the blower - the motor may be live.
+11,M711,HEATER CONTACTOR FEEDBACK FAULT,HIGH,SAFETY,-K3 does not agree with its command. It may be welded closed. Isolate before working on the elements - they may be live.
+12,M712,LOTS LOADED / UNLOADED MISMATCH,MEDIUM,PRODUCTION,More lots have been loaded than accounted for. Check the event log for early resets. Quality clears the counters once the discrepancy is understood.
+13,M713,CURE TIMERS PAUSED - OVEN NOT FIT TO CURE,MEDIUM,PROCESS,One or more cure timers are held because the oven cannot hold temperature. Elapsed time is kept. Clear the underlying fault and the timers resume.

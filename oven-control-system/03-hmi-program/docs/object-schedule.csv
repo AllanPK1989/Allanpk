@@ -1,0 +1,152 @@
+Screen,Object type,Name,Device,Action,Role required,Notes
+B-1000,Header,Role indicator,D28,word lamp 0/1/2,-,"0 none, 1 maintenance, 2 quality"
+B-1000,Header,Clock,GOT RTC,date+time display,-,
+B-1000,Lamp,Blower 1 running,M32,bit lamp,-,gBl1Out
+B-1000,Lamp,Blower 2 running,M33,bit lamp,-,gBl2Out
+B-1000,Lamp,Heater on,M35,bit lamp,-,gHtrOut
+B-1000,Lamp,Door closed,M10,bit lamp,-,"gDoorClosed, raw X5"
+B-1000,Switch,Blower 1 start,M820,momentary set,-,gHmiBl1Start
+B-1000,Switch,Blower 1 stop,M821,momentary set,-,gHmiBl1Stop
+B-1000,Switch,Blower 2 start,M822,momentary set,-,gHmiBl2Start
+B-1000,Switch,Blower 2 stop,M823,momentary set,-,gHmiBl2Stop
+B-1000,Lamp,PID heat demand,M11,bit lamp,-,"gHeatDemand, X6"
+B-1000,Numeric,Door open elapsed,D18,"display, min",-,gDoorOpenMin
+B-1000,Numeric,Slot 1-6 elapsed,D40-D57,display h:m:s,-,gSlotH / gSlotM / gSlotS
+B-1000,Parts/bar,Slot 1-6 progress,D64-D69,bar graph 0-100,-,gSlotPct[1..6]
+B-1000,Lamp,Slot 1-6 running,M4000-M4005,bit lamp,-,gSlotRunning
+B-1000,Numeric,Active Alarms,M700-M713,display,-,
+B-1000,Numeric,Unaccounted Lots,D24,display,-,
+B-1000,Numeric,Slots Curing,D11,display,-,
+B-1000,Switch,Nav HOME,-,screen -> B-1000,-,
+B-1000,Switch,Nav SLOTS,-,screen -> B-1100,-,
+B-1000,Switch,Nav COUNTERS,-,screen -> B-1200,-,
+B-1000,Switch,Nav ALARMS,-,screen -> B-1300,-,
+B-1000,Switch,Nav HISTORY,-,screen -> B-1900,-,
+B-1000,Switch,Nav LOGIN,-,screen -> B-1600,-,
+B-1100,Header,Role indicator,D28,word lamp 0/1/2,-,"0 none, 1 maintenance, 2 quality"
+B-1100,Header,Clock,GOT RTC,date+time display,-,
+B-1100,Numeric,Slot 1-6 elapsed h/m/s,D40-D57,display,-,gSlotH / gSlotM / gSlotS
+B-1100,Numeric,Slot 1-6 remaining,D58-D63,"display, min",-,gSlotRemainMin
+B-1100,Switch,Slot 1-6 START,M800-M805,momentary set,-,"gHmiSlotStart, hidden when running"
+B-1100,Switch,Slot 1-6 RESET,M810-M815,momentary set,-,"gHmiSlotReset, disabled unless complete"
+B-1100,Lamp,Cure timers paused,M62,bit lamp + banner,-,gSlotTimersPaused
+B-1100,Switch,Go to early reset,M58,screen -> B-1700,MAINT,visible only while gMaintLoggedIn
+B-1100,Switch,Nav HOME,-,screen -> B-1000,-,
+B-1100,Switch,Nav SLOTS,-,screen -> B-1100,-,
+B-1100,Switch,Nav COUNTERS,-,screen -> B-1200,-,
+B-1100,Switch,Nav ALARMS,-,screen -> B-1300,-,
+B-1100,Switch,Nav HISTORY,-,screen -> B-1900,-,
+B-1100,Switch,Nav LOGIN,-,screen -> B-1600,-,
+B-1200,Header,Role indicator,D28,word lamp 0/1/2,-,"0 none, 1 maintenance, 2 quality"
+B-1200,Header,Clock,GOT RTC,date+time display,-,
+B-1200,Numeric,Door opened count,D4020,display,-,gCntDoorOpen
+B-1200,Numeric,Door closed count,D4022,display,-,gCntDoorClose
+B-1200,Numeric,Lots loaded,D4024,display,-,gCntLotsLoaded
+B-1200,Numeric,Lots unloaded,D4026,display,-,gCntLotsUnloaded
+B-1200,Numeric,Early resets,D4028,display,-,gCntEarlyReset
+B-1200,Numeric,Unaccounted lots,D24,"display, 32-bit",-,gLotsUnaccounted
+B-1200,Lamp,Mismatch,M712,"bit lamp, background red",-,gAlmLotMismatch
+B-1200,Numeric,Heater run hours,D19,"display, h",-,
+B-1200,Numeric,Blower 1 run hours,D20,"display, h",-,
+B-1200,Numeric,Blower 2 run hours,D21,"display, h",-,
+B-1200,Switch,Go to counter reset,M60,screen -> B-1800,QUALITY,visible only while gQualityLoggedIn
+B-1200,Alarm history,Recent early resets,GOT alarm history,filtered on the early-reset events,-,full record is on the PLC SD card
+B-1200,Switch,Nav HOME,-,screen -> B-1000,-,
+B-1200,Switch,Nav SLOTS,-,screen -> B-1100,-,
+B-1200,Switch,Nav COUNTERS,-,screen -> B-1200,-,
+B-1200,Switch,Nav ALARMS,-,screen -> B-1300,-,
+B-1200,Switch,Nav HISTORY,-,screen -> B-1900,-,
+B-1200,Switch,Nav LOGIN,-,screen -> B-1600,-,
+B-1300,Header,Role indicator,D28,word lamp 0/1/2,-,"0 none, 1 maintenance, 2 quality"
+B-1300,Header,Clock,GOT RTC,date+time display,-,
+B-1300,Alarm display,Advanced user alarm,M700-M713,"alarm observation, 14 points",-,see docs/alarm-list.csv
+B-1300,Switch,Alarm accept,M824,momentary set,-,gHmiAlarmAccept
+B-1300,Switch,Nav HOME,-,screen -> B-1000,-,
+B-1300,Switch,Nav SLOTS,-,screen -> B-1100,-,
+B-1300,Switch,Nav COUNTERS,-,screen -> B-1200,-,
+B-1300,Switch,Nav ALARMS,-,screen -> B-1300,-,
+B-1300,Switch,Nav HISTORY,-,screen -> B-1900,-,
+B-1300,Switch,Nav LOGIN,-,screen -> B-1600,-,
+B-1400,Header,Role indicator,D28,word lamp 0/1/2,-,"0 none, 1 maintenance, 2 quality"
+B-1400,Header,Clock,GOT RTC,date+time display,-,
+B-1400,Numeric,Manual timeout remaining,D9,"display, s",MAINT,gManualTmoAcc counts up to gSetManualTmoS
+B-1400,Switch,Manual Blower 1,M832,momentary while touched,MAINT,cleared automatically when manual mode drops
+B-1400,Lamp,Blower 1 contactor feedback,M15,bit lamp,MAINT,proves the contactor actually moved
+B-1400,Switch,Manual Blower 2,M833,momentary while touched,MAINT,cleared automatically when manual mode drops
+B-1400,Lamp,Blower 2 contactor feedback,M16,bit lamp,MAINT,proves the contactor actually moved
+B-1400,Switch,Manual Heater,M834,momentary while touched,MAINT,cleared automatically when manual mode drops
+B-1400,Lamp,Heater contactor feedback,M17,bit lamp,MAINT,proves the contactor actually moved
+B-1400,Lamp,Manual permit,M54,bit lamp,MAINT,gManualPermit
+B-1400,Switch,Exit manual test,M828,momentary set,MAINT,gHmiManualExit
+B-1400,Switch,Nav HOME,-,screen -> B-1000,-,
+B-1400,Switch,Nav SLOTS,-,screen -> B-1100,-,
+B-1400,Switch,Nav COUNTERS,-,screen -> B-1200,-,
+B-1400,Switch,Nav ALARMS,-,screen -> B-1300,-,
+B-1400,Switch,Nav HISTORY,-,screen -> B-1900,-,
+B-1400,Switch,Nav LOGIN,-,screen -> B-1600,-,
+B-1500,Header,Role indicator,D28,word lamp 0/1/2,-,"0 none, 1 maintenance, 2 quality"
+B-1500,Header,Clock,GOT RTC,date+time display,-,
+B-1500,Numeric input,Heat-up watchdog,D4100,"write, range checked",MAINT,10 - 240
+B-1500,Numeric input,Door watchdog,D4101,"write, range checked",MAINT,60 - 1800
+B-1500,Numeric input,Chatter transitions,D4102,"write, range checked",MAINT,4 - 50
+B-1500,Numeric input,Chatter window,D4103,"write, range checked",MAINT,5 - 60
+B-1500,Numeric input,Heater minimum ON,D4104,"write, range checked",MAINT,5 - 120
+B-1500,Numeric input,Heater minimum OFF,D4105,"write, range checked",MAINT,5 - 120
+B-1500,Numeric input,Manual test timeout,D4106,"write, range checked",MAINT,60 - 900
+B-1500,Numeric input,Auto-logout,D4107,"write, range checked",MAINT,60 - 900
+B-1500,Numeric input,Cure time,D4108,"write, range checked",MAINT,fixed at 2 h
+B-1500,Switch,Cure timers pause on a fault,M4021,alternate,MAINT,latched option bit
+B-1500,Switch,Heater requires airflow,M4020,alternate,MAINT,latched option bit
+B-1500,Numeric input,Maintenance passcode,D4110,"write, masked",MAINT,
+B-1500,Numeric input,Quality passcode,D4111,"write, masked",QUALITY,changed under the quality login only
+B-1500,Switch,Nav HOME,-,screen -> B-1000,-,
+B-1500,Switch,Nav SLOTS,-,screen -> B-1100,-,
+B-1500,Switch,Nav COUNTERS,-,screen -> B-1200,-,
+B-1500,Switch,Nav ALARMS,-,screen -> B-1300,-,
+B-1500,Switch,Nav HISTORY,-,screen -> B-1900,-,
+B-1500,Switch,Nav LOGIN,-,screen -> B-1600,-,
+B-1600,Header,Role indicator,D28,word lamp 0/1/2,-,"0 none, 1 maintenance, 2 quality"
+B-1600,Header,Clock,GOT RTC,date+time display,-,
+B-1600,Numeric input,Passcode entry,D27,"write, masked, 4 digits",-,"gHmiPasscodeEntry, cleared by the PLC after every attempt"
+B-1600,Switch,Keypad 0-9 / CLR / DEL,D27,GOT keypad,-,
+B-1600,Switch,Login maintenance,M829,"write D27 then set M829, ONE touch action",-,gHmiMaintLoginReq
+B-1600,Switch,Login quality,M835,"write D27 then set M835, ONE touch action",-,gHmiQualityLoginReq
+B-1600,Numeric,Lockout remaining,D26,"display, s",-,gLockoutAcc
+B-1600,Lamp,Locked out,M61,"bit lamp, shows this panel",-,gLockoutActive
+B-1600,Switch,Log out,M830,momentary set,-,gHmiLogout
+B-1600,Switch,Nav HOME,-,screen -> B-1000,-,
+B-1600,Switch,Nav SLOTS,-,screen -> B-1100,-,
+B-1600,Switch,Nav COUNTERS,-,screen -> B-1200,-,
+B-1600,Switch,Nav ALARMS,-,screen -> B-1300,-,
+B-1600,Switch,Nav HISTORY,-,screen -> B-1900,-,
+B-1600,Switch,Nav LOGIN,-,screen -> B-1600,-,
+B-1700,Header,Role indicator,D28,word lamp 0/1/2,-,"0 none, 1 maintenance, 2 quality"
+B-1700,Header,Clock,GOT RTC,date+time display,-,
+B-1700,Switch,Slot 1-6 early reset,M810-M815,"momentary set, confirm dialogue first",MAINT,same bit as the normal reset; the PLC decides which rule applies
+B-1700,Numeric,Slot elapsed / remaining,D40-D63,display,MAINT,
+B-1700,Switch,Nav HOME,-,screen -> B-1000,-,
+B-1700,Switch,Nav SLOTS,-,screen -> B-1100,-,
+B-1700,Switch,Nav COUNTERS,-,screen -> B-1200,-,
+B-1700,Switch,Nav ALARMS,-,screen -> B-1300,-,
+B-1700,Switch,Nav HISTORY,-,screen -> B-1900,-,
+B-1700,Switch,Nav LOGIN,-,screen -> B-1600,-,
+B-1800,Header,Role indicator,D28,word lamp 0/1/2,-,"0 none, 1 maintenance, 2 quality"
+B-1800,Header,Clock,GOT RTC,date+time display,-,
+B-1800,Switch,Reset door counters,M825,"momentary set, confirm dialogue first",QUALITY,gHmiResetDoorCnt
+B-1800,Switch,Reset lot counters,M826,"momentary set, confirm dialogue first",QUALITY,gHmiResetLotCnt
+B-1800,Switch,Nav HOME,-,screen -> B-1000,-,
+B-1800,Switch,Nav SLOTS,-,screen -> B-1100,-,
+B-1800,Switch,Nav COUNTERS,-,screen -> B-1200,-,
+B-1800,Switch,Nav ALARMS,-,screen -> B-1300,-,
+B-1800,Switch,Nav HISTORY,-,screen -> B-1900,-,
+B-1800,Switch,Nav LOGIN,-,screen -> B-1600,-,
+B-1900,Header,Role indicator,D28,word lamp 0/1/2,-,"0 none, 1 maintenance, 2 quality"
+B-1900,Header,Clock,GOT RTC,date+time display,-,
+B-1900,Alarm history,Event log view,SD card,GOT alarm history + FX5U logging CSV,-,see docs/event-codes.md
+B-1900,Switch,USB export,GOT alarm history,GT Designer3 alarm history CSV output to USB,-,exports the GOT's own history; the 7 day event log lives on the PLC SD card
+B-1900,Switch,Nav HOME,-,screen -> B-1000,-,
+B-1900,Switch,Nav SLOTS,-,screen -> B-1100,-,
+B-1900,Switch,Nav COUNTERS,-,screen -> B-1200,-,
+B-1900,Switch,Nav ALARMS,-,screen -> B-1300,-,
+B-1900,Switch,Nav HISTORY,-,screen -> B-1900,-,
+B-1900,Switch,Nav LOGIN,-,screen -> B-1600,-,

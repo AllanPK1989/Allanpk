@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="480" viewBox="0 0 800 480">
+<rect width="800" height="480" fill="#D3D7DC"/>
+<rect x="0" y="0" width="800" height="56" rx="0" fill="#2B323B"/>
+<text x="14" y="24" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13" fill="#9FB0C0" text-anchor="start" font-weight="bold" font-style="normal">OVN-2026-01  OVEN CONTROL</text>
+<text x="14" y="44" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="19" fill="#F3F5F7" text-anchor="start" font-weight="bold" font-style="normal">ALARMS</text>
+<rect x="560" y="12" width="128" height="22" rx="11" fill="#4A525C"/>
+<text x="624" y="27" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="11" fill="#FFFFFF" text-anchor="middle" font-weight="bold" font-style="normal">OPERATOR</text>
+<text x="624" y="47" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="10" fill="#9FB0C0" text-anchor="middle" font-weight="normal" font-style="normal">no login</text>
+<text x="786" y="27" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="17" fill="#F3F5F7" text-anchor="end" font-weight="normal" font-style="normal">14:32</text>
+<text x="786" y="45" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="10" fill="#9FB0C0" text-anchor="end" font-weight="normal" font-style="normal">06-09-2026</text>
+<rect x="12" y="64" width="776" height="268" rx="4" fill="#EFF1F3" stroke="#C2C8CF" stroke-width="1"/>
+<text x="24" y="86" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="11" fill="#5B636E" text-anchor="start" font-weight="bold" font-style="normal"></text>
+<text x="60" y="86" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="11" fill="#5B636E" text-anchor="start" font-weight="bold" font-style="normal">TIME</text>
+<text x="180" y="86" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="11" fill="#5B636E" text-anchor="start" font-weight="bold" font-style="normal">ALARM</text>
+<text x="690" y="86" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="11" fill="#5B636E" text-anchor="start" font-weight="bold" font-style="normal">STATUS</text>
+<line x1="20" y1="94" x2="780" y2="94" stroke="#C2C8CF" stroke-width="1"/>
+<rect x="20" y="100" width="760" height="32" rx="2" fill="#E2E5E9"/>
+<circle cx="30" cy="116" r="6" fill="#B5342A"/>
+<text x="60" y="121" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="14" fill="#1A1F26" text-anchor="start" font-weight="normal" font-style="normal">14:21</text>
+<text x="180" y="121" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="14" fill="#1A1F26" text-anchor="start" font-weight="bold" font-style="normal">DOOR OPEN LONGER THAN 10 MIN</text>
+<text x="690" y="121" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="11" fill="#B5342A" text-anchor="start" font-weight="bold" font-style="normal">ACTIVE</text>
+<circle cx="30" cy="152" r="6" fill="#9C6B12"/>
+<text x="60" y="157" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="14" fill="#1A1F26" text-anchor="start" font-weight="normal" font-style="normal">14:19</text>
+<text x="180" y="157" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="14" fill="#1A1F26" text-anchor="start" font-weight="bold" font-style="normal">CURE TIMERS PAUSED - OVEN NOT FIT</text>
+<text x="690" y="157" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="11" fill="#9C6B12" text-anchor="start" font-weight="bold" font-style="normal">ACTIVE</text>
+<rect x="20" y="172" width="760" height="32" rx="2" fill="#E2E5E9"/>
+<circle cx="30" cy="188" r="6" fill="#B5342A"/>
+<text x="60" y="193" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="14" fill="#1A1F26" text-anchor="start" font-weight="normal" font-style="normal">13:58</text>
+<text x="180" y="193" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="14" fill="#1A1F26" text-anchor="start" font-weight="bold" font-style="normal">HIGH-LIMIT THERMOSTAT TRIPPED</text>
+<text x="690" y="193" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="11" fill="#B5342A" text-anchor="start" font-weight="bold" font-style="normal">ACTIVE</text>
+<circle cx="30" cy="224" r="6" fill="#9C6B12"/>
+<text x="60" y="229" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="14" fill="#1A1F26" text-anchor="start" font-weight="normal" font-style="normal">11:04</text>
+<text x="180" y="229" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="14" fill="#1A1F26" text-anchor="start" font-weight="normal" font-style="normal">LOTS LOADED / UNLOADED MISMATCH</text>
+<text x="690" y="229" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="11" fill="#9C6B12" text-anchor="start" font-weight="bold" font-style="normal">ACCEPTED</text>
+<rect x="20" y="244" width="760" height="32" rx="2" fill="#E2E5E9"/>
+<circle cx="30" cy="260" r="6" fill="#5B636E"/>
+<text x="60" y="265" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="14" fill="#1A1F26" text-anchor="start" font-weight="normal" font-style="normal">09:12</text>
+<text x="180" y="265" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="14" fill="#5B636E" text-anchor="start" font-weight="normal" font-style="normal">BLOWER 2 OVERLOAD TRIPPED</text>
+<text x="690" y="265" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="11" fill="#5B636E" text-anchor="start" font-weight="bold" font-style="normal">CLEARED</text>
+<circle cx="30" cy="296" r="6" fill="#5B636E"/>
+<text x="60" y="301" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="14" fill="#1A1F26" text-anchor="start" font-weight="normal" font-style="normal">08:47</text>
+<text x="180" y="301" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="14" fill="#5B636E" text-anchor="start" font-weight="normal" font-style="normal">FAILURE TO REACH SETPOINT</text>
+<text x="690" y="301" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="11" fill="#5B636E" text-anchor="start" font-weight="bold" font-style="normal">CLEARED</text>
+<rect x="12" y="346" width="250" height="54" rx="4" fill="#F4E9D4" stroke="#9C6B12" stroke-width="2"/>
+<text x="137.0" y="374.0" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="15" fill="#9C6B12" text-anchor="middle" font-weight="bold" font-style="normal">ACCEPT</text>
+<text x="137.0" y="389.0" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="10" fill="#5B636E" text-anchor="middle" font-weight="normal" font-style="normal">silences the hooter, the lamp stays until the cause clears</text>
+<rect x="270" y="346" width="250" height="54" rx="4" fill="#E6E9ED" stroke="#9AA2AC" stroke-width="2"/>
+<text x="395.0" y="374.0" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="15" fill="#1A1F26" text-anchor="middle" font-weight="bold" font-style="normal">HISTORY</text>
+<text x="395.0" y="389.0" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="10" fill="#5B636E" text-anchor="middle" font-weight="normal" font-style="normal">7 day log</text>
+<rect x="528" y="346" width="260" height="54" rx="4" fill="#E2E5E9" stroke="#C2C8CF" stroke-width="1"/>
+<text x="540" y="366" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="11" fill="#5B636E" text-anchor="start" font-weight="bold" font-style="normal">ACTIVE / UNACCEPTED</text>
+<text x="540" y="390" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="22" fill="#B5342A" text-anchor="start" font-weight="bold" font-style="normal">3</text>
+<text x="566" y="390" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="11" fill="#5B636E" text-anchor="start" font-weight="normal" font-style="normal">of 14 configured alarms</text>
+<rect x="0" y="424" width="800" height="56" rx="0" fill="#2B323B"/>
+<rect x="8.0" y="430" width="127.33333333333334" height="44" rx="4" fill="#39424C" stroke="#5C6773" stroke-width="1"/>
+<text x="71.66666666666667" y="458" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13" fill="#C7CED6" text-anchor="middle" font-weight="normal" font-style="normal">HOME</text>
+<rect x="139.33333333333334" y="430" width="127.33333333333334" height="44" rx="4" fill="#39424C" stroke="#5C6773" stroke-width="1"/>
+<text x="203.0" y="458" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13" fill="#C7CED6" text-anchor="middle" font-weight="normal" font-style="normal">SLOTS</text>
+<rect x="270.6666666666667" y="430" width="127.33333333333334" height="44" rx="4" fill="#39424C" stroke="#5C6773" stroke-width="1"/>
+<text x="334.33333333333337" y="458" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13" fill="#C7CED6" text-anchor="middle" font-weight="normal" font-style="normal">COUNTERS</text>
+<rect x="402.0" y="430" width="127.33333333333334" height="44" rx="4" fill="#48525E" stroke="#5C6773" stroke-width="1"/>
+<text x="465.6666666666667" y="458" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13" fill="#FFFFFF" text-anchor="middle" font-weight="bold" font-style="normal">ALARMS</text>
+<rect x="533.3333333333334" y="430" width="127.33333333333334" height="44" rx="4" fill="#39424C" stroke="#5C6773" stroke-width="1"/>
+<text x="597.0" y="458" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13" fill="#C7CED6" text-anchor="middle" font-weight="normal" font-style="normal">HISTORY</text>
+<rect x="664.6666666666667" y="430" width="127.33333333333334" height="44" rx="4" fill="#39424C" stroke="#5C6773" stroke-width="1"/>
+<text x="728.3333333333334" y="458" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13" fill="#C7CED6" text-anchor="middle" font-weight="normal" font-style="normal">LOGIN</text>
+</svg>

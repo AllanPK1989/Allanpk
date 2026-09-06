@@ -1,0 +1,79 @@
+PLC device,Used on,Object,Type,Role required
+D9,B-1400,Manual timeout remaining,Numeric,MAINT
+D11,B-1000,Slots Curing,Numeric,-
+D18,B-1000,Door open elapsed,Numeric,-
+D19,B-1200,Heater run hours,Numeric,-
+D20,B-1200,Blower 1 run hours,Numeric,-
+D21,B-1200,Blower 2 run hours,Numeric,-
+D24,B-1000,Unaccounted Lots,Numeric,-
+D24,B-1200,Unaccounted lots,Numeric,-
+D26,B-1600,Lockout remaining,Numeric,-
+D27,B-1600,Passcode entry,Numeric input,-
+D27,B-1600,Keypad 0-9 / CLR / DEL,Switch,-
+D28,B-1000,Role indicator,Header,-
+D28,B-1100,Role indicator,Header,-
+D28,B-1200,Role indicator,Header,-
+D28,B-1300,Role indicator,Header,-
+D28,B-1400,Role indicator,Header,-
+D28,B-1500,Role indicator,Header,-
+D28,B-1600,Role indicator,Header,-
+D28,B-1700,Role indicator,Header,-
+D28,B-1800,Role indicator,Header,-
+D28,B-1900,Role indicator,Header,-
+D4020,B-1200,Door opened count,Numeric,-
+D4022,B-1200,Door closed count,Numeric,-
+D4024,B-1200,Lots loaded,Numeric,-
+D4026,B-1200,Lots unloaded,Numeric,-
+D4028,B-1200,Early resets,Numeric,-
+D4100,B-1500,Heat-up watchdog,Numeric input,MAINT
+D4101,B-1500,Door watchdog,Numeric input,MAINT
+D4102,B-1500,Chatter transitions,Numeric input,MAINT
+D4103,B-1500,Chatter window,Numeric input,MAINT
+D4104,B-1500,Heater minimum ON,Numeric input,MAINT
+D4105,B-1500,Heater minimum OFF,Numeric input,MAINT
+D4106,B-1500,Manual test timeout,Numeric input,MAINT
+D4107,B-1500,Auto-logout,Numeric input,MAINT
+D4108,B-1500,Cure time,Numeric input,MAINT
+D4110,B-1500,Maintenance passcode,Numeric input,MAINT
+D4111,B-1500,Quality passcode,Numeric input,QUALITY
+D40-D57,B-1000,Slot 1-6 elapsed,Numeric,-
+D40-D57,B-1100,Slot 1-6 elapsed h/m/s,Numeric,-
+D40-D63,B-1700,Slot elapsed / remaining,Numeric,MAINT
+D58-D63,B-1100,Slot 1-6 remaining,Numeric,-
+D64-D69,B-1000,Slot 1-6 progress,Parts/bar,-
+M10,B-1000,Door closed,Lamp,-
+M11,B-1000,PID heat demand,Lamp,-
+M15,B-1400,Blower 1 contactor feedback,Lamp,MAINT
+M16,B-1400,Blower 2 contactor feedback,Lamp,MAINT
+M17,B-1400,Heater contactor feedback,Lamp,MAINT
+M32,B-1000,Blower 1 running,Lamp,-
+M33,B-1000,Blower 2 running,Lamp,-
+M35,B-1000,Heater on,Lamp,-
+M54,B-1400,Manual permit,Lamp,MAINT
+M58,B-1100,Go to early reset,Switch,MAINT
+M60,B-1200,Go to counter reset,Switch,QUALITY
+M61,B-1600,Locked out,Lamp,-
+M62,B-1100,Cure timers paused,Lamp,-
+M712,B-1200,Mismatch,Lamp,-
+M820,B-1000,Blower 1 start,Switch,-
+M821,B-1000,Blower 1 stop,Switch,-
+M822,B-1000,Blower 2 start,Switch,-
+M823,B-1000,Blower 2 stop,Switch,-
+M824,B-1300,Alarm accept,Switch,-
+M825,B-1800,Reset door counters,Switch,QUALITY
+M826,B-1800,Reset lot counters,Switch,QUALITY
+M828,B-1400,Exit manual test,Switch,MAINT
+M829,B-1600,Login maintenance,Switch,-
+M830,B-1600,Log out,Switch,-
+M832,B-1400,Manual Blower 1,Switch,MAINT
+M833,B-1400,Manual Blower 2,Switch,MAINT
+M834,B-1400,Manual Heater,Switch,MAINT
+M835,B-1600,Login quality,Switch,-
+M4020,B-1500,Heater requires airflow,Switch,MAINT
+M4021,B-1500,Cure timers pause on a fault,Switch,MAINT
+M700-M713,B-1000,Active Alarms,Numeric,-
+M700-M713,B-1300,Advanced user alarm,Alarm display,-
+M800-M805,B-1100,Slot 1-6 START,Switch,-
+M810-M815,B-1100,Slot 1-6 RESET,Switch,-
+M810-M815,B-1700,Slot 1-6 early reset,Switch,MAINT
+M4000-M4005,B-1000,Slot 1-6 running,Lamp,-

@@ -11,7 +11,17 @@ a GOT2000 GT2107 HMI.
 |---|-------------|--------|----------|
 | 1 | Electrical schematic diagram (13 A3 sheets) | **Delivered** | `01-electrical-schematic/` |
 | 2 | FX5U PLC program (ST, GX Works3) | **Delivered** — 97/97 tests pass | `02-plc-program/` |
-| 3 | GT2107 HMI project (GT Designer3) | Not started | `03-hmi-program/` |
+| 3 | GT2107 HMI project (GT Designer3) | **Delivered** — 10 screens, 151 objects | `03-hmi-program/` |
+
+## Project status
+
+All three deliverables are complete. The schematic is at Rev 3, the PLC program
+passes 127 of 127 behavioural tests, and the HMI design is rendered at the
+panel's true resolution for approval.
+
+Read them in this order: schematic → PLC functional description → HMI
+configuration. Each references the one before it, and the I/O allocation is
+generated from a single source file so the three cannot drift apart.
 
 ## 1. Electrical schematic
 

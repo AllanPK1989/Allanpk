@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="480" viewBox="0 0 800 480">
+<rect width="800" height="480" fill="#D3D7DC"/>
+<rect x="0" y="0" width="800" height="56" rx="0" fill="#2B323B"/>
+<text x="14" y="24" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13" fill="#9FB0C0" text-anchor="start" font-weight="bold" font-style="normal">OVN-2026-01  OVEN CONTROL</text>
+<text x="14" y="44" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="19" fill="#F3F5F7" text-anchor="start" font-weight="bold" font-style="normal">EARLY RESET  -  MAINTENANCE</text>
+<rect x="560" y="12" width="128" height="22" rx="11" fill="#9C6B12"/>
+<text x="624" y="27" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="11" fill="#FFFFFF" text-anchor="middle" font-weight="bold" font-style="normal">MAINTENANCE</text>
+<text x="624" y="47" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="10" fill="#9FB0C0" text-anchor="middle" font-weight="normal" font-style="normal">logged in</text>
+<text x="786" y="27" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="17" fill="#F3F5F7" text-anchor="end" font-weight="normal" font-style="normal">14:32</text>
+<text x="786" y="45" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="10" fill="#9FB0C0" text-anchor="end" font-weight="normal" font-style="normal">06-09-2026</text>
+<rect x="8" y="62" width="784" height="44" rx="5" fill="#9C6B12"/>
+<text x="20" y="85" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="15" fill="#FFFFFF" text-anchor="start" font-weight="bold" font-style="normal">THIS ENDS A CURE BEFORE ITS 2 HOURS ARE UP</text>
+<text x="20" y="100" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="11" fill="#FFE9E6" text-anchor="start" font-weight="normal" font-style="normal">it is recorded against your login with the slot and the minutes remaining, and it does NOT count as a lot unloaded</text>
+<rect x="12" y="114" width="776" height="38" rx="4" fill="#EFF1F3" stroke="#C2C8CF" stroke-width="1"/>
+<text x="28" y="139" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="14" fill="#1A1F26" text-anchor="start" font-weight="bold" font-style="normal">SLOT 1</text>
+<text x="120" y="139" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="16" fill="#1A1F26" text-anchor="start" font-weight="normal" font-style="normal">01:14:22</text>
+<text x="250" y="139" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="12" fill="#5B636E" text-anchor="start" font-weight="normal" font-style="normal">46 min remaining</text>
+<rect x="600" y="118" width="176" height="30" rx="4" fill="#F1DEDC" stroke="#B5342A" stroke-width="2"/>
+<text x="688.0" y="138.0" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="12" fill="#B5342A" text-anchor="middle" font-weight="bold" font-style="normal">EARLY RESET</text>
+<rect x="12" y="156" width="776" height="38" rx="4" fill="#E2E5E9" stroke="#C2C8CF" stroke-width="1"/>
+<text x="28" y="181" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="14" fill="#5B636E" text-anchor="start" font-weight="bold" font-style="normal">SLOT 2</text>
+<text x="120" y="181" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="16" fill="#5B636E" text-anchor="start" font-weight="normal" font-style="normal">-</text>
+<text x="250" y="181" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="12" fill="#5B636E" text-anchor="start" font-weight="normal" font-style="normal">not loaded</text>
+<rect x="12" y="198" width="776" height="38" rx="4" fill="#EFF1F3" stroke="#C2C8CF" stroke-width="1"/>
+<text x="28" y="223" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="14" fill="#1A1F26" text-anchor="start" font-weight="bold" font-style="normal">SLOT 3</text>
+<text x="120" y="223" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="16" fill="#1A1F26" text-anchor="start" font-weight="normal" font-style="normal">01:45:10</text>
+<text x="250" y="223" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="12" fill="#5B636E" text-anchor="start" font-weight="normal" font-style="normal">15 min remaining</text>
+<rect x="600" y="202" width="176" height="30" rx="4" fill="#F1DEDC" stroke="#B5342A" stroke-width="2"/>
+<text x="688.0" y="222.0" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="12" fill="#B5342A" text-anchor="middle" font-weight="bold" font-style="normal">EARLY RESET</text>
+<rect x="12" y="240" width="776" height="38" rx="4" fill="#E2E5E9" stroke="#C2C8CF" stroke-width="1"/>
+<text x="28" y="265" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="14" fill="#5B636E" text-anchor="start" font-weight="bold" font-style="normal">SLOT 4</text>
+<text x="120" y="265" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="16" fill="#5B636E" text-anchor="start" font-weight="normal" font-style="normal">02:00:00</text>
+<text x="250" y="265" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="12" fill="#5B636E" text-anchor="start" font-weight="normal" font-style="normal">complete - use the normal reset</text>
+<rect x="12" y="282" width="776" height="38" rx="4" fill="#E2E5E9" stroke="#C2C8CF" stroke-width="1"/>
+<text x="28" y="307" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="14" fill="#5B636E" text-anchor="start" font-weight="bold" font-style="normal">SLOT 5</text>
+<text x="120" y="307" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="16" fill="#5B636E" text-anchor="start" font-weight="normal" font-style="normal">-</text>
+<text x="250" y="307" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="12" fill="#5B636E" text-anchor="start" font-weight="normal" font-style="normal">not loaded</text>
+<rect x="12" y="324" width="776" height="38" rx="4" fill="#EFF1F3" stroke="#C2C8CF" stroke-width="1"/>
+<text x="28" y="349" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="14" fill="#1A1F26" text-anchor="start" font-weight="bold" font-style="normal">SLOT 6</text>
+<text x="120" y="349" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="16" fill="#1A1F26" text-anchor="start" font-weight="normal" font-style="normal">00:41:05</text>
+<text x="250" y="349" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="12" fill="#5B636E" text-anchor="start" font-weight="normal" font-style="normal">79 min remaining</text>
+<rect x="600" y="328" width="176" height="30" rx="4" fill="#F1DEDC" stroke="#B5342A" stroke-width="2"/>
+<text x="688.0" y="348.0" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="12" fill="#B5342A" text-anchor="middle" font-weight="bold" font-style="normal">EARLY RESET</text>
+<rect x="0" y="424" width="800" height="56" rx="0" fill="#2B323B"/>
+<rect x="8.0" y="430" width="127.33333333333334" height="44" rx="4" fill="#39424C" stroke="#5C6773" stroke-width="1"/>
+<text x="71.66666666666667" y="458" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13" fill="#C7CED6" text-anchor="middle" font-weight="normal" font-style="normal">HOME</text>
+<rect x="139.33333333333334" y="430" width="127.33333333333334" height="44" rx="4" fill="#48525E" stroke="#5C6773" stroke-width="1"/>
+<text x="203.0" y="458" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13" fill="#FFFFFF" text-anchor="middle" font-weight="bold" font-style="normal">SLOTS</text>
+<rect x="270.6666666666667" y="430" width="127.33333333333334" height="44" rx="4" fill="#39424C" stroke="#5C6773" stroke-width="1"/>
+<text x="334.33333333333337" y="458" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13" fill="#C7CED6" text-anchor="middle" font-weight="normal" font-style="normal">COUNTERS</text>
+<rect x="402.0" y="430" width="127.33333333333334" height="44" rx="4" fill="#39424C" stroke="#5C6773" stroke-width="1"/>
+<text x="465.6666666666667" y="458" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13" fill="#C7CED6" text-anchor="middle" font-weight="normal" font-style="normal">ALARMS</text>
+<rect x="533.3333333333334" y="430" width="127.33333333333334" height="44" rx="4" fill="#39424C" stroke="#5C6773" stroke-width="1"/>
+<text x="597.0" y="458" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13" fill="#C7CED6" text-anchor="middle" font-weight="normal" font-style="normal">HISTORY</text>
+<rect x="664.6666666666667" y="430" width="127.33333333333334" height="44" rx="4" fill="#39424C" stroke="#5C6773" stroke-width="1"/>
+<text x="728.3333333333334" y="458" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13" fill="#C7CED6" text-anchor="middle" font-weight="normal" font-style="normal">LOGIN</text>
+</svg>

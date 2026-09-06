@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="480" viewBox="0 0 800 480">
+<rect width="800" height="480" fill="#D3D7DC"/>
+<rect x="0" y="0" width="800" height="56" rx="0" fill="#2B323B"/>
+<text x="14" y="24" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13" fill="#9FB0C0" text-anchor="start" font-weight="bold" font-style="normal">OVN-2026-01  OVEN CONTROL</text>
+<text x="14" y="44" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="19" fill="#F3F5F7" text-anchor="start" font-weight="bold" font-style="normal">COUNTER RESET  -  QUALITY</text>
+<rect x="560" y="12" width="128" height="22" rx="11" fill="#1D5C86"/>
+<text x="624" y="27" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="11" fill="#FFFFFF" text-anchor="middle" font-weight="bold" font-style="normal">QUALITY</text>
+<text x="624" y="47" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="10" fill="#9FB0C0" text-anchor="middle" font-weight="normal" font-style="normal">logged in</text>
+<text x="786" y="27" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="17" fill="#F3F5F7" text-anchor="end" font-weight="normal" font-style="normal">14:32</text>
+<text x="786" y="45" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="10" fill="#9FB0C0" text-anchor="end" font-weight="normal" font-style="normal">06-09-2026</text>
+<rect x="8" y="62" width="784" height="44" rx="5" fill="#1D5C86"/>
+<text x="20" y="85" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="15" fill="#FFFFFF" text-anchor="start" font-weight="bold" font-style="normal">RESETTING A COUNTER CLEARS THE PRODUCTION RECORD</text>
+<text x="20" y="100" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="11" fill="#FFE9E6" text-anchor="start" font-weight="normal" font-style="normal">take the readings first; the reset itself is written to the 7 day log</text>
+<rect x="12" y="114" width="380" height="130" rx="4" fill="#EFF1F3" stroke="#C2C8CF" stroke-width="1"/>
+<text x="28" y="140" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13" fill="#1A1F26" text-anchor="start" font-weight="bold" font-style="normal">DOOR COUNTERS</text>
+<text x="28" y="164" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="12" fill="#5B636E" text-anchor="start" font-weight="normal" font-style="normal">opened</text>
+<text x="200" y="164" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="16" fill="#1A1F26" text-anchor="end" font-weight="bold" font-style="normal">1 284</text>
+<text x="28" y="186" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="12" fill="#5B636E" text-anchor="start" font-weight="normal" font-style="normal">closed</text>
+<text x="200" y="186" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="16" fill="#1A1F26" text-anchor="end" font-weight="bold" font-style="normal">1 283</text>
+<rect x="220" y="154" width="152" height="74" rx="4" fill="#DEE9F1" stroke="#1D5C86" stroke-width="2"/>
+<text x="296.0" y="196.0" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="15" fill="#1D5C86" text-anchor="middle" font-weight="bold" font-style="normal">RESET</text>
+<rect x="408" y="114" width="380" height="130" rx="4" fill="#EFF1F3" stroke="#C2C8CF" stroke-width="1"/>
+<text x="424" y="140" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13" fill="#1A1F26" text-anchor="start" font-weight="bold" font-style="normal">LOT COUNTERS</text>
+<text x="424" y="164" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="12" fill="#5B636E" text-anchor="start" font-weight="normal" font-style="normal">loaded</text>
+<text x="596" y="164" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="16" fill="#1A1F26" text-anchor="end" font-weight="bold" font-style="normal">412</text>
+<text x="424" y="186" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="12" fill="#5B636E" text-anchor="start" font-weight="normal" font-style="normal">unloaded</text>
+<text x="596" y="186" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="16" fill="#1A1F26" text-anchor="end" font-weight="bold" font-style="normal">409</text>
+<text x="424" y="208" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="12" fill="#5B636E" text-anchor="start" font-weight="normal" font-style="normal">early resets</text>
+<text x="596" y="208" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="16" fill="#9C6B12" text-anchor="end" font-weight="bold" font-style="normal">3</text>
+<rect x="616" y="154" width="152" height="74" rx="4" fill="#DEE9F1" stroke="#1D5C86" stroke-width="2"/>
+<text x="692.0" y="196.0" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="15" fill="#1D5C86" text-anchor="middle" font-weight="bold" font-style="normal">RESET</text>
+<rect x="12" y="256" width="776" height="96" rx="4" fill="#EEF3F7" stroke="#1D5C86" stroke-width="2"/>
+<text x="28" y="282" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13" fill="#1D5C86" text-anchor="start" font-weight="bold" font-style="normal">WHY ONLY QUALITY CAN DO THIS</text>
+<text x="28" y="304" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="11" fill="#1A1F26" text-anchor="start" font-weight="normal" font-style="normal">Maintenance is who cuts a cure short with an early reset. If the maintenance passcode could also</text>
+<text x="28" y="320" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="11" fill="#1A1F26" text-anchor="start" font-weight="normal" font-style="normal">clear these counters, the person who ended a cure early could erase the record of having done it.</text>
+<text x="28" y="336" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="11" fill="#1A1F26" text-anchor="start" font-weight="normal" font-style="normal">The two passcodes are held in the PLC, not in this panel, so replacing the HMI does not change the rule.</text>
+<rect x="0" y="424" width="800" height="56" rx="0" fill="#2B323B"/>
+<rect x="8.0" y="430" width="127.33333333333334" height="44" rx="4" fill="#39424C" stroke="#5C6773" stroke-width="1"/>
+<text x="71.66666666666667" y="458" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13" fill="#C7CED6" text-anchor="middle" font-weight="normal" font-style="normal">HOME</text>
+<rect x="139.33333333333334" y="430" width="127.33333333333334" height="44" rx="4" fill="#39424C" stroke="#5C6773" stroke-width="1"/>
+<text x="203.0" y="458" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13" fill="#C7CED6" text-anchor="middle" font-weight="normal" font-style="normal">SLOTS</text>
+<rect x="270.6666666666667" y="430" width="127.33333333333334" height="44" rx="4" fill="#48525E" stroke="#5C6773" stroke-width="1"/>
+<text x="334.33333333333337" y="458" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13" fill="#FFFFFF" text-anchor="middle" font-weight="bold" font-style="normal">COUNTERS</text>
+<rect x="402.0" y="430" width="127.33333333333334" height="44" rx="4" fill="#39424C" stroke="#5C6773" stroke-width="1"/>
+<text x="465.6666666666667" y="458" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13" fill="#C7CED6" text-anchor="middle" font-weight="normal" font-style="normal">ALARMS</text>
+<rect x="533.3333333333334" y="430" width="127.33333333333334" height="44" rx="4" fill="#39424C" stroke="#5C6773" stroke-width="1"/>
+<text x="597.0" y="458" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13" fill="#C7CED6" text-anchor="middle" font-weight="normal" font-style="normal">HISTORY</text>
+<rect x="664.6666666666667" y="430" width="127.33333333333334" height="44" rx="4" fill="#39424C" stroke="#5C6773" stroke-width="1"/>
+<text x="728.3333333333334" y="458" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13" fill="#C7CED6" text-anchor="middle" font-weight="normal" font-style="normal">LOGIN</text>
+</svg>
