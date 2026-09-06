@@ -109,7 +109,9 @@ All confirmed by the client:
 3. **Lot counting** — loaded increments on every start; unloaded increments only
    on a normal reset at 2 h. An early reset counts separately and is **not** an
    unload. That asymmetry is what exposes malpractice.
-4. **Passwords** — a single protected level: Level 2, maintenance technician.
+4. **Passwords** — **two separate passcodes, not two levels**: MAINTENANCE
+   (early slot reset, manual test, settings) and QUALITY (resetting the
+   counters). Neither role inherits the other's rights.
 5. **Heat-up watchdog** — the alarm for "controller ON a long time and never
    reaching set point". 60 min default, adjustable 10–240 min on the HMI.
 6. **Manual test guards** — accepted as proposed.
@@ -117,8 +119,14 @@ All confirmed by the client:
 8. **Door-signal alarm** (added) — a pulsating door signal, or no 'door closed'
    signal for 10 minutes, energises the volt-free alarm output Y12 / -KA4.
 
-### One judgement call to confirm
+9. **Cure timers stop rather than complete** — a slot timer is held whenever
+   the oven is not fit to cure (E-stop, high-limit, heater overload, PID alarm
+   or sensor break, or the heat-up watchdog). It resumes from the accumulated
+   value and needs its full remaining time of healthy running.
 
-Door open/close counter reset was put behind the maintenance password along
-with everything else, on the grounds that a counter anyone can zero is not
-evidence. One flag changes it if operators should reset it freely.
+### Separation of duties
+
+MAINTENANCE performs the early slot resets; QUALITY, and only QUALITY, can
+clear the counters that record them. If one passcode did both, the person who
+cut a cure short could erase the record of having done it. The lot-counter
+reset is explicitly refused for maintenance, and there is a test for it.

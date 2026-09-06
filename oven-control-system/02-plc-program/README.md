@@ -6,22 +6,22 @@ here and on sheet 13 come from the same source file.
 
 ## Status
 
-**97 of 97 behavioural tests pass.** `python3 test/test_logic.py`
+**127 of 127 behavioural tests pass.** `python3 test/test_logic.py`
 
 Every specified behaviour is covered: the door interlock and its auto-restart,
 the no-restart-after-stop rule, the heater anti-chatter and permissive
 override, the heat-up watchdog (including that normal PID cycling never trips
 it), both door-signal watchdogs, chatter not inflating the counters, the six
-slot timers, the early-reset password rule and the malpractice figure, resume
-after a power failure, manual test guards, alarm handling and welded-contactor
-detection.
+slot timers, the early-reset passcode rule and the malpractice figure, resume
+after a power failure, manual test guards, alarm handling, welded-contactor
+detection, the two-role security model with lockout, and the cure-timer gating.
 
 ## What is here
 
 | Path | What it is |
 |------|-----------|
 | `st/*.st` | **The program.** Eight ST program blocks, P00–P07. |
-| `labels/global_labels.csv` | Global label list for GX Works3 import (143 labels). |
+| `labels/global_labels.csv` | Global label list for GX Works3 import (158 labels). |
 | `labels/make_labels.py` | Generates the CSV **and checks it** — see below. |
 | `labels/device_comments_xy.csv` | X/Y device comments. |
 | `test/sim.py` | Behavioural model of the program (a test harness, not the deliverable). |
@@ -83,6 +83,10 @@ two things to keep in step.
   contactors and inflate the counters.
 - **Early reset does not count as an unload.** That asymmetry is what makes
   `gLotsUnaccounted` a real number rather than an accounting identity.
-- **Two safety options are built but disabled** so the delivered behaviour is
-  exactly as specified — `gSetHtrNeedsAir` (M4020) and `gSetSlotGated` (M4021).
-  Both are tested. See the functional description §7.
+- **Two separate roles, not two levels.** Maintenance cuts cures short; only
+  quality can clear the counters that record it. See the functional description
+  §5 — the separation of duties is the point, not an implementation detail.
+- **Cure timers are gated** (`gSetSlotGated` ON): a fault holds the timer rather
+  than letting it run on to completion.
+- **One option remains built but disabled** — `gSetHtrNeedsAir` (M4020), the
+  heater airflow interlock. Tested; enabling it is a one-bit change.

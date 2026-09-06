@@ -35,8 +35,12 @@ IF NOT gDefaultsWritten THEN
     gSetManualTmoS  := 300;             (* manual test auto-exit, seconds      *)
     gSetLoginTmoS   := 300;             (* level 2 auto-logout, seconds        *)
     gSetSlotTargetS := 7200;            (* slot cure time = 2 hours            *)
+    gSetMaintCode   := 2468;            (* MAINTENANCE passcode - CHANGE IT    *)
+    gSetQualityCode := 1357;            (* QUALITY passcode - CHANGE IT        *)
+    gSetMaxAttempts := 3;               (* failed logins before a lockout      *)
+    gSetLockoutS    := 300;             (* lockout duration, seconds           *)
     gSetHtrNeedsAir := FALSE;           (* optional airflow interlock - OFF    *)
-    gSetSlotGated   := FALSE;           (* optional slot-timer gating - OFF    *)
+    gSetSlotGated   := TRUE;            (* cure timers pause on a fault - ON   *)
     gDefaultsWritten := TRUE;
 END_IF;
 
@@ -48,8 +52,12 @@ IF SM402 THEN
     gBl1RunReq    := FALSE;
     gBl2RunReq    := FALSE;
     gHtrCmd       := FALSE;
-    gManualMode   := FALSE;
-    gL2LoggedIn   := FALSE;
+    gManualMode      := FALSE;
+    gMaintLoggedIn   := FALSE;
+    gQualityLoggedIn := FALSE;
+    gFailedAttempts  := 0;
+    gLockoutAcc      := 0;
+    gHmiPasscodeEntry := 0;
     gHtrMinOnAcc  := 0;
     gHtrMinOffAcc := 0;                 (* forces the min-OFF delay before the *)
                                         (* first heater ON after power-up      *)
@@ -106,7 +114,3 @@ gHtrPermit := gEStopOK
 IF gSetHtrNeedsAir THEN
     gHtrPermit := gHtrPermit AND (gK1Closed OR gK2Closed OR NOT gDoorClosed);
 END_IF;
-
-(*      Permissive for the slot timers to advance, used only when the optional  *)
-(*      gating is enabled.                                                       *)
-gSlotRunPermit := gEStopOK AND gHighLimitOK AND NOT gHtrOlTrip;

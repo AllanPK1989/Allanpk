@@ -25,6 +25,16 @@
    Local labels required in this POU:   i : INT
    ============================================================================= *)
 
+(* -- 0. may the cure timers advance? ---------------------------------------- *)
+(*      gSetSlotGated is ON by default: a cure timer must not run on towards    *)
+(*      completion while the oven cannot actually hold the product at           *)
+(*      temperature. gAlmHeatUp is fresh here because P04 has already run.      *)
+gSlotRunPermit := gEStopOK
+                  AND gHighLimitOK
+                  AND gPidOK
+                  AND NOT gHtrOlTrip
+                  AND NOT gAlmHeatUp;
+
 gSlotsActive := 0;
 
 FOR i := 1 TO 6 DO
@@ -72,8 +82,8 @@ FOR i := 1 TO 6 DO
             gEventValue := 0;
             gEventPulse := TRUE;
 
-        ELSIF gSlotRunning[i] AND gL2LoggedIn THEN
-            (* EARLY RESET - maintenance password only, NOT an unload *)
+        ELSIF gSlotRunning[i] AND gMaintLoggedIn THEN
+            (* EARLY RESET - MAINTENANCE passcode only, NOT an unload *)
             gEventValue      := DINT_TO_INT(gSlotElapsed[i] / DINT#60);
             gSlotRunning[i]  := FALSE;
             gSlotComplete[i] := FALSE;
@@ -94,14 +104,34 @@ END_FOR;
 
 gAnySlotRunning := gSlotsActive > 0;
 
+(* -- 4a. paused indication --------------------------------------------------- *)
+(*      Operators must be able to see WHY a cure timer is not advancing.        *)
+gSlotTimersPaused := gSetSlotGated AND NOT gSlotRunPermit AND gAnySlotRunning;
+
+IF gSlotTimersPaused AND NOT gSlotPausedMem THEN
+    gEventCode  := 55;
+    gEventParam := gSlotsActive;
+    gEventValue := 0;
+    gEventPulse := TRUE;
+END_IF;
+IF NOT gSlotTimersPaused AND gSlotPausedMem THEN
+    gEventCode  := 56;
+    gEventParam := gSlotsActive;
+    gEventValue := 0;
+    gEventPulse := TRUE;
+END_IF;
+gSlotPausedMem := gSlotTimersPaused;
+
 (* -- 5. lot reconciliation -------------------------------------------------- *)
 gLotsUnaccounted := gCntLotsLoaded - gCntLotsUnloaded - INT_TO_DINT(gSlotsActive);
 gAlmLotMismatch  := gLotsUnaccounted <> DINT#0;
 
-(* -- 6. counter resets, maintenance password only --------------------------- *)
+(* -- 6. counter resets - QUALITY passcode only ------------------------------- *)
+(*      NOT maintenance. Maintenance performs the early resets; they must not   *)
+(*      be able to clear the counters that record them. See P01_Security.       *)
 IF gHmiResetDoorCnt THEN
     gHmiResetDoorCnt := FALSE;
-    IF gL2LoggedIn THEN
+    IF gQualityLoggedIn THEN
         gCntDoorOpen  := DINT#0;
         gCntDoorClose := DINT#0;
         gEventCode  := 61;
@@ -113,7 +143,7 @@ END_IF;
 
 IF gHmiResetLotCnt THEN
     gHmiResetLotCnt := FALSE;
-    IF gL2LoggedIn THEN
+    IF gQualityLoggedIn THEN
         gCntLotsLoaded   := DINT#0;
         gCntLotsUnloaded := DINT#0;
         gCntEarlyReset   := DINT#0;

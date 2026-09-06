@@ -5,7 +5,7 @@ DWG = "OVN-2026-01"
 
 
 def new(num, title, sub=None):
-    s = Sheet(num, title, DWG, rev="2")
+    s = Sheet(num, title, DWG, rev="3")
     s.frame()
     s.header(sub)
     return s
@@ -38,6 +38,8 @@ def sheet01():
         ("PLC", "MELSEC iQ-F  FX5U-32MT/ES  (16 DI / 16 DO, sink)"),
         ("HMI", "GOT2000  GT2107-WTBD  7\" TFT, 24 V DC, Ethernet"),
         ("PLC <-> HMI link", "Ethernet 100BASE-TX, MELSOFT connection"),
+        ("Security", "Two separate passcodes: MAINTENANCE and QUALITY"),
+        ("Cure timers", "Held while the oven is not fit to cure"),
         ("Door watchdog", "Chatter or no 'door closed' signal for 10 min"),
         ("", "-> alarm + volt-free output Y12 / -KA4"),
         ("Data logging", "FX5U SD card, 7-day rolling history, CSV"),
@@ -70,11 +72,14 @@ def sheet01():
         "     remote alarm output Y12 / -KA4 on terminals -X1:50 / -X1:51.",
         "f)  Six independent retentive 2-hour slot timers (slot 1...6). Once started",
         "     a timer runs to 02:00:00 and can only then be reset. An earlier reset",
-        "     needs the maintenance password (HMI security level 2).",
+        "     needs the MAINTENANCE passcode. A cure timer is held, and does not run",
+        "     on to completion, whenever the oven is not fit to cure.",
         "g)  Door open / door close event counters, separate and resettable.",
         "h)  Lots loaded / lots unloaded counters derived from slot-timer start and",
         "     reset events, with a mismatch indication.",
-        "i)  Password-protected manual test of the blowers and the heater (level 2).",
+        "i)  Two separate passcodes, not two levels: MAINTENANCE (early slot reset,",
+        "     manual test, settings) and QUALITY (resetting the counters). Neither",
+        "     role inherits the other's rights - see NOTE 11.",
         "j)  Alarm and event history logged to the FX5U SD card, 7 days rolling,",
         "     exportable to a USB stick from the HMI.",
     ]
@@ -143,7 +148,7 @@ def sheet01():
          "Terminal / protective earth")
 
     # ---------------- notes ----------------
-    nx, ny = 152, 175
+    nx, ny = 152, 170
     s.text(nx, ny, "5.  NOTES", 3.0, weight="bold")
     s.line(nx, ny + 1.6, nx + 250, ny + 1.6, w=LW_THIN)
     notes = [
@@ -167,25 +172,27 @@ def sheet01():
         "9.  Cable screens of the thermocouple extension lead are earthed at the panel end only.",
         "10. Ratings shown are for the assumed loads listed in section 1.  Confirm motor nameplate FLC and heater element",
         "     rating on site and adjust -Q2/-Q3 settings, -F1/-F2/-F3 overload settings and cable sizes accordingly.",
+        "11. SEPARATION OF DUTIES - maintenance performs the early slot-timer resets; the quality team, and only the quality",
+        "     team, can clear the counters that record them, so the record cannot be erased by the person who made it.  Both",
+        "     passcodes are held in the PLC, not the HMI, and must be changed from their defaults at commissioning.",
     ]
-    s.text(x, 212, "6.  REVISION HISTORY", 3.0, weight="bold")
-    s.line(x, 213.6, x + 128, 213.6, w=LW_THIN)
-    s.table(x, 216, [(12, "REV"), (22, "DATE"), (74, "DESCRIPTION"), (20, "BY")], [
+    s.text(x, 222, "6.  REVISION HISTORY", 3.0, weight="bold")
+    s.line(x, 223.6, x + 128, 223.6, w=LW_THIN)
+    s.table(x, 226, [(12, "REV"), (22, "DATE"), (74, "DESCRIPTION"), (20, "BY")], [
         ["0", "2026-09-06", "First issue - schematic for review", "CLAUDE"],
-        ["1", "2026-09-06", "Door-signal watchdog alarm output", "CLAUDE"],
-        ["", "", "Y12 / -KA4 added; single maintenance", ""],
-        ["", "", "password level; 7-day data logging to", ""],
-        ["", "", "the SD card in the FX5U", ""],
-        ["2", "2026-09-06", "-S0 contact to PLC X0 corrected from", "CLAUDE"],
-        ["", "", "11-12 to 21-22 (11-12 is used in the", ""],
-        ["", "", "coil bus on sheet 05)", ""],
+        ["1", "2026-09-06", "Door-signal watchdog output Y12 / -KA4;", "CLAUDE"],
+        ["", "", "7-day event logging to the SD card", ""],
+        ["2", "2026-09-06", "-S0 contact to PLC X0 corrected to 21-22", "CLAUDE"],
+        ["", "", "(11-12 is used in the coil bus, sheet 05)", ""],
+        ["3", "2026-09-06", "Separate maintenance / quality passcodes;", "CLAUDE"],
+        ["", "", "cure timers held when the oven is not fit", ""],
     ], rh=5.0, align=["middle", "middle", "start", "middle"])
 
     yy = ny + 6.0
     for n in notes:
         ind = (len(n) - len(n.lstrip())) * 0.85
         s.text(nx + ind, yy, n.strip(), 2.05)
-        yy += 3.5
+        yy += 3.4
     return s
 
 

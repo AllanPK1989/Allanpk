@@ -11,20 +11,9 @@ Run `python3 labels/make_labels.py` after any change.
 | Device | Latch (1) | Contents |
 |---|---|---|
 | M | M4000–M4095 | slot state, config options |
-| D | D4000–D4499 | slot elapsed, counters, settings |
+| D | D4000–D4499 | slot elapsed, counters, settings, passcodes |
 
-## Summary
-
-| Area | Range | Count |
-|---|---|---|
-| Working bits | M0–M59 | 60 |
-| Alarm bits (GOT block) | M700–M715 | 16 |
-| Alarm memory | M720–M735 | 16 |
-| HMI command bits | M800–M834 | 35 |
-| Latched bits | M4000–M4022 | 23 |
-| Working words | D0–D69 | 70 |
-| Latched words | D4000–D4109 | 110 |
-| **Total labels** | | **143** |
+## Summary — 158 labels, 27 of them latched
 
 ## Latched data — survives a power failure
 
@@ -53,6 +42,10 @@ Run `python3 labels/make_labels.py` after any change.
 | `gSetManualTmoS` | D4106 | Word [Signed] | SET manual test auto-exit, s |
 | `gSetLoginTmoS` | D4107 | Word [Signed] | SET level 2 auto-logout, s |
 | `gSetSlotTargetS` | D4108 | Double Word [Signed] | SET slot cure time, s (default 7200) |
+| `gSetMaintCode` | D4110 | Word [Signed] | SET MAINTENANCE passcode - change at commissioning |
+| `gSetQualityCode` | D4111 | Word [Signed] | SET QUALITY passcode - change at commissioning |
+| `gSetMaxAttempts` | D4112 | Word [Signed] | SET failed logins before lockout (default 3) |
+| `gSetLockoutS` | D4113 | Word [Signed] | SET lockout duration, s (default 300) |
 
 ## Full label list
 
@@ -116,8 +109,12 @@ Run `python3 labels/make_labels.py` after any change.
 | `gManBl1` | M55 | Bit | manual blower 1 demand |
 | `gManBl2` | M56 | Bit | manual blower 2 demand |
 | `gManHtr` | M57 | Bit | manual heater demand |
-| `gL2LoggedIn` | M58 | Bit | maintenance level 2 logged in |
+| `gMaintLoggedIn` | M58 | Bit | MAINTENANCE role logged in |
 | `gEventPulse` | M59 | Bit | 1 scan event trigger for SD logging |
+| `gQualityLoggedIn` | M60 | Bit | QUALITY role logged in |
+| `gLockoutActive` | M61 | Bit | login locked out after failed attempts |
+| `gSlotTimersPaused` | M62 | Bit | cure timers held - oven not fit to cure |
+| `gSlotPausedMem` | M63 | Bit | edge memory for the pause event |
 | `gAlmBits` | M700 | Bit(0..15) | alarm block, overlays the named alarms |
 | `gAlmEStop` | M700 | Bit | ALM 0  emergency stop operated |
 | `gAlmBl1Ol` | M701 | Bit | ALM 1  blower 1 overload tripped |
@@ -132,6 +129,7 @@ Run `python3 labels/make_labels.py` after any change.
 | `gAlmK2Fault` | M710 | Bit | ALM 10 -K2 feedback disagrees |
 | `gAlmK3Fault` | M711 | Bit | ALM 11 -K3 feedback disagrees |
 | `gAlmLotMismatch` | M712 | Bit | ALM 12 lots loaded / unloaded mismatch |
+| `gAlmCurePaused` | M713 | Bit | ALM 13 cure timers paused, oven not fit |
 | `gAlmMem` | M720 | Bit(0..15) | previous scan alarm block |
 | `gHmiSlotStart` | M800 | Bit(1..6) | HMI start, slot 1-6 |
 | `gHmiSlotReset` | M810 | Bit(1..6) | HMI reset, slot 1-6 |
@@ -144,12 +142,13 @@ Run `python3 labels/make_labels.py` after any change.
 | `gHmiResetLotCnt` | M826 | Bit | HMI reset lot counters |
 | `gHmiManualReq` | M827 | Bit | HMI enter manual test |
 | `gHmiManualExit` | M828 | Bit | HMI exit manual test |
-| `gHmiL2Login` | M829 | Bit | GOT reports auth level 2 reached |
-| `gHmiL2Logout` | M830 | Bit | GOT reports logout |
+| `gHmiMaintLoginReq` | M829 | Bit | HMI login attempt, MAINTENANCE |
+| `gHmiLogout` | M830 | Bit | HMI log out |
 | `gHmiActivity` | M831 | Bit | GOT screen touch, resets the logout timer |
 | `gHmiManBl1` | M832 | Bit | HMI manual blower 1, momentary |
 | `gHmiManBl2` | M833 | Bit | HMI manual blower 2, momentary |
 | `gHmiManHtr` | M834 | Bit | HMI manual heater, momentary |
+| `gHmiQualityLoginReq` | M835 | Bit | HMI login attempt, QUALITY |
 | `gSlotRunning` | M4000 | Bit(1..6) | LATCH slot 1-6 occupied / timing |
 | `gSlotComplete` | M4008 | Bit(1..6) | LATCH slot 1-6 reached 2 hours |
 | `gSetHtrNeedsAir` | M4020 | Bit | LATCH option: heater needs a blower running |
@@ -165,7 +164,7 @@ Run `python3 labels/make_labels.py` after any change.
 | `gK2FbAcc` | D7 | Word [Signed] | -K2 feedback disagreement, 100 ms units |
 | `gK3FbAcc` | D8 | Word [Signed] | -K3 feedback disagreement, 100 ms units |
 | `gManualTmoAcc` | D9 | Word [Signed] | manual test elapsed, s |
-| `gLoginTmoAcc` | D10 | Word [Signed] | level 2 login idle time, s |
+| `gMaintTmoAcc` | D10 | Word [Signed] | maintenance login idle time, s |
 | `gSlotsActive` | D11 | Word [Signed] | number of slots currently running |
 | `gEventCode` | D12 | Word [Signed] | event code for the SD log |
 | `gEventParam` | D13 | Word [Signed] | event parameter, usually the slot number |
@@ -177,6 +176,11 @@ Run `python3 labels/make_labels.py` after any change.
 | `gTotHtrRunH` | D19 | Word [Signed] | heater running hours, for the HMI |
 | `gTotBl1RunH` | D20 | Word [Signed] | blower 1 running hours, for the HMI |
 | `gTotBl2RunH` | D21 | Word [Signed] | blower 2 running hours, for the HMI |
+| `gQualityTmoAcc` | D22 | Word [Signed] | quality login idle time, s |
+| `gFailedAttempts` | D23 | Word [Signed] | consecutive failed login attempts |
+| `gLockoutAcc` | D26 | Word [Signed] | login lockout remaining, s |
+| `gHmiPasscodeEntry` | D27 | Word [Signed] | passcode typed on the HMI, cleared after use |
+| `gActiveRole` | D28 | Word [Signed] | 0 none, 1 maintenance, 2 quality |
 | `gLotsUnaccounted` | D24 | Double Word [Signed] | loaded - unloaded - running = the discrepancy |
 | `gSlotH` | D40 | Word [Signed](1..6) | slot 1-6 elapsed hours |
 | `gSlotM` | D46 | Word [Signed](1..6) | slot 1-6 elapsed minutes |
@@ -201,3 +205,7 @@ Run `python3 labels/make_labels.py` after any change.
 | `gSetManualTmoS` | D4106 | Word [Signed] | SET manual test auto-exit, s |
 | `gSetLoginTmoS` | D4107 | Word [Signed] | SET level 2 auto-logout, s |
 | `gSetSlotTargetS` | D4108 | Double Word [Signed] | SET slot cure time, s (default 7200) |
+| `gSetMaintCode` | D4110 | Word [Signed] | SET MAINTENANCE passcode - change at commissioning |
+| `gSetQualityCode` | D4111 | Word [Signed] | SET QUALITY passcode - change at commissioning |
+| `gSetMaxAttempts` | D4112 | Word [Signed] | SET failed logins before lockout (default 3) |
+| `gSetLockoutS` | D4113 | Word [Signed] | SET lockout duration, s (default 300) |

@@ -16,15 +16,26 @@ real-time-clock stamp. Retention is 7 days rolling — see `cpu-parameters.md`.
 | 52 | Door closed | – | – |
 | 53 | Door signal pulsating (chatter alarm) | – | transitions counted |
 | 54 | No 'door closed' signal for the watchdog period | – | seconds |
-| 61 | Door counters reset | – | – |
-| 62 | Lot counters reset | – | – |
+| 55 | Cure timers **paused** — oven not fit to cure | slots affected | – |
+| 56 | Cure timers resumed | slots affected | – |
+| 61 | Door counters reset (quality) | – | – |
+| 62 | Lot counters reset (quality) | – | – |
 | 71 | Manual test entered | – | – |
 | 72 | Manual test exited | – | – |
+| 73 | **MAINTENANCE** logged in | – | – |
+| 74 | **QUALITY** logged in | – | – |
+| 75 | Failed login attempt | – | attempt number |
+| 76 | Login attempted while locked out | – | seconds remaining |
+| 77 | Logged out | – | – |
 | 81 | Heat-up watchdog — failure to reach setpoint | – | watchdog setting, min |
 
 ## The codes that matter for traceability
 
-**41–46 are the malpractice record.** Every one of them is a cure that was cut
+**41–46 are the malpractice record.** They are written only by MAINTENANCE,
+and only QUALITY can clear the counters that tally them — see the separation of
+duties note in `functional-description.md` §5.
+
+Every one of them is a cure that was cut
 short with the maintenance password, stamped with the slot number, the wall
 clock time and how many minutes short it was. They are the only events that
 increment `gCntEarlyReset` and they deliberately do **not** increment

@@ -191,9 +191,9 @@ def test_slot_timers():
     o.gHmiSlotReset[2] = True; o.run(1)
     check("early reset refused without login", o.gSlotRunning[2])
 
-    o.gHmiL2Login = True; o.run(1)
+    o.login('maint'); o.run(1)
     o.gHmiSlotReset[2] = True; o.run(1)
-    check("early reset accepted with level 2", not o.gSlotRunning[2])
+    check("early reset accepted with the maintenance code", not o.gSlotRunning[2])
     check("early reset counted", o.gCntEarlyReset == 1)
     check("early reset NOT counted as an unload", o.gCntLotsUnloaded == 0)
     check("one lot unaccounted", o.gLotsUnaccounted == 1, f"got {o.gLotsUnaccounted}")
@@ -245,9 +245,9 @@ def test_manual_and_counters():
     o.gHmiManualReq = True; o.run(1)
     check("manual test refused without login", not o.gManualMode)
 
-    o.gHmiL2Login = True; o.run(1)
+    o.login('maint'); o.run(1)
     o.gHmiManualReq = True; o.run(1)
-    check("manual test entered with level 2", o.gManualMode)
+    check("manual test entered with the maintenance code", o.gManualMode)
 
     o.gHmiManBl1 = True; o.run(1)
     check("manual blower 1 runs", o.Y0)
@@ -266,7 +266,7 @@ def test_manual_and_counters():
 
     t("16. Manual test is blocked during a cure")
     o = Oven(); o.run(2)
-    o.gHmiL2Login = True; o.run(1)
+    o.login('maint'); o.run(1)
     o.gHmiSlotStart[1] = True; o.run(1)
     o.gHmiManualReq = True; o.run(1)
     check("manual test refused while a slot timer is running", not o.gManualMode)
@@ -276,17 +276,61 @@ def test_manual_and_counters():
     for _ in range(2):
         o.X5 = False; o.run(3); o.X5 = True; o.run(3)
     o.gHmiResetDoorCnt = True; o.run(1)
-    check("door counter reset refused without login", o.gCntDoorOpen == 2)
-    o.gHmiL2Login = True; o.run(1)
+    check("door counter reset refused with nobody logged in", o.gCntDoorOpen == 2)
+    o.login('maint'); o.run(1)
     o.gHmiResetDoorCnt = True; o.run(1)
-    check("door counter reset accepted with level 2", o.gCntDoorOpen == 0)
+    check("door counter reset REFUSED for maintenance", o.gCntDoorOpen == 2)
+    o.login('quality'); o.run(1)
+    o.gHmiResetDoorCnt = True; o.run(1)
+    check("door counter reset accepted for quality", o.gCntDoorOpen == 0)
 
-    t("18. Level 2 logs out on its own")
+    t("18. Separation of duties on the lot counters")
     o = Oven(); o.run(2)
-    o.gHmiL2Login = True; o.run(1)
-    check("logged in", o.gL2LoggedIn)
+    o.gHmiSlotStart[1] = True; o.run(1)
+    o.login('maint'); o.run(1)
+    o.gHmiSlotReset[1] = True; o.run(1)
+    check("maintenance can cut a cure short", o.gCntEarlyReset == 1)
+    check("it shows as unaccounted", o.gLotsUnaccounted == 1)
+    o.gHmiResetLotCnt = True; o.run(1)
+    check("maintenance CANNOT erase the record of its own early reset",
+          o.gCntEarlyReset == 1 and o.gLotsUnaccounted == 1)
+    o.login('quality'); o.run(1)
+    o.gHmiResetLotCnt = True; o.run(1)
+    check("quality can clear the lot counters", o.gCntEarlyReset == 0)
+
+    t("19. Passcodes, wrong entries and lockout")
+    o = Oven(); o.run(2)
+    o.login('maint', 9999); o.run(1)
+    check("wrong code refused", not o.gMaintLoggedIn)
+    check("failed attempt counted", o.gFailedAttempts == 1)
+    o.login('maint', 1111); o.run(1)
+    o.login('maint', 2222); o.run(1)
+    check("locked out after 3 failures", o.gLockoutActive)
+    o.login('maint'); o.run(1)
+    check("the CORRECT code is refused while locked out", not o.gMaintLoggedIn)
     o.run(301)
-    check("auto-logout after 5 minutes idle", not o.gL2LoggedIn)
+    check("lockout expires after 5 minutes", not o.gLockoutActive)
+    o.login('maint'); o.run(1)
+    check("correct code works again", o.gMaintLoggedIn)
+    check("failed attempts logged", len([e for e in o.events if e[1] == 75]) == 3)
+
+    t("20. The two roles are mutually exclusive")
+    o = Oven(); o.run(2)
+    o.login('maint'); o.run(1)
+    check("maintenance in", o.gMaintLoggedIn and not o.gQualityLoggedIn)
+    o.login('quality'); o.run(1)
+    check("quality in, maintenance automatically out",
+          o.gQualityLoggedIn and not o.gMaintLoggedIn)
+    check("quality cannot enter manual test", not o.gManualPermit)
+    o.gHmiLogout = True; o.run(1)
+    check("logout clears both", not o.gMaintLoggedIn and not o.gQualityLoggedIn)
+
+    t("21. Each role logs out on its own after 5 minutes idle")
+    o = Oven(); o.run(2)
+    o.login('quality'); o.run(1)
+    check("logged in", o.gQualityLoggedIn)
+    o.run(301)
+    check("auto-logout after 5 minutes idle", not o.gQualityLoggedIn)
 
 
 # ====================================================================== alarms
@@ -326,8 +370,58 @@ def test_alarms():
     check("hooter does not sound on a lamp test", not o.Y11)
 
 
+def test_cure_gating():
+    t("22. A cure timer stops on a fault and does NOT run on to completion")
+    o = Oven(); o.run(2)
+    o.gHmiSlotStart[1] = True; o.run(1)
+    o.run(60 * 60)
+    at_fault = o.gSlotElapsed[1]
+    check("1 hour elapsed", abs(at_fault - 3600) <= 2, f"got {at_fault}")
+
+    o.X13 = False                                  # high-limit trips
+    o.run(2 * 60 * 60)                             # two hours of fault
+    check("cure timer frozen through the fault", o.gSlotElapsed[1] == at_fault,
+          f"{o.gSlotElapsed[1]} vs {at_fault}")
+    check("slot did NOT complete during the fault", not o.gSlotComplete[1])
+    check("paused indication shown", o.gSlotTimersPaused)
+    check("cure-paused alarm raised", o.gAlmCurePaused)
+    check("pause written to the event log", any(e[1] == 55 for e in o.events))
+
+    o.X13 = True; o.run(2)
+    check("paused indication clears", not o.gSlotTimersPaused)
+    check("resume written to the event log", any(e[1] == 56 for e in o.events))
+    o.run(60 * 60)
+    check("cure completes only after a further hour of healthy running",
+          o.gSlotComplete[1])
+
+    t("23. A heat-up failure also holds the cure")
+    o = Oven(); o.run(2)
+    o.gHmiSlotStart[1] = True; o.run(1)
+    o.X6 = True                                    # demand, oven never satisfied
+    o.run(59 * 60)
+    running = o.gSlotElapsed[1]
+    check("cure advancing while the oven is still heating", running > 3000)
+    o.run(120)
+    check("heat-up watchdog fired", o.gAlmHeatUp)
+    frozen = o.gSlotElapsed[1]
+    o.run(30 * 60)
+    check("cure timer held once the oven proves it cannot reach setpoint",
+          o.gSlotElapsed[1] == frozen, f"{o.gSlotElapsed[1]} vs {frozen}")
+
+    t("24. Normal running is unaffected by the gating")
+    o = Oven(); o.run(2)
+    o.gHmiSlotStart[1] = True; o.run(1)
+    for _ in range(10):                            # normal PID cycling
+        o.X6 = True;  o.run(60)
+        o.X6 = False; o.run(30)
+    check("cure advanced by the full wall time", abs(o.gSlotElapsed[1] - 900) <= 3,
+          f"got {o.gSlotElapsed[1]}")
+    check("no pause", not o.gSlotTimersPaused)
+
+
 for fn in (test_blowers_and_door, test_heater, test_door_watchdogs,
-           test_slot_timers, test_manual_and_counters, test_alarms):
+           test_slot_timers, test_manual_and_counters, test_alarms,
+           test_cure_gating):
     fn()
 
 print(f"\n{'=' * 62}\n{len(PASS)} passed, {len(FAIL)} failed")

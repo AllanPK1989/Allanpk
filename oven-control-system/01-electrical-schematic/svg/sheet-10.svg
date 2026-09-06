@@ -73,7 +73,7 @@
 <text x="388.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">SHEET</text>
 <text x="388.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">10 / 13</text>
 <text x="402.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">REV</text>
-<text x="402.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">2</text>
+<text x="402.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">3</text>
 <text x="16.00" y="12.50" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="4.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">HMI -A3, ETHERNET NETWORK &amp; PANEL DOOR ARRANGEMENT</text>
 <text x="16.00" y="17.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">GOT2000 GT2107-WTBD  &lt;-&gt;  MELSEC iQ-F FX5U-32MT/ES, 100BASE-TX</text>
 <line x1="16.00" y1="19.60" x2="408.00" y2="19.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
@@ -230,58 +230,58 @@
 <text x="269.40" y="103.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">SCREEN</text>
 <text x="293.40" y="103.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">TITLE</text>
 <line x1="292.00" y1="100.00" x2="292.00" y2="157.20" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
-<text x="369.40" y="103.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">SEC. LEVEL</text>
+<text x="369.40" y="103.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">ROLE</text>
 <line x1="368.00" y1="100.00" x2="368.00" y2="157.20" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <text x="269.40" y="108.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">B-1000</text>
 <text x="293.40" y="108.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">HOME / OVERVIEW</text>
-<text x="384.00" y="108.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">0</text>
+<text x="384.00" y="108.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
 <line x1="268.00" y1="105.20" x2="400.00" y2="105.20" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <rect x="268.00" y="110.40" width="132.00" height="5.20" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
 <text x="269.40" y="114.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">B-1100</text>
 <text x="293.40" y="114.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">SLOT TIMERS 1-6</text>
-<text x="384.00" y="114.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">0</text>
+<text x="384.00" y="114.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
 <line x1="268.00" y1="110.40" x2="400.00" y2="110.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <text x="269.40" y="119.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">B-1200</text>
 <text x="293.40" y="119.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">COUNTERS - door, lots</text>
-<text x="384.00" y="119.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">0</text>
+<text x="384.00" y="119.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
 <line x1="268.00" y1="115.60" x2="400.00" y2="115.60" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <rect x="268.00" y="120.80" width="132.00" height="5.20" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
 <text x="269.40" y="124.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">B-1300</text>
 <text x="293.40" y="124.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">ALARMS - live &amp; history</text>
-<text x="384.00" y="124.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">0</text>
+<text x="384.00" y="124.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
 <line x1="268.00" y1="120.80" x2="400.00" y2="120.80" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <text x="269.40" y="129.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">B-1400</text>
 <text x="293.40" y="129.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">MANUAL TEST - blowers, heater</text>
-<text x="384.00" y="129.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">2</text>
+<text x="384.00" y="129.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">MAINT</text>
 <line x1="268.00" y1="126.00" x2="400.00" y2="126.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <rect x="268.00" y="131.20" width="132.00" height="5.20" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
 <text x="269.40" y="134.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">B-1500</text>
 <text x="293.40" y="134.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">SETTINGS - watchdog, presets</text>
-<text x="384.00" y="134.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">2</text>
+<text x="384.00" y="134.80" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">MAINT</text>
 <line x1="268.00" y1="131.20" x2="400.00" y2="131.20" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <text x="269.40" y="140.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">B-1600</text>
-<text x="293.40" y="140.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">PASSWORD / LOGIN</text>
-<text x="384.00" y="140.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">0</text>
+<text x="293.40" y="140.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">LOGIN - passcode keypad</text>
+<text x="384.00" y="140.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
 <line x1="268.00" y1="136.40" x2="400.00" y2="136.40" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <rect x="268.00" y="141.60" width="132.00" height="5.20" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
 <text x="269.40" y="145.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">B-1700</text>
 <text x="293.40" y="145.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">TIMER EARLY RESET</text>
-<text x="384.00" y="145.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">2</text>
+<text x="384.00" y="145.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">MAINT</text>
 <line x1="268.00" y1="141.60" x2="400.00" y2="141.60" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <text x="269.40" y="150.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">B-1800</text>
-<text x="293.40" y="150.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">COUNTER RESET</text>
-<text x="384.00" y="150.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">2</text>
+<text x="293.40" y="150.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">COUNTER RESET - door and lots</text>
+<text x="384.00" y="150.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">QUALITY</text>
 <line x1="268.00" y1="146.80" x2="400.00" y2="146.80" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <rect x="268.00" y="152.00" width="132.00" height="5.20" rx="0" fill="#f4f4f4" stroke="#000" stroke-width="0"/>
 <text x="269.40" y="155.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">B-1900</text>
 <text x="293.40" y="155.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">HISTORY - log view &amp; USB export</text>
-<text x="384.00" y="155.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">0</text>
+<text x="384.00" y="155.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">-</text>
 <line x1="268.00" y1="152.00" x2="400.00" y2="152.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <rect x="268.00" y="100.00" width="132.00" height="57.20" rx="0" fill="none" stroke="#000" stroke-width="0.3"/>
 <line x1="292.00" y1="100.00" x2="292.00" y2="157.20" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <line x1="368.00" y1="100.00" x2="368.00" y2="157.20" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
-<text x="268.00" y="168.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Security level 0 = operator, no login required.</text>
-<text x="268.00" y="171.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Level 2 = maintenance technician, password protected.</text>
+<text x="268.00" y="168.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">'-' = operator, no login.  MAINT and QUALITY are two SEPARATE</text>
+<text x="268.00" y="171.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">passcodes - neither inherits the other's rights (sheet 01, NOTE 11).</text>
 <text x="268.00" y="180.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.3000000000000003" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">NOTES:</text>
 <text x="268.00" y="184.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">1.  The HMI is powered from -F12 and is NOT</text>
 <text x="268.00" y="187.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">     interrupted by the emergency stop, so</text>

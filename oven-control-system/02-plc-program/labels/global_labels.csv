@@ -57,8 +57,12 @@ gManualPermit,Bit,VAR_GLOBAL,M54,,manual test conditions satisfied
 gManBl1,Bit,VAR_GLOBAL,M55,,manual blower 1 demand
 gManBl2,Bit,VAR_GLOBAL,M56,,manual blower 2 demand
 gManHtr,Bit,VAR_GLOBAL,M57,,manual heater demand
-gL2LoggedIn,Bit,VAR_GLOBAL,M58,,maintenance level 2 logged in
+gMaintLoggedIn,Bit,VAR_GLOBAL,M58,,MAINTENANCE role logged in
 gEventPulse,Bit,VAR_GLOBAL,M59,,1 scan event trigger for SD logging
+gQualityLoggedIn,Bit,VAR_GLOBAL,M60,,QUALITY role logged in
+gLockoutActive,Bit,VAR_GLOBAL,M61,,login locked out after failed attempts
+gSlotTimersPaused,Bit,VAR_GLOBAL,M62,,cure timers held - oven not fit to cure
+gSlotPausedMem,Bit,VAR_GLOBAL,M63,,edge memory for the pause event
 gAlmBits,Bit(0..15),VAR_GLOBAL,M700,,"alarm block, overlays the named alarms"
 gAlmEStop,Bit,VAR_GLOBAL,M700,,ALM 0  emergency stop operated
 gAlmBl1Ol,Bit,VAR_GLOBAL,M701,,ALM 1  blower 1 overload tripped
@@ -73,6 +77,7 @@ gAlmK1Fault,Bit,VAR_GLOBAL,M709,,ALM 9  -K1 feedback disagrees
 gAlmK2Fault,Bit,VAR_GLOBAL,M710,,ALM 10 -K2 feedback disagrees
 gAlmK3Fault,Bit,VAR_GLOBAL,M711,,ALM 11 -K3 feedback disagrees
 gAlmLotMismatch,Bit,VAR_GLOBAL,M712,,ALM 12 lots loaded / unloaded mismatch
+gAlmCurePaused,Bit,VAR_GLOBAL,M713,,"ALM 13 cure timers paused, oven not fit"
 gAlmMem,Bit(0..15),VAR_GLOBAL,M720,,previous scan alarm block
 gHmiSlotStart,Bit(1..6),VAR_GLOBAL,M800,,"HMI start, slot 1-6"
 gHmiSlotReset,Bit(1..6),VAR_GLOBAL,M810,,"HMI reset, slot 1-6"
@@ -85,12 +90,13 @@ gHmiResetDoorCnt,Bit,VAR_GLOBAL,M825,,HMI reset door counters
 gHmiResetLotCnt,Bit,VAR_GLOBAL,M826,,HMI reset lot counters
 gHmiManualReq,Bit,VAR_GLOBAL,M827,,HMI enter manual test
 gHmiManualExit,Bit,VAR_GLOBAL,M828,,HMI exit manual test
-gHmiL2Login,Bit,VAR_GLOBAL,M829,,GOT reports auth level 2 reached
-gHmiL2Logout,Bit,VAR_GLOBAL,M830,,GOT reports logout
+gHmiMaintLoginReq,Bit,VAR_GLOBAL,M829,,"HMI login attempt, MAINTENANCE"
+gHmiLogout,Bit,VAR_GLOBAL,M830,,HMI log out
 gHmiActivity,Bit,VAR_GLOBAL,M831,,"GOT screen touch, resets the logout timer"
 gHmiManBl1,Bit,VAR_GLOBAL,M832,,"HMI manual blower 1, momentary"
 gHmiManBl2,Bit,VAR_GLOBAL,M833,,"HMI manual blower 2, momentary"
 gHmiManHtr,Bit,VAR_GLOBAL,M834,,"HMI manual heater, momentary"
+gHmiQualityLoginReq,Bit,VAR_GLOBAL,M835,,"HMI login attempt, QUALITY"
 gSlotRunning,Bit(1..6),VAR_GLOBAL,M4000,,LATCH slot 1-6 occupied / timing
 gSlotComplete,Bit(1..6),VAR_GLOBAL,M4008,,LATCH slot 1-6 reached 2 hours
 gSetHtrNeedsAir,Bit,VAR_GLOBAL,M4020,,LATCH option: heater needs a blower running
@@ -106,7 +112,7 @@ gK1FbAcc,Word [Signed],VAR_GLOBAL,D6,,"-K1 feedback disagreement, 100 ms units"
 gK2FbAcc,Word [Signed],VAR_GLOBAL,D7,,"-K2 feedback disagreement, 100 ms units"
 gK3FbAcc,Word [Signed],VAR_GLOBAL,D8,,"-K3 feedback disagreement, 100 ms units"
 gManualTmoAcc,Word [Signed],VAR_GLOBAL,D9,,"manual test elapsed, s"
-gLoginTmoAcc,Word [Signed],VAR_GLOBAL,D10,,"level 2 login idle time, s"
+gMaintTmoAcc,Word [Signed],VAR_GLOBAL,D10,,"maintenance login idle time, s"
 gSlotsActive,Word [Signed],VAR_GLOBAL,D11,,number of slots currently running
 gEventCode,Word [Signed],VAR_GLOBAL,D12,,event code for the SD log
 gEventParam,Word [Signed],VAR_GLOBAL,D13,,"event parameter, usually the slot number"
@@ -118,6 +124,11 @@ gDoorOpenMin,Word [Signed],VAR_GLOBAL,D18,,"no door closed signal, min, for the 
 gTotHtrRunH,Word [Signed],VAR_GLOBAL,D19,,"heater running hours, for the HMI"
 gTotBl1RunH,Word [Signed],VAR_GLOBAL,D20,,"blower 1 running hours, for the HMI"
 gTotBl2RunH,Word [Signed],VAR_GLOBAL,D21,,"blower 2 running hours, for the HMI"
+gQualityTmoAcc,Word [Signed],VAR_GLOBAL,D22,,"quality login idle time, s"
+gFailedAttempts,Word [Signed],VAR_GLOBAL,D23,,consecutive failed login attempts
+gLockoutAcc,Word [Signed],VAR_GLOBAL,D26,,"login lockout remaining, s"
+gHmiPasscodeEntry,Word [Signed],VAR_GLOBAL,D27,,"passcode typed on the HMI, cleared after use"
+gActiveRole,Word [Signed],VAR_GLOBAL,D28,,"0 none, 1 maintenance, 2 quality"
 gLotsUnaccounted,Double Word [Signed],VAR_GLOBAL,D24,,loaded - unloaded - running = the discrepancy
 gSlotH,Word [Signed](1..6),VAR_GLOBAL,D40,,slot 1-6 elapsed hours
 gSlotM,Word [Signed](1..6),VAR_GLOBAL,D46,,slot 1-6 elapsed minutes
@@ -142,3 +153,7 @@ gSetHtrMinOffS,Word [Signed],VAR_GLOBAL,D4105,,"SET heater minimum OFF, s (5-120
 gSetManualTmoS,Word [Signed],VAR_GLOBAL,D4106,,"SET manual test auto-exit, s"
 gSetLoginTmoS,Word [Signed],VAR_GLOBAL,D4107,,"SET level 2 auto-logout, s"
 gSetSlotTargetS,Double Word [Signed],VAR_GLOBAL,D4108,,"SET slot cure time, s (default 7200)"
+gSetMaintCode,Word [Signed],VAR_GLOBAL,D4110,,SET MAINTENANCE passcode - change at commissioning
+gSetQualityCode,Word [Signed],VAR_GLOBAL,D4111,,SET QUALITY passcode - change at commissioning
+gSetMaxAttempts,Word [Signed],VAR_GLOBAL,D4112,,SET failed logins before lockout (default 3)
+gSetLockoutS,Word [Signed],VAR_GLOBAL,D4113,,"SET lockout duration, s (default 300)"

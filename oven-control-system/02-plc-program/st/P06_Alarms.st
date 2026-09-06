@@ -47,6 +47,7 @@ gAlmPidFault  := NOT gPidOK;
 (*  gAlmDoorChatter     set in P02 (latched)                                   *)
 (*  gAlmDoorNotClosed   set in P02                                             *)
 (*  gAlmLotMismatch     set in P05                                             *)
+gAlmCurePaused := gSlotTimersPaused;
 
 (* -- 3. summary and new-alarm detection ------------------------------------- *)
 gAnyAlarm  := FALSE;

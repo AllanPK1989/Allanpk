@@ -56,7 +56,7 @@ class Oven:
         self.gTotHtrRunS = self.gTotBl1RunS = self.gTotBl2RunS = 0
         self.gDefaultsWritten = False
         self.gSetHtrNeedsAir = False
-        self.gSetSlotGated = False
+        self.gSetSlotGated = True
 
     def _init_volatile(self):
         self.gTick100msMem = self.gTick1sMem = False
@@ -64,7 +64,14 @@ class Oven:
         self.gBl1RunReq = self.gBl2RunReq = False
         self.gHtrCmd = False
         self.gManualMode = False
-        self.gL2LoggedIn = False
+        self.gMaintLoggedIn = False
+        self.gQualityLoggedIn = False
+        self.gFailedAttempts = 0
+        self.gLockoutAcc = 0
+        self.gHmiPasscodeEntry = 0
+        self.gActiveRole = 0
+        self.gSlotTimersPaused = False
+        self.gSlotPausedMem = False
         self.gHtrMinOnAcc = self.gHtrMinOffAcc = 0
         self.gHeatUpAcc = 0
         self.gDoorOpenAcc = 0
@@ -76,7 +83,7 @@ class Oven:
         self.gAcceptMem = False
         self.gBl1StartMem = self.gBl2StartMem = False
         self.gK1FbAcc = self.gK2FbAcc = self.gK3FbAcc = 0
-        self.gManualTmoAcc = self.gLoginTmoAcc = 0
+        self.gManualTmoAcc = self.gMaintTmoAcc = self.gQualityTmoAcc = 0
         self.gAlmDoorChatter = False
         self.gAlmDoorNotClosedMem = self.gAlmHeatUpMem = False
         self.gAlarmUnack = False
@@ -87,7 +94,8 @@ class Oven:
         # HMI command bits
         for n in ("gHmiBl1Start", "gHmiBl1Stop", "gHmiBl2Start", "gHmiBl2Stop",
                   "gHmiAlarmAccept", "gHmiResetDoorCnt", "gHmiResetLotCnt",
-                  "gHmiManualReq", "gHmiManualExit", "gHmiL2Login", "gHmiL2Logout",
+                  "gHmiManualReq", "gHmiManualExit", "gHmiMaintLoginReq",
+                  "gHmiQualityLoginReq", "gHmiLogout",
                   "gHmiActivity", "gHmiManBl1", "gHmiManBl2", "gHmiManHtr"):
             setattr(self, n, False)
         self.gHmiSlotStart = [False] * 7
@@ -142,6 +150,10 @@ class Oven:
             self.gSetManualTmoS = 300
             self.gSetLoginTmoS = 300
             self.gSetSlotTargetS = 7200
+            self.gSetMaintCode = 2468
+            self.gSetQualityCode = 1357
+            self.gSetMaxAttempts = 3
+            self.gSetLockoutS = 300
             self.gDefaultsWritten = True
         if sm402:
             self._ev(1)
@@ -165,31 +177,62 @@ class Oven:
         if self.gSetHtrNeedsAir:
             self.gHtrPermit = self.gHtrPermit and (
                 self.gK1Closed or self.gK2Closed or not self.gDoorClosed)
-        self.gSlotRunPermit = (self.gEStopOK and self.gHighLimitOK
-                               and not self.gHtrOlTrip)
 
     def _p01(self):
-        if self.gHmiL2Login:
-            self.gHmiL2Login = False
-            self.gL2LoggedIn = True
-            self.gLoginTmoAcc = 0
-        if self.gHmiL2Logout:
-            self.gHmiL2Logout = False
-            self.gL2LoggedIn = False
+        if self.gLockoutAcc > 0 and self.gTick1s:
+            self.gLockoutAcc -= 1
+        self.gLockoutActive = self.gLockoutAcc > 0
 
-        if self.gL2LoggedIn:
-            if self.gHmiActivity:
-                self.gHmiActivity = False
-                self.gLoginTmoAcc = 0
-            if self.gTick1s:
-                self.gLoginTmoAcc += 1
-            if self.gLoginTmoAcc >= self.gSetLoginTmoS:
-                self.gL2LoggedIn = False
-                self.gLoginTmoAcc = 0
-        else:
-            self.gLoginTmoAcc = 0
+        if self.gHmiMaintLoginReq or self.gHmiQualityLoginReq:
+            if self.gLockoutActive:
+                self._ev(76, 0, self.gLockoutAcc)
+            elif self.gHmiMaintLoginReq and self.gHmiPasscodeEntry == self.gSetMaintCode:
+                self.gMaintLoggedIn = True
+                self.gQualityLoggedIn = False
+                self.gMaintTmoAcc = 0
+                self.gFailedAttempts = 0
+                self._ev(73)
+            elif self.gHmiQualityLoginReq and self.gHmiPasscodeEntry == self.gSetQualityCode:
+                self.gQualityLoggedIn = True
+                self.gMaintLoggedIn = False
+                self.gQualityTmoAcc = 0
+                self.gFailedAttempts = 0
+                self._ev(74)
+            else:
+                self.gFailedAttempts += 1
+                self._ev(75, 0, self.gFailedAttempts)
+                if self.gFailedAttempts >= self.gSetMaxAttempts:
+                    self.gLockoutAcc = self.gSetLockoutS
+                    self.gFailedAttempts = 0
+            self.gHmiMaintLoginReq = False
+            self.gHmiQualityLoginReq = False
+            self.gHmiPasscodeEntry = 0
 
-        self.gManualPermit = (self.gL2LoggedIn and self.gEStopOK and self.gDoorOK
+        if self.gHmiLogout:
+            self.gHmiLogout = False
+            self.gMaintLoggedIn = False
+            self.gQualityLoggedIn = False
+            self.gHmiPasscodeEntry = 0
+            self._ev(77)
+
+        for flag, acc in (("gMaintLoggedIn", "gMaintTmoAcc"),
+                          ("gQualityLoggedIn", "gQualityTmoAcc")):
+            if getattr(self, flag):
+                if self.gHmiActivity:
+                    setattr(self, acc, 0)
+                if self.gTick1s:
+                    setattr(self, acc, getattr(self, acc) + 1)
+                if getattr(self, acc) >= self.gSetLoginTmoS:
+                    setattr(self, flag, False)
+                    setattr(self, acc, 0)
+                    self.gHmiPasscodeEntry = 0
+            else:
+                setattr(self, acc, 0)
+        self.gHmiActivity = False
+
+        self.gActiveRole = 1 if self.gMaintLoggedIn else (2 if self.gQualityLoggedIn else 0)
+
+        self.gManualPermit = (self.gMaintLoggedIn and self.gEStopOK and self.gDoorOK
                               and not self.gBl1OlTrip and not self.gBl2OlTrip
                               and not self.gHtrOlTrip and self.gHighLimitOK
                               and not self.gAnySlotRunning)
@@ -343,6 +386,8 @@ class Oven:
         self.gHeatUpMin = self.gHeatUpAcc // 60
 
     def _p05(self):
+        self.gSlotRunPermit = (self.gEStopOK and self.gHighLimitOK and self.gPidOK
+                               and not self.gHtrOlTrip and not self.gAlmHeatUp)
         self.gSlotsActive = 0
         for i in range(1, 7):
             if self.gHmiSlotStart[i]:
@@ -368,7 +413,7 @@ class Oven:
                     self.gSlotElapsed[i] = 0
                     self.gCntLotsUnloaded += 1
                     self._ev(30 + i, i)
-                elif self.gSlotRunning[i] and self.gL2LoggedIn:
+                elif self.gSlotRunning[i] and self.gMaintLoggedIn:
                     mins = self.gSlotElapsed[i] // 60
                     self.gSlotRunning[i] = False
                     self.gSlotComplete[i] = False
@@ -380,18 +425,25 @@ class Oven:
                 self.gSlotsActive += 1
 
         self.gAnySlotRunning = self.gSlotsActive > 0
+        self.gSlotTimersPaused = (self.gSetSlotGated and not self.gSlotRunPermit
+                                  and self.gAnySlotRunning)
+        if self.gSlotTimersPaused and not self.gSlotPausedMem:
+            self._ev(55, self.gSlotsActive)
+        if not self.gSlotTimersPaused and self.gSlotPausedMem:
+            self._ev(56, self.gSlotsActive)
+        self.gSlotPausedMem = self.gSlotTimersPaused
         self.gLotsUnaccounted = (self.gCntLotsLoaded - self.gCntLotsUnloaded
                                  - self.gSlotsActive)
         self.gAlmLotMismatch = self.gLotsUnaccounted != 0
 
         if self.gHmiResetDoorCnt:
             self.gHmiResetDoorCnt = False
-            if self.gL2LoggedIn:
+            if self.gQualityLoggedIn:
                 self.gCntDoorOpen = self.gCntDoorClose = 0
                 self._ev(61)
         if self.gHmiResetLotCnt:
             self.gHmiResetLotCnt = False
-            if self.gL2LoggedIn:
+            if self.gQualityLoggedIn:
                 self.gCntLotsLoaded = self.gCntLotsUnloaded = self.gCntEarlyReset = 0
                 self._ev(62)
 
@@ -414,12 +466,13 @@ class Oven:
         self.gAlmHtrOl = self.gHtrOlTrip
         self.gAlmHighLimit = not self.gHighLimitOK
         self.gAlmPidFault = not self.gPidOK
+        self.gAlmCurePaused = self.gSlotTimersPaused
 
         bits = [self.gAlmEStop, self.gAlmBl1Ol, self.gAlmBl2Ol, self.gAlmHtrOl,
                 self.gAlmHighLimit, self.gAlmPidFault, self.gAlmHeatUp,
                 self.gAlmDoorChatter, self.gAlmDoorNotClosed, self.gAlmK1Fault,
                 self.gAlmK2Fault, self.gAlmK3Fault, self.gAlmLotMismatch,
-                False, False, False]
+                self.gAlmCurePaused, False, False]
         self.gAnyAlarm = False
         self.gAlarmNew = False
         for i, b in enumerate(bits):
@@ -467,4 +520,14 @@ class Oven:
 
     def hmi(self, name):
         setattr(self, name, True)
+        self.step()
+
+    def login(self, role, code=None):
+        """role: 'maint' or 'quality'. Passcode and request in one touch."""
+        self.gHmiPasscodeEntry = code if code is not None else (
+            self.gSetMaintCode if role == "maint" else self.gSetQualityCode)
+        if role == "maint":
+            self.gHmiMaintLoginReq = True
+        else:
+            self.gHmiQualityLoginReq = True
         self.step()

@@ -101,6 +101,12 @@ Six independent retentive timers, one per oven slot.
    **not** counted as an unload.
 5. `gSlotElapsed` is in the latched device area. A power failure **pauses** the
    cure; it resumes from the accumulated value and never restarts.
+6. **A cure timer only advances while the oven is fit to cure** (`gSetSlotGated`,
+   ON by default). It is held whenever the E-stop is operated, the high-limit
+   has tripped, the heater overload has tripped, the PID has an alarm or sensor
+   break, or the heat-up watchdog has fired. A held timer does **not** run on to
+   completion — `-H5` shows the `CURE TIMERS PAUSED` alarm, the HMI shows why,
+   and the pause and the resume are both written to the SD log (events 55/56).
 
 ### The malpractice figure
 
@@ -113,17 +119,52 @@ states rather than read back from the early-reset counter, so it also exposes
 tampering with either counter. Non-zero raises the mismatch indication and
 every unit of it has a matching 41–46 event in the SD log.
 
-**Worth knowing:** point 5 means an oven switched off for three hours mid-cure
-resumes and completes, even though the product was not at temperature for that
-time. That is what "resume from accumulated time" was specified to mean. If you
-would rather the timer only advanced while the oven is healthy, set
-`gSetSlotGated` (M4021) — the option is built and tested, just disabled.
+Points 5 and 6 work together: an outage or a fault **pauses** the cure and the
+elapsed time is preserved, so a slot that was 40 minutes in is still 40 minutes
+in when the oven recovers — and it needs its remaining 80 minutes of healthy
+running before it will complete.
+
+The gating deliberately does **not** include the oven door. Opening the door to
+load or unload another slot would otherwise pause all six cures every time.
 
 ---
 
-## 5. Manual test
+## 5. Security — two separate roles
 
-Password protected (level 2) and guarded. Entry requires: logged in, E-stop
+Not two levels of one hierarchy. Two roles, mutually exclusive, neither
+inheriting the other's rights.
+
+| Role | Can do |
+|------|--------|
+| **MAINTENANCE** | early slot-timer reset, manual test, changing the settings |
+| **QUALITY** | resetting the door counters, resetting the lot counters |
+
+### Separation of duties — read before changing this
+
+MAINTENANCE performs the early resets. QUALITY, and only QUALITY, can clear the
+counters that record them. If maintenance could zero the lot counters they could
+erase the evidence of their own early resets and the traceability requirement
+would be decorative. This is why the two roles do not inherit from each other,
+and why the lot-counter reset is explicitly **refused** for maintenance — there
+is a test for exactly that.
+
+### How the check works
+
+Both passcodes live in the PLC (latched `D4110` / `D4111`), not in the GOT. Two
+non-inheriting roles cannot be expressed by GOT security levels, which are
+hierarchical; holding the check in the PLC also means the rules survive an HMI
+swap. Protect the GX Works3 project with a password as well.
+
+The HMI writes the typed passcode and sets the request bit in one touch action,
+so the code exists for a single scan and is cleared immediately after the
+comparison. Three consecutive wrong entries lock login out for 5 minutes; every
+attempt, failure and lockout is logged.
+
+Each role logs itself out after 5 minutes of inactivity.
+
+## 6. Manual test
+
+MAINTENANCE only, and guarded. Entry requires: logged in as maintenance, E-stop
 released, **door closed**, no overload tripped, high-limit healthy, and **no
 slot timer running** — you should not be cycling the heater by hand mid-cure.
 
@@ -133,9 +174,9 @@ lost, or automatically after 5 minutes.
 
 ---
 
-## 6. Alarms
+## 7. Alarms
 
-Thirteen alarms in `M700–M712`, readable by the GOT as one bit-device block.
+Fourteen alarms in `M700–M712`, readable by the GOT as one bit-device block.
 
 Hooter sounds on any **new** alarm — including a new one arriving while an
 earlier alarm still stands. `-S5` or the HMI accept button silences the hooter;
@@ -149,15 +190,13 @@ feedback still on — the load is live when you think it is dead) and one that
 
 ---
 
-## 7. Two options built but switched off
+## 8. One option built but switched off
 
-Both default OFF so the delivered behaviour is exactly as specified. Both are
-tested. Turn either on by setting its latched bit.
+`gSetSlotGated` (M4021) is now **ON** — the client confirmed a cure timer must
+stop rather than run on to completion. One option remains off:
 
 | Bit | Option | Why you might want it |
 |-----|--------|-----------------------|
 | M4020 `gSetHtrNeedsAir` | Heater requires a blower running, or the door open | Running 18 kW of elements with no airflow and the door shut risks element burnout and local overheating. Left off because the specified door behaviour deliberately runs the heater with both blowers stopped. |
-| M4021 `gSetSlotGated` | Slot timers only advance while the oven is healthy | Stops a cure timer completing across a long outage when the product was not at temperature. |
 
-Raise either with the panel builder before FAT if you want it enabled — it is a
-one-bit change, not a program change.
+It is built and tested. Enabling it is a one-bit change, not a program change.

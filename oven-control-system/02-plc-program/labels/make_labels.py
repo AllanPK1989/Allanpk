@@ -71,8 +71,12 @@ L = [
     ("gManBl1",           BIT, "M55", None, "manual blower 1 demand"),
     ("gManBl2",           BIT, "M56", None, "manual blower 2 demand"),
     ("gManHtr",           BIT, "M57", None, "manual heater demand"),
-    ("gL2LoggedIn",       BIT, "M58", None, "maintenance level 2 logged in"),
+    ("gMaintLoggedIn",    BIT, "M58", None, "MAINTENANCE role logged in"),
     ("gEventPulse",       BIT, "M59", None, "1 scan event trigger for SD logging"),
+    ("gQualityLoggedIn",  BIT, "M60", None, "QUALITY role logged in"),
+    ("gLockoutActive",    BIT, "M61", None, "login locked out after failed attempts"),
+    ("gSlotTimersPaused", BIT, "M62", None, "cure timers held - oven not fit to cure"),
+    ("gSlotPausedMem",    BIT, "M63", None, "edge memory for the pause event"),
 
     # ---------------- alarm bits (GOT watches M700-M715) ----------------
     ("gAlmBits",          BIT, "M700", 16, "alarm block, overlays the named alarms"),
@@ -89,6 +93,7 @@ L = [
     ("gAlmK2Fault",       BIT, "M710", None, "ALM 10 -K2 feedback disagrees"),
     ("gAlmK3Fault",       BIT, "M711", None, "ALM 11 -K3 feedback disagrees"),
     ("gAlmLotMismatch",   BIT, "M712", None, "ALM 12 lots loaded / unloaded mismatch"),
+    ("gAlmCurePaused",    BIT, "M713", None, "ALM 13 cure timers paused, oven not fit"),
     ("gAlmMem",           BIT, "M720", 16, "previous scan alarm block"),
 
     # ---------------- HMI command bits ----------------
@@ -103,12 +108,13 @@ L = [
     ("gHmiResetLotCnt",   BIT, "M826", None, "HMI reset lot counters"),
     ("gHmiManualReq",     BIT, "M827", None, "HMI enter manual test"),
     ("gHmiManualExit",    BIT, "M828", None, "HMI exit manual test"),
-    ("gHmiL2Login",       BIT, "M829", None, "GOT reports auth level 2 reached"),
-    ("gHmiL2Logout",      BIT, "M830", None, "GOT reports logout"),
+    ("gHmiMaintLoginReq", BIT, "M829", None, "HMI login attempt, MAINTENANCE"),
+    ("gHmiLogout",        BIT, "M830", None, "HMI log out"),
     ("gHmiActivity",      BIT, "M831", None, "GOT screen touch, resets the logout timer"),
     ("gHmiManBl1",        BIT, "M832", None, "HMI manual blower 1, momentary"),
     ("gHmiManBl2",        BIT, "M833", None, "HMI manual blower 2, momentary"),
     ("gHmiManHtr",        BIT, "M834", None, "HMI manual heater, momentary"),
+    ("gHmiQualityLoginReq", BIT, "M835", None, "HMI login attempt, QUALITY"),
 
     # ---------------- latched bits ----------------
     ("gSlotRunning",      BIT, "M4000", 6, "LATCH slot 1-6 occupied / timing"),
@@ -128,7 +134,7 @@ L = [
     ("gK2FbAcc",          INT, "D7",  None, "-K2 feedback disagreement, 100 ms units"),
     ("gK3FbAcc",          INT, "D8",  None, "-K3 feedback disagreement, 100 ms units"),
     ("gManualTmoAcc",     INT, "D9",  None, "manual test elapsed, s"),
-    ("gLoginTmoAcc",      INT, "D10", None, "level 2 login idle time, s"),
+    ("gMaintTmoAcc",      INT, "D10", None, "maintenance login idle time, s"),
     ("gSlotsActive",      INT, "D11", None, "number of slots currently running"),
     ("gEventCode",        INT, "D12", None, "event code for the SD log"),
     ("gEventParam",       INT, "D13", None, "event parameter, usually the slot number"),
@@ -140,6 +146,11 @@ L = [
     ("gTotHtrRunH",       INT, "D19", None, "heater running hours, for the HMI"),
     ("gTotBl1RunH",       INT, "D20", None, "blower 1 running hours, for the HMI"),
     ("gTotBl2RunH",       INT, "D21", None, "blower 2 running hours, for the HMI"),
+    ("gQualityTmoAcc",    INT, "D22", None, "quality login idle time, s"),
+    ("gFailedAttempts",   INT, "D23", None, "consecutive failed login attempts"),
+    ("gLockoutAcc",       INT, "D26", None, "login lockout remaining, s"),
+    ("gHmiPasscodeEntry", INT, "D27", None, "passcode typed on the HMI, cleared after use"),
+    ("gActiveRole",       INT, "D28", None, "0 none, 1 maintenance, 2 quality"),
     ("gLotsUnaccounted",  DINT,"D24", None, "loaded - unloaded - running = the discrepancy"),
     ("gSlotH",            INT, "D40", 6, "slot 1-6 elapsed hours"),
     ("gSlotM",            INT, "D46", 6, "slot 1-6 elapsed minutes"),
@@ -166,6 +177,10 @@ L = [
     ("gSetManualTmoS",    INT, "D4106", None, "SET manual test auto-exit, s"),
     ("gSetLoginTmoS",     INT, "D4107", None, "SET level 2 auto-logout, s"),
     ("gSetSlotTargetS",   DINT,"D4108", None, "SET slot cure time, s (default 7200)"),
+    ("gSetMaintCode",     INT, "D4110", None, "SET MAINTENANCE passcode - change at commissioning"),
+    ("gSetQualityCode",   INT, "D4111", None, "SET QUALITY passcode - change at commissioning"),
+    ("gSetMaxAttempts",   INT, "D4112", None, "SET failed logins before lockout (default 3)"),
+    ("gSetLockoutS",      INT, "D4113", None, "SET lockout duration, s (default 300)"),
 ]
 
 SIZE = {BIT: 1, INT: 1, DINT: 2}
@@ -219,7 +234,7 @@ def check():
                   ("gAlmBits", "gAlmHeatUp"), ("gAlmBits", "gAlmDoorChatter"),
                   ("gAlmBits", "gAlmDoorNotClosed"), ("gAlmBits", "gAlmK1Fault"),
                   ("gAlmBits", "gAlmK2Fault"), ("gAlmBits", "gAlmK3Fault"),
-                  ("gAlmBits", "gAlmLotMismatch")}
+                  ("gAlmBits", "gAlmLotMismatch"), ("gAlmBits", "gAlmCurePaused")}
     for name, t, dev, n, _ in L:
         pfx, a, b = span(dev, t, n)
         for d in range(a, b + 1):

@@ -80,7 +80,23 @@ outputs P03/P04 have already resolved.
 8  P07_Indication
 ```
 
-## 7. Local labels
+## 7. Passcodes — change these at commissioning
+
+Shipped defaults, held in latched registers:
+
+| Register | Role | Default |
+|----------|------|---------|
+| D4110 | MAINTENANCE | **2468** |
+| D4111 | QUALITY | **1357** |
+| D4112 | failed attempts before lockout | 3 |
+| D4113 | lockout duration, seconds | 300 |
+
+**Both defaults must be changed before handover**, and the two codes handed to
+the two teams separately and in writing. Also set a **project password** on the
+GX Works3 project (`Project → Security → User Authentication`) — a passcode in a
+D register is only as protected as the project that holds it.
+
+## 8. Local labels
 
 Three POUs use a loop counter. Declare in each POU's **local label** list:
 

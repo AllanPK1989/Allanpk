@@ -758,21 +758,21 @@ def sheet10():
     sx = 268
     s.text(sx, 96, "HMI SCREEN STRUCTURE  (see the HMI project for detail)", 2.6, weight="bold")
     scr = [
-        ["B-1000", "HOME / OVERVIEW", "0"],
-        ["B-1100", "SLOT TIMERS 1-6", "0"],
-        ["B-1200", "COUNTERS - door, lots", "0"],
-        ["B-1300", "ALARMS - live & history", "0"],
-        ["B-1400", "MANUAL TEST - blowers, heater", "2"],
-        ["B-1500", "SETTINGS - watchdog, presets", "2"],
-        ["B-1600", "PASSWORD / LOGIN", "0"],
-        ["B-1700", "TIMER EARLY RESET", "2"],
-        ["B-1800", "COUNTER RESET", "2"],
-        ["B-1900", "HISTORY - log view & USB export", "0"],
+        ["B-1000", "HOME / OVERVIEW", "-"],
+        ["B-1100", "SLOT TIMERS 1-6", "-"],
+        ["B-1200", "COUNTERS - door, lots", "-"],
+        ["B-1300", "ALARMS - live & history", "-"],
+        ["B-1400", "MANUAL TEST - blowers, heater", "MAINT"],
+        ["B-1500", "SETTINGS - watchdog, presets", "MAINT"],
+        ["B-1600", "LOGIN - passcode keypad", "-"],
+        ["B-1700", "TIMER EARLY RESET", "MAINT"],
+        ["B-1800", "COUNTER RESET - door and lots", "QUALITY"],
+        ["B-1900", "HISTORY - log view & USB export", "-"],
     ]
-    s.table(sx, 100, [(24, "SCREEN"), (76, "TITLE"), (32, "SEC. LEVEL")], scr,
+    s.table(sx, 100, [(24, "SCREEN"), (76, "TITLE"), (32, "ROLE")], scr,
             rh=5.2, zebra="#f4f4f4", align=["start", "start", "middle"])
-    s.text(sx, 168, "Security level 0 = operator, no login required.", 2.0)
-    s.text(sx, 171.6, "Level 2 = maintenance technician, password protected.", 2.0)
+    s.text(sx, 168, "'-' = operator, no login.  MAINT and QUALITY are two SEPARATE", 2.0)
+    s.text(sx, 171.6, "passcodes - neither inherits the other's rights (sheet 01, NOTE 11).", 2.0)
 
     s.notes(268, 180, [
         "1.  The HMI is powered from -F12 and is NOT",
