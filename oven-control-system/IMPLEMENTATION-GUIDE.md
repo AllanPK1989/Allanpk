@@ -148,11 +148,19 @@ the block as one alarm range. GX Works3 will not object.
 
 Three blocks use a loop counter. Without it they will not compile.
 
-| Program block | Label | Class | Data Type |
-|---------------|-------|-------|-----------|
-| `P05_SlotTimers` | `i` | VAR | Word [Signed] |
-| `P06_Alarms` | `i` | VAR | Word [Signed] |
-| `P07_Indication` | `i` | VAR | Word [Signed] |
+| Program block | Label | Class | Data Type | Lines that need it |
+|---------------|-------|-------|-----------|--------------------|
+| `P05_SlotTimers` | `i` | VAR | Word [Signed] | 30 |
+| `P06_Alarms` | `i` | VAR | Word [Signed] | 4 |
+| `P07_Indication` | `i` | VAR | Word [Signed] | 11 |
+
+Pick **Word [Signed]** from the Data Type dropdown — do not type `INT`.
+
+A POU's local variables live in the label editor pane, not in the code, so
+there is no `VAR ... END_VAR` block in the program body to paste. These three
+rows are the only hand-typed labels in the whole project. Miss one and the
+build reports *"Undefined label is used"* once for every line in that block
+that touches the loop counter — 25 to 30 errors from a single missing row.
 
 Open each block's **local label** editor (the pane above the ST code) and add
 the row. No other block has local labels.
@@ -467,7 +475,8 @@ proved end to end.
 | *"No imported information found in the file"* | The plain `.csv` was imported. MELSOFT reads UTF-16 tab-delimited only | Paste from `global_labels.xlsx` instead, or import `global_labels_GXW3.txt` (B.2) |
 | Import runs but cells are flagged red | Column set differs by GX Works3 release | Export a blank template and send it over; or just use the paste method (B.2) |
 | Type errors on `+ DINT#1` lines | Block pasted incompletely | Re-paste the whole `.st` file |
-| `P05/P06/P07` will not compile | Missing local label `i` | Add it (B.4) |
+| *"Undefined label is used"*, many errors, all in `P05_SlotTimers`, `P06_Alarms` or `P07_Indication` | The local label `i` is not declared in that POU. 30, 4 and 11 lines respectively use it, so one missing row makes dozens of errors | Add the one row per POU (B.4). Errors confined to these three blocks mean the global labels imported correctly |
+| *"Undefined label is used"* in **every** POU including `P00_Common` | The global labels did not import | B.2 |
 | Counters and timers zero after a power cut | Latch range not set | B.6, then re-prove with B.13 |
 | Passcodes revert to 2468 / 1357 | Same cause — `M4022` is not latched | B.6 |
 | Blowers hesitate or the feedback alarms chatter | Program blocks out of order | B.5 |

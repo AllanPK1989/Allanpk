@@ -9,7 +9,10 @@
    summary loop below stays short, and so the GOT can watch M700-M715 as a
    single bit-device alarm block.
 
-   Local labels required in this POU:   i : INT
+   LOCAL LABEL REQUIRED IN THIS POU - declare it before converting:
+       Label Name  i      Class  VAR      Data Type  Word [Signed]
+   Without it the build reports "Undefined label is used" on all 4
+   lines that reference the loop counter.
    ============================================================================= *)
 
 (* -- 1. contactor feedback, 1 s disagreement filter ------------------------- *)

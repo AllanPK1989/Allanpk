@@ -22,7 +22,10 @@
    from the early-reset counter, so it also exposes tampering with either
    counter. Any non-zero value raises the mismatch indication.
 
-   Local labels required in this POU:   i : INT
+   LOCAL LABEL REQUIRED IN THIS POU - declare it before converting:
+       Label Name  i      Class  VAR      Data Type  Word [Signed]
+   Without it the build reports "Undefined label is used" on all 30
+   lines that reference the loop counter.
    ============================================================================= *)
 
 (* -- 0. may the cure timers advance? ---------------------------------------- *)

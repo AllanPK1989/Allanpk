@@ -6,7 +6,10 @@
    button accepts alarms - see P00. The hooter is deliberately excluded from
    the lamp test.
 
-   Local labels required in this POU:   i : INT
+   LOCAL LABEL REQUIRED IN THIS POU - declare it before converting:
+       Label Name  i      Class  VAR      Data Type  Word [Signed]
+   Without it the build reports "Undefined label is used" on all 11
+   lines that reference the loop counter.
    ============================================================================= *)
 
 (* -- 1. pilot lamps ---------------------------------------------------------- *)
