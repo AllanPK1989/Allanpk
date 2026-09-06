@@ -71,10 +71,73 @@ const ago = s => s == null ? "\\u2014"
 '''
 
 TAIL = '''
-/* --- data ------------------------------------------------------------- */
-const TOKEN = new URLSearchParams(location.search).get("token") || "";
-const AUTH = TOKEN ? { "X-App-Token": TOKEN } : {};
+/* --- access token ------------------------------------------------------
+   Taken from ?token= once, then kept in localStorage and sent as a header, so
+   it stops riding in the URL where it would sit in history and server logs. */
+const KEY = "us-book-token";
+let TOKEN = "";
+try {
+  const q = new URLSearchParams(location.search).get("token");
+  if (q) {
+    localStorage.setItem(KEY, q);
+    history.replaceState(null, "", location.pathname);   // strip it from the bar
+  }
+  TOKEN = localStorage.getItem(KEY) || "";
+} catch { TOKEN = new URLSearchParams(location.search).get("token") || ""; }
+const authHeaders = () => TOKEN ? { "X-App-Token": TOKEN } : {};
 let timer = null;
+
+/* Shown instead of the dashboard when the server wants a token we do not have.
+   Built here rather than in the shared template: only the deployed app is
+   ever gated. */
+function askForToken(wrong) {
+  clearTimeout(timer);
+  document.querySelector(".wrap").hidden = true;
+  document.getElementById("refresh").hidden = true;
+  let box = document.getElementById("unlock");
+  if (!box) {
+    box = document.createElement("div");
+    box.id = "unlock";
+    box.innerHTML =
+      '<form style="max-width:26rem;margin:12vh auto;padding:26px 28px;' +
+      'background:var(--surface);border:1px solid var(--rule);border-radius:12px;' +
+      'box-shadow:var(--shadow)">' +
+      '<h2 style="font-family:var(--disp);font-size:19px;margin:0 0 8px">' +
+      'This dashboard is private</h2>' +
+      '<p style="margin:0 0 16px;color:var(--ink-2);font-size:13.5px;line-height:1.55">' +
+      'It needs the access token. On Render it is under your service &rarr; ' +
+      '<b>Environment</b> &rarr; <code>APP_TOKEN</code>.</p>' +
+      '<input id="tok" type="password" autocomplete="current-password" ' +
+      'placeholder="Paste the token" style="width:100%;padding:9px 11px;' +
+      'font-family:var(--mono);font-size:13px;border:1px solid var(--rule-2);' +
+      'border-radius:8px;background:var(--bg);color:var(--ink)">' +
+      '<p id="tokerr" style="color:var(--neg);font-size:12.5px;margin:9px 0 0" hidden></p>' +
+      '<button class="btn" style="margin-top:14px;width:100%">Unlock</button></form>';
+    document.body.append(box);
+    box.querySelector("form").addEventListener("submit", async e => {
+      e.preventDefault();
+      const v = box.querySelector("#tok").value.trim();
+      if (!v) return;
+      const r = await fetch("/api/auth", { headers: { "X-App-Token": v } })
+        .catch(() => ({ ok: false }));
+      if (!r.ok) {
+        const err = box.querySelector("#tokerr");
+        err.hidden = false;
+        err.textContent = "That token was not accepted. Check it against APP_TOKEN.";
+        return;
+      }
+      try { localStorage.setItem(KEY, v); } catch { /* private window */ }
+      TOKEN = v;
+      box.remove();
+      document.querySelector(".wrap").hidden = false;
+      document.getElementById("refresh").hidden = false;
+      load(false);
+    });
+  }
+  const err = box.querySelector("#tokerr");
+  err.hidden = !wrong;
+  if (wrong) err.textContent = "That token was not accepted. Check it against APP_TOKEN.";
+}
 
 function setFeed(live, text, title) {
   const b = $("#feed");
@@ -89,9 +152,13 @@ async function load(force) {
   if (BOOK) btn.textContent = "Refreshing\\u2026";
   try {
     const r = await fetch("/api/" + (force ? "refresh" : "portfolio"),
-      { method: force ? "POST" : "GET", headers: AUTH, cache: "no-store" });
-    if (r.status === 401)
-      throw new Error("This dashboard needs an access token \\u2014 add ?token=\\u2026 to the URL.");
+      { method: force ? "POST" : "GET", headers: authHeaders(), cache: "no-store" });
+    if (r.status === 401) {
+      try { localStorage.removeItem(KEY); } catch { /* ignore */ }
+      askForToken(Boolean(TOKEN));       // "wrong" only if we actually sent one
+      TOKEN = "";
+      return;
+    }
     if (!r.ok) throw new Error("server returned " + r.status);
     BOOK = await r.json();
     render();

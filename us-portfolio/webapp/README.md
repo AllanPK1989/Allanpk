@@ -57,11 +57,16 @@ Copy `.env.example`. Every value has a working default.
 |---|---|
 | `FINNHUB_API_KEY` | free key from finnhub.io; needed for live quotes on a deployed host |
 | `QUOTE_TTL` | seconds a quote is reused before refetching (default 60) |
-| `APP_TOKEN` | shared secret; empty means no auth |
+| `APP_TOKEN` | shared secret; empty means no auth. The page prompts for it and remembers it per browser |
 | `PORT` | listen port (container hosts set this) |
 | `SKIP_WARMUP` | skip the startup fetch |
 
 ## Deploying
+
+The page itself is served without a token — it is an empty shell of markup and
+rendering code, with no positions or prices in it. Everything on screen comes
+from `/api/portfolio`, which is gated. That way opening your own dashboard gives
+you somewhere to enter the token rather than a JSON error.
 
 **Before you expose this to the internet, set `APP_TOKEN`.** The app has no
 login. Without a token anyone with the URL can read your positions, cost bases

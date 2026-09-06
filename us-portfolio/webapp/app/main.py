@@ -107,6 +107,12 @@ async def api_refresh():
     return await _payload(force=True)
 
 
+@app.get("/api/auth", dependencies=[Depends(require_token)])
+async def api_auth():
+    """Cheap endpoint for the page to test a token against before storing it."""
+    return {"ok": True}
+
+
 @app.get("/api/health")
 async def api_health():
     """Liveness, not feed quality.
@@ -142,10 +148,19 @@ async def favicon():
         headers={"Cache-Control": "public, max-age=86400"})
 
 
-@app.api_route("/", methods=["GET", "HEAD"], dependencies=[Depends(require_token)])
+@app.api_route("/", methods=["GET", "HEAD"])
 async def index():
-    # HEAD as well as GET: platform port probes use it, and a 405 there reads
-    # as a broken service.
+    """Served without a token, deliberately.
+
+    The page is an empty shell: markup and rendering code, no positions, no
+    prices, no totals — every figure arrives from /api/portfolio, which does
+    require the token. Gating this route bought no secrecy and cost the person
+    opening their own dashboard a raw {"detail": "bad or missing token"} blob
+    instead of somewhere to enter it. The page now asks for the token itself.
+
+    HEAD as well as GET: platform port probes use it, and a 405 reads as a
+    broken service.
+    """
     return FileResponse(STATIC / "index.html")
 
 

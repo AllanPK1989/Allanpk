@@ -20,8 +20,12 @@ root because that is the only place Render looks for it.
    not on `main`, so do not let it default there.
 3. Apply. Render builds `us-portfolio/webapp/Dockerfile` with `us-portfolio/`
    as the build context, and generates `APP_TOKEN` for you.
-4. Copy that value from the service's **Environment** tab, then open
-   `https://us-book.onrender.com/?token=<value>`
+4. Open `https://us-book.onrender.com`. The page asks for the token; copy it
+   from the service's **Environment** tab and paste it in. The browser
+   remembers it, so this is a one-time step per device.
+
+   `?token=<value>` in the URL also works — the page stores it and immediately
+   strips it from the address bar, so it does not linger in history or logs.
 
 Pushes to that branch redeploy automatically. The free tier sleeps when idle, so
 the first request after a quiet spell takes ~30s to wake.

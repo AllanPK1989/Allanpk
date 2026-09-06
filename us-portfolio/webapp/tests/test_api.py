@@ -126,3 +126,28 @@ def test_drift_flags_a_call_whose_price_has_moved(client):
 def test_favicon_is_served(client):
     r = client.get("/favicon.ico")
     assert r.status_code == 200 and "svg" in r.headers["content-type"]
+
+
+def test_the_page_shell_is_public_but_carries_no_data(monkeypatch):
+    """Regression: gating / returned {"detail":"bad or missing token"} to
+    anyone opening their own dashboard. The shell holds no positions — every
+    figure comes from /api/portfolio, which stays gated — so it is served
+    openly and the page asks for the token itself."""
+    monkeypatch.setattr(main, "APP_TOKEN", "s3cret")
+    main.quotes.providers = [Stub({"GOOGL": 400.0})]
+    with TestClient(main.app) as c:
+        page = c.get("/")
+        assert page.status_code == 200
+        for leak in ("GOOGL", "AAPL", "cost_basis\":", "53,767"):
+            assert leak not in page.text, f"the public shell leaked {leak!r}"
+        assert c.get("/api/portfolio").status_code == 401     # data stays shut
+        assert c.head("/").status_code == 200
+
+
+def test_auth_endpoint_validates_a_token_without_returning_data(monkeypatch):
+    monkeypatch.setattr(main, "APP_TOKEN", "s3cret")
+    with TestClient(main.app) as c:
+        assert c.get("/api/auth").status_code == 401
+        assert c.get("/api/auth", headers={"X-App-Token": "nope"}).status_code == 401
+        good = c.get("/api/auth", headers={"X-App-Token": "s3cret"})
+        assert good.status_code == 200 and good.json() == {"ok": True}
