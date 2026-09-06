@@ -1,0 +1,53 @@
+# Deploys the dashboard to Fly.io. One-time setup:
+#   1. fly auth login && fly apps create us-book
+#   2. fly secrets set APP_TOKEN=$(openssl rand -hex 16) --app us-book
+#   3. fly tokens create deploy --app us-book
+#   4. paste that token into this repo: Settings → Secrets → Actions → FLY_API_TOKEN
+# After that every push to the branch redeploys.
+name: Deploy portfolio dashboard
+
+on:
+  push:
+    branches: [main, claude/us-portfolio-dashboard-analysis-3ymsyv]
+    paths: ['us-portfolio/**', '.github/workflows/portfolio-deploy.yml']
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-us-book
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # Without the token the job would fail on every push for anyone who has not
+    # set it up, so skip rather than fail.
+    if: ${{ github.event_name == 'workflow_dispatch' || vars.DEPLOY_ENABLED == 'true' }}
+    defaults:
+      run:
+        working-directory: us-portfolio
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Check the deploy token is present
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          if [ -z "$FLY_API_TOKEN" ]; then
+            echo "::error::FLY_API_TOKEN is not set. See the header of this workflow."
+            exit 1
+          fi
+      - run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - name: Confirm the deployed app is healthy
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          url="https://$(flyctl status --json | python3 -c 'import json,sys;print(json.load(sys.stdin)["Hostname"])')"
+          echo "checking $url/api/health"
+          for i in 1 2 3 4 5; do
+            code=$(curl -sS -o /dev/null -w '%{http_code}' "$url/api/health" || true)
+            [ "$code" = "200" ] && { echo "healthy at $url"; exit 0; }
+            echo "  attempt $i: HTTP $code, retrying"; sleep 10
+          done
+          echo "::error::App did not report healthy after deploy"; exit 1

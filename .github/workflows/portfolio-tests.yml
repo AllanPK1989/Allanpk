@@ -1,0 +1,32 @@
+name: Portfolio app tests
+
+on:
+  push:
+    paths: ['us-portfolio/**', '.github/workflows/portfolio-tests.yml']
+  pull_request:
+    paths: ['us-portfolio/**']
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: us-portfolio/webapp
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: us-portfolio/webapp/requirements-dev.txt
+      - run: pip install -r requirements-dev.txt
+      - run: python -m pytest -q
+      - name: The generated pages must match the template
+        working-directory: us-portfolio
+        run: |
+          python build_data.py
+          python webapp/build_frontend.py
+          git diff --exit-code -- dashboard.html dashboard.local.html \
+            webapp/static/index.html data/portfolio.json \
+          || { echo "::error::Generated files are stale. Run build_data.py and webapp/build_frontend.py, then commit."; exit 1; }

@@ -6,7 +6,7 @@ All figures were gathered on **5 September 2026**, the date all three statements
 
 | Account | Source | Value | Cost | Return |
 |---|---|---:|---:|---:|
-| Vested · VSCH000079 | `PK_vested_account.pdf`, "Details of Holdings as of 05 Sep 2026" | $27,251.33 | $14,458.32 | +88.48% |
+| Vested · Account 1 | `PK_vested_account.pdf`, "Details of Holdings as of 05 Sep 2026" | $27,251.33 | $14,458.32 | +88.48% |
 | Vested · Account 2 | Holdings table screenshot, same date | $20,967.75 | $13,315.02 | +57.47% |
 | IBKR | "Open Positions" statement, same date | $5,548.35 | $5,237.48 | +5.94% |
 | **Consolidated** | | **$53,767.41** | **$33,011.14** | **+62.88%** |

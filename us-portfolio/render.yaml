@@ -1,0 +1,21 @@
+# Render Blueprint. Point Render at this repo and it reads this file — no CLI,
+# no local Docker, no token to paste. Push to the branch and it redeploys.
+services:
+  - type: web
+    name: us-book
+    runtime: docker
+    plan: free
+    region: singapore                 # nearest Render region to India
+    dockerfilePath: ./us-portfolio/webapp/Dockerfile
+    dockerContext: ./us-portfolio     # the Dockerfile COPYs data/ and webapp/
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      # Render generates this and shows it in the dashboard. Without it the
+      # app is open to anyone who finds the URL.
+      - key: APP_TOKEN
+        generateValue: true
+      - key: QUOTE_TTL
+        value: "60"
+      - key: LOG_LEVEL
+        value: INFO

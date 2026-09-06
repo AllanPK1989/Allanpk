@@ -10,7 +10,7 @@ market     : prices / 52-week ranges / multiples / consensus targets gathered
 
 Run:  python3 build_data.py     ->  data/portfolio.json
 """
-import json, datetime, pathlib, sys
+import json, pathlib, sys
 
 # The scoring model is shared with the web app so the two can never disagree.
 sys.path.insert(0, str(pathlib.Path(__file__).parent / "webapp"))
@@ -24,7 +24,7 @@ USDINR = 94.38
 # is marked to the same tape.
 ACCOUNTS = {
     "vested_1": {
-        "label": "Vested · VSCH000079",
+        "label": "Vested · Account 1",
         "broker": "Vested / DriveWealth",
         "note": "Largest account. Statement PDF, 05 Sep 2026.",
         "holdings": [
@@ -244,7 +244,7 @@ for r in universe:
         themes[r["theme"]] = round(themes.get(r["theme"], 0) + r["value"], 2)
 
 out = dict(
-    as_of=AS_OF, generated=datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
+    as_of=AS_OF,
     usdinr=USDINR,
     totals=dict(value=round(total_value, 2), cost=round(total_cost, 2),
                 pl=round(total_value - total_cost, 2),

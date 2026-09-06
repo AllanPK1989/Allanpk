@@ -265,7 +265,7 @@ code{font-family:var(--mono);font-size:.92em;background:var(--surface-2);
     </div>
     <div class="tools">
       <button class="tab" data-acct="all" aria-pressed="true">All accounts</button>
-      <button class="tab" data-acct="vested_1" aria-pressed="false">Vested · VSCH000079</button>
+      <button class="tab" data-acct="vested_1" aria-pressed="false">Vested · 1</button>
       <button class="tab" data-acct="vested_2" aria-pressed="false">Vested · 2</button>
       <button class="tab" data-acct="ibkr" aria-pressed="false">IBKR</button>
     </div>
@@ -323,7 +323,7 @@ code{font-family:var(--mono);font-size:.92em;background:var(--surface-2);
   </section>
 
   <footer>
-    <p><b>Data.</b> Positions come from the three statements dated 5 Sep 2026 — the Vested PDF (VSCH000079), the second Vested holdings table, and the IBKR open-positions report. Prices, 52-week ranges, multiples and consensus targets were gathered from public sources on the same date; <code>data/SOURCES.md</code> lists them. Where a figure could not be confirmed it is marked <i>low confidence</i> in the watchlist table rather than guessed.</p>
+    <p><b>Data.</b> Positions come from the three statements dated 5 Sep 2026 — the first Vested statement, the second Vested holdings table, and the IBKR open-positions report. Prices, 52-week ranges, multiples and consensus targets were gathered from public sources on the same date; <code>data/SOURCES.md</code> lists them. Where a figure could not be confirmed it is marked <i>low confidence</i> in the watchlist table rather than guessed.</p>
     <p><b>Live quotes.</b> A browser page cannot fetch a quote API on its own: opened as a file it sends <code>Origin: null</code> and the quote host refuses it, and inside a published Artifact the content policy blocks the request before it leaves. Run <code>python3 serve.py</code> in this folder instead — it serves the page on <code>localhost</code> and fetches quotes server-side, where those rules do not apply. The badge then reads <i>Live</i> and the 50/200-day and RSI figures are computed from a year of fetched history. Everywhere else the page shows the 5 Sep snapshot and says so.</p>
     <p><b>Not investment advice.</b> This is analysis for your own decision-making, not a recommendation from a SEBI-registered investment adviser. Consensus targets are other people's opinions. As an Indian resident, gains here are taxable in India — foreign equity is taxed at slab rates if held under 24 months and 12.5% LTCG beyond that, and Schedule FA reporting applies. Position sizes assume you are not investing an emergency fund or borrowed money.</p>
   </footer>

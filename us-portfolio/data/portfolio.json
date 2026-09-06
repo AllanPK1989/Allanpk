@@ -1,6 +1,5 @@
 {
  "as_of": "2026-09-05",
- "generated": "2026-09-06T14:46:01+00:00",
  "usdinr": 94.38,
  "totals": {
   "value": 53767.41,
@@ -13,7 +12,7 @@
  },
  "accounts": [
   {
-   "label": "Vested \u00b7 VSCH000079",
+   "label": "Vested \u00b7 Account 1",
    "broker": "Vested / DriveWealth",
    "note": "Largest account. Statement PDF, 05 Sep 2026.",
    "id": "vested_1",
