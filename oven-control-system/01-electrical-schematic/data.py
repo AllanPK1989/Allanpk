@@ -2,7 +2,7 @@
 
 # (address, wire no, -X1 terminal, device tag, symbol, contact ref, description, location)
 INPUTS = [
-    ("X0",  "220", "20", "-S0",  "estop", "11-12", "EMERGENCY STOP - healthy (NC, fail-safe)", "panel door"),
+    ("X0",  "220", "20", "-S0",  "estop", "21-22", "EMERGENCY STOP - healthy (NC, fail-safe)", "panel door"),
     ("X1",  "221", "21", "-S1",  "pb_no", "13-14", "BLOWER 1  START push-button", "panel door"),
     ("X2",  "222", "22", "-S2",  "pb_nc", "11-12", "BLOWER 1  STOP push-button (NC, fail-safe)", "panel door"),
     ("X3",  "223", "23", "-S3",  "pb_no", "13-14", "BLOWER 2  START push-button", "panel door"),
@@ -52,7 +52,7 @@ TERMINALS_X1 = [
     ("08", "TC-", "-B2:-",  "Thermocouple type K, negative (white)", "09"),
     ("09", "SCR", "-B2 scr", "Thermocouple screen - earthed at panel only", "09"),
     ("10", "PE",  "oven",   "Oven body bonding conductor", "04"),
-    ("20", "220", "-S0:11", "Emergency stop, contact 11-12 -> PLC X0", "06"),
+    ("20", "220", "-S0:21", "Emergency stop, contact 21-22 -> PLC X0", "06"),
     ("21", "221", "-S1:13", "Blower 1 START push-button -> PLC X1", "06"),
     ("22", "222", "-S2:11", "Blower 1 STOP push-button -> PLC X2", "06"),
     ("23", "223", "-S3:13", "Blower 2 START push-button -> PLC X3", "06"),

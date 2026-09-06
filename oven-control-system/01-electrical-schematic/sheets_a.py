@@ -5,7 +5,7 @@ DWG = "OVN-2026-01"
 
 
 def new(num, title, sub=None):
-    s = Sheet(num, title, DWG, rev="1")
+    s = Sheet(num, title, DWG, rev="2")
     s.frame()
     s.header(sub)
     return s
@@ -176,6 +176,9 @@ def sheet01():
         ["", "", "Y12 / -KA4 added; single maintenance", ""],
         ["", "", "password level; 7-day data logging to", ""],
         ["", "", "the SD card in the FX5U", ""],
+        ["2", "2026-09-06", "-S0 contact to PLC X0 corrected from", "CLAUDE"],
+        ["", "", "11-12 to 21-22 (11-12 is used in the", ""],
+        ["", "", "coil bus on sheet 05)", ""],
     ], rh=5.0, align=["middle", "middle", "start", "middle"])
 
     yy = ny + 6.0

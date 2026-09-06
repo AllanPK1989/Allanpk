@@ -73,7 +73,7 @@
 <text x="388.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">SHEET</text>
 <text x="388.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">01 / 13</text>
 <text x="402.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">REV</text>
-<text x="402.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">1</text>
+<text x="402.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">2</text>
 <text x="16.00" y="12.50" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="4.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">COVER SHEET, DRAWING INDEX &amp; LEGEND</text>
 <text x="16.00" y="17.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">Electric batch oven - 18 kW heater bank, 2 x recirculation blowers, PLC / HMI control retrofit</text>
 <line x1="16.00" y1="19.60" x2="408.00" y2="19.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
@@ -329,11 +329,11 @@
 <rect x="16.00" y="216.00" width="128.00" height="5.00" rx="0" fill="#e8e8e8" stroke="#000" stroke-width="0.3"/>
 <text x="17.40" y="219.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">REV</text>
 <text x="29.40" y="219.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">DATE</text>
-<line x1="28.00" y1="216.00" x2="28.00" y2="246.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="28.00" y1="216.00" x2="28.00" y2="261.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <text x="51.40" y="219.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">DESCRIPTION</text>
-<line x1="50.00" y1="216.00" x2="50.00" y2="246.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="50.00" y1="216.00" x2="50.00" y2="261.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <text x="125.40" y="219.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">BY</text>
-<line x1="124.00" y1="216.00" x2="124.00" y2="246.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="124.00" y1="216.00" x2="124.00" y2="261.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <text x="22.00" y="224.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">0</text>
 <text x="39.00" y="224.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">2026-09-06</text>
 <text x="51.40" y="224.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">First issue - schematic for review</text>
@@ -359,10 +359,25 @@
 <text x="51.40" y="244.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">the SD card in the FX5U</text>
 <text x="134.00" y="244.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal"></text>
 <line x1="16.00" y1="241.00" x2="144.00" y2="241.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
-<rect x="16.00" y="216.00" width="128.00" height="30.00" rx="0" fill="none" stroke="#000" stroke-width="0.3"/>
-<line x1="28.00" y1="216.00" x2="28.00" y2="246.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
-<line x1="50.00" y1="216.00" x2="50.00" y2="246.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
-<line x1="124.00" y1="216.00" x2="124.00" y2="246.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="22.00" y="249.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">2</text>
+<text x="39.00" y="249.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">2026-09-06</text>
+<text x="51.40" y="249.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">-S0 contact to PLC X0 corrected from</text>
+<text x="134.00" y="249.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">CLAUDE</text>
+<line x1="16.00" y1="246.00" x2="144.00" y2="246.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="22.00" y="254.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal"></text>
+<text x="39.00" y="254.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal"></text>
+<text x="51.40" y="254.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">11-12 to 21-22 (11-12 is used in the</text>
+<text x="134.00" y="254.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal"></text>
+<line x1="16.00" y1="251.00" x2="144.00" y2="251.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<text x="22.00" y="259.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal"></text>
+<text x="39.00" y="259.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal"></text>
+<text x="51.40" y="259.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">coil bus on sheet 05)</text>
+<text x="134.00" y="259.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.0" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal"></text>
+<line x1="16.00" y1="256.00" x2="144.00" y2="256.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<rect x="16.00" y="216.00" width="128.00" height="45.00" rx="0" fill="none" stroke="#000" stroke-width="0.3"/>
+<line x1="28.00" y1="216.00" x2="28.00" y2="261.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="50.00" y1="216.00" x2="50.00" y2="261.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
+<line x1="124.00" y1="216.00" x2="124.00" y2="261.00" stroke="#000" stroke-width="0.18" stroke-linecap="round"/>
 <text x="152.00" y="181.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">1.  All wiring to IEC 60204-1.  Power conductors 1100 V grade PVC copper, control conductors 1.5 mm2 black,</text>
 <text x="156.25" y="184.50" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">24 V DC control conductors 1.0 mm2 dark blue, protective conductor green/yellow, neutral light blue.</text>
 <text x="152.00" y="188.00" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">2.  All field wiring terminates on terminal strip -X1 / -X2.  No field cable is landed directly on a device.</text>

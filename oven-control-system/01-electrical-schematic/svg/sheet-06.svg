@@ -73,7 +73,7 @@
 <text x="388.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">SHEET</text>
 <text x="388.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">06 / 13</text>
 <text x="402.00" y="280.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.7" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">REV</text>
-<text x="402.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">1</text>
+<text x="402.00" y="286.60" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">2</text>
 <text x="16.00" y="12.50" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="4.6" fill="#000" text-anchor="start" font-weight="bold" font-style="normal">PLC -A1 : CPU SUPPLY &amp; DIGITAL INPUTS X0 - X17</text>
 <text x="16.00" y="17.40" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.6" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">MELSEC iQ-F  FX5U-32MT/ES  -  sink input wiring (S/S = +24 V)</text>
 <line x1="16.00" y1="19.60" x2="408.00" y2="19.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
@@ -109,7 +109,7 @@
 <text x="136.00" y="49.70" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.9" fill="#000" text-anchor="middle" font-weight="normal" font-style="normal">20</text>
 <g transform="rotate(-90 156.00 52.00)"><line x1="156.00" y1="52.00" x2="156.00" y2="53.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="58.40" x2="156.00" y2="60.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="156.00" y1="58.40" x2="159.40" y2="53.40" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="158.20" y1="52.20" x2="160.60" y2="54.60" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><line x1="157.70" y1="55.90" x2="162.10" y2="55.90" stroke="#000" stroke-width="0.18" stroke-linecap="round" stroke-dasharray="0.8,0.8"/><line x1="162.10" y1="55.90" x2="162.10" y2="53.80" stroke="#000" stroke-width="0.3" stroke-linecap="round"/><path d="M 160.10 53.80 A 2.20 2.20 0 0 1 164.10 53.80" fill="none" stroke="#000" stroke-width="0.3"/></g>
 <text x="154.00" y="50.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.1" fill="#000" text-anchor="end" font-weight="bold" font-style="normal">-S0</text>
-<text x="154.00" y="55.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.85" fill="#000" text-anchor="end" font-weight="normal" font-style="normal">11-12</text>
+<text x="154.00" y="55.20" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="1.85" fill="#000" text-anchor="end" font-weight="normal" font-style="normal">21-22</text>
 <line x1="164.00" y1="52.00" x2="218.00" y2="52.00" stroke="#000" stroke-width="0.3" stroke-linecap="round"/>
 <circle cx="218.00" cy="52.00" r="0.70" fill="#000" stroke="#000" stroke-width="0"/>
 <text x="230.00" y="52.90" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="2.05" fill="#000" text-anchor="start" font-weight="normal" font-style="normal">EMERGENCY STOP - healthy (NC, fail-safe)</text>
