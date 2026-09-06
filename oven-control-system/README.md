@@ -10,7 +10,7 @@ a GOT2000 GT2107 HMI.
 | # | Deliverable | Status | Location |
 |---|-------------|--------|----------|
 | 1 | Electrical schematic diagram (13 A3 sheets) | **Delivered** | `01-electrical-schematic/` |
-| 2 | FX5U PLC program (GX Works3) | Not started | `02-plc-program/` |
+| 2 | FX5U PLC program (ST, GX Works3) | **Delivered** — 97/97 tests pass | `02-plc-program/` |
 | 3 | GT2107 HMI project (GT Designer3) | Not started | `03-hmi-program/` |
 
 ## 1. Electrical schematic
@@ -99,24 +99,26 @@ around rather than argued about:
    events, with a mismatch indication to expose malpractice.
 8. Password-protected manual test of blowers and heater.
 
-## 4. Open items before the PLC and HMI programs are built
+## 4. Answers that shaped the program
 
-These do not block the schematic but do change the program:
+All confirmed by the client:
 
-1. **Slot-timer semantics.** Does "start" mean an operator presses a Start button
-   for that slot on the HMI, or is loading detected by a sensor? Current
-   assumption: HMI button per slot.
-2. **Retentive behaviour across power failure.** Assumption: a running slot timer
-   keeps its accumulated value and resumes on power-up (latched devices), rather
-   than restarting from zero or being abandoned.
-3. **Lot counting rule.** Assumption: lots loaded increments on every timer start;
-   lots unloaded increments only on a *normal* reset at 2 h. A password reset
-   before 2 h increments a separate "early reset" counter and does **not** count
-   as an unload — this is what makes the malpractice visible.
-4. **Passwords.** How many levels and who holds them. Current design: level 1
-   supervisor, level 2 maintenance technician.
-5. **Heat-up watchdog default.** Assumed 60 min, adjustable 10–240 min on the HMI.
-6. **Manual test limits.** Assumption: manual test is inhibited unless the oven
-   door is closed and no overload is tripped, and it self-cancels after 5 min.
-7. **Data logging.** Whether the timer/counter history has to be exportable to
-   USB, and for how long it must be retained.
+1. **Slot timer start** — one HMI button per slot.
+2. **Power failure** — a running cure pauses and resumes from the accumulated
+   value; it never restarts.
+3. **Lot counting** — loaded increments on every start; unloaded increments only
+   on a normal reset at 2 h. An early reset counts separately and is **not** an
+   unload. That asymmetry is what exposes malpractice.
+4. **Passwords** — a single protected level: Level 2, maintenance technician.
+5. **Heat-up watchdog** — the alarm for "controller ON a long time and never
+   reaching set point". 60 min default, adjustable 10–240 min on the HMI.
+6. **Manual test guards** — accepted as proposed.
+7. **History retention** — 7 days, logged to the FX5U SD card.
+8. **Door-signal alarm** (added) — a pulsating door signal, or no 'door closed'
+   signal for 10 minutes, energises the volt-free alarm output Y12 / -KA4.
+
+### One judgement call to confirm
+
+Door open/close counter reset was put behind the maintenance password along
+with everything else, on the grounds that a counter anyone can zero is not
+evidence. One flag changes it if operators should reset it freely.

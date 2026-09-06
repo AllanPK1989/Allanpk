@@ -1,0 +1,33 @@
+Device,Comment
+X0,"-S0 21-22  EMERGENCY STOP - healthy (NC, fail-safe)"
+X1,-S1 13-14  BLOWER 1  START push-button
+X2,"-S2 11-12  BLOWER 1  STOP push-button (NC, fail-safe)"
+X3,-S3 13-14  BLOWER 2  START push-button
+X4,"-S4 11-12  BLOWER 2  STOP push-button (NC, fail-safe)"
+X5,-B1 13-14  OVEN DOOR CLOSED - position switch
+X6,-A2 OUT1  TEMP CONTROLLER heat demand (volt-free)
+X7,-A2 AL1  TEMP CONTROLLER alarm / sensor break (NC = healthy)
+X10,-F1 97-98  BLOWER 1 overload TRIPPED
+X11,-F2 97-98  BLOWER 2 overload TRIPPED
+X12,-F3 97-98  HEATER overload TRIPPED
+X13,-B3 C2  HIGH-LIMIT THERMOSTAT healthy (NC = healthy)
+X14,-K1 13-14  BLOWER 1 contactor closed - feedback
+X15,-K2 13-14  BLOWER 2 contactor closed - feedback
+X16,-K3 13-14  HEATER contactor closed - feedback
+X17,-S5 13-14  LAMP TEST / ALARM ACCEPT push-button
+Y0,-KA1  Interposing relay  ->  -K1  BLOWER 1 contactor
+Y1,-KA2  Interposing relay  ->  -K2  BLOWER 2 contactor
+Y2,-KA3  Interposing relay  ->  -K3  HEATER contactor
+Y3,-H1  BLOWER 1 RUNNING
+Y4,-H2  BLOWER 2 RUNNING
+Y5,-H3  HEATER ON
+Y6,-H4  OVEN DOOR OPEN
+Y7,-H5  COMMON ALARM (flashing)
+Y10,-H6  CYCLE RUNNING - one or more slot timers active
+Y11,"-B4  AUDIBLE ALARM - hooter, 24 V DC, 85 dB"
+Y12,-KA4  DOOR ALARM relay - volt-free contact to -X1:50 / -X1:51
+Y13,SPARE
+Y14,SPARE
+Y15,SPARE
+Y16,SPARE
+Y17,SPARE
