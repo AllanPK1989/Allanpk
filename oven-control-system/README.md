@@ -13,6 +13,12 @@ a GOT2000 GT2107 HMI.
 | 2 | FX5U PLC program (ST, GX Works3) | **Delivered** — 97/97 tests pass | `02-plc-program/` |
 | 3 | GT2107 HMI project (GT Designer3) | **Delivered** — 10 screens, 151 objects | `03-hmi-program/` |
 
+## Start here
+
+**`OVN-2026-01_Implementation-Guide.pdf`** — how to build the GX Works3 and
+GT Designer3 projects step by step, and the order to commission them in. The
+steps marked CRITICAL in it are the ones that fail silently if skipped.
+
 ## Project status
 
 All three deliverables are complete. The schematic is at Rev 3, the PLC program
