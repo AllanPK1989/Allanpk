@@ -1,0 +1,29 @@
+# Render Blueprint.
+#
+# This file must sit at the REPOSITORY ROOT — Render only looks here — and every
+# path below is relative to that root, not to us-portfolio/.
+#
+# Deploy: https://dashboard.render.com/blueprints -> New Blueprint Instance ->
+# pick this repo. No CLI, no local Docker, no token to paste.
+services:
+  - type: web
+    name: us-book
+    runtime: docker
+    plan: free
+    region: singapore                       # nearest Render region to India
+    # The app lives on this branch, not main. Render defaults to main, which
+    # has none of it, so this has to be explicit.
+    branch: claude/us-portfolio-dashboard-analysis-3ymsyv
+    dockerfilePath: ./us-portfolio/webapp/Dockerfile
+    dockerContext: ./us-portfolio           # the Dockerfile COPYs data/ and webapp/
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      # Render generates this and shows it under Environment. Without it the
+      # dashboard is open to anyone who finds the URL.
+      - key: APP_TOKEN
+        generateValue: true
+      - key: QUOTE_TTL
+        value: "60"
+      - key: LOG_LEVEL
+        value: INFO

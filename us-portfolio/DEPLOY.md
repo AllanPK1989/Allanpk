@@ -11,16 +11,28 @@ The Render blueprint generates one for you; on Fly you set it yourself.
 
 ## Render — recommended, no local tooling
 
-Nothing to install. Render reads `render.yaml` from the repo.
+Nothing to install. Render reads `render.yaml`, which sits at the repository
+root because that is the only place Render looks for it.
 
 1. <https://dashboard.render.com/blueprints> → **New Blueprint Instance**
-2. Pick this repo and the branch `claude/us-portfolio-dashboard-analysis-3ymsyv`
-3. Apply. It builds `us-portfolio/webapp/Dockerfile` and generates `APP_TOKEN`.
-4. Copy that value from **Environment**, then open
+2. Pick this repo. The blueprint pins
+   `branch: claude/us-portfolio-dashboard-analysis-3ymsyv` itself — the code is
+   not on `main`, so do not let it default there.
+3. Apply. Render builds `us-portfolio/webapp/Dockerfile` with `us-portfolio/`
+   as the build context, and generates `APP_TOKEN` for you.
+4. Copy that value from the service's **Environment** tab, then open
    `https://us-book.onrender.com/?token=<value>`
 
-Pushes to the branch redeploy automatically. The free tier sleeps when idle, so
+Pushes to that branch redeploy automatically. The free tier sleeps when idle, so
 the first request after a quiet spell takes ~30s to wake.
+
+If you later merge this to `main`, change `branch:` in `render.yaml` to match,
+or the blueprint will keep tracking the old branch.
+
+`python3 scripts/check_deploy_config.py` (run from the repo root) checks the
+blueprint before you click: that the file is where Render looks, that the branch
+it names actually carries the code, and that every Dockerfile `COPY` resolves
+inside the declared build context. CI runs it on every push.
 
 ## Fly.io — if you would rather use a CLI
 
