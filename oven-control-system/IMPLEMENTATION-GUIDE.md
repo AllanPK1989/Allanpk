@@ -300,6 +300,11 @@ separately, in writing. Also set a project password:
 > `03-hmi-program/OVN-2026-01_GT-Designer3-Build-Guide.pdf` — 14 pages, with a
 > recipe for every object type, the exact dialogue fields, and a screen-by-screen
 > build list. Use that at the keyboard; use Part C below as the overview.
+>
+> **And to build it quickly:** `03-hmi-program/OVN-2026-01_HMI-Build-Sheet.pdf`
+> — most of the 151 objects are the same few repeated six times, so build one of
+> each, copy it, and work down the device substitution tables. About 40
+> operations instead of 151.
 
 ## C.1 Create the project
 
