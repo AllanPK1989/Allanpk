@@ -161,7 +161,7 @@ completed work order left with its counter unreset.
 **With the optional Python toolkit**, five more, all currently passing:
 
 ```bash
-python tools/check_consistency.py         # 46 checks: schema, data, model, docs agree
+python tools/check_consistency.py         # 53 checks: schema, data, model, docs agree
 python tools/prepare_sharepoint_data.py   # 0 errors, 0 warnings on the supplied data
 python tools/validate_model.py            # 0 errors, 0 orphaned measures
 python tools/verify_measures.py           # 65 measures recomputed, none blank

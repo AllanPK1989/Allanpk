@@ -295,9 +295,19 @@ The five forms, in the order they appear on the machine's page:
 | **Breakdown Report** | 14 | Records a stoppage |
 | **Abnormality Log** | 9 | Records anything anyone spots |
 
-**`automate\FLOW_SPECS.md` §"The five forms" lists every question on every form, with
-the SharePoint column each one lands in.** Build from there — this stage is the one
-where working from memory costs you a week.
+### Copy the questions — do not retype them
+
+**Open `automate\FORMS_BUILD_SCRIPT.md`.** It has all **140 questions** written out
+in the order you enter them: every title, every subtitle, every choice list, generated
+straight from the master data.
+
+The checklist alone is 102 of those, and 51 of them carry an **acceptance standard** —
+the actual limit the technician judges the machine against. Retyped by hand,
+"≤ 0.05 mm" becomes "< 0.5 mm" on one line out of fifty-one, and a machine passes
+against a number ten times too loose. Nothing catches that. So copy.
+
+`automate\FLOW_SPECS.md` §"The five forms" explains *why* the forms are shaped this
+way and which column each answer lands in. Read it once; build from the script.
 
 ### ⚠ The rule that will catch you out
 

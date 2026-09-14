@@ -349,7 +349,7 @@ Five more gates, all currently passing. **None is needed to build or run the sys
 they are for whoever maintains it.
 
 ```bash
-python tools/check_consistency.py                  # 46 checks: everything agrees
+python tools/check_consistency.py                  # 53 checks: everything agrees
 python tools/prepare_sharepoint_data.py --strict   # 0 errors, 0 warnings, 2,422 rows
 python tools/validate_model.py                     # 0 errors, 0 orphaned measures
 python tools/verify_measures.py                    # 65 measures, none blank

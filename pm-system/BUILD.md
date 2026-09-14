@@ -435,6 +435,7 @@ sharepoint/
   data/                     import-ready CSVs, validation report, row counts
 
 automate/
+  FORMS_BUILD_SCRIPT.md     all 140 form questions, ready to copy
   FLOW_SPECS.md             5 forms and 9 flows, action by action
   expressions.md            every expression, copy-paste ready
 
@@ -475,7 +476,8 @@ later, and for the day the source data changes.
 | `tools/generate_sharepoint_schema.py` | Rebuilds the 14 schema files and the manifest | You added or removed a column |
 | `tools/verify_measures.py` | Recomputes 65 dashboard measures in plain Python, independently of the DAX | You want the dashboard's numbers checked by something other than the dashboard |
 | `tools/validate_model.py` | Confirms every reference in every visual, relationship and measure resolves | You edited the Power BI model |
-| `tools/check_consistency.py` | 46 checks that the schema, data, model, flows, views and all documents agree | You changed anything and want one command that says whether it still hangs together |
+| `tools/check_consistency.py` | 53 checks that the schema, data, model, flows, views and all documents agree | You changed anything and want one command that says whether it still hangs together |
+| `tools/build_forms_script.py` | Regenerates `FORMS_BUILD_SCRIPT.md` from the master data | A check point, acceptance standard, technician or spare changed |
 | `qr/generate_qr_labels.py` | The original QR generator, with optical decode verification | You prefer a command line to the browser page |
 
 If you can run Python 3.9+:

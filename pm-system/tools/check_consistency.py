@@ -370,6 +370,53 @@ def main():
           else f"switch not found" if not handled
           else f"UNHANDLED: {sorted(types_used - handled)}")
 
+    # ---------------------------------------------------------------- forms script
+    # The forms script is typed into Microsoft Forms by hand. If it drifts from
+    # Checklist_Master, the limit on the phone stops matching the limit in the
+    # system - and a machine passes against the wrong number with nothing to catch it.
+    print("\nForms build script")
+    fs = read("automate/FORMS_BUILD_SCRIPT.md")
+    cl = [r for r in csv.DictReader(
+        open(ROOT / "sharepoint/data/Checklist_Master.csv", encoding="utf-8-sig"))
+        if r["Active"] == "Yes"]
+
+    missing = [c["Check_Point"] for c in cl if c["Check_Point"] not in fs]
+    check("every check point appears verbatim", not missing,
+          str(missing[:2]) if missing else f"{len(cl)} check points")
+
+    bad_std = [c["Acceptance_Standard"] for c in cl
+               if f"Accept: {c['Acceptance_Standard']}" not in fs]
+    check("every acceptance standard appears verbatim", not bad_std,
+          str(bad_std[:2]) if bad_std else "the limit on the phone matches the list")
+
+    wrong_type = [f"{c['Checklist_ID']}/{c['Item_No']}" for c in cl
+                  if (("Reading — " if c["Check_Type"] == "Measurement"
+                       else "Observation — ") + c["Check_Point"]) not in fs]
+    check("measurement items ask for a number, others for an observation",
+          not wrong_type, str(wrong_type[:2]) if wrong_type else "")
+
+    crit = sum(1 for c in cl if c["Safety_Critical"] == "Yes")
+    check("every safety-critical item is flagged",
+          fs.count("SAFETY-CRITICAL") == crit,
+          f"{crit} of {len(cl)} block the cell from closing")
+
+    ids = {c["Checklist_ID"] for c in cl}
+    check("one branched section per checklist",
+          len(re.findall(r"^## Section \d+ — `", fs, re.M)) == len(ids),
+          f"{len(ids)} sections")
+
+    names = [t["Tech_Name"] for t in csv.DictReader(
+        open(ROOT / "sharepoint/data/Technician_Master.csv", encoding="utf-8-sig"))
+        if t["Active"] == "Yes"]
+    check("every active technician is in the dropdowns",
+          all(n in fs for n in names), f"{len(names)} names")
+
+    codes = [sp["Spare_Code"] for sp in csv.DictReader(
+        open(ROOT / "sharepoint/data/Spare_Master.csv", encoding="utf-8-sig"))
+        if sp["Active"] == "Yes"]
+    check("every active spare code is listed", all(c in fs for c in codes),
+          f"{len(codes)} codes")
+
     # ---------------------------------------------------------------- label language
     # The plant asked for English-only stickers. Both generators and the shop-floor
     # SOP have to agree on that, and a stray Tamil string in one of them would print
