@@ -1,0 +1,1588 @@
+<title>Core Words</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+/* ---------- tokens: light (bare :root defines the complete palette) ---------- */
+:root {
+  --ground:   #F7F8FA;
+  --paper:    #FFFFFF;
+  --sunk:     #EFF2F6;
+  --ink:      #14181F;
+  --ink-2:    #4A5361;
+  --ink-3:    #6E7887;
+  --rule:     #DDE2E9;
+  --rule-2:   #C8D0DA;
+  --accent:   #176A57;
+  --accent-soft: #E4F0EC;
+
+  --t-strong:      #176A57;
+  --t-strong-bg:   #E4F0EC;
+  --t-promising:   #2C5C8F;
+  --t-promising-bg:#E5EDF6;
+  --t-thin:        #8A6A12;
+  --t-thin-bg:     #F5EEDC;
+  --t-avoid:       #A32B2B;
+  --t-avoid-bg:    #F7E6E4;
+
+  --shadow: 0 1px 2px rgba(20, 24, 31, .05);
+
+  --display: "Bricolage Grotesque", "Trebuchet MS", sans-serif;
+  --body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --measure: 66ch;
+  --pad: clamp(18px, 4vw, 44px);
+}
+
+/* ---------- tokens: dark via OS (guarded so an explicit light choice wins) ---------- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #101318;
+    --paper:    #171B22;
+    --sunk:     #1D222B;
+    --ink:      #E8ECF2;
+    --ink-2:    #AEB7C4;
+    --ink-3:    #7F8A99;
+    --rule:     #262C36;
+    --rule-2:   #343C48;
+    --accent:   #4FBFA0;
+    --accent-soft: #14312A;
+
+    --t-strong:      #4FBFA0;
+    --t-strong-bg:   #14312A;
+    --t-promising:   #79ADE4;
+    --t-promising-bg:#152535;
+    --t-thin:        #D8AE4A;
+    --t-thin-bg:     #2C2415;
+    --t-avoid:       #E8817C;
+    --t-avoid-bg:    #33191A;
+
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3);
+  }
+}
+
+/* ---------- tokens: dark via explicit choice ---------- */
+:root[data-theme="dark"] {
+  --ground:   #101318;
+  --paper:    #171B22;
+  --sunk:     #1D222B;
+  --ink:      #E8ECF2;
+  --ink-2:    #AEB7C4;
+  --ink-3:    #7F8A99;
+  --rule:     #262C36;
+  --rule-2:   #343C48;
+  --accent:   #4FBFA0;
+  --accent-soft: #14312A;
+
+  --t-strong:      #4FBFA0;
+  --t-strong-bg:   #14312A;
+  --t-promising:   #79ADE4;
+  --t-promising-bg:#152535;
+  --t-thin:        #D8AE4A;
+  --t-thin-bg:     #2C2415;
+  --t-avoid:       #E8817C;
+  --t-avoid-bg:    #33191A;
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- typography ---------- */
+h1, h2, h3, h4 {
+  font-family: var(--display);
+  font-weight: 600;
+  line-height: 1.12;
+  text-wrap: balance;
+  margin: 0;
+  letter-spacing: -.011em;
+}
+h1 { font-size: clamp(2.1rem, 6.2vw, 3.5rem); font-weight: 800; letter-spacing: -.028em; }
+h2 { font-size: clamp(1.5rem, 3.6vw, 2rem); letter-spacing: -.018em; }
+h3 { font-size: 1.14rem; font-weight: 600; }
+h4 { font-size: .95rem; font-weight: 600; }
+p { margin: 0; }
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:focus-visible, button:focus-visible, input:focus-visible,
+select:focus-visible, textarea:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+strong { font-weight: 600; }
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: .69rem;
+  font-weight: 500;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.lede { font-size: 1.16rem; color: var(--ink-2); max-width: var(--measure); }
+.prose { max-width: var(--measure); display: flex; flex-direction: column; gap: 14px; }
+.prose ul { margin: 0; padding-left: 1.15em; display: flex; flex-direction: column; gap: 8px; }
+.small { font-size: .9rem; color: var(--ink-2); }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* ---------- shell ---------- */
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding-inline: var(--pad);
+}
+
+/* ---------- nav ---------- */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: color-mix(in srgb, var(--ground) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--rule);
+}
+.topbar-in {
+  display: flex; align-items: center; gap: 18px;
+  padding-block: 11px;
+}
+.brand {
+  font-family: var(--display); font-weight: 800; font-size: .96rem;
+  letter-spacing: -.01em; white-space: nowrap;
+}
+.brand span { color: var(--accent); }
+.navlinks {
+  display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none;
+  margin-left: auto;
+}
+.navlinks::-webkit-scrollbar { display: none; }
+.navlinks a {
+  font-family: var(--mono); font-size: .72rem; letter-spacing: .04em;
+  text-transform: uppercase; color: var(--ink-2); text-decoration: none;
+  padding: 6px 9px; border-radius: 3px; white-space: nowrap;
+}
+.navlinks a:hover { background: var(--sunk); color: var(--ink); }
+
+/* ---------- hero ---------- */
+.hero { padding-block: clamp(34px, 7vw, 62px) clamp(26px, 5vw, 40px); }
+.hero-grid { display: grid; gap: clamp(22px, 4vw, 40px); grid-template-columns: 1fr; }
+@media (min-width: 900px) { .hero-grid { grid-template-columns: 1.55fr 1fr; align-items: start; } }
+.hero h1 { margin-bottom: 16px; }
+.hero .lede { font-size: clamp(1.08rem, 2.2vw, 1.3rem); }
+
+.thesis {
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  background: var(--paper);
+  padding: 18px 20px;
+  border-radius: 3px;
+  display: flex; flex-direction: column; gap: 9px;
+}
+.thesis p { font-size: 1rem; color: var(--ink-2); }
+.thesis .big {
+  font-family: var(--display); font-weight: 600; font-size: 1.16rem;
+  color: var(--ink); line-height: 1.3;
+}
+
+.stamp {
+  display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: baseline;
+  font-family: var(--mono); font-size: .73rem; color: var(--ink-3);
+  border-top: 1px solid var(--rule); padding-top: 14px; margin-top: 26px;
+}
+.stamp b { color: var(--ink-2); font-weight: 500; }
+
+/* ---------- sections ---------- */
+section { padding-block: clamp(34px, 6vw, 58px); border-top: 1px solid var(--rule); }
+.sec-head { display: flex; flex-direction: column; gap: 10px; margin-bottom: 26px; max-width: var(--measure); }
+
+/* ---------- ask-list (questions for the SLP) ---------- */
+.asklist { display: flex; flex-direction: column; gap: 12px; counter-reset: q; }
+.ask {
+  background: var(--paper); border: 1px solid var(--rule); border-radius: 3px;
+  padding: 16px 18px; display: grid; gap: 4px 14px;
+  grid-template-columns: auto 1fr;
+}
+.ask::before {
+  counter-increment: q; content: counter(q);
+  font-family: var(--mono); font-size: .8rem; font-weight: 600;
+  color: var(--accent); grid-row: 1 / span 2; padding-top: 2px;
+}
+.ask h3 { font-size: 1.02rem; }
+.ask p { font-size: .93rem; color: var(--ink-2); }
+.ask .why { font-family: var(--mono); font-size: .71rem; color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
+
+/* ---------- evidence board (echoes an AAC grid) ---------- */
+.legend {
+  display: flex; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 20px;
+  font-family: var(--mono); font-size: .71rem; color: var(--ink-2);
+  text-transform: uppercase; letter-spacing: .05em;
+}
+.legend i { width: 10px; height: 10px; display: inline-block; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+
+.board { display: grid; gap: 10px; grid-template-columns: 1fr; }
+@media (min-width: 680px) { .board { grid-template-columns: 1fr 1fr; } }
+
+.cell {
+  background: var(--paper); border: 1px solid var(--rule);
+  border-radius: 4px; padding: 16px 17px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.cell-top { display: flex; align-items: center; gap: 8px; }
+.chip {
+  width: 11px; height: 11px; border-radius: 2px; flex: none;
+}
+.tier {
+  font-family: var(--mono); font-size: .68rem; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+}
+.cell h3 { font-size: 1.04rem; }
+.cell p { font-size: .92rem; color: var(--ink-2); }
+.cell .terms {
+  font-family: var(--mono); font-size: .74rem; color: var(--ink-3);
+  border-top: 1px dashed var(--rule-2); padding-top: 9px; margin-top: auto;
+}
+.cell[data-tier="strong"]     { border-color: color-mix(in srgb, var(--t-strong) 32%, var(--rule)); }
+.cell[data-tier="strong"]     .chip { background: var(--t-strong); }
+.cell[data-tier="strong"]     .tier { color: var(--t-strong); }
+.cell[data-tier="promising"]  .chip { background: var(--t-promising); }
+.cell[data-tier="promising"]  .tier { color: var(--t-promising); }
+.cell[data-tier="thin"]       .chip { background: var(--t-thin); }
+.cell[data-tier="thin"]       .tier { color: var(--t-thin); }
+.cell[data-tier="avoid"]      { border-color: color-mix(in srgb, var(--t-avoid) 40%, var(--rule)); background: var(--t-avoid-bg); }
+.cell[data-tier="avoid"]      .chip { background: var(--t-avoid); }
+.cell[data-tier="avoid"]      .tier { color: var(--t-avoid); }
+
+/* ---------- news log ---------- */
+.log { display: flex; flex-direction: column; }
+.entry {
+  display: grid; gap: 4px 22px; grid-template-columns: 1fr;
+  padding-block: 18px; border-top: 1px solid var(--rule);
+}
+.entry:last-child { border-bottom: 1px solid var(--rule); }
+@media (min-width: 720px) { .entry { grid-template-columns: 116px 1fr; } }
+.entry .when {
+  font-family: var(--mono); font-size: .75rem; color: var(--ink-3);
+  font-variant-numeric: tabular-nums; padding-top: 3px;
+}
+.entry h3 { font-size: 1.05rem; margin-bottom: 6px; }
+.entry p { font-size: .94rem; color: var(--ink-2); max-width: var(--measure); }
+.entry .tag {
+  display: inline-block; font-family: var(--mono); font-size: .65rem;
+  font-weight: 600; letter-spacing: .09em; text-transform: uppercase;
+  padding: 2px 6px; border-radius: 2px; margin-bottom: 8px;
+}
+.tag[data-kind="policy"]  { background: var(--t-promising-bg); color: var(--t-promising); }
+.tag[data-kind="research"]{ background: var(--t-strong-bg); color: var(--t-strong); }
+.tag[data-kind="caution"] { background: var(--t-avoid-bg); color: var(--t-avoid); }
+.src { margin-top: 9px; font-family: var(--mono); font-size: .72rem; }
+.src a { color: var(--ink-3); }
+.src a:hover { color: var(--accent); }
+
+/* ---------- checklist ---------- */
+.checks { display: grid; gap: 10px; grid-template-columns: 1fr; }
+@media (min-width: 700px) { .checks { grid-template-columns: 1fr 1fr; } }
+.check {
+  background: var(--paper); border: 1px solid var(--rule); border-radius: 3px;
+  padding: 14px 16px; display: flex; flex-direction: column; gap: 5px;
+}
+.check h4 { font-size: .97rem; }
+.check p { font-size: .89rem; color: var(--ink-2); }
+
+/* ---------- india resource table ---------- */
+.tablewrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 3px; background: var(--paper); }
+table { border-collapse: collapse; width: 100%; min-width: 560px; }
+th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--rule); vertical-align: top; font-size: .91rem; }
+th {
+  font-family: var(--mono); font-size: .68rem; font-weight: 600;
+  letter-spacing: .09em; text-transform: uppercase; color: var(--ink-3);
+  background: var(--sunk); white-space: nowrap;
+}
+tr:last-child td { border-bottom: none; }
+td b { font-weight: 600; }
+td .note { color: var(--ink-3); font-size: .85rem; display: block; margin-top: 2px; }
+
+/* ---------- tools (db-backed) ---------- */
+.toolnote {
+  font-family: var(--mono); font-size: .72rem; color: var(--ink-3);
+  display: flex; align-items: center; gap: 7px; margin-bottom: 18px;
+}
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink-3); flex: none; }
+.dot[data-on="db"]    { background: var(--t-strong); }
+.dot[data-on="local"] { background: var(--t-thin); }
+
+.panels { display: grid; gap: 14px; grid-template-columns: 1fr; align-items: start; }
+@media (min-width: 940px) { .panels { grid-template-columns: 1.15fr 1fr; } }
+.stack { display: grid; gap: 14px; align-content: start; }
+
+.panel {
+  background: var(--paper); border: 1px solid var(--rule);
+  border-radius: 4px; overflow: hidden;
+}
+.panel-head {
+  padding: 13px 16px; border-bottom: 1px solid var(--rule);
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  background: var(--sunk);
+}
+.panel-head h3 { font-size: .98rem; }
+.panel-head .count { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); margin-left: auto; }
+.panel-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; }
+
+form.row { display: flex; flex-direction: column; gap: 8px; }
+.fields { display: flex; flex-wrap: wrap; gap: 8px; }
+label.f { display: flex; flex-direction: column; gap: 3px; flex: 1 1 130px; min-width: 0; }
+label.f > span {
+  font-family: var(--mono); font-size: .65rem; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+input[type="text"], input[type="date"], select, textarea {
+  font-family: var(--body); font-size: .92rem;
+  background: var(--ground); color: var(--ink);
+  border: 1px solid var(--rule-2); border-radius: 3px;
+  padding: 7px 9px; width: 100%; min-width: 0;
+}
+textarea { resize: vertical; min-height: 54px; }
+select { font-family: var(--mono); font-size: .82rem; }
+
+button {
+  font-family: var(--mono); font-size: .76rem; font-weight: 600;
+  letter-spacing: .05em; text-transform: uppercase;
+  background: var(--accent); color: var(--paper);
+  border: 1px solid transparent; border-radius: 3px;
+  padding: 8px 14px; cursor: pointer; align-self: flex-start;
+}
+:root[data-theme="dark"] button { color: #0E1216; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) button { color: #0E1216; } }
+button:hover { filter: brightness(1.08); }
+button[disabled] { opacity: .5; cursor: default; filter: none; }
+button.ghost {
+  background: transparent; color: var(--ink-2); border-color: var(--rule-2);
+}
+button.ghost:hover { background: var(--sunk); color: var(--ink); filter: none; }
+button.mini {
+  padding: 3px 7px; font-size: .66rem; background: transparent;
+  color: var(--ink-3); border-color: transparent;
+}
+button.mini:hover { color: var(--t-avoid); background: var(--t-avoid-bg); filter: none; }
+
+.items { display: flex; flex-direction: column; border-top: 1px solid var(--rule); }
+.item {
+  display: grid; grid-template-columns: 1fr auto; gap: 3px 10px;
+  padding-block: 11px; border-bottom: 1px solid var(--rule);
+  font-size: .92rem;
+}
+.item:last-child { border-bottom: none; }
+.item .meta {
+  font-family: var(--mono); font-size: .69rem; color: var(--ink-3);
+  display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center;
+}
+.item .what { color: var(--ink); overflow-wrap: anywhere; }
+.item .mode {
+  font-family: var(--mono); font-size: .64rem; font-weight: 600;
+  letter-spacing: .07em; text-transform: uppercase;
+  padding: 2px 5px; border-radius: 2px;
+}
+.mode[data-m="device"]  { background: var(--t-strong-bg);    color: var(--t-strong); }
+.mode[data-m="picture"] { background: var(--t-thin-bg);      color: var(--t-thin); }
+.mode[data-m="sign"]    { background: var(--t-promising-bg);  color: var(--t-promising); }
+.mode[data-m="voice"]   { background: var(--accent-soft);     color: var(--accent); }
+.mode[data-m="behaviour"]{ background: var(--sunk);           color: var(--ink-2); }
+.mode[data-m="trying"]  { background: var(--t-promising-bg);  color: var(--t-promising); }
+.mode[data-m="kept"]    { background: var(--t-strong-bg);     color: var(--t-strong); }
+.mode[data-m="stopped"] { background: var(--sunk);            color: var(--ink-2); }
+
+.empty {
+  border: 1px dashed var(--rule-2); border-radius: 3px;
+  padding: 12px 14px; background: var(--sunk);
+  display: flex; flex-direction: column; gap: 5px;
+}
+.empty .tagline {
+  font-family: var(--mono); font-size: .64rem; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.empty .sample { font-size: .89rem; color: var(--ink-3); font-style: italic; }
+
+.summary {
+  display: flex; flex-wrap: wrap; gap: 6px 22px;
+  font-family: var(--mono); font-size: .74rem; color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.summary b { color: var(--ink); font-weight: 600; }
+
+/* ---------- claim checker ---------- */
+.checker {
+  background: var(--paper); border: 1px solid var(--rule);
+  border-radius: 4px; padding: 18px 20px;
+  display: flex; flex-direction: column; gap: 12px;
+  max-width: 760px;
+}
+.answer {
+  border-top: 1px solid var(--rule); padding-top: 14px;
+  font-size: .95rem; color: var(--ink-2); white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.answer:empty { display: none; }
+
+/* ---------- red flags ---------- */
+.flags { display: grid; gap: 10px; grid-template-columns: 1fr; }
+@media (min-width: 760px) { .flags { grid-template-columns: 1fr 1fr 1fr; } }
+.flag {
+  border: 1px solid color-mix(in srgb, var(--t-avoid) 30%, var(--rule));
+  background: var(--t-avoid-bg); border-radius: 3px; padding: 13px 15px;
+  display: flex; flex-direction: column; gap: 5px;
+}
+.flag .said {
+  font-family: var(--body); font-style: italic; font-size: .95rem; color: var(--ink);
+}
+.flag .means { font-family: var(--mono); font-size: .73rem; color: var(--t-avoid); }
+
+/* ---------- footer ---------- */
+footer {
+  border-top: 1px solid var(--rule); padding-block: 34px 48px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+footer p { font-size: .87rem; color: var(--ink-3); max-width: var(--measure); }
+
+details.sources { margin-top: 20px; }
+details.sources summary {
+  font-family: var(--mono); font-size: .73rem; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--ink-2); cursor: pointer;
+}
+details.sources ul {
+  margin: 12px 0 0; padding-left: 1.1em;
+  display: flex; flex-direction: column; gap: 6px;
+  font-size: .87rem; color: var(--ink-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+</style>
+
+<div class="topbar">
+  <div class="wrap topbar-in">
+    <div class="brand">Core<span>&nbsp;Words</span></div>
+    <nav class="navlinks">
+      <a href="#ask">Ask the SLP</a>
+      <a href="#evidence">Evidence</a>
+      <a href="#news">Updates</a>
+      <a href="#medical">Medical</a>
+      <a href="#india">India</a>
+      <a href="#track">Track</a>
+      <a href="#check">Check a claim</a>
+    </nav>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow" style="margin-bottom:14px">Evidence tracker &middot; minimally speaking autistic children</p>
+        <h1>Eight is not late.</h1>
+        <p class="lede">
+          Your son has things to say. The job now is giving him a way to say them
+          while the speech work continues &mdash; and the evidence on how to do that
+          is better than it was five years ago.
+        </p>
+      </div>
+      <aside class="thesis">
+        <p class="eyebrow">The one thing on this page</p>
+        <p class="big">Communication access is the intervention with the strongest evidence &mdash; and it is not a substitute for speech, it is a route to it.</p>
+        <p>
+          Across the research, giving a child a robust way to communicate does not
+          suppress spoken language. Children who get one tend to
+          <em>attempt more speech</em>, not less.
+        </p>
+      </aside>
+    </div>
+    <div class="stamp">
+      <span><b>Reviewed</b> 14 Sept 2026</span>
+      <span><b>Context</b> 8 years old &middot; nonspeaking &middot; seeing an SLP &middot; India</span>
+      <span><b>Not medical advice</b> &mdash; background reading for your next appointment</span>
+    </div>
+  </header>
+
+  <!-- ============ 1. ASK THE SLP ============ -->
+  <section id="ask">
+    <div class="sec-head">
+      <p class="eyebrow">Start here</p>
+      <h2>Five questions for your speech therapist</h2>
+      <p class="lede">
+        You already have an SLP, so this is the highest-value thing on the page.
+        Many therapists working with nonspeaking children focus on producing speech
+        sounds and treat a communication device as a last resort. Current evidence
+        points the other way. Ask these out loud, and write down the answers.
+      </p>
+    </div>
+
+    <div class="asklist">
+      <div class="ask">
+        <div>
+          <h3>Does he have a robust AAC system, not a request board?</h3>
+          <p>
+            A robust system carries a <em>core vocabulary</em> &mdash; the 80&ndash;400 high-frequency
+            words that make up most of what anyone says: <em>want, stop, more, go, help,
+            different, that, mine, finished</em>. A board with twelve pictures of snacks and toys
+            teaches him to request. It cannot teach him to comment, refuse, joke, or object.
+          </p>
+          <p class="why">Ask: how many words can he reach right now, and how do they grow?</p>
+        </div>
+      </div>
+
+      <div class="ask">
+        <div>
+          <h3>Are you modelling on the device yourself &mdash; and how much?</h3>
+          <p>
+            This is called <em>aided language stimulation</em>: the adult talks
+            <em>and</em> touches the words on his device, all day, with no demand that he
+            copy it. It is the single most-skipped ingredient. Children are routinely handed
+            a device nobody else ever uses, then judged for not using it.
+          </p>
+          <p class="why">Ask: who models at school, at home, and for how many minutes</p>
+        </div>
+      </div>
+
+      <div class="ask">
+        <div>
+          <h3>Has he been assessed for childhood apraxia of speech?</h3>
+          <p>
+            CAS is a motor planning problem &mdash; the brain struggles to sequence the
+            movements for speech, even when language is intact. It appears to be common in
+            autistic children with very little speech, and it changes the treatment:
+            motor-based methods with intensive, structured practice rather than
+            general language therapy or oral-motor exercises.
+          </p>
+          <p class="why">Ask: is there a motor speech diagnosis, and does it change the plan?</p>
+        </div>
+      </div>
+
+      <div class="ask">
+        <div>
+          <h3>What happens in the other 23 hours?</h3>
+          <p>
+            Two clinic sessions a week cannot build a language system. The gains in the
+            research come from communication woven into ordinary life &mdash; meals, bath,
+            travel, play &mdash; by the people already there. Caregiver-implemented
+            intervention has solid evidence behind it, and parent coaching should be an
+            explicit part of the plan, not a courtesy chat at pickup.
+          </p>
+          <p class="why">Ask: what are you teaching <em>us</em> to do this week?</p>
+        </div>
+      </div>
+
+      <div class="ask">
+        <div>
+          <h3>What exactly are we measuring, and when do we review it?</h3>
+          <p>
+            &ldquo;He's doing well&rdquo; is not data. The outcome that matters in trials is the
+            count of <em>spontaneous communicative utterances</em> &mdash; unprompted
+            communication he initiates himself &mdash; plus how many different words he uses
+            and how many different reasons he uses them for. Pick a measure, take a baseline,
+            review it on a date you both write down.
+          </p>
+          <p class="why">Use the log further down this page to bring your own data</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2. EVIDENCE ============ -->
+  <section id="evidence">
+    <div class="sec-head">
+      <p class="eyebrow">The map</p>
+      <h2>What the evidence actually supports</h2>
+      <p class="lede">
+        Tiers reflect the weight and quality of published evidence for
+        <em>minimally speaking children</em> specifically &mdash; not popularity, cost,
+        or how confidently it is sold to you.
+      </p>
+    </div>
+
+    <div class="legend">
+      <span><i style="background:var(--t-strong)"></i>Strong &mdash; do this</span>
+      <span><i style="background:var(--t-promising)"></i>Promising &mdash; worth asking about</span>
+      <span><i style="background:var(--t-thin)"></i>Thin &mdash; no good evidence</span>
+      <span><i style="background:var(--t-avoid)"></i>Avoid &mdash; risk of harm</span>
+    </div>
+
+    <div class="board">
+
+      <div class="cell" data-tier="strong">
+        <div class="cell-top"><i class="chip"></i><span class="tier">Strong</span></div>
+        <h3>Aided AAC with a core vocabulary</h3>
+        <p>
+          A speech-generating app or device carrying real vocabulary, available every
+          waking hour. A 2026 systematic review of interventions for minimally verbal
+          autistic children found the most consistent gains in
+          <em>spontaneous communication</em> where developmental approaches were combined
+          with AAC. A randomised trial of 61 minimally speaking children aged 5&ndash;8
+          found AAC-supported intervention beat the same intervention without AAC on
+          communication frequency, range of words, and using communication socially.
+        </p>
+        <p class="terms">Ask for: SGD / speech-generating device, core vocabulary, aided language stimulation</p>
+      </div>
+
+      <div class="cell" data-tier="strong">
+        <div class="cell-top"><i class="chip"></i><span class="tier">Strong</span></div>
+        <h3>Naturalistic developmental behavioural intervention</h3>
+        <p>
+          NDBI is the family that includes <strong>JASPER</strong> (joint attention,
+          symbolic play, engagement, regulation) and <strong>Enhanced Milieu Teaching</strong>.
+          It teaches communication inside play and routines the child is already interested in.
+          A 2025 trial of 194 minimally verbal 5&ndash;8 year olds found it worked about as
+          well as traditional discrete-trial teaching as a starting point &mdash; so the
+          choice can be made on what your son tolerates and enjoys.
+        </p>
+        <p class="terms">Ask for: JASPER, EMT, NDBI, naturalistic teaching</p>
+      </div>
+
+      <div class="cell" data-tier="strong">
+        <div class="cell-top"><i class="chip"></i><span class="tier">Strong</span></div>
+        <h3>Coaching the people around him</h3>
+        <p>
+          Caregiver-implemented intervention has repeatedly shown benefit, and it is the
+          only realistic way to reach the volume of practice language learning needs.
+          In the 2025 trial, parent training was built into the design rather than bolted on.
+          This is also the most affordable lever you have.
+        </p>
+        <p class="terms">Ask for: parent-mediated intervention, caregiver coaching, parent-child training programme</p>
+      </div>
+
+      <div class="cell" data-tier="promising">
+        <div class="cell-top"><i class="chip"></i><span class="tier">Promising</span></div>
+        <h3>Motor-speech treatment for apraxia</h3>
+        <p>
+          If a motor speech diagnosis fits, targeted methods exist &mdash; ReST, DTTC, and
+          <strong>Auditory-Motor Mapping Training</strong>, which pairs sung syllables with
+          drum taps. In a controlled comparison, AMMT produced significantly larger gains
+          than ordinary speech repetition practice in minimally verbal autistic children.
+          Evidence is early and trials are small, but this is a real and legitimate avenue.
+        </p>
+        <p class="terms">Ask for: AMMT, ReST, DTTC, motor learning principles</p>
+      </div>
+
+      <div class="cell" data-tier="promising">
+        <div class="cell-top"><i class="chip"></i><span class="tier">Promising</span></div>
+        <h3>Genetic testing &mdash; exome or genome</h3>
+        <p>
+          Not a treatment, but it can change management. Testing finds an explanation in
+          roughly 20&ndash;40% of autistic children, and paediatric guidance now favours
+          exome or genome sequencing as a first-tier test where there is developmental
+          delay. A named condition can flag seizure risk, heart or kidney screening, or a
+          specific clinical trial &mdash; and it ends the search for a cause.
+        </p>
+        <p class="terms">Ask for: exome sequencing, genome sequencing, clinical genetics referral</p>
+      </div>
+
+      <div class="cell" data-tier="promising">
+        <div class="cell-top"><i class="chip"></i><span class="tier">Promising</span></div>
+        <h3>Leucovorin &mdash; only with a confirmed deficiency</h3>
+        <p>
+          This is the treatment you will have heard most about, and the detail matters.
+          In March 2026 the US FDA approved leucovorin for <em>cerebral folate deficiency</em>
+          with a confirmed <em>FOLR1</em> variant &mdash; a condition affecting fewer than one
+          in a million &mdash; and explicitly declined to endorse it for autism generally,
+          citing insufficient evidence. Small studies have reported language gains in
+          some autistic children. It is a real avenue to raise with a paediatric
+          neurologist, with testing first. It is not a general autism treatment.
+        </p>
+        <p class="terms">Ask about: FRAA testing, CSF 5-MTHF, cerebral folate deficiency</p>
+      </div>
+
+      <div class="cell" data-tier="thin">
+        <div class="cell-top"><i class="chip"></i><span class="tier">Thin</span></div>
+        <h3>Medication for core autism features</h3>
+        <p>
+          After three decades of trials, no drug has shown consistent efficacy for the
+          core features of autism. Risperidone and aripiprazole are approved only for
+          severe irritability and aggression &mdash; a narrow, real use, with weight and
+          metabolic costs to weigh. Oxytocin and bumetanide did not hold up in larger trials.
+          Anyone offering you a pill for speech is ahead of the evidence.
+        </p>
+        <p class="terms">Reasonable to treat: sleep, seizures, constipation, anxiety, ADHD</p>
+      </div>
+
+      <div class="cell" data-tier="thin">
+        <div class="cell-top"><i class="chip"></i><span class="tier">Thin</span></div>
+        <h3>Diets, supplement stacks, hyperbaric oxygen</h3>
+        <p>
+          Gluten-free/casein-free diets, megavitamin protocols, and hyperbaric oxygen have
+          not shown reliable benefit for autism in controlled research. Restrictive diets
+          carry a real cost in a child who may already have a narrow food range. Treat a
+          documented deficiency; skip the protocol.
+        </p>
+        <p class="terms">Worth testing: ferritin, vitamin D, B12 &mdash; then treat what is actually low</p>
+      </div>
+
+      <div class="cell" data-tier="avoid">
+        <div class="cell-top"><i class="chip"></i><span class="tier">Avoid</span></div>
+        <h3>Chelation, chlorine dioxide, stem cell clinics</h3>
+        <p>
+          Chelation does not treat autism and can cause severe kidney damage; a
+          five-year-old boy died after a chelation session in 2005. Chlorine dioxide
+          (sold as MMS) is industrial bleach. Commercial stem cell infusions for autism
+          are unproven, invasive, and expensive. Note that the FDA quietly removed its
+          own page warning against these therapies in late 2025 &mdash; the absence of the
+          warning is not a change in the science.
+        </p>
+        <p class="terms">Also unsupported: detox clay baths, raw camel milk, &ldquo;heavy metal&rdquo; protocols</p>
+      </div>
+
+      <div class="cell" data-tier="avoid">
+        <div class="cell-top"><i class="chip"></i><span class="tier">Avoid</span></div>
+        <h3>Facilitated Communication, RPM, Spelling to Communicate</h3>
+        <p>
+          These are the hardest ones to hear about, because they promise exactly what you
+          want: that your son is already fluently literate and simply needs a hand held
+          near his. Under controlled testing, the messages have repeatedly traced back to
+          the facilitator, not the child. ASHA holds formal position statements against
+          Facilitated Communication and the Rapid Prompting Method. Real AAC differs in one
+          decisive way: <strong>nobody touches him, and nobody holds the board.</strong>
+        </p>
+        <p class="terms">Rebranded as: supported typing, S2C, letterboarding</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ 3. NEWS ============ -->
+  <section id="news">
+    <div class="sec-head">
+      <p class="eyebrow">Updates</p>
+      <h2>What changed recently</h2>
+      <p class="lede">
+        Dated entries, newest first, each with its source. Autism news moves in two
+        currents &mdash; genuine research progress, and policy noise that gets reported as
+        research. These are labelled separately.
+      </p>
+    </div>
+
+    <div class="log">
+
+      <article class="entry">
+        <div class="when">10 Mar 2026</div>
+        <div>
+          <span class="tag" data-kind="policy">Policy</span>
+          <h3>FDA approves leucovorin &mdash; for cerebral folate deficiency, not autism</h3>
+          <p>
+            The final approval landed far narrower than the September 2025 announcement
+            suggested. Leucovorin is approved for cerebral folate deficiency in patients with
+            a confirmed <em>FOLR1</em> variant &mdash; fewer than one in a million people.
+            An FDA official stated there were insufficient data to establish efficacy for
+            autism more broadly. If you saw headlines in 2025 promising an autism speech
+            drug, this is how it ended.
+          </p>
+          <p class="src">
+            <a href="https://www.cnbc.com/2026/03/10/fda-approves-leucovorin-cerebral-folate-deficiency-not-autism.html">CNBC</a> &middot;
+            <a href="https://www.cnn.com/2026/03/10/health/fda-leucovorin-update-autism-folate-deficiency">CNN</a> &middot;
+            <a href="https://www.biopharmadive.com/news/fda-gsk-wellcovorin-leucovorin-autism-cerebral-folate-deficiency/760840/">BioPharma Dive</a>
+          </p>
+        </div>
+      </article>
+
+      <article class="entry">
+        <div class="when">Feb 2026</div>
+        <div>
+          <span class="tag" data-kind="caution">Caution</span>
+          <h3>FDA's warning page on unproven autism treatments was taken down</h3>
+          <p>
+            The page that warned families against chelation, hyperbaric oxygen, chlorine
+            dioxide and similar products was pulled in late 2025. HHS described it as routine
+            cleanup of content that had not been updated since 2019. Clinicians raised concerns
+            that removing the warning would be read as a change in the evidence. It is not.
+            Expect more aggressive marketing of these products, including in India.
+          </p>
+          <p class="src">
+            <a href="https://www.disabilityscoop.com/2026/01/20/fda-pulls-warning-about-potentially-dangerous-autism-therapies/31811/">Disability Scoop</a> &middot;
+            <a href="https://undark.org/2026/02/23/fda-autism-treatment-warnings/">Undark</a>
+          </p>
+        </div>
+      </article>
+
+      <article class="entry">
+        <div class="when">2026</div>
+        <div>
+          <span class="tag" data-kind="research">Research</span>
+          <h3>Systematic review: developmental approaches plus AAC give the most consistent gains</h3>
+          <p>
+            A review of communication interventions for minimally verbal autistic children
+            found the most consistent improvements in spontaneous communication where
+            developmental methods were combined with AAC technology. The authors call for
+            standard definitions of &ldquo;minimally verbal&rdquo; and longer follow-up &mdash;
+            a fair criticism of the whole field, and a reason to track your own child's data.
+          </p>
+          <p class="src">
+            <a href="https://www.mdpi.com/2076-3271/14/3/388"><em>Medical Sciences</em> 14(3):388</a> &middot;
+            <a href="https://pubmed.ncbi.nlm.nih.gov/41422612/">related AAC corpus analysis, PubMed</a>
+          </p>
+        </div>
+      </article>
+
+      <article class="entry">
+        <div class="when">2025</div>
+        <div>
+          <span class="tag" data-kind="research">Research</span>
+          <h3>The largest trial yet in school-age minimally verbal children</h3>
+          <p>
+            194 children aged 5&ndash;8 with fewer than 20 functional words, randomised in
+            the community between discrete trial training and a blended naturalistic
+            approach (JASPER + Enhanced Milieu Teaching), with parent training at home.
+            Neither starting point beat the other. The practical reading: the
+            <em>choice of school of therapy matters less than getting intensity, AAC, and
+            the home environment right</em>. This is the trial to cite when a provider
+            insists only their method works.
+          </p>
+          <p class="src">
+            <a href="https://www.sciencedirect.com/science/article/pii/S0890856725000449"><em>JAACAP</em>, primary aim results</a> &middot;
+            <a href="https://www.kasarilab.org/research">Kasari Lab, UCLA</a>
+          </p>
+        </div>
+      </article>
+
+      <article class="entry">
+        <div class="when">Standing</div>
+        <div>
+          <span class="tag" data-kind="research">Research</span>
+          <h3>Drug development: still no pharmacotherapy for core autism features</h3>
+          <p>
+            Reviews of the pipeline conclude that after three decades of trials, no drug has
+            shown consistent efficacy for core autism features; approvals remain limited to
+            risperidone and aripiprazole for severe irritability. Current work is shifting
+            toward <em>stratified</em> treatment &mdash; matching a drug to a specific genetic
+            subgroup rather than to the diagnosis. That is the direction to watch, and another
+            argument for genetic testing.
+          </p>
+          <p class="src">
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42127326/">Drug development in ASD: the case for stratified pharmacotherapy, PubMed</a>
+          </p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ 4. MEDICAL ============ -->
+  <section id="medical">
+    <div class="sec-head">
+      <p class="eyebrow">Rule these out</p>
+      <h2>Treatable things that block communication</h2>
+      <p class="lede">
+        A child in pain, exhausted, or unable to hear clearly will not learn language,
+        no matter how good the therapy is. These are ordinary medical items, each
+        treatable, each easy to miss in a nonspeaking child who cannot report symptoms.
+        Work through them with your paediatrician.
+      </p>
+    </div>
+
+    <div class="checks">
+      <div class="check">
+        <h4>Hearing &mdash; retested recently</h4>
+        <p>
+          A newborn screen years ago is not enough. Glue ear and fluctuating hearing loss
+          are common and easily missed, and mild loss is enough to derail speech. Ask for a
+          fresh audiological assessment appropriate for a child who will not cooperate with
+          standard testing.
+        </p>
+      </div>
+      <div class="check">
+        <h4>Sleep</h4>
+        <p>
+          Sleep problems affect a large share of autistic children and hit daytime learning,
+          behaviour and regulation hard. Ask about sleep apnoea specifically (snoring, mouth
+          breathing, restless nights), and about melatonin, which has reasonable evidence
+          for sleep onset.
+        </p>
+      </div>
+      <div class="check">
+        <h4>Seizures &mdash; and staring spells</h4>
+        <p>
+          Epilepsy is markedly more common in autistic children, and the risk rises around
+          and after this age. Brief blank spells, unexplained loss of skills, or odd
+          repetitive movements deserve an EEG rather than reassurance.
+        </p>
+      </div>
+      <div class="check">
+        <h4>Constipation, reflux, dental pain</h4>
+        <p>
+          The most common hidden drivers of &ldquo;behaviour&rdquo; in a nonspeaking child.
+          Chronic constipation is very common and frequently underdiagnosed. A sudden change
+          in behaviour with no other explanation is a reason to look for pain, starting with
+          teeth and gut.
+        </p>
+      </div>
+      <div class="check">
+        <h4>Iron, vitamin D, B12</h4>
+        <p>
+          Worth testing, especially with a restricted diet. Low ferritin is associated with
+          poor sleep and restlessness. Treat what is measurably low &mdash; that is different
+          from a supplement protocol.
+        </p>
+      </div>
+      <div class="check">
+        <h4>Vision</h4>
+        <p>
+          Uncorrected refractive error makes a picture-based or grid-based communication
+          system much harder to use. Ask for an assessment that does not depend on him
+          reading a chart aloud.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 5. INDIA ============ -->
+  <section id="india">
+    <div class="sec-head">
+      <p class="eyebrow">India</p>
+      <h2>Rights, funding, and where to go</h2>
+      <p class="lede">
+        Autism is a specified disability under the Rights of Persons with Disabilities Act,
+        2016. That entitlement is the door to almost everything else &mdash; the device,
+        the insurance, the school accommodations &mdash; so if the certificate and UDID are
+        not done, they are the first administrative task.
+      </p>
+    </div>
+
+    <div class="tablewrap" style="margin-bottom:16px">
+      <table>
+        <thead>
+          <tr><th>What</th><th>Why it matters for him</th><th>Where</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Disability certificate + UDID</b><span class="note">40% benchmark disability</span></td>
+            <td>The prerequisite for ADIP, Niramaya, scholarships, school provisions and concessions. Everything below assumes it.</td>
+            <td><a href="https://www.swavlambancard.gov.in/">swavlambancard.gov.in</a></td>
+          </tr>
+          <tr>
+            <td><b>ADIP scheme</b><span class="note">Ministry of Social Justice &amp; Empowerment</span></td>
+            <td>Government funding to buy assistive devices, including communication aids, for citizens with 40%+ certified disability within income limits. This is the route to a funded device or tablet.</td>
+            <td><a href="https://depwd.gov.in/en/adip/">depwd.gov.in/adip</a></td>
+          </tr>
+          <tr>
+            <td><b>Niramaya health insurance</b><span class="note">The National Trust</span></td>
+            <td>Cover up to &#8377;1 lakh, and unusually it includes OPD, ongoing therapies, diagnostics and transport &mdash; the recurring costs that actually hurt.</td>
+            <td><a href="https://nationaltrust.nic.in/scheme/niramaya-scheme/">nationaltrust.nic.in</a></td>
+          </tr>
+          <tr>
+            <td><b>RPWD Act 2016 + Samagra Shiksha</b></td>
+            <td>Inclusive education, reasonable accommodation, and specific provisions for benchmark disability. The legal basis for insisting his device goes into the classroom with him.</td>
+            <td><a href="https://nayi-disha.org/article/autism/legal-rights-of-children-with-autism-india/">Nayi Disha, rights explainer</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="board" style="margin-top:22px">
+      <div class="cell" data-tier="strong">
+        <div class="cell-top"><i class="chip"></i><span class="tier">Built in India</span></div>
+        <h3>AAC apps that speak his languages</h3>
+        <p>
+          <strong>Jellow Communicator</strong> is free, developed at IDC School of Design,
+          IIT Bombay with UNICEF support, and runs in English, Hindi, Bengali, Marathi,
+          Tamil and Telugu with multiple accents &mdash; a genuinely good place to start
+          today at zero cost. <strong>Avaz AAC</strong> is India's first successful AAC
+          product, supporting Hindi, Tamil, Kannada, Malayalam, Telugu and Marathi, with a
+          deeper vocabulary structure for growing into.
+        </p>
+        <p class="terms">
+          <a href="https://jellow.org/jellow-basic.php">jellow.org</a> &middot;
+          <a href="https://avazapp.com/products/avaz-aac-app/">avazapp.com</a>
+        </p>
+      </div>
+
+      <div class="cell" data-tier="promising">
+        <div class="cell-top"><i class="chip"></i><span class="tier">Centres</span></div>
+        <h3>Where to get a second opinion</h3>
+        <p>
+          <strong>AIISH Mysore</strong> for speech and hearing assessment, including
+          motor speech questions. <strong>Action for Autism</strong> (New Delhi) runs a
+          Parent Child Training Programme &mdash; parent coaching is exactly the
+          strong-evidence ingredient. <strong>Ummeed</strong> (Mumbai) works
+          family-centred across home and school. <strong>Communication DEALL</strong>
+          (Bengaluru) and <strong>NIMHANS</strong> (Bengaluru) both run structured
+          programmes with an Indian cultural frame.
+        </p>
+        <p class="terms">
+          <a href="https://aiishmysore.in/public/communication-disorder/autism">AIISH</a> &middot;
+          <a href="https://www.autism-india.org/">Action for Autism</a> &middot;
+          <a href="https://autismsocietyofindia.org/resources/">Autism Society of India directory</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 6. TRACK ============ -->
+  <section id="track">
+    <div class="sec-head">
+      <p class="eyebrow">Your data</p>
+      <h2>Track what he does and what you try</h2>
+      <p class="lede">
+        Clinicians change plans on evidence. Right now the only person who can collect
+        evidence about your son across a whole week is you. Two weeks of entries here is
+        worth more at an appointment than any printout from this page.
+      </p>
+    </div>
+
+    <p class="toolnote"><span class="dot" id="store-dot"></span><span id="store-label">Checking where this saves&hellip;</span></p>
+
+    <div class="panels">
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Communication log</h3>
+          <span class="count" id="log-count">&mdash;</span>
+        </div>
+        <div class="panel-body">
+          <form class="row" id="log-form">
+            <div class="fields">
+              <label class="f" style="flex:0 1 140px">
+                <span>Date</span>
+                <input type="date" id="log-date" required>
+              </label>
+              <label class="f" style="flex:0 1 165px">
+                <span>How</span>
+                <select id="log-mode">
+                  <option value="device">Device / app</option>
+                  <option value="picture">Picture / PECS</option>
+                  <option value="sign">Sign or gesture</option>
+                  <option value="voice">Sound or word</option>
+                  <option value="behaviour">Behaviour only</option>
+                </select>
+              </label>
+              <label class="f" style="flex:1 1 150px">
+                <span>Where</span>
+                <input type="text" id="log-where" placeholder="Kitchen, school bus, park">
+              </label>
+            </div>
+            <label class="f">
+              <span>What he communicated</span>
+              <textarea id="log-what" placeholder="Pressed MORE then pointed at the fan — unprompted, first time without me modelling first" required></textarea>
+            </label>
+            <button type="submit">Add entry</button>
+          </form>
+
+          <p class="summary" id="log-summary"></p>
+          <div id="log-items"></div>
+        </div>
+      </div>
+
+      <div class="stack">
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3>What we've tried</h3>
+          <span class="count" id="try-count">&mdash;</span>
+        </div>
+        <div class="panel-body">
+          <form class="row" id="try-form">
+            <label class="f">
+              <span>Intervention or treatment</span>
+              <input type="text" id="try-name" placeholder="Jellow on the home tablet" required>
+            </label>
+            <div class="fields">
+              <label class="f" style="flex:0 1 140px">
+                <span>Started</span>
+                <input type="date" id="try-date" required>
+              </label>
+              <label class="f" style="flex:1 1 120px">
+                <span>Status</span>
+                <select id="try-status">
+                  <option value="trying">Trying</option>
+                  <option value="kept">Kept</option>
+                  <option value="stopped">Stopped</option>
+                </select>
+              </label>
+              <label class="f" style="flex:1 1 130px">
+                <span>Effect so far</span>
+                <select id="try-effect">
+                  <option value="too early">Too early to say</option>
+                  <option value="clear help">Clear help</option>
+                  <option value="maybe">Maybe</option>
+                  <option value="none">No change</option>
+                  <option value="worse">Worse</option>
+                </select>
+              </label>
+            </div>
+            <button type="submit">Add</button>
+          </form>
+          <div id="try-items"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Questions for the next appointment</h3>
+          <span class="count" id="q-count">&mdash;</span>
+        </div>
+        <div class="panel-body">
+          <form class="row" id="q-form">
+            <label class="f">
+              <span>Question</span>
+              <input type="text" id="q-text" placeholder="Can the school SLP model on his device during lunch?" required>
+            </label>
+            <button type="submit">Add question</button>
+          </form>
+          <div id="q-items"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Export for the clinic</h3>
+        </div>
+        <div class="panel-body">
+          <p class="small">
+            Copy everything above as plain text to paste into an email, a WhatsApp message
+            to his therapist, or a printout to carry in.
+          </p>
+          <button class="ghost" id="copy-btn" type="button">Copy all entries</button>
+          <p class="small mono" id="copy-note" style="color:var(--ink-3)"></p>
+        </div>
+      </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 7. CLAIM CHECKER ============ -->
+  <section id="check">
+    <div class="sec-head">
+      <p class="eyebrow">Filter</p>
+      <h2>Check a claim before you spend on it</h2>
+      <p class="lede">
+        You will be sent things &mdash; by relatives, by WhatsApp groups, by clinics with
+        good waiting rooms. Paste the claim here for a plain-language read on what kind of
+        evidence sits behind it, and what to ask before trying it.
+      </p>
+    </div>
+
+    <div class="checker" id="checker">
+      <label class="f">
+        <span>The claim, in their words</span>
+        <textarea id="claim-input" placeholder="A clinic says stem cell therapy will help my son speak within six months"></textarea>
+      </label>
+      <div class="fields" style="align-items:center">
+        <button type="button" id="claim-btn">Check it</button>
+        <span class="small mono" id="claim-status" style="color:var(--ink-3)"></span>
+      </div>
+      <div class="answer" id="claim-answer"></div>
+    </div>
+
+    <h3 style="margin-top:38px; margin-bottom:14px">Red flags in a sales pitch</h3>
+    <div class="flags">
+      <div class="flag">
+        <p class="said">&ldquo;We've seen children start talking in weeks.&rdquo;</p>
+        <p class="means">Language does not work like that. Testimonials replace data because there is no data.</p>
+      </div>
+      <div class="flag">
+        <p class="said">&ldquo;Mainstream doctors won't tell you about this.&rdquo;</p>
+        <p class="means">A conspiracy frame exists to stop you asking your paediatrician.</p>
+      </div>
+      <div class="flag">
+        <p class="said">&ldquo;Recovery&rdquo; or &ldquo;cure&rdquo; &mdash; and pay for the full course upfront.</p>
+        <p class="means">Autism is not something he recovers from. Upfront packages transfer all the risk to you.</p>
+      </div>
+      <div class="flag">
+        <p class="said">&ldquo;First we detox the heavy metals.&rdquo;</p>
+        <p class="means">Chelation. Refuse it. It has killed children and treats nothing here.</p>
+      </div>
+      <div class="flag">
+        <p class="said">&ldquo;He can already read &mdash; he just needs our board.&rdquo;</p>
+        <p class="means">Facilitated communication. Test it: real AAC never needs an adult's hand or held board.</p>
+      </div>
+      <div class="flag">
+        <p class="said">&ldquo;Don't use a device, it will stop him speaking.&rdquo;</p>
+        <p class="means">The evidence points the opposite way. This claim alone is reason to change providers.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>
+      <strong>Core Words</strong> &mdash; built 14 September 2026 for one eight-year-old boy
+      and the people trying to hear him. Reference sections reflect published evidence as of
+      that date; the tracker holds only what you type into it.
+    </p>
+    <p>
+      This is background reading to make your appointments sharper. It is not medical advice
+      and it does not replace your paediatrician, your SLP, or a clinical geneticist. Nothing
+      here should be started or stopped without them.
+    </p>
+    <details class="sources">
+      <summary>Sources</summary>
+      <ul>
+        <li><a href="https://www.mdpi.com/2076-3271/14/3/388">Interventions to Promote Communication in Minimally Verbal Autistic Children: A Systematic Review</a> — <em>Medical Sciences</em> 14(3):388, 2026</li>
+        <li><a href="https://www.sciencedirect.com/science/article/pii/S0890856725000449">Adaptive Intervention for School-Age, Minimally Verbal Children With ASD in the Community: Primary Aim Results</a> — <em>JAACAP</em>, 2025</li>
+        <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC13414371/">Systematic review, PMC mirror</a> and <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12587618/">trial, PMC mirror</a></li>
+        <li><a href="https://pubmed.ncbi.nlm.nih.gov/41422612/">Patterns of AAC use and communicative functions in minimally verbal autistic children</a> — PubMed</li>
+        <li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5102445/">Auditory-Motor Mapping Training vs control treatment for minimally verbal children with autism</a></li>
+        <li><a href="https://pubs.asha.org/doi/abs/10.1044/2022_LSHSS-21-00162">Diagnosis and Treatment of Childhood Apraxia of Speech Among Children With Autism</a> — <em>LSHSS</em></li>
+        <li><a href="https://www.asha.org/policy/ps2018-00352/">ASHA position statement: Facilitated Communication</a> and <a href="https://www.asha.org/policy/ps2018-00351/">Rapid Prompting Method</a></li>
+        <li><a href="https://www.cnbc.com/2026/03/10/fda-approves-leucovorin-cerebral-folate-deficiency-not-autism.html">FDA approves leucovorin for cerebral folate deficiency, not autism</a> — CNBC, 10 March 2026</li>
+        <li><a href="https://www.aap.org/en/patient-care/autism/use-of-leucovorin-in-autistic-pediatric-patients/frequently-asked-questions-faqs-for-pediatricians-and-other-prescribing-pediatric-clinicians/">AAP FAQ: leucovorin use in autism and cerebral folate deficiency</a></li>
+        <li><a href="https://www.disabilityscoop.com/2026/01/20/fda-pulls-warning-about-potentially-dangerous-autism-therapies/31811/">FDA pulls warning about potentially dangerous autism therapies</a> — Disability Scoop</li>
+        <li><a href="https://www.mayoclinic.org/diseases-conditions/autism-spectrum-disorder/expert-answers/autism-treatment/faq-20596029">Mayo Clinic: chelation therapy for autism</a></li>
+        <li><a href="https://pubmed.ncbi.nlm.nih.gov/42127326/">Drug development in ASD: genetic heterogeneity, failed trials, stratified pharmacotherapy</a></li>
+        <li><a href="https://publications.aap.org/pediatrics/article/156/1/e2025072219/202230/Genetic-Evaluation-of-the-Child-With-Intellectual">AAP: Genetic Evaluation of the Child With Intellectual Disability or Global Developmental Delay</a> — 2025</li>
+        <li><a href="https://depwd.gov.in/en/adip/">ADIP scheme</a> · <a href="https://nationaltrust.nic.in/scheme/niramaya-scheme/">Niramaya</a> · <a href="https://jellow.org/jellow-basic.php">Jellow</a> · <a href="https://avazapp.com/products/avaz-aac-app/">Avaz</a></li>
+      </ul>
+    </details>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------------- storage: db when available, localStorage otherwise ---------------- */
+  var LS_KEY = "corewords.v1";
+  var state = { log: [], tried: [], questions: [] };
+  var backend = "local";
+  var dbRefs = null;
+
+  function readLocal() {
+    try {
+      var raw = window.localStorage.getItem(LS_KEY);
+      if (!raw) return null;
+      var parsed = JSON.parse(raw);
+      return parsed && typeof parsed === "object" ? parsed : null;
+    } catch (e) { return null; }
+  }
+  function writeLocal() {
+    try { window.localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  function setStoreLabel(kind) {
+    var dot = document.getElementById("store-dot");
+    var label = document.getElementById("store-label");
+    dot.setAttribute("data-on", kind);
+    if (kind === "db") {
+      label.textContent = "Saved to this page — private to your account, and here on any device you open it from.";
+    } else {
+      label.textContent = "Saved in this browser only. Entries will not follow you to another device.";
+    }
+  }
+
+  function persist(key) {
+    if (backend === "db" && dbRefs) {
+      dbRefs[key].set({ items: state[key], updated: new Date().toISOString() })
+        .catch(function () { writeLocal(); });
+    } else {
+      writeLocal();
+    }
+  }
+
+  /* ---------------- rendering ---------------- */
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function niceDate(iso) {
+    if (!iso) return "";
+    var parts = String(iso).split("-");
+    if (parts.length !== 3) return esc(iso);
+    var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    var mi = parseInt(parts[1], 10) - 1;
+    if (isNaN(mi) || mi < 0 || mi > 11) return esc(iso);
+    return parseInt(parts[2], 10) + " " + months[mi];
+  }
+
+  function emptyBlock(sample) {
+    return '<div class="empty"><p class="tagline">Example — nothing logged yet</p>' +
+           '<p class="sample">' + esc(sample) + "</p></div>";
+  }
+
+  function renderLog() {
+    var host = document.getElementById("log-items");
+    var items = state.log;
+    document.getElementById("log-count").textContent =
+      items.length ? items.length + (items.length === 1 ? " entry" : " entries") : "empty";
+
+    var sum = document.getElementById("log-summary");
+    if (items.length) {
+      var modes = {}, days = {};
+      items.forEach(function (it) { modes[it.mode] = 1; days[it.date] = 1; });
+      sum.innerHTML = "<span><b>" + items.length + "</b> logged</span>" +
+                      "<span><b>" + Object.keys(days).length + "</b> different days</span>" +
+                      "<span><b>" + Object.keys(modes).length + "</b> modes used</span>";
+    } else {
+      sum.innerHTML = "";
+    }
+
+    if (!items.length) {
+      host.innerHTML = emptyBlock("12 Sep · Device · kitchen — pressed MORE then looked straight at me, unprompted.");
+      return;
+    }
+    var rows = items.slice().sort(function (a, b) {
+      return String(b.date).localeCompare(String(a.date)) || (b.at || 0) - (a.at || 0);
+    }).map(function (it) {
+      return '<div class="item">' +
+        '<div><div class="what">' + esc(it.what) + "</div>" +
+          '<div class="meta"><span>' + niceDate(it.date) + "</span>" +
+          '<span class="mode" data-m="' + esc(it.mode) + '">' + esc(it.mode) + "</span>" +
+          (it.where ? "<span>" + esc(it.where) + "</span>" : "") +
+        "</div></div>" +
+        '<button class="mini" type="button" data-del="log" data-id="' + esc(it.id) + '" aria-label="Delete entry">Remove</button>' +
+      "</div>";
+    }).join("");
+    host.innerHTML = '<div class="items">' + rows + "</div>";
+  }
+
+  function renderTried() {
+    var host = document.getElementById("try-items");
+    var items = state.tried;
+    document.getElementById("try-count").textContent = items.length ? items.length + " tracked" : "empty";
+    if (!items.length) {
+      host.innerHTML = emptyBlock("Jellow on the home tablet · started 1 Sep · trying · too early to say");
+      return;
+    }
+    var rows = items.slice().sort(function (a, b) {
+      return String(b.date).localeCompare(String(a.date));
+    }).map(function (it) {
+      return '<div class="item">' +
+        '<div><div class="what">' + esc(it.name) + "</div>" +
+          '<div class="meta"><span>from ' + niceDate(it.date) + "</span>" +
+          '<span class="mode" data-m="' + esc(it.status) + '">' + esc(it.status) + "</span>" +
+          "<span>" + esc(it.effect) + "</span>" +
+        "</div></div>" +
+        '<button class="mini" type="button" data-del="tried" data-id="' + esc(it.id) + '" aria-label="Delete item">Remove</button>' +
+      "</div>";
+    }).join("");
+    host.innerHTML = '<div class="items">' + rows + "</div>";
+  }
+
+  function renderQuestions() {
+    var host = document.getElementById("q-items");
+    var items = state.questions;
+    document.getElementById("q-count").textContent = items.length ? items.length + " waiting" : "empty";
+    if (!items.length) {
+      host.innerHTML = emptyBlock("How many core words can he reach on the device right now?");
+      return;
+    }
+    var rows = items.map(function (it) {
+      return '<div class="item">' +
+        '<div class="what"' + (it.asked ? ' style="opacity:.5;text-decoration:line-through"' : "") + ">" +
+          esc(it.text) + "</div>" +
+        '<div style="display:flex;gap:2px">' +
+          '<button class="mini" type="button" data-ask="' + esc(it.id) + '">' +
+            (it.asked ? "Undo" : "Asked") + "</button>" +
+          '<button class="mini" type="button" data-del="questions" data-id="' + esc(it.id) + '" aria-label="Delete question">Remove</button>' +
+        "</div></div>";
+    }).join("");
+    host.innerHTML = '<div class="items">' + rows + "</div>";
+  }
+
+  function renderAll() { renderLog(); renderTried(); renderQuestions(); }
+
+  /* ---------------- forms ---------------- */
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+  function today() { return new Date().toISOString().slice(0, 10); }
+
+  document.getElementById("log-date").value = today();
+  document.getElementById("try-date").value = today();
+
+  document.getElementById("log-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var what = document.getElementById("log-what").value.trim();
+    if (!what) return;
+    state.log.push({
+      id: uid(), at: Date.now(),
+      date: document.getElementById("log-date").value || today(),
+      mode: document.getElementById("log-mode").value,
+      where: document.getElementById("log-where").value.trim(),
+      what: what
+    });
+    document.getElementById("log-what").value = "";
+    document.getElementById("log-where").value = "";
+    persist("log"); renderLog();
+  });
+
+  document.getElementById("try-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var name = document.getElementById("try-name").value.trim();
+    if (!name) return;
+    state.tried.push({
+      id: uid(), name: name,
+      date: document.getElementById("try-date").value || today(),
+      status: document.getElementById("try-status").value,
+      effect: document.getElementById("try-effect").value
+    });
+    document.getElementById("try-name").value = "";
+    persist("tried"); renderTried();
+  });
+
+  document.getElementById("q-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var text = document.getElementById("q-text").value.trim();
+    if (!text) return;
+    state.questions.push({ id: uid(), text: text, asked: false });
+    document.getElementById("q-text").value = "";
+    persist("questions"); renderQuestions();
+  });
+
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest ? e.target.closest("button") : null;
+    if (!btn) return;
+    var delKey = btn.getAttribute("data-del");
+    if (delKey && state[delKey]) {
+      var id = btn.getAttribute("data-id");
+      state[delKey] = state[delKey].filter(function (x) { return x.id !== id; });
+      persist(delKey); renderAll();
+      return;
+    }
+    var askId = btn.getAttribute("data-ask");
+    if (askId) {
+      state.questions.forEach(function (q) { if (q.id === askId) q.asked = !q.asked; });
+      persist("questions"); renderQuestions();
+    }
+  });
+
+  /* ---------------- export ---------------- */
+  document.getElementById("copy-btn").addEventListener("click", function () {
+    var out = ["CORE WORDS — notes for the clinic", "Generated " + today(), ""];
+    out.push("COMMUNICATION LOG (" + state.log.length + ")");
+    state.log.slice().sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); })
+      .forEach(function (it) {
+        out.push("  " + it.date + " [" + it.mode + (it.where ? ", " + it.where : "") + "] " + it.what);
+      });
+    out.push("", "TRIED (" + state.tried.length + ")");
+    state.tried.forEach(function (it) {
+      out.push("  " + it.name + " — from " + it.date + " — " + it.status + " — effect: " + it.effect);
+    });
+    out.push("", "QUESTIONS (" + state.questions.length + ")");
+    state.questions.forEach(function (q) { out.push("  " + (q.asked ? "[asked] " : "[ ] ") + q.text); });
+
+    var text = out.join("\n");
+    var note = document.getElementById("copy-note");
+    function fallback() {
+      var ta = document.createElement("textarea");
+      ta.value = text; ta.setAttribute("readonly", "");
+      ta.style.position = "fixed"; ta.style.top = "-1000px";
+      document.body.appendChild(ta); ta.select();
+      var ok = false;
+      try { ok = document.execCommand("copy"); } catch (err) { ok = false; }
+      document.body.removeChild(ta);
+      note.textContent = ok ? "Copied." : "Could not copy — select the entries above instead.";
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        note.textContent = "Copied.";
+      }, fallback);
+    } else { fallback(); }
+  });
+
+  /* ---------------- claim checker (sample) ---------------- */
+  var sampleFn = null;
+  var claimBtn = document.getElementById("claim-btn");
+  var claimStatus = document.getElementById("claim-status");
+  var claimAnswer = document.getElementById("claim-answer");
+
+  claimBtn.disabled = true;
+  claimStatus.textContent = "Connecting…";
+
+  claimBtn.addEventListener("click", function () {
+    var claim = document.getElementById("claim-input").value.trim();
+    if (!claim || !sampleFn) return;
+    claimBtn.disabled = true;
+    claimStatus.textContent = "Thinking…";
+    claimAnswer.textContent = "";
+
+    var prompt =
+      "A parent of an 8-year-old nonspeaking autistic child in India is evaluating this claim " +
+      "about autism treatment:\n\n\"" + claim + "\"\n\n" +
+      "Reply in under 220 words, plain language, no jargon, using exactly these headings:\n" +
+      "WHAT IT IS — one sentence.\n" +
+      "EVIDENCE — one of: STRONG / PROMISING / THIN / NO GOOD EVIDENCE / HARMFUL, AVOID. " +
+      "Then say what kind of evidence exists (randomised trials, small case series, anecdote only).\n" +
+      "BEFORE YOU SPEND — what to ask a clinician, and roughly what it should cost or whether " +
+      "it is free.\n\n" +
+      "Rules: never tell the parent to start or stop a medicine. If the claim involves chelation, " +
+      "chlorine dioxide or MMS, stem cell infusions for autism, hyperbaric oxygen for autism, or " +
+      "facilitated communication / rapid prompting method / spelling to communicate, state plainly " +
+      "that it is not supported and can cause harm. Be honest where the evidence is genuinely " +
+      "uncertain rather than reassuring. Do not invent study names or numbers. " +
+      "End with exactly this line: Take this to his paediatrician or SLP — background reading, not medical advice.";
+
+    sampleFn(prompt, {
+      modelTier: "default",
+      onText: function (u) { claimAnswer.textContent = u.text; }
+    }).then(function (res) {
+      claimAnswer.textContent = res.text;
+      claimStatus.textContent = res.truncated ? "Cut short — try a shorter claim." : "";
+      claimBtn.disabled = false;
+    }).catch(function (err) {
+      var code = err && err.code;
+      if (err && err.text) claimAnswer.textContent = err.text;
+      if (code === "not_granted") {
+        document.getElementById("checker").style.display = "none";
+        return;
+      }
+      claimStatus.textContent = code === "rate_limited"
+        ? "Too many checks just now — wait a minute."
+        : "That didn't go through. Try again.";
+      claimBtn.disabled = false;
+    });
+  });
+
+  /* ---------------- boot ---------------- */
+  var local = readLocal();
+  if (local) {
+    state.log = Array.isArray(local.log) ? local.log : [];
+    state.tried = Array.isArray(local.tried) ? local.tried : [];
+    state.questions = Array.isArray(local.questions) ? local.questions : [];
+  }
+  setStoreLabel("local");
+  renderAll();
+
+  if (window.claude && typeof window.claude.use === "function") {
+    window.claude.use("db").then(function (db) {
+      if (!db) return;
+      backend = "db";
+      dbRefs = {
+        log: db.doc("tracker/log"),
+        tried: db.doc("tracker/tried"),
+        questions: db.doc("tracker/questions")
+      };
+      setStoreLabel("db");
+      ["log", "tried", "questions"].forEach(function (key) {
+        dbRefs[key].onSnapshot(function (snap) {
+          var body = snap.exists ? snap.data() : null;
+          var items = body && Array.isArray(body.items) ? body.items : null;
+          if (items) {
+            state[key] = items;
+          } else if (state[key].length) {
+            // first run with entries already in this browser: carry them up
+            persist(key);
+          }
+          renderAll();
+        }, function () { backend = "local"; setStoreLabel("local"); });
+      });
+    }).catch(function () {});
+
+    window.claude.use("sample").then(function (s) {
+      if (!s) {
+        document.getElementById("checker").style.display = "none";
+        return;
+      }
+      sampleFn = s;
+      claimBtn.disabled = false;
+      claimStatus.textContent = "";
+    }).catch(function () {
+      document.getElementById("checker").style.display = "none";
+    });
+  } else {
+    document.getElementById("checker").style.display = "none";
+  }
+})();
+</script>
