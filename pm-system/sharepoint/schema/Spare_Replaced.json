@@ -82,14 +82,6 @@
       "MaxLength": 255
     },
     {
-      "InternalName": "Spare_Description",
-      "DisplayName": "Spare_Description",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Text",
-      "MaxLength": 255
-    },
-    {
       "InternalName": "Qty_Used",
       "DisplayName": "Qty_Used",
       "Required": true,
@@ -104,30 +96,6 @@
       "Indexed": false,
       "Type": "Number",
       "Decimals": 2
-    },
-    {
-      "InternalName": "Total_Cost_INR",
-      "DisplayName": "Total_Cost_INR",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Number",
-      "Decimals": 2
-    },
-    {
-      "InternalName": "Old_Part_Condition",
-      "DisplayName": "Old_Part_Condition",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Choice",
-      "Choices": [
-        "Worn",
-        "Damaged",
-        "Burnt",
-        "Leaking",
-        "End of life"
-      ],
-      "Format": "Dropdown",
-      "FillInChoice": false
     },
     {
       "InternalName": "Failure_Mode",
@@ -157,30 +125,12 @@
       "MaxLength": 255
     },
     {
-      "InternalName": "Expected_Life_Hours",
-      "DisplayName": "Expected_Life_Hours",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Number",
-      "Decimals": 0
-    },
-    {
       "InternalName": "Warranty_Claim",
       "DisplayName": "Warranty_Claim",
       "Required": false,
       "Indexed": false,
       "Type": "Boolean",
       "DefaultValue": "0"
-    },
-    {
-      "InternalName": "Remarks",
-      "DisplayName": "Remarks",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Note",
-      "NumberOfLines": 4,
-      "RichText": false,
-      "AppendOnly": false
     }
   ]
 }

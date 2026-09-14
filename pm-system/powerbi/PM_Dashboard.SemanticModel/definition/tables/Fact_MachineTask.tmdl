@@ -33,14 +33,6 @@ table Fact_MachineTask
 
 		annotation SummarizationSetBy = Automatic
 
-	column Assigned_Tech_ID
-		dataType: string
-		lineageTag: 3965f2dd-20a7-5227-974d-03f9cde65bd8
-		summarizeBy: none
-		sourceColumn: Assigned_Tech_ID
-
-		annotation SummarizationSetBy = Automatic
-
 	column Task_Status
 		dataType: string
 		lineageTag: 84f2221d-e03c-5cd3-85cb-452545a781f4
@@ -70,55 +62,28 @@ table Fact_MachineTask
 
 		annotation SummarizationSetBy = Automatic
 
-	column Duration_Min
-		dataType: int64
-		lineageTag: 1aaddab6-eaa3-577b-a5bf-1a03e132f0a9
-		summarizeBy: none
-		sourceColumn: Duration_Min
-		formatString: #,##0
-
-		annotation SummarizationSetBy = Automatic
-
-	column Checklist_Response_ID
-		dataType: string
-		lineageTag: b08d5f87-275b-5305-b2c3-ab0a93b2a409
-		summarizeBy: none
-		sourceColumn: Checklist_Response_ID
-
-		annotation SummarizationSetBy = Automatic
-
-	column NOT_OK_Count
-		dataType: int64
-		lineageTag: 76cd1923-9254-5be3-ba6f-26e27deb6773
-		summarizeBy: none
-		sourceColumn: NOT_OK_Count
-		formatString: #,##0
-
-		annotation SummarizationSetBy = Automatic
-
-	column Abnormality_Raised
-		dataType: boolean
-		lineageTag: 1fc2aba8-64bb-5d07-932f-5b4a87fa708a
-		summarizeBy: none
-		sourceColumn: Abnormality_Raised
-		formatString: "TRUE";;"FALSE"
-
-		annotation SummarizationSetBy = Automatic
-
-	column Spare_Used_Flag
-		dataType: boolean
-		lineageTag: 6de3c1b2-f828-5b8b-b288-3e881bdccb8d
-		summarizeBy: none
-		sourceColumn: Spare_Used_Flag
-		formatString: "TRUE";;"FALSE"
-
-		annotation SummarizationSetBy = Automatic
-
 	column Completed_By
 		dataType: string
 		lineageTag: b9aa9155-b2bf-59b6-8453-41effd7bc7cd
 		summarizeBy: none
 		sourceColumn: Completed_By
+
+		annotation SummarizationSetBy = Automatic
+
+	column Skip_Reason
+		dataType: string
+		lineageTag: 0e2e9a64-2cb3-5ee4-9093-265f1220e928
+		summarizeBy: none
+		sourceColumn: Skip_Reason
+
+		annotation SummarizationSetBy = Automatic
+
+	column Duration_Min
+		dataType: double
+		lineageTag: 1aaddab6-eaa3-577b-a5bf-1a03e132f0a9
+		summarizeBy: none
+		sourceColumn: Duration_Min
+		formatString: #,##0.00
 
 		annotation SummarizationSetBy = Automatic
 
@@ -129,14 +94,6 @@ table Fact_MachineTask
 		sourceColumn: Completion_Date
 		formatString: yyyy-mm-dd
 		annotation UnderlyingDateTimeDataType = Date
-
-		annotation SummarizationSetBy = Automatic
-
-	column Skip_Reason
-		dataType: string
-		lineageTag: 0e2e9a64-2cb3-5ee4-9093-265f1220e928
-		summarizeBy: none
-		sourceColumn: Skip_Reason
 
 		annotation SummarizationSetBy = Automatic
 
@@ -154,15 +111,6 @@ table Fact_MachineTask
 		lineageTag: d63efa57-6645-55a1-9f05-d32d64c28e3f
 		summarizeBy: none
 		sourceColumn: Is_Open
-		formatString: "TRUE";;"FALSE"
-
-		annotation SummarizationSetBy = Automatic
-
-	column Is_Clean_Pass
-		dataType: boolean
-		lineageTag: 2219ff4c-87f2-5ffd-9a2f-c6b0f5af3d51
-		summarizeBy: none
-		sourceColumn: Is_Clean_Pass
 		formatString: "TRUE";;"FALSE"
 
 		annotation SummarizationSetBy = Automatic
@@ -194,31 +142,38 @@ table Fact_MachineTask
 				let
 				    Source = fnGetTable("PM_Machine_Task", "03_PM_Transactions_Dummy.xlsx", "PM_Machine_Task"),
 
-				    Keys = fnCleanKeys(Source, {"Task_ID", "WO_No", "Machine_ID", "Cell_ID",
-				                                "Assigned_Tech_ID", "Completed_By", "Checklist_Response_ID"}),
-				    Bools = fnYesNo(Keys, {"Abnormality_Raised", "Spare_Used_Flag"}),
+				    Keys = fnCleanKeys(Source, {"Task_ID", "WO_No", "Machine_ID", "Cell_ID", "Completed_By"}),
+				    Bools = fnYesNo(Keys, {}),
 
 				    Typed = Table.TransformColumnTypes(Bools, {
 				        {"Task_ID",               type text},
 				        {"WO_No",                 type text},
 				        {"Machine_ID",            type text},
 				        {"Cell_ID",               type text},
-				        {"Assigned_Tech_ID",      type text},
 				        {"Task_Status",           type text},
 				        {"Scan_Start_Time",       type datetime},
 				        {"Scan_End_Time",         type datetime},
-				        {"Duration_Min",          Int64.Type},
-				        {"Checklist_Response_ID", type text},
-				        {"NOT_OK_Count",          Int64.Type},
-				        {"Abnormality_Raised",    type logical},
-				        {"Spare_Used_Flag",       type logical},
 				        {"Completed_By",          type text},
-				        {"Completion_Date",       type date},
 				        {"Skip_Reason",           type text}
 				    }),
 
+				    // Derived here rather than stored on the list. Flow 4 used to compute and write
+				    // Duration_Min; now the model works it out from the two timestamps on every
+				    // refresh, so it cannot go stale and there is one less thing a flow can get
+				    // wrong at two in the morning.
+				    WithDuration = Table.AddColumn(
+				        Typed, "Duration_Min",
+				        each if [Scan_Start_Time] = null or [Scan_End_Time] = null then null
+				             else Duration.TotalMinutes([Scan_End_Time] - [Scan_Start_Time]),
+				        type nullable number),
+
+				    WithCompletionDate = Table.AddColumn(
+				        WithDuration, "Completion_Date",
+				        each if [Scan_End_Time] = null then null else DateTime.Date([Scan_End_Time]),
+				        type nullable date),
+
 				    WithComplete = Table.AddColumn(
-				        Typed, "Is_Completed",
+				        WithCompletionDate, "Is_Completed",
 				        each [Task_Status] = "Completed",
 				        type logical),
 
@@ -227,18 +182,10 @@ table Fact_MachineTask
 				        each [Task_Status] = "Pending" or [Task_Status] = "In Progress",
 				        type logical),
 
-				    // A completed task with no findings at all. Rolled up to the work order this
-				    // becomes First-Pass PM %.
-				    WithClean = Table.AddColumn(
-				        WithOpen, "Is_Clean_Pass",
-				        each [Task_Status] = "Completed"
-				             and ([NOT_OK_Count] = null or [NOT_OK_Count] = 0),
-				        type logical),
-
 				    // Sort key so a status axis reads in workflow order rather than alphabetically
 				    // (which would put Completed before In Progress before Pending - backwards).
 				    WithSort = Table.AddColumn(
-				        WithClean, "Status_Sort",
+				        WithOpen, "Status_Sort",
 				        each if [Task_Status] = "Pending" then 1
 				             else if [Task_Status] = "In Progress" then 2
 				             else if [Task_Status] = "Completed" then 3

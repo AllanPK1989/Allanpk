@@ -47,6 +47,15 @@
                     }
                   },
                   {
+                    "value": "Requisition and approval are left to the stores process. This page reports what was actually fitted.   ",
+                    "textStyle": {
+                      "fontSize": "8pt",
+                      "color": "#7B8794",
+                      "fontWeight": "normal",
+                      "fontFamily": "Segoe UI"
+                    }
+                  },
+                  {
                     "value": "Stockout Risk Score = (1 - current/minimum, floored at 0) x lead time days.   ",
                     "textStyle": {
                       "fontSize": "8pt",

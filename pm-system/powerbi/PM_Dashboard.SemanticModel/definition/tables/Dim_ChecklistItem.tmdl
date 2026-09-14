@@ -9,14 +9,6 @@ table Dim_ChecklistItem
 
 		annotation SummarizationSetBy = Automatic
 
-	column Checklist_Name
-		dataType: string
-		lineageTag: 3f94b448-ab7d-5491-a320-c5b9d28f87e5
-		summarizeBy: none
-		sourceColumn: Checklist_Name
-
-		annotation SummarizationSetBy = Automatic
-
 	column Item_No
 		dataType: int64
 		lineageTag: e3dc90bd-0602-5a8a-9e4a-12717671bf0f
@@ -47,22 +39,6 @@ table Dim_ChecklistItem
 		lineageTag: a56db59f-922c-552f-82af-56eba62eb90d
 		summarizeBy: none
 		sourceColumn: Acceptance_Standard
-
-		annotation SummarizationSetBy = Automatic
-
-	column Tool_Required
-		dataType: string
-		lineageTag: 1d528c5b-1383-58cd-ae07-0f30b377eec1
-		summarizeBy: none
-		sourceColumn: Tool_Required
-
-		annotation SummarizationSetBy = Automatic
-
-	column Frequency
-		dataType: string
-		lineageTag: c75d3418-583c-54bb-9e81-aa36ccfc52da
-		summarizeBy: none
-		sourceColumn: Frequency
 
 		annotation SummarizationSetBy = Automatic
 
@@ -131,13 +107,10 @@ table Dim_ChecklistItem
 
 				    Typed = Table.TransformColumnTypes(Bools, {
 				        {"Checklist_ID",        type text},
-				        {"Checklist_Name",      type text},
 				        {"Item_No",             Int64.Type},
 				        {"Check_Point",         type text},
 				        {"Check_Type",          type text},
 				        {"Acceptance_Standard", type text},
-				        {"Tool_Required",       type text},
-				        {"Frequency",           type text},
 				        {"Safety_Critical",     type logical},
 				        {"Expected_Time_Min",   Int64.Type},
 				        {"Active",              type logical}

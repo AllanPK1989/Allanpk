@@ -1,6 +1,6 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.0.0/schema.json",
-  "name": "v20Gantt",
+  "name": "v20PlanVsDone",
   "position": {
     "x": 24,
     "y": 194,
@@ -10,7 +10,7 @@
     "tabOrder": 20
   },
   "visual": {
-    "visualType": "barChart",
+    "visualType": "clusteredBarChart",
     "drillFilterOtherVisuals": true,
     "query": {
       "queryState": {
@@ -42,11 +42,11 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Gantt Planned Offset (Days)"
+                  "Property": "Planned WO Count"
                 }
               },
-              "queryRef": "_Measures.Gantt Planned Offset (Days)",
-              "nativeQueryRef": "Gantt Planned Offset (Days)"
+              "queryRef": "_Measures.Planned WO Count",
+              "nativeQueryRef": "Planned WO Count"
             },
             {
               "field": {
@@ -56,39 +56,11 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Gantt Planned Duration (Days)"
+                  "Property": "Completed WO Count (by Actual Date)"
                 }
               },
-              "queryRef": "_Measures.Gantt Planned Duration (Days)",
-              "nativeQueryRef": "Gantt Planned Duration (Days)"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "Gantt Actual Offset (Days)"
-                }
-              },
-              "queryRef": "_Measures.Gantt Actual Offset (Days)",
-              "nativeQueryRef": "Gantt Actual Offset (Days)"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "Gantt Actual Duration (Days)"
-                }
-              },
-              "queryRef": "_Measures.Gantt Actual Duration (Days)",
-              "nativeQueryRef": "Gantt Actual Duration (Days)"
+              "queryRef": "_Measures.Completed WO Count (by Actual Date)",
+              "nativeQueryRef": "Completed WO Count (by Actual Date)"
             }
           ]
         }
@@ -108,7 +80,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Planned window versus actual window, per cell'"
+                  "Value": "'Planned against completed, per cell'"
                 }
               }
             },
@@ -156,7 +128,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Set the first series to no fill in the format pane - it is the invisible offset that positions the bar'"
+                  "Value": "'Planned counts by the committed end date; completed counts by the date it actually finished'"
                 }
               }
             },
@@ -190,7 +162,7 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
                 }
               }
             },

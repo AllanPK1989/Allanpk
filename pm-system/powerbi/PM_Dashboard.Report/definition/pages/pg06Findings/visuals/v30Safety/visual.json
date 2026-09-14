@@ -94,11 +94,11 @@
                       "Entity": "Fact_ChecklistResponse"
                     }
                   },
-                  "Property": "Follow_Up_WO"
+                  "Property": "Follow_Up_Required"
                 }
               },
-              "queryRef": "Fact_ChecklistResponse.Follow_Up_WO",
-              "nativeQueryRef": "Follow_Up_WO"
+              "queryRef": "Fact_ChecklistResponse.Follow_Up_Required",
+              "nativeQueryRef": "Follow_Up_Required"
             }
           ]
         }

@@ -35,13 +35,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Fact_SpareReplaced"
+                      "Entity": "Dim_Spare"
                     }
                   },
                   "Property": "Spare_Description"
                 }
               },
-              "queryRef": "Fact_SpareReplaced.Spare_Description",
+              "queryRef": "Dim_Spare.Spare_Description",
               "nativeQueryRef": "Spare_Description"
             },
             {

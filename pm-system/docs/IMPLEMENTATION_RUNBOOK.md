@@ -13,37 +13,37 @@ the mistakes get caught, and both are tempting to rush.
 
 | Need | Detail |
 |---|---|
-| SharePoint site | A dedicated team site. **Do not** use an existing one — this creates 16 lists and 5 libraries |
+| SharePoint site | A dedicated team site. **Do not** use an existing one — this creates 14 lists and 5 libraries |
 | Permissions | Site Owner on that site |
 | Licences | Microsoft 365 E3 or better. Power Automate and Forms are included |
-| Owning account | **One individual account** owns all eleven flows and all five Forms — no service account is available. Decide *which* person before you start, and read `ASSUMPTIONS.md` §8.2 first: this works, but the risk has to be managed |
+| Owning account | **One individual account** owns all nine flows and all five Forms — no service account is available. Decide *which* person before you start, and read `ASSUMPTIONS.md` §8.2 first: this works, but the risk has to be managed |
 | Workstation | Power BI Desktop, PowerShell 7, Python 3.9+ |
 | Shop floor | At least one Android handset with a working camera |
 
 ### Building on an individual account
 
-No service account is available, so all eleven flows and all five Forms are created
+No service account is available, so all nine flows and all five Forms are created
 under one person's login. That is workable, and this system is designed to survive
 it — but only because of three things you have to do while building, not afterwards.
 
 **What actually breaks.** A flow has *owners* and it has *connections*. Co-owners
 can edit and repair the flow. The connections, though, belong to the single account
 that created them — SharePoint, Outlook, Forms, Teams, Approvals. When that account
-is disabled or unlicensed, every connection breaks and all eleven flows stop,
+is disabled or unlicensed, every connection breaks and all nine flows stop,
 regardless of who else owns them. Co-ownership shortens the repair; it does not
 prevent the failure.
 
 **So do these three as you build:**
 
 1. **Add two named co-owners to every flow.** Flow → Share → add both. Retrofitting
-   this across eleven flows later is an hour nobody schedules.
+   this across nine flows later is an hour nobody schedules.
 2. **Point every failure branch at a shared mailbox**, not the owner's inbox. The
    built-in *"Send me an email if a flow fails"* only ever reaches the owner.
 3. **Export a flow package after UAT** (Power Automate → Export → Package) and keep
    the `.zip` with this repository. If the account is deleted outright rather than
    just unlicensed, the flows go with it.
 
-**And know the warning sign.** Flow 11 sends a one-line "PM system healthy" every
+**And know the warning sign.** Flow 9 sends a one-line "PM system healthy" every
 Monday even when there is nothing to report. **If no digest arrives on a Monday, the
 flows have stopped.** That is deliberate: without it, a silent inbox means either
 "nothing outstanding" or "everything died three weeks ago", and there is no way to
@@ -103,7 +103,7 @@ cd sharepoint
 ```
 
 Nothing is changed. It prints every list, every column and every index it would
-create. Read it. Confirm 16 lists, 224 columns, 5 libraries.
+create. Read it. Confirm 14 lists, 138 columns, 5 libraries.
 
 **2.3** Run it for real:
 
@@ -136,7 +136,7 @@ settings**, click `Cell_ID`, and look at the URL. It must end `Field=Cell_ID`,
 .\load_data.ps1 -SiteUrl "https://<tenant>.sharepoint.com/sites/Maintenance" -WhatIf
 ```
 
-Expect **2,822 rows, 0 conversion problems** (730 of them the plant calendar).
+Expect **2,422 rows, 0 conversion problems** (730 of them the plant calendar).
 
 **3.2** Load:
 
@@ -185,8 +185,14 @@ above them. Never reorder them. If you need a new question, append it.
 
 ### 4.2 Build each form
 
-Five forms: **PM Start**, **PM Checklist**, **Breakdown Report**, **Spare Request**,
-**Abnormality Log**.
+Five forms: **PM Start**, **PM Checklist**, **Spare Replaced**, **Breakdown Report**,
+**Abnormality Log** — one per button on the Machine Hub card.
+
+> The **Spare Request** form is gone. Requisition and approval are a stores process
+> that already runs; what this system needs is what was *fitted*.
+>
+> `automate/FLOW_SPECS.md` §"The five forms" has every question on every form, with
+> the SharePoint column each one lands in. Build from there, not from memory.
 
 For each:
 
@@ -227,14 +233,22 @@ Substitute the machine ID into the pattern for all 30 machines:
 https://forms.office.com/r/AbCdEf?id=xxxxx&r1a2b3c4={Machine_ID}&r5d6e7f8={Cell_ID}
 ```
 
-Fastest way: paste the pattern into a spreadsheet column next to
-`Machine_Master`, substitute with a formula, and paste the result back into the
-`Checklist_Form_URL`, `Breakdown_Form_URL`, `Spare_Request_Form_URL` and
-`Abnormality_Form_URL` columns.
+**There is nothing per-machine to build.** `Machine_Master` used to carry four
+hyperlink columns per machine — 120 URLs typed into a spreadsheet, every one of them
+a chance to point a button at the wrong machine. The Machine Hub now assembles each
+link from the row it is drawing.
 
-**Test one on a phone before doing all 30.** Open the link and confirm the machine
-and cell are already filled in and that the technician's first tap is the name
-dropdown, not a keyboard.
+So you set **11 placeholders once**, in
+`sharepoint/formatting/Machine_Master.MachineHub.view.json`: for each of the five
+forms, the part of a prefilled link before the machine ID and the next key after it,
+plus a third for the checklist form's question 3. Copy and paste both halves out of
+one real link — retyping an eight-character question ID by hand produces a button
+that opens the form with nothing filled in, and nothing about it looks wrong until
+somebody uses it.
+
+**Test one on a phone before going further.** Open it and confirm the machine and
+cell are already filled in, and that the technician's first tap is a real question,
+not a keyboard.
 
 ### 4.5 Build the QR payload
 
@@ -293,7 +307,7 @@ Follow `automate/FLOW_SPECS.md`. Every expression is written out in
 
 **Build order — this matters.** Flows 1, 2 and 5 are the spine: the counter, the
 trigger and the reset. Build and test those three before anything else. The other
-eight are independent and can follow in any order.
+six are independent and can follow in any order.
 
 | Order | Flow | Time |
 |---|---|---|
@@ -303,11 +317,15 @@ eight are independent and can follow in any order.
 | 4 | PM-03 Start PM (scan) | 1 h |
 | 5 | PM-04 Checklist Submission | 3 h |
 | 6 | PM-06 Breakdown Report | 1 h |
-| 7 | PM-07 Spare Request + Approval | 2 h |
-| 8 | PM-08 Spare Replaced | 1 h |
-| 9 | PM-09 Abnormality Log | 1 h |
-| 10 | PM-10 Follow-Up WO from NOT OK | 1 h |
-| 11 | PM-11 Daily Digest | 2 h |
+| 7 | PM-07 Spare Replaced | 1 h |
+| 8 | PM-08 Abnormality Log | 1 h |
+| 9 | PM-09 Daily Digest | 2 h |
+
+**19 hours, down from 24.** Two flows are gone entirely — the spare requisition and
+approval loop, which duplicated a stores process that already exists, and the
+overnight corrective work order, which is now a supervisor's decision made from the
+**NOT OK Findings** view. `automate/FLOW_SPECS.md` opens with what that cost and
+what it bought.
 
 ### Two rules that will each save you a day
 
@@ -331,9 +349,8 @@ same afternoon.
 **7.1** Follow `powerbi/README_PowerBI.md`. Open `PM_Dashboard.pbip`, set
 `pSourceFolder`, refresh.
 
-**7.2** Finish the two things Desktop has to do:
+**7.2** Finish the one thing Desktop has to do:
 - drag `Dim_Machine[Machine_ID]` into the **Drill through** well on page 5
-- set the two Gantt offset series on page 3 to **no fill**
 
 **7.3** Check every page opens with no visual errors.
 
@@ -356,7 +373,7 @@ and set the SharePoint credentials under **Data source credentials**.
 
 ## Step 8 — UAT (1 day)
 
-Work through `docs/UAT_TEST_CASES.md` in order. All 35 cases, recorded, with a name
+Work through `docs/UAT_TEST_CASES.md` in order. All 36 cases, recorded, with a name
 and a date against each.
 
 **Do not shorten this step.** The five that must pass before go-live:
@@ -366,7 +383,7 @@ and a date against each.
 | UAT-03 | A cell crossing 4,000 raises exactly one work order |
 | UAT-07 | The 6-month backstop fires for a cell that never reaches 4,000 |
 | UAT-14 | Three of four machines complete and **nothing** resets |
-| UAT-15 | The fourth completes and all five `Cell_Master` fields move together |
+| UAT-15 | The fourth completes and all three `Cell_Master` fields move together |
 | UAT-19 | A mid-month reset prorates by working days to 720.00 h |
 | UAT-30a | The Monday heartbeat arrives on a clean week — the only way a stopped flow becomes visible |
 
@@ -391,7 +408,7 @@ any dashboard will show it.
 - the `My Allotted PM List` view and how it empties
 - the daily digest and what to act on first
 - the Power BI planning page and the monthly PM plan
-- approving spare requests
+- the **NOT OK Findings** view, and deciding which findings become work orders
 
 **9.4** Go live on a **Monday**, not a Friday. The first week generates questions and
 you want a full week to answer them.
@@ -412,10 +429,10 @@ the most moving parts and the one nobody will remember in a year.
 | Monthly | Review every `Skip_Reason` from the month | Manager |
 | Monthly | Review `Breakdowns After PM (7d)` — is the PM working? | Manager |
 | Quarterly | Review `Trigger_Type` split. Mostly Calendar Backstop means 4,000 is too high | Manager |
-| Quarterly | Review `Min_Stock` against `Stock_At_Request` history | Stores |
+| Quarterly | Review `Min_Stock` against `Spare_Replaced` consumption | Stores |
 | Every Monday | Confirm the heartbeat digest arrived. No digest = flows stopped | Supervisor |
 | Each December | Mark next year's holidays and shutdown in `Plant_Calendar` | Planner |
-| Year 4 | Extend `Plant_Calendar` past 2027-03-31; review `Scan_Log` archiving | IT |
+| Year 4 | Extend `Plant_Calendar` past 2027-03-31; review list sizes against the 5,000-item view threshold | IT |
 
 **Freezing the plan on the 25th is what makes adherence honest.** Without a frozen
 plan you can only measure "did we do it", never "did we do it when we said we would",
@@ -430,7 +447,7 @@ and the second question is the one production actually cares about.
 | Counter did not reset after all machines done | Flow 5 failed, or a task is `Pending` not `Completed` | Check the run history; check the `Get items pending tasks` filter |
 | Two work orders for the same cell | Flow 2's open-WO check is missing or misconfigured | Cancel one; fix the condition |
 | Monthly upload rejected | That month already exists | Check `StdHours_Monthly` for the existing rows |
-| Counter jumped by a whole month after a mid-month PM | Proration not applied | Check `Reset_Date` is populated and in the uploaded month |
+| Counter jumped by a whole month after a mid-month PM | Proration not applied | Check `Cell_Master.Last_PM_Date` is populated and falls inside the uploaded month, and that `Get item cell` is the **first** action in Flow 1's row loop |
 | Monthly import fails "divide by zero" or terminates naming a month | `Plant_Calendar` has no working days for that month | Add the month's dates and mark working days |
 | Proration posts slightly too many hours | Holidays not marked in `Plant_Calendar` | Mark them; the divisor counts only working days |
 | Scan opens a blank hub | `QR_Payload_URL` points at a renamed or deleted view | Re-run `apply_views.ps1`, update the column, reprint |
@@ -444,21 +461,21 @@ and the second question is the one production actually cares about.
 
 ## Handover checklist
 
-- [ ] All 16 lists created, row counts reconciled against `_ROW_COUNTS.csv`
+- [ ] All 14 lists created, row counts reconciled against `_ROW_COUNTS.csv`
 - [ ] `Plant_Calendar` holidays and shutdowns marked for the next 12 months
 - [ ] Column internal names verified unmangled on at least three lists
 - [ ] 12 views created; Machine Hub renders the five buttons on a phone
-- [ ] 5 Forms built, technician dropdown mandatory on all five
+- [ ] 5 Forms built, technician dropdown mandatory on all but **PM Start** (which asks nothing)
 - [ ] All 30 pre-filled URLs tested on a real phone
 - [ ] 30 QR labels printed, fitted and **individually scan-tested**
-- [ ] All 11 flows built, failure alerts routed to a **shared mailbox**
-- [ ] **Two co-owners added to all 11 flows** (§8.2 — do not skip this)
+- [ ] All 9 flows built, failure alerts routed to a **shared mailbox**
+- [ ] **Two co-owners added to all 9 flows** (§8.2 — do not skip this)
 - [ ] Flow package exported to `.zip` and stored with the repository
 - [ ] Monday heartbeat confirmed arriving, and the "no Monday digest = flows stopped"
       rule written into the handover note
 - [ ] Concurrency off on flows 1 and 5
 - [ ] Power BI published, refresh scheduled, credentials set
-- [ ] All 35 UAT cases passed and recorded
+- [ ] All 36 UAT cases passed and recorded
 - [ ] SOP printed and laminated at each cell
 - [ ] Technicians and supervisors trained
 - [ ] `ASSUMPTIONS.md` §8.2 reassignment procedure circulated to both co-owners

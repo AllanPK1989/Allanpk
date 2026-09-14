@@ -35,14 +35,6 @@
       "MaxLength": 255
     },
     {
-      "InternalName": "Cell_Name",
-      "DisplayName": "Cell_Name",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Text",
-      "MaxLength": 255
-    },
-    {
       "InternalName": "Actual_Std_Hours",
       "DisplayName": "Actual_Std_Hours",
       "Required": true,
@@ -57,14 +49,6 @@
       "Indexed": false,
       "Type": "Number",
       "Decimals": 0
-    },
-    {
-      "InternalName": "Uploaded_By",
-      "DisplayName": "Uploaded_By",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Text",
-      "MaxLength": 255
     },
     {
       "InternalName": "Upload_Date",

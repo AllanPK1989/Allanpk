@@ -17,9 +17,6 @@ let
         {"Tech_Name",     type text},
         {"Skill_Level",   type text},
         {"Trade",         type text},
-        {"Default_Shift", type text},
-        {"Contact_No",    type text},
-        {"Role_Scope",    type text},
         {"Active",        type logical}
     }),
 

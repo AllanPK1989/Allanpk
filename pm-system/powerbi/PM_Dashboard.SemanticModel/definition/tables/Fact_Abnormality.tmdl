@@ -76,14 +76,6 @@ table Fact_Abnormality
 
 		annotation SummarizationSetBy = Automatic
 
-	column Immediate_Action
-		dataType: string
-		lineageTag: 438f3fb9-3368-50d2-8496-2dd1988abb2f
-		summarizeBy: none
-		sourceColumn: Immediate_Action
-
-		annotation SummarizationSetBy = Automatic
-
 	column Responsibility
 		dataType: string
 		lineageTag: 805a16a4-548b-5370-b60d-d2c5d7fadd91
@@ -117,23 +109,6 @@ table Fact_Abnormality
 		sourceColumn: Closed_Date
 		formatString: yyyy-mm-dd
 		annotation UnderlyingDateTimeDataType = Date
-
-		annotation SummarizationSetBy = Automatic
-
-	column Closure_Remarks
-		dataType: string
-		lineageTag: 47dd796e-1e26-591a-a20a-8fb470c731de
-		summarizeBy: none
-		sourceColumn: Closure_Remarks
-
-		annotation SummarizationSetBy = Automatic
-
-	column Converted_To_WO
-		dataType: boolean
-		lineageTag: b9d570f1-adcb-5a25-90c7-223920ae8558
-		summarizeBy: none
-		sourceColumn: Converted_To_WO
-		formatString: "TRUE";;"FALSE"
 
 		annotation SummarizationSetBy = Automatic
 
@@ -202,7 +177,7 @@ table Fact_Abnormality
 				    Source = fnGetTable("Abnormality_Log", "03_PM_Transactions_Dummy.xlsx", "Abnormality_Log"),
 
 				    Keys = fnCleanKeys(Source, {"Abn_ID", "Machine_ID", "Cell_ID", "Logged_By"}),
-				    Bools = fnYesNo(Keys, {"Converted_To_WO"}),
+				    Bools = fnYesNo(Keys, {}),
 
 				    Flattened = Table.TransformColumns(
 				        Bools,
@@ -223,13 +198,10 @@ table Fact_Abnormality
 				        {"Description",      type text},
 				        {"Severity",         type text},
 				        {"Photo_Link",       type text},
-				        {"Immediate_Action", type text},
 				        {"Responsibility",   type text},
 				        {"Target_Date",      type date},
 				        {"Status",           type text},
-				        {"Closed_Date",      type date},
-				        {"Closure_Remarks",  type text},
-				        {"Converted_To_WO",  type logical}
+				        {"Closed_Date",      type date}
 				    }),
 
 				    WithDate = Table.AddColumn(

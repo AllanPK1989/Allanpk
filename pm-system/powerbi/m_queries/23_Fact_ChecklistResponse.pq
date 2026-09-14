@@ -13,8 +13,7 @@
 let
     Source = fnGetTable("Checklist_Response", "03_PM_Transactions_Dummy.xlsx", "Checklist_Response"),
 
-    Keys = fnCleanKeys(Source, {"Response_ID", "WO_No", "Machine_ID", "Cell_ID",
-                                "Checklist_ID", "Tech_ID", "Follow_Up_WO"}),
+    Keys = fnCleanKeys(Source, {"Response_ID", "WO_No", "Machine_ID", "Checklist_ID", "Tech_ID"}),
     Bools = fnYesNo(Keys, {"Follow_Up_Required"}),
 
     // Photo_Link is a hyperlink in SharePoint and text in Excel - flatten both.
@@ -32,7 +31,6 @@ let
         {"Submitted_DateTime", type datetime},
         {"WO_No",              type text},
         {"Machine_ID",         type text},
-        {"Cell_ID",            type text},
         {"Checklist_ID",       type text},
         {"Item_No",            Int64.Type},
         {"Check_Point",        type text},
@@ -40,10 +38,8 @@ let
         {"Measured_Value",     type number},
         {"Observation",        type text},
         {"Photo_Link",         type text},
-        {"Action_Taken",       type text},
         {"Tech_ID",            type text},
-        {"Follow_Up_Required", type logical},
-        {"Follow_Up_WO",       type text}
+        {"Follow_Up_Required", type logical}
     }),
 
     Trimmed = Table.TransformColumns(Typed, {

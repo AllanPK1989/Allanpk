@@ -108,11 +108,11 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Avg Approval Lead Time (Days)"
+                  "Property": "Spare Cost"
                 }
               },
-              "queryRef": "_Measures.Avg Approval Lead Time (Days)",
-              "nativeQueryRef": "Avg Approval Lead Time (Days)"
+              "queryRef": "_Measures.Spare Cost",
+              "nativeQueryRef": "Spare Cost"
             },
             {
               "field": {
@@ -122,39 +122,11 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Avg Issue Lead Time (Days)"
+                  "Property": "Qty Replaced"
                 }
               },
-              "queryRef": "_Measures.Avg Issue Lead Time (Days)",
-              "nativeQueryRef": "Avg Issue Lead Time (Days)"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "Approved Not Issued Count"
-                }
-              },
-              "queryRef": "_Measures.Approved Not Issued Count",
-              "nativeQueryRef": "Approved Not Issued Count"
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Dim_Spare"
-                    }
-                  },
-                  "Property": "Preferred_Vendor"
-                }
-              },
-              "queryRef": "Dim_Spare.Preferred_Vendor",
-              "nativeQueryRef": "Preferred_Vendor"
+              "queryRef": "_Measures.Qty Replaced",
+              "nativeQueryRef": "Qty Replaced"
             }
           ]
         }

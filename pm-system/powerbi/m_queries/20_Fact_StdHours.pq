@@ -56,10 +56,16 @@ let
             Parsed   = Table.AddColumn(OnlyXlsx, "Data", each TransformFile([Content])),
             Kept     = Table.SelectRows(Parsed,
                            each Table.HasColumns([Data], {"Upload_Month", "Cell_ID", "Actual_Std_Hours"})),
+            // The six columns the StdHours_Monthly list actually holds. The supplied
+            // template also has Cell_Name and Uploaded_By; both were cut - the name
+            // is looked up from Cell_Master, and SharePoint stamps Created By on
+            // every item without being asked. Expanding a column an older archived
+            // workbook does not have yields nulls rather than failing, so files
+            // saved in either shape still load.
             Expanded = Table.ExpandTableColumn(
                            Table.SelectColumns(Kept, {"Data"}), "Data",
-                           {"Upload_Month", "Cell_ID", "Cell_Name", "Actual_Std_Hours",
-                            "Production_Qty", "Uploaded_By", "Upload_Date", "Remarks"})
+                           {"Upload_Month", "Cell_ID", "Actual_Std_Hours",
+                            "Production_Qty", "Upload_Date", "Remarks"})
         in
             Expanded,
 
@@ -79,10 +85,8 @@ let
     Typed = Table.TransformColumnTypes(Keys, {
         {"Upload_Month",     type text},
         {"Cell_ID",          type text},
-        {"Cell_Name",        type text},
         {"Actual_Std_Hours", type number},
         {"Production_Qty",   Int64.Type},
-        {"Uploaded_By",      type text},
         {"Upload_Date",      type date},
         {"Remarks",          type text}
     }),

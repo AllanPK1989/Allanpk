@@ -12,31 +12,38 @@
 let
     Source = fnGetTable("PM_Machine_Task", "03_PM_Transactions_Dummy.xlsx", "PM_Machine_Task"),
 
-    Keys = fnCleanKeys(Source, {"Task_ID", "WO_No", "Machine_ID", "Cell_ID",
-                                "Assigned_Tech_ID", "Completed_By", "Checklist_Response_ID"}),
-    Bools = fnYesNo(Keys, {"Abnormality_Raised", "Spare_Used_Flag"}),
+    Keys = fnCleanKeys(Source, {"Task_ID", "WO_No", "Machine_ID", "Cell_ID", "Completed_By"}),
+    Bools = fnYesNo(Keys, {}),
 
     Typed = Table.TransformColumnTypes(Bools, {
         {"Task_ID",               type text},
         {"WO_No",                 type text},
         {"Machine_ID",            type text},
         {"Cell_ID",               type text},
-        {"Assigned_Tech_ID",      type text},
         {"Task_Status",           type text},
         {"Scan_Start_Time",       type datetime},
         {"Scan_End_Time",         type datetime},
-        {"Duration_Min",          Int64.Type},
-        {"Checklist_Response_ID", type text},
-        {"NOT_OK_Count",          Int64.Type},
-        {"Abnormality_Raised",    type logical},
-        {"Spare_Used_Flag",       type logical},
         {"Completed_By",          type text},
-        {"Completion_Date",       type date},
         {"Skip_Reason",           type text}
     }),
 
+    // Derived here rather than stored on the list. Flow 4 used to compute and write
+    // Duration_Min; now the model works it out from the two timestamps on every
+    // refresh, so it cannot go stale and there is one less thing a flow can get
+    // wrong at two in the morning.
+    WithDuration = Table.AddColumn(
+        Typed, "Duration_Min",
+        each if [Scan_Start_Time] = null or [Scan_End_Time] = null then null
+             else Duration.TotalMinutes([Scan_End_Time] - [Scan_Start_Time]),
+        type nullable number),
+
+    WithCompletionDate = Table.AddColumn(
+        WithDuration, "Completion_Date",
+        each if [Scan_End_Time] = null then null else DateTime.Date([Scan_End_Time]),
+        type nullable date),
+
     WithComplete = Table.AddColumn(
-        Typed, "Is_Completed",
+        WithCompletionDate, "Is_Completed",
         each [Task_Status] = "Completed",
         type logical),
 
@@ -45,18 +52,10 @@ let
         each [Task_Status] = "Pending" or [Task_Status] = "In Progress",
         type logical),
 
-    // A completed task with no findings at all. Rolled up to the work order this
-    // becomes First-Pass PM %.
-    WithClean = Table.AddColumn(
-        WithOpen, "Is_Clean_Pass",
-        each [Task_Status] = "Completed"
-             and ([NOT_OK_Count] = null or [NOT_OK_Count] = 0),
-        type logical),
-
     // Sort key so a status axis reads in workflow order rather than alphabetically
     // (which would put Completed before In Progress before Pending - backwards).
     WithSort = Table.AddColumn(
-        WithClean, "Status_Sort",
+        WithOpen, "Status_Sort",
         each if [Task_Status] = "Pending" then 1
              else if [Task_Status] = "In Progress" then 2
              else if [Task_Status] = "Completed" then 3

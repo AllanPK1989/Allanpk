@@ -47,7 +47,7 @@
                     }
                   },
                   {
-                    "value": "The Gantt bars are a stacked bar: an invisible offset series then a visible duration series.   ",
+                    "value": "Planned counts a work order by its committed end date; completed counts it by the date it actually finished. The two inactive date relationships are what let one month slicer answer both.   ",
                     "textStyle": {
                       "fontSize": "8pt",
                       "color": "#7B8794",

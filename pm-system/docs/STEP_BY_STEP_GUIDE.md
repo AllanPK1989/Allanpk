@@ -18,7 +18,7 @@ and they connect in one direction:
 ```
         ┌──────────────────────────────────────────────────┐
         │  1. SHAREPOINT  — the filing cabinet             │
-        │     16 lists holding every PM record             │
+        │     14 lists holding every PM record             │
         └───────────────┬──────────────────────────────────┘
                         │  everything reads and writes here
         ┌───────────────┴──────────────┬───────────────────┐
@@ -31,7 +31,7 @@ and they connect in one direction:
 └─────────────────┘        └───────────┬──────┘   └────────▲────────┘
                                        │                   │
                            ┌───────────▼───────────────────┴───┐
-                           │ 4. POWER AUTOMATE — 11 flows      │
+                           │ 4. POWER AUTOMATE —  9 flows      │
                            │    the rules that run by          │
                            │    themselves: counters, triggers,│
                            │    resets, alerts                 │
@@ -51,9 +51,9 @@ the filing cabinet, and the dashboard shows what it all means.
 
 | You need | Why |
 |---|---|
-| A SharePoint site you own | The system creates 16 lists — do not use an existing site |
+| A SharePoint site you own | The system creates 14 lists — do not use an existing site |
 | **Site Owner** permission on it | You cannot create lists without it |
-| One M365 account to own everything | All 11 flows and 5 forms are built under it. **Decide who, now** — see §"The one thing to get right" at the end |
+| One M365 account to own everything | All 9 flows and 5 forms are built under it. **Decide who, now** — see §"The one thing to get right" at the end |
 | Two colleagues as co-owners | So you are not the only person who can fix a flow |
 | A shared mailbox for alerts | So failure emails do not go to one person's inbox |
 | One Android phone | To test the QR stickers |
@@ -63,7 +63,7 @@ the filing cabinet, and the dashboard shows what it all means.
 Three things. Install them once.
 
 **1. PowerShell 7** — this is the tool that creates the SharePoint lists for you, so
-you do not have to click through 224 columns by hand.
+you do not have to click through 138 columns by hand.
 
 Download from Microsoft's PowerShell releases page and install. Then open it (search
 "PowerShell 7" in the Start menu) and paste this:
@@ -133,14 +133,14 @@ with it.
 
 ### Before you move on
 
-Open `sharepoint\data\_ROW_COUNTS.csv` and note the total: **2,822**. You will check
+Open `sharepoint\data\_ROW_COUNTS.csv` and note the total: **2,422**. You will check
 against this in Stage 3.
 
 ---
 
 # Stage 2 — Build the SharePoint site  ·  45 minutes
 
-**What you are doing:** creating the 16 lists, all 224 columns, and the views the
+**What you are doing:** creating the 14 lists, all 138 columns, and the views the
 technicians will actually use. The script does it; you just run it.
 
 ### Do this
@@ -159,7 +159,7 @@ cd sharepoint
 `-WhatIf` means **"show me what you would do, but do not actually do it."** Nothing
 is created. It prints every list and column it *would* make.
 
-Read it. You should see **16 lists, 224 columns, 5 libraries** and `Failed : 0`.
+Read it. You should see **14 lists, 138 columns, 5 libraries** and `Failed : 0`.
 
 **3. Now do it for real.** Same command, without `-WhatIf`:
 
@@ -178,7 +178,7 @@ It will ask you to sign in. Takes a few minutes.
 
 ### How you know it worked
 
-`Failed : 0` at the end, and you can see 16 lists on the site.
+`Failed : 0` at the end, and you can see 14 lists on the site.
 
 ### ⚠ One check you must not skip
 
@@ -197,7 +197,7 @@ dashboard, the flows, the app — refers to `Cell_ID`, and none of it would find
 
 # Stage 3 — Load the data  ·  20 minutes
 
-**What you are doing:** putting the 2,822 rows into the lists you just made.
+**What you are doing:** putting the 2,422 rows into the lists you just made.
 
 ### Do this
 
@@ -210,7 +210,7 @@ Practice run first, as before. The real run takes a few minutes.
 
 ### How you know it worked
 
-`Rows loaded : 2822` and `Conversion problems : 0`.
+`Rows loaded : 2422` and `Conversion problems : 0`.
 
 ### ⚠ Then count them yourself
 
@@ -220,12 +220,12 @@ Open each list and compare its item count against `sharepoint\data\_ROW_COUNTS.c
 Cell_Master              8      PM_WorkOrder            51
 Technician_Master        6      PM_Machine_Task        193
 Spare_Master            15      Checklist_Response     997
-Checklist_Master        51      Scan_Log               336
-Machine_Master          30      Breakdown_Log           88
-Plant_Calendar         730      Spare_Request           64
-StdHours_Monthly        96      Spare_Replaced          58
-                                Abnormality_Log         44
-                                PM_Plan_Calendar        55
+Checklist_Master        51      Breakdown_Log           88
+Machine_Master          30      Spare_Replaced          58
+Plant_Calendar         730      Abnormality_Log         44
+StdHours_Monthly        96      PM_Plan_Calendar        55
+
+                                 2,422 rows in total
 ```
 
 A list that is short by even one row means a row was dropped silently. Find it now,
@@ -255,20 +255,32 @@ Filter to the next 12 months, and for every holiday, Pongal day, and shutdown da
 **What you are doing:** making the five forms the technicians fill in. This is the
 fiddliest stage. Take your time.
 
-The five forms: **PM Start**, **PM Checklist**, **Breakdown Report**, **Spare
-Request**, **Abnormality Log**.
+The five forms, in the order they appear on the machine's page:
+
+| Form | Questions | What it does |
+|---|---|---|
+| **PM Start** | **2** — and both are pre-filled | Starts the clock on a machine's PM |
+| **PM Checklist** | 4, then the checklist itself | Records every check point |
+| **Spare Replaced** | 9 | Records what was fitted and why it failed |
+| **Breakdown Report** | 14 | Records a stoppage |
+| **Abnormality Log** | 9 | Records anything anyone spots |
+
+**`automate\FLOW_SPECS.md` §"The five forms" lists every question on every form, with
+the SharePoint column each one lands in.** Build from there — this stage is the one
+where working from memory costs you a week.
 
 ### ⚠ The rule that will catch you out
 
 A pre-filled link fills in answers **by position** — question 1 gets the first
 value, question 2 the second, and so on. It does not use question names.
 
-So: **`Machine ID` must always be question 1. `Cell ID` must always be question 2.**
+So: **`Machine ID` must always be question 1, `Cell ID` always question 2** — and on
+the checklist, **`Checklist ID` always question 3.**
 
 If you ever add a question above them, every sticker on the shop floor will start
 filling the wrong boxes — silently, with no error. Add new questions at the bottom.
 
-### Do this, for each of the five forms
+### Do this, for each form
 
 1. Go to **forms.office.com**, signed in as the **owning account** (the one you
    chose at the start). → **New Form**
@@ -282,14 +294,33 @@ filling the wrong boxes — silently, with no error. Add new questions at the bo
    > Free text gives you "Murugan", "murugan s" and "MURUGAN S", and then nothing
    > can be counted.
 
-5. Add the rest of the questions for that form — listed in
-   `automate\FLOW_SPECS.md`
+5. Add the rest of that form's questions from `FLOW_SPECS.md`
 6. **Settings** (…) → **Anyone can respond** ✅ , **Record name** ❌
+
+### Two forms are different
+
+**PM Start has no technician question at all.** Machine and cell arrive pre-filled
+from the sticker, so the whole thing is: scan, tap *Start PM*, tap *Submit*. Nothing
+records who started a job — `Completed_By` on the checklist is the record that
+matters — so a dropdown there would be a tap that throws its answer away.
+
+**PM Checklist has nine sections, one per checklist.** Question 3 is `Checklist ID`,
+pre-filled from the machine, and the form **branches** on it to the section for that
+checklist, with the real check-point wording written out.
+
+> Build one form with nine sections, not nine forms. The alternative — eight generic
+> "Item 4 result" boxes — works fine for the flow and is useless to the person
+> holding the phone, because nothing on screen says what item 4 actually is.
+
+Each check point is **two questions**: a four-option choice, and one optional text
+box for the reading or the observation. The four options carry two facts in one tap —
+`OK`, `NOT OK — fixed on the spot`, `NOT OK — needs follow-up`, `N/A`.
 
 ### Then make the pre-filled links
 
 1. Open a form → **Collect responses** → **Get a link to prefill answers**
 2. Type `MC-01-001` into Machine ID and `CELL-01` into Cell ID, leave the rest blank
+   (on the checklist, pick a Checklist ID too)
 3. Click **Get link**. You get something like:
 
 ```
@@ -298,14 +329,24 @@ https://forms.office.com/r/AbCdEf?id=xxxxx&r1a2b3c4=MC-01-001&r5d6e7f8=CELL-01
 
 Those `r1a2b3c4` codes are that form's question IDs. They never change.
 
-4. Now make one for each of the 30 machines by swapping the machine and cell IDs.
-   Easiest way: paste that link into a spreadsheet column next to your machine list
-   and use a formula to substitute, then paste the results into the four URL columns
-   in `Machine_Master`.
+4. **You do not make one of these per machine.** Cut the link into two pieces —
+   everything before `MC-01-001`, and the `&r5d6e7f8=` that follows it — and paste
+   them into the matching placeholders in
+   `sharepoint\formatting\Machine_Master.MachineHub.view.json`.
 
-**Test one on a real phone before you make all 30.** Open it and check the machine
-and cell are already filled in, and the first thing you have to touch is the name
-dropdown — not the keyboard.
+   **Eleven placeholders across the five forms, set once.** The machine's page builds
+   every button's link from the row it is showing, so there is nothing per-machine to
+   keep up to date. *(An earlier design stored four URLs against each of the 30
+   machines — 120 links typed into a spreadsheet, every one of them a chance to point
+   a button at the wrong machine.)*
+
+   Copy and paste both halves out of a real link. Retyping an eight-character
+   question ID by hand gives you a button that opens the form with nothing filled in,
+   and nothing about it looks wrong until somebody uses it.
+
+**Test one on a real phone before you go on.** Open it and check the machine and cell
+are already filled in, and that the first thing you have to touch is a real question
+— not the keyboard.
 
 ---
 
@@ -350,7 +391,7 @@ python qr/generate_qr_labels.py --base-url https://yourcompany.sharepoint.com/si
 
 # Stage 6 — Build the flows  ·  2 days
 
-**What you are doing:** building the 11 automations that make the system run by
+**What you are doing:** building the 9 automations that make the system run by
 itself. This is the biggest stage.
 
 Open `automate\FLOW_SPECS.md`. It lists every flow, every action in order, and every
@@ -367,8 +408,8 @@ and the monthly counter. Get those working before anything else.
 | 2nd | **2 — PM Trigger** | Raises the work order when a cell hits 4,000 hours or 6 months | 3 h |
 | 3rd | **1 — Monthly Hours Import** | Adds each month's hours to the counters | 4 h |
 | then | 3, 4 | Scan in, checklist submission | 4 h |
-| then | 6, 7, 8, 9 | Breakdown, spare request, spare used, abnormality | 5 h |
-| last | 10, 11 | Follow-up jobs, daily digest | 3 h |
+| then | 6, 7, 8 | Breakdown, spare fitted, abnormality | 3 h |
+| last | 9 | Daily digest | 2 h |
 
 ### Three rules while building
 
@@ -384,7 +425,7 @@ then fails later with a confusing error.
 > This will happen the first month two cells finish on the same afternoon.
 
 **3. Add your two co-owners to every flow as you finish it.** Flow → **Share** → add
-both. Doing this later across 11 flows is an hour nobody ever schedules.
+both. Doing this later across 9 flows is an hour nobody ever schedules.
 
 Also: point every failure alert at the **shared mailbox**, not your own inbox.
 
@@ -402,19 +443,19 @@ SharePoint site.
    **Refresh**.
 3. Check all nine pages open without red error triangles.
 
-### Two small jobs Power BI will not do for you
+### One small job Power BI will not do for you
 
-Both take under a minute. They cannot be saved in the file.
+It takes under a minute. It cannot be saved in the file.
 
-**a) The machine drill-through.** Click the `Machine 360` page. In the
+**The machine drill-through.** Click the `Machine 360` page. In the
 **Visualizations** panel on the right, find the **Drill through** box, and drag
 `Dim_Machine → Machine_ID` into it. Now you can right-click any machine anywhere and
 jump to its full history.
 
-**b) The planned-vs-actual bars on page 3.** Click the bar chart. Format → **Bars**
-→ **Colors** → set `Gantt Planned Offset (Days)` and `Gantt Actual Offset (Days)` to
-**no fill**. Those two are invisible spacers that push the visible bars into the
-right position — a trick, because Power BI has no real timeline chart.
+> There used to be a second job here — setting two invisible spacer bars on page 3 to
+> "no fill" to fake a timeline chart. You had to remember it every time the report was
+> rebuilt, and forgetting it gave you a chart that looked fine and was wrong. It came
+> out with the reduction.
 
 ### Now point it at SharePoint
 
@@ -444,7 +485,7 @@ each one as you do it.
 | Test | What you are proving |
 |---|---|
 | **UAT-14** | Finish 3 of 4 machines in a cell → the counter does **not** reset |
-| **UAT-15** | Finish the 4th → the counter resets and all five fields change together |
+| **UAT-15** | Finish the 4th → the counter resets and all three fields change together |
 | **UAT-19** | A mid-month PM splits the hours correctly → **720.00** hours, not 780 or 728 |
 | **UAT-21** | Uploading the same month twice → rejected |
 | **UAT-30a** | The Monday "system healthy" email arrives |
@@ -477,7 +518,7 @@ Not in a meeting room. At a machine.
 - The `My Allotted PM List` view, and how rows disappear as work gets done
 - The daily digest, and what to act on first
 - The planning page in Power BI, and the monthly plan
-- Approving spare requests
+- The **NOT OK Findings** view, and deciding which findings become a work order
 
 ### Go live
 
@@ -506,7 +547,7 @@ and it is the step nobody will remember in a year.
 
 # The one thing to get right
 
-The 11 flows will be owned by **one person's account**. There is no service account
+The 9 flows will be owned by **one person's account**. There is no service account
 available, and that is fine — but you need to know what it means.
 
 A flow has two things attached: who can **edit** it, and the **connections** it uses
@@ -514,7 +555,7 @@ to reach SharePoint, Outlook and Teams. Those connections belong to the single
 account that created them.
 
 **If that account is ever disabled or loses its licence, every connection breaks and
-all 11 flows stop.** Adding co-owners lets someone else go in and repair them — it
+all 9 flows stop.** Adding co-owners lets someone else go in and repair them — it
 does not stop them breaking.
 
 So the real question is: *how long before anyone notices?*
@@ -581,7 +622,7 @@ python tools/verify_measures.py
 | Counter did not reset after all machines done | Flow 5 failed, or one task is still `Pending` | Open Flow 5 → run history → read the error |
 | Two work orders for the same cell | Flow 2 is missing its "is one already open?" check | Cancel one, fix the condition |
 | Monthly upload rejected | That month is already loaded | Check `StdHours_Monthly` for existing rows |
-| Counter jumped a whole month after a mid-month PM | The hours were not split | Check `Reset_Date` is filled in and falls inside the uploaded month |
+| Counter jumped a whole month after a mid-month PM | The hours were not split | Check the cell's `Last_PM_Date` falls inside the uploaded month, and that `Get item cell` is the **first** action inside Flow 1's row loop |
 | Import fails, naming a month | `Plant_Calendar` has no working days for it | Add the dates and mark working days |
 | Sticker opens a blank page | The link points at a renamed view | Re-run `apply_views.ps1`, update `QR_Payload_URL`, reprint |
 | Dashboard columns blank after switching to SharePoint | Mangled column names (see Stage 2) | Recreate those columns using the script |

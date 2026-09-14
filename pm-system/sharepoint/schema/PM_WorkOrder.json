@@ -19,8 +19,7 @@
     "WO_Status",
     "Planned_Month",
     "WO_Created_Date",
-    "Planned_End_Date",
-    "Actual_End_Date"
+    "Planned_End_Date"
   ],
   "Fields": [
     {
@@ -36,14 +35,6 @@
       "DisplayName": "Cell_ID",
       "Required": true,
       "Indexed": true,
-      "Type": "Text",
-      "MaxLength": 255
-    },
-    {
-      "InternalName": "Cell_Name",
-      "DisplayName": "Cell_Name",
-      "Required": false,
-      "Indexed": false,
       "Type": "Text",
       "MaxLength": 255
     },
@@ -86,28 +77,12 @@
       "MaxLength": 255
     },
     {
-      "InternalName": "Planned_Start_Date",
-      "DisplayName": "Planned_Start_Date",
-      "Required": false,
-      "Indexed": false,
-      "Type": "DateTime",
-      "DisplayFormat": "DateOnly"
-    },
-    {
       "InternalName": "Planned_End_Date",
       "DisplayName": "Planned_End_Date",
       "Required": false,
       "Indexed": true,
       "Type": "DateTime",
       "DisplayFormat": "DateOnly"
-    },
-    {
-      "InternalName": "Lead_Tech_ID",
-      "DisplayName": "Lead_Tech_ID",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Text",
-      "MaxLength": 255
     },
     {
       "InternalName": "Priority",
@@ -156,44 +131,12 @@
       "FillInChoice": false
     },
     {
-      "InternalName": "Actual_Start_Date",
-      "DisplayName": "Actual_Start_Date",
-      "Required": false,
-      "Indexed": false,
-      "Type": "DateTime",
-      "DisplayFormat": "DateOnly"
-    },
-    {
-      "InternalName": "Actual_End_Date",
-      "DisplayName": "Actual_End_Date",
-      "Required": false,
-      "Indexed": true,
-      "Type": "DateTime",
-      "DisplayFormat": "DateOnly"
-    },
-    {
-      "InternalName": "PM_Duration_Min",
-      "DisplayName": "PM_Duration_Min",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Number",
-      "Decimals": 0
-    },
-    {
       "InternalName": "Reset_Applied",
       "DisplayName": "Reset_Applied",
       "Required": false,
       "Indexed": false,
       "Type": "Boolean",
       "DefaultValue": "0"
-    },
-    {
-      "InternalName": "Reset_Date",
-      "DisplayName": "Reset_Date",
-      "Required": false,
-      "Indexed": false,
-      "Type": "DateTime",
-      "DisplayFormat": "DateOnly"
     },
     {
       "InternalName": "Remarks",

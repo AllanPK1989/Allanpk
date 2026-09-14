@@ -69,11 +69,19 @@ time" repeated four times is how a PM system quietly dies. Review skips monthly 
 *If wrong:* remove `Task_Status ne 'Skipped'` from Flow 5's filter and a skip will
 block closure.
 
-**2.4 The reset quartet moves in one action.**
-`Cum_Std_Hours_Since_PM`, `Last_PM_Date`, `Last_PM_WO_No`, `Reset_Applied` and
-`Reset_Date` are set in a single `Update item`. Splitting them creates a window where
-a failure leaves a zeroed counter with no `Last_PM_Date`, and nothing downstream can
-distinguish that from a genuine reset.
+**2.4 The reset moves in one action.**
+`Cum_Std_Hours_Since_PM`, `Last_PM_Date` and `Next_PM_Due_Date_Calendar` are set in a
+single `Update item` on `Cell_Master`. Splitting them creates a window where a failure
+leaves a zeroed counter with no `Last_PM_Date`, and nothing downstream can distinguish
+that from a genuine reset.
+
+It used to be five fields. `Last_PM_WO_No` went because SharePoint's own version
+history on the cell already answers *"which work order zeroed this counter"* — and
+answers it for every reset, not only the most recent. `Reset_Date` went because it
+always held the same instant as `Last_PM_Date`, written by the same action in the same
+second; two dates that cannot legitimately differ are one date. `Reset_Applied` stays,
+on the **work order**, where it is the flag the daily digest reads to find a job that
+closed without resetting anything.
 
 **2.5 Proration is by WORKING days.** *(Confirmed: `Actual_Std_Hours` is a capacity
 figure.)*
@@ -135,11 +143,13 @@ a month's upload arrives — which is exactly when a planner looks at it.
 A cell needing 1.2 months of running is due in the second month. Rounding down would
 schedule a PM before the hours exist to justify it.
 
-**3.3 `Breakdowns After PM (7d)` is derived from dates, not from `Linked_PM_WO`.**
-That column is empty for all 88 breakdowns in the supplied data and is only
-populated by Flow 6 going forward. A measure depending on it would read **zero** on
-history and look reassuring — the worst possible failure mode for the one number
-that says whether the PM is working. The measure pairs breakdowns to completed PMs
+**3.3 `Breakdowns After PM (7d)` is derived from dates.** There is no stored linkage
+column — there was one, `Linked_PM_WO`, and it was empty for all 88 breakdowns in the
+supplied data because only Flow 6 would have populated it, going forward. A measure
+depending on it would have read **zero** on history and looked reassuring, which is
+the worst possible failure mode for the one number that says whether the PM is
+working. Since the measure never used it, the column was maintaining itself for
+nobody. The measure pairs breakdowns to completed PMs
 on the same cell by date instead, and works either way.
 
 **3.4 The 7-day window is inclusive at both ends.**
@@ -182,7 +192,7 @@ enough that a report opened today still has next year's forecast dates to land o
 Extend the `CALENDAR` range in `Dim_Date.tmdl` before April 2027.
 
 **4.3 One active date relationship per fact.** Second dates that genuinely matter
-(`Planned_End_Date`, `Actual_End_Date`, `Target_Date`, `Approved_Date`) are inactive
+(`Planned_End_Date`, `Target_Date`, `Closed_Date`) are inactive
 and reached with `USERELATIONSHIP`. Two active date paths would make every date
 filter ambiguous.
 
@@ -195,9 +205,11 @@ survives a Desktop version change that a bookmark's stored exploration state may
 not. `README_PowerBI.md` documents the two-minute conversion to a toggled panel.
 *Trade-off:* it uses 40 px of every page.
 
-**4.6 Two things must be finished in Desktop** — the drillthrough field on page 5
-and the transparent Gantt offset series on page 3. Neither can be expressed in the
-file format. Both are documented in `README_PowerBI.md` and take under a minute.
+**4.6 One thing must be finished in Desktop** — the drillthrough field on page 5.
+It cannot be expressed in the file format, is documented in `README_PowerBI.md`, and
+takes under a minute. There used to be a second, setting two invisible Gantt offset
+series to no-fill, which had to be redone on every rebuild and produced a chart that
+was *wrong* rather than broken when it was skipped. It went with its measures.
 
 **4.7 `Cum_Std_Hours_Since_PM` is a snapshot.** It has no time dimension, so summing
 it across cells is meaningful and summing it across months is not. No visual in the
@@ -218,10 +230,6 @@ shared login.
 **5.3 `5S / Housekeeping` is the choice value.** The dictionary abbreviates it to
 `5S`; the supplied data uses the longer form. The data wins, because that is what
 the CSVs load.
-
-**5.4 `Frequency` allows Quarterly and Annual** even though the data only contains
-`Monthly (per PM cycle)`. The dictionary says the column is reserved for a future
-split, so the choice values exist ready.
 
 **5.5 `Machine_Family` is text, not a choice.** 28 distinct values that will grow
 with every new machine type. A choice column would need editing on every purchase.
@@ -259,7 +267,7 @@ sticker that must always be readable.
 
 **7.1 The original brief said no Power Apps; you asked for it, so both paths are
 built.** Path A (Forms + list views) and Path B (canvas app) write to identical
-lists with identical column names, and the eleven flows do not care which produced
+lists with identical column names, and the nine flows do not care which produced
 the row. Path A remains configured as the fallback for a phone that will not install
 the app.
 
@@ -272,10 +280,10 @@ If the answer is no, Path A delivers the same system.
 otherwise attribute the next person's work to whoever used it last — worse than no
 attribution, because it looks authoritative.
 
-**7.4 Spare requests are blocked offline.** `Stock_At_Request` must be the real
-number at the moment of asking; capturing it against a cached figure makes the
-evidence worthless. Better to block with a clear reason than to record a number that
-is quietly wrong.
+**7.4 Spare replacement is blocked offline.** The stock decrement has to read the
+real figure at the moment of use; applying it against a cached number puts the
+shelf and the system out of step with no record of when it happened. Better to block
+with a clear reason than to write a number that is quietly wrong.
 
 **7.5 The app never resets a counter, creates a work order, or computes a cost.**
 Those rules live in flows, in one place, where they can be tested. Duplicating a rule
@@ -294,8 +302,8 @@ All eight confirmed by the system owner. Recorded here as the decisions of recor
 | 3 | Is `Actual_Std_Hours` an actual or a capacity figure? | **Capacity** | **Changed.** Proration is now by working days via `Plant_Calendar` (§2.5) |
 | 4 | Is the Tamil label wording right? | **Yes** | "தொடங்கும் முன் ஸ்கேன் செய்யவும்" — approved for print |
 | 5 | Are Power Apps rights available? | **No licence currently** | Path A (Forms) is the go-live route. Canvas app is Phase 2, subject to a licence request — see §8.1 |
-| 6 | Who owns the eleven flows? | **An individual account** | Accepted with mitigations — see §8.2. Flow 11 becomes a weekly heartbeat so a silent failure is detectable |
-| 7 | Retention on `Scan_Log` and `Checklist_Response`? | **None — keep everything** | Accepted. Growth and the one real risk are in §8.3 |
+| 6 | Who owns the nine flows? | **An individual account** | Accepted with mitigations — see §8.2. Flow 9 becomes a weekly heartbeat so a silent failure is detectable |
+| 7 | Retention on the transaction lists? | **None — keep everything** | Accepted. Growth and the one real risk are in §8.3 |
 | 8 | Is 4,000 hours right for every cell? | **Held per cell in `PM_Trigger_Hours`** | As built. All eight currently set to 4,000; retune any cell without touching code |
 
 ### 8.1 Power Apps — Phase 2, not now
@@ -303,7 +311,7 @@ All eight confirmed by the system owner. Recorded here as the decisions of recor
 No Power Apps licence is available today, so **the system goes live on Path A: the
 QR code opens the SharePoint Machine Hub, and the five buttons open pre-filled
 Microsoft Forms.** Everything in the brief works this way. Nothing in the data
-model, the eleven flows or the Power BI report depends on the canvas app.
+model, the nine flows or the Power BI report depends on the canvas app.
 
 The `powerapps/` folder stays in the repository as a complete, costed Phase 2 spec.
 `docs/POWERAPPS_LICENCE_CASE.pptx` is the business case for requesting the licence.
@@ -316,7 +324,7 @@ have to be reprinted. That is a known, accepted cost of starting on Forms — it
 
 ### 8.2 Flow ownership — an individual account *(confirmed)*
 
-**Decision: the eleven flows are owned by an individual account, not a service
+**Decision: the nine flows are owned by an individual account, not a service
 account.** No service account is available. This is workable, but it carries a
 specific residual risk that has to be managed rather than ignored, because nothing
 about it is visible until it has already caused damage.
@@ -332,20 +340,20 @@ Two different things are attached to a flow, and they fail differently:
 
 Adding co-owners is worth doing, but be clear about what it buys: **it shortens the
 repair, it does not prevent the failure.** The flows still run on the original
-person's SharePoint, Outlook, Forms, Teams and Approvals connections. The day that
-account is disabled, all eleven stop — and a co-owner then has to notice, go in, and
+person's SharePoint, Outlook, Forms, Teams and Excel connections. The day that
+account is disabled, all nine stop — and a co-owner then has to notice, go in, and
 re-point every connection to their own account.
 
 So the question is not "can someone fix it" but "**how long before anyone notices**".
 
 #### The five mitigations, in order of value
 
-1. **Add two named co-owners to all eleven flows.** Power Automate → the flow →
+1. **Add two named co-owners to all nine flows.** Power Automate → the flow →
    Share → add both. Do it at build time, not later. Without this, nobody but the
    owner can even open the flow to see why it stopped.
 
 2. **Make the daily digest a heartbeat.** This is the one that turns a silent
-   failure into a loud one, and it is a change to Flow 11 — see below and
+   failure into a loud one, and it is a change to Flow 9 — see below and
    `FLOW_SPECS.md`.
 
 3. **Route failure notifications to a shared mailbox.** Power Automate → Settings →
@@ -362,7 +370,7 @@ So the question is not "can someone fix it" but "**how long before anyone notice
 
 #### The silent-failure problem, and the fix
 
-Flow 11 was specified to **send only when something is outstanding** — deliberately,
+Flow 9 was specified to **send only when something is outstanding** — deliberately,
 because a digest that arrives every day regardless stops being read within a
 fortnight.
 
@@ -372,7 +380,7 @@ of two things and you cannot tell which:
 - nothing is outstanding, or
 - **the flows died and nobody has noticed**
 
-The fix keeps both properties. Flow 11 now sends **on Mondays regardless**, even
+The fix keeps both properties. Flow 9 now sends **on Mondays regardless**, even
 when everything is clean, as a one-line "PM system healthy, nothing outstanding".
 Tuesday to Sunday it stays quiet unless there is something to act on.
 
@@ -385,15 +393,17 @@ Do this *before* the leaving date, not after — once the licence is removed the
 connections are already broken.
 
 1. New owner signs in to Power Automate → **My flows** → **Shared with me**
-2. For each of the eleven flows: open → **Edit** → each connector step shows
+2. For each of the nine flows: open → **Edit** → each connector step shows
    *"Invalid connection"* or the old owner's name → **Switch / Add new connection**
    → sign in as the new owner
-3. **Save**, then **Test → Manually** on flows 2, 5 and 11
-4. Re-check the Approvals connection on Flow 7 in particular — approval assignment
-   is the one that fails most quietly
+3. **Save**, then **Test → Manually** on flows 2, 5 and 9 — the trigger, the reset
+   and the digest
+4. Re-check the **Excel Online** connection on Flow 1 in particular. It is the one
+   that fails most quietly: the flow saves, runs, and reports success having read
+   nothing, and the month simply never appears
 5. Confirm a Monday heartbeat arrives before considering the handover done
 
-Budget half a day. It is eleven flows and roughly forty connector steps.
+Budget half a day. It is nine flows and roughly thirty connector steps.
 
 ### 8.3 Retention — none, accepted
 
@@ -403,7 +413,6 @@ actually bite is not disk:
 | List | Rows/year (from the sample) | After 5 years |
 |---|---:|---:|
 | `Checklist_Response` | ~1,000 | ~5,000 |
-| `Scan_Log` | ~340 | ~1,700 |
 | `PM_Machine_Task` | ~190 | ~950 |
 | `Breakdown_Log` | ~90 | ~450 |
 | `Plant_Calendar` | 365 | 1,825 |
@@ -421,8 +430,8 @@ Three things already protect against it, and one is a decision for later:
 2. Every view carries a `RowLimit` with paging.
 3. Power BI is import-mode, so the report reads the whole list on refresh and is
    unaffected.
-4. **Around year four**, extend `Plant_Calendar` past 2027-03-31 and review whether
-   `Scan_Log` should move to an archive list. Put it in the maintenance plan now —
+4. **Around year four**, extend `Plant_Calendar` past 2027-03-31 and check
+   `Checklist_Response` against the threshold. Put it in the maintenance plan now —
    it is the kind of task nobody schedules and everybody discovers.
 
 Keeping the history is the right call. `Measured_Value` across successive PMs is what
@@ -443,25 +452,81 @@ credibility rests on are hand-worked below.
 
 ### 9.1 Hand-worked: `Breakdowns After PM (7d)`
 
-**9 of 88 breakdowns (10.2%)** fell within 7 days of a completed PM on the same cell.
+**7 of 88 breakdowns (8.0%)** fell within 7 days of a completed PM on the same cell,
+carrying **28.1 of 299.5 downtime hours (9.4%)**.
 
 | BD_ID | Cell | Breakdown | PM completed | Gap |
 |---|---|---|---|---|
 | BD-3012 | CELL-03 | 2025-10-01 | 2025-09-30 | 1 day |
 | BD-3034 | CELL-03 | 2025-10-05 | 2025-09-30 | 5 days |
 | BD-3068 | CELL-04 | 2025-10-06 | 2025-10-03 | 3 days |
-| BD-3072 | CELL-05 | 2025-10-19 | 2025-10-17 | 2 days |
+| BD-3072 | CELL-05 | 2025-10-19 | 2025-10-16 | 3 days |
 | BD-3058 | CELL-07 | 2026-01-01 | 2025-12-30 | 2 days |
 | BD-3007 | CELL-05 | 2026-02-12 | 2026-02-12 | 0 days |
-| BD-3014 | CELL-07 | 2026-03-01 | 2026-02-22 | 7 days |
 | BD-3049 | CELL-06 | 2026-04-23 | 2026-04-18 | 5 days |
-| *(one further row)* | | | | |
 
 BD-3007 at a gap of 0 is the strongest evidence in the set: the machine broke down
 on the day its cell PM completed.
 
 Read it as a **share**, not a count. A rising count during a period of rising PM
 volume is expected; a rising share is the warning.
+
+#### This number was 9 (10.2%) before the reduction. Here is exactly why it moved
+
+The measure pairs a breakdown to a PM by date, so everything depends on **when the
+PM finished**. That used to come from `PM_WorkOrder.Actual_End_Date`, a stored
+column. It now comes from the latest `Scan_End_Time` across the work order's own
+machine tasks.
+
+In the supplied data the two disagree on **29 of the 43 completed work orders**,
+always by one or two days, and always with the stored date *later* than the last
+machine scan:
+
+| | Stored `Actual_End_Date` | Last machine scan |
+|---|---|---|
+| WO-1023 (CELL-07) | 2026-02-22 | 2026-02-20 |
+| WO-1025 (CELL-02) | 2026-07-12 | 2026-07-10 |
+
+Those two are the whole difference. BD-3014 fell 7 days after the stored date and 9
+after the work; BD-3025 fell 6 days after the stored date and 8 after the work. Both
+landed inside the seven-day window only on the strength of that gap.
+
+**Which figure is right depends on what the lag was.** Being precise about this
+matters, because the claim is narrower than "the old number was wrong":
+
+- **The system as designed cannot produce that lag.** Flow 5 stamps the work order
+  complete in the same run that sees the final machine task finish — the two
+  timestamps are seconds apart, not days. So a one-to-two-day gap is an artefact of
+  how the sample data was generated, not behaviour the built system would reproduce.
+- On that reading, **7 is the figure consistent with the work actually recorded**, and
+  the 9 was counting two breakdowns into a window widened by a date nothing in the
+  design would have written.
+- If instead the lag is real at your plant — if a work order is genuinely signed off a
+  day or two after the last machine is scanned out — then that is a **business rule
+  this build does not implement**, and you should say so before go-live rather than
+  after. It would change the measure.
+
+Either way, **the two values can no longer disagree**, because there is now only one
+of them. That is the point: a stored rollup had already drifted from the rows it
+summarised, in the one measure the system's credibility rests on, and nothing
+anywhere reported the drift — because nothing was comparing them.
+
+**Three other measures move for the same reason**, all of them dated off the same
+column:
+
+| Measure | Was | Now |
+|---|---:|---:|
+| `PM On-Time Count` | 21 | **28** |
+| `PM On-Time %` | 48.8% | **65.1%** |
+| `Avg PM Delay (Days)` | +0.51 | **−0.56** |
+
+The stored dates made every PM look one to two days later than the machines said it
+was, which pushed jobs past their `Planned_End_Date` that had not actually missed it.
+On-time performance was being understated by the same artefact.
+
+If you load real data and these numbers move again, that is the measure working.
+Check any figure you doubt against `verify_measures.py`, which recomputes it in
+Python from the same source rather than reading it back from the model.
 
 ### 9.2 Hand-worked: `Projected PM Date`
 
@@ -511,7 +576,15 @@ reported hours has working days recorded.
 
 ### 9.4 All measures, recomputed
 
-Recomputed at `--asof 2026-08-30`:
+Recomputed at `--asof 2026-08-30`, independently of the DAX — **65 measures**,
+every one returning a value.
+
+> Several of these are now computed from columns that are **no longer stored**:
+> durations from the two scan timestamps, MTTR and response time from the breakdown
+> timestamps, spare cost from quantity times unit cost, findings by counting NOT OK
+> responses. `verify_measures.py` derives each of them in Python from the same source
+> data the model reads. Two independent derivations agreeing is the check; one of them
+> reading back a number the other stored would not be.
 
 | Measure | Value | Unit |
 |---|---:|---|
@@ -520,10 +593,10 @@ Recomputed at `--asof 2026-08-30`:
 | `PM Overdue Count` | 2 |  |
 | `PM In Progress Count` | 2 |  |
 | `PM Compliance %` | 0.8958 | % |
-| `PM On-Time Count` | 21 |  |
-| `PM On-Time %` | 0.4884 | % |
+| `PM On-Time Count` | 28 |  |
+| `PM On-Time %` | 0.6512 | % |
 | `Schedule Adherence %` | 0.549 | % |
-| `Avg PM Delay (Days)` | 0.5116 | days |
+| `Avg PM Delay (Days)` | -0.5581 | days |
 | `Calendar-Triggered PM %` | 0.25 | % |
 | `Cum Std Hours` | 20,340 | h |
 | `PM Trigger Hours` | 32,000 | h |
@@ -563,8 +636,8 @@ Recomputed at `--asof 2026-08-30`:
 | `Downtime Hours` | 299.4833 | h |
 | `MTBF (Hrs)` | 847.9511 | h |
 | `Availability %` | 0.996 | % |
-| `Breakdowns After PM (7d)` | 9 |  |
-| `Breakdowns After PM %` | 0.1023 | % |
+| `Breakdowns After PM (7d)` | 7 |  |
+| `Breakdowns After PM %` | 0.0795 | % |
 | `Repeat Breakdown Count` | 17 |  |
 | `Open Breakdowns` | 0 |  |
 | `Spare Cost` | 319,160 | INR |
@@ -572,9 +645,6 @@ Recomputed at `--asof 2026-08-30`:
 | `Unplanned Spare Cost` | 172,190 | INR |
 | `Spare Cost per PM` | 3,417.907 | INR/PM |
 | `Qty Replaced` | 128 |  |
-| `Requests Pending Approval` | 12 |  |
-| `Avg Approval Lead Time (Days)` | 1 | days |
-| `Approved Not Issued Count` | 0 |  |
 | `Stock Below Min Count` | 1 |  |
 | `Stock Value (INR)` | 221,390 | INR |
 | `Warranty Claims Flagged` | 15 |  |
@@ -598,3 +668,79 @@ Recomputed at `--asof 2026-08-30`:
   record repair time instead, this number flatters.
 - **`Schedule Adherence %` = 54.9%** against 51 committed plan rows, with 4 forecast
   rows correctly excluded.
+- **`Breakdowns After PM (7d)` = 7, not the 9 quoted before the reduction**, and
+  on-time performance moved with it. §9.1 has the full working. The short version: a
+  PM is now dated from its own machine scans rather than from a stored column, and in
+  the supplied data those two disagreed on 29 of 43 completed work orders — by a lag
+  the system as designed cannot produce.
+
+---
+
+## 10. The reduction — what was taken out, and what it cost
+
+The first build carried **16 lists, 224 columns and 11 flows**. It now carries
+**14 lists, 138 columns and 9 flows**. This section is the record of that decision,
+because a smaller schema is only an improvement if you can say what it can no longer
+answer.
+
+### 10.1 The three rules, applied in order
+
+| | Rule | What it caught |
+|---|---|---|
+| 1 | **Derivable goes.** A flow computed it and stored it; the report could work it out at read time. The stored copy is a second version of the same fact, and the one that goes stale when a flow fails halfway. | `Duration_Min`, `MTTR_Min`, `Response_Time_Min`, `Total_Cost_INR`, `NOT_OK_Count`, `Avg_Monthly_Std_Hours_L3M`, the work order's start, end and duration |
+| 2 | **Denormalised goes.** A copy of master data on a fact row is a second place the same fact can be wrong, and renaming a cell should not require rewriting history. | `Cell_Name` on five lists, `Spare_Description`, `Checklist_Name` |
+| 3 | **Speculative goes.** Nothing reads it, and no business rule needs it. | `Preferred_Vendor`, `Tool_Required`, `Role_Scope`, `Default_Shift`, `Year_Installed`, `Frequency` |
+
+**One exception overrides rule 1**, and it is worth knowing: a column a SharePoint
+**view filter** needs stays, because CAML cannot do arithmetic. That is why
+`Next_PM_Due_Date_Calendar` is still stored even though it is just `Last_PM_Date`
+plus a few months — the **Cells Due This Month** view filters on it.
+
+**Two exceptions override rule 2**, both for the same reason — a record has to stay
+readable after the master changes:
+
+- **`Check_Point`** is stored as text on every checklist response. Reword the master
+  next year and last year's records still say what was actually checked.
+- **`Unit_Cost_INR`** is copied onto the replacement row at the moment of use. A
+  price rise must not retrospectively rewrite last year's maintenance cost.
+
+Every one of the 58 cuts is listed with its reason in `tools/essential_schema.py`,
+which is also what the loader, the Power BI model and the provisioning script read.
+The documentation cannot silently drift away from what actually gets built.
+
+### 10.2 What the system can no longer answer
+
+Four things, honestly stated. None is recoverable from history — if any of them
+matters, reinstate it **before** go-live, not after.
+
+1. **The scan that led nowhere.** `Scan_Log` recorded every QR scan, including
+   scans against machines with no open work order. That is a genuine early signal
+   that people are using the stickers before the process is ready for them. Flow 3
+   still *tells* the technician there is no open job; it no longer files the fact.
+   **This is the first thing to reinstate if take-up is ever in doubt.**
+2. **Spare approval lead time, and stock at the moment of asking.** Both went with
+   the requisition loop. If purchasing later wants to argue a min-stock revision
+   from evidence, that evidence has to come from the stores system.
+3. **Who started a PM, as distinct from who finished it.** `Assigned_Tech_ID` went;
+   `Completed_By` is what remains, stamped at checklist submission. Across a shift
+   change mid-job, the system records the finisher.
+4. **Asset-register detail** — make, model, year installed. Age-versus-breakdown
+   analysis, the evidence base for replacement capex, now needs the asset register
+   rather than this system.
+
+### 10.3 What it bought
+
+- **25 SharePoint writes down to 16** across the flows. A write is the action most
+  likely to fail at 2 a.m. and the only kind that can leave a record half-finished.
+- **120 hand-maintained form URLs down to 11 placeholders set once.** The Machine Hub
+  builds each link from the row it is drawing, so a button cannot point at the wrong
+  machine.
+- **One class of defect removed outright.** A stored number that disagrees with the
+  facts it came from — a work order whose duration does not match its tasks, a line
+  total that does not match quantity times price — is no longer possible, because
+  those numbers are no longer stored.
+- **One live defect fixed.** The overnight corrective work order wrote into
+  `PM_WorkOrder`, where Flow 2's open-work-order check could not tell it apart from a
+  live PM. An unclosed corrective job would have suppressed that cell's next
+  4,000-hour trigger indefinitely, silently. Removing the flow removed the defect;
+  follow-up is now a supervisor's decision made from the **NOT OK Findings** view.

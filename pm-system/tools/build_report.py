@@ -457,13 +457,11 @@ def pg03():
         kpi_card("v13KpiDone", 3, 13, "Completed WO Count (by Actual Date)", "COMPLETED THIS MONTH"),
         kpi_card("v14KpiDelay", 4, 14, "Avg PM Delay (Days)", "AVG DELAY (DAYS)"),
 
-        bar("v20Gantt", cx(0), ROW2_Y, cw(7), 250, 2000, 20,
+        bar("v20PlanVsDone", cx(0), ROW2_Y, cw(7), 250, 2000, 20,
             category=col(C, "Cell_Name"),
-            values=[meas("Gantt Planned Offset (Days)"), meas("Gantt Planned Duration (Days)"),
-                    meas("Gantt Actual Offset (Days)"), meas("Gantt Actual Duration (Days)")],
-            title="Planned window versus actual window, per cell",
-            subtitle="Set the first series to no fill in the format pane - it is the invisible offset that positions the bar",
-            visual="barChart", data_labels=False),
+            values=[meas("Planned WO Count"), meas("Completed WO Count (by Actual Date)")],
+            title="Planned against completed, per cell",
+            subtitle="Planned counts by the committed end date; completed counts by the date it actually finished"),
 
         donut("v21Adherence", cx(7), ROW2_Y, cw(5), 250, 2001, 21,
               category=col(FP, "Adherence_Status"),
@@ -472,16 +470,16 @@ def pg03():
               subtitle="Forecast rows are excluded - you cannot miss a date you never committed to"),
 
         table("v30Delayed", cx(0), 460, cw(12), 176, 2002, 30,
-              projections=[col(FW, "WO_No"), col(FW, "Cell_Name"), col(FW, "Priority"),
+              projections=[col(FW, "WO_No"), col(C, "Cell_Name"), col(FW, "Priority"),
                            col(FW, "Planned_End_Date"), col(FW, "Actual_End_Date"),
-                           col(FW, "Delay_Days"), col(FW, "WO_Status"), col(FW, "Lead_Tech_ID")],
+                           col(FW, "Delay_Days"), col(FW, "WO_Status")],
               title="Which work orders missed their committed end date, and by how many days?",
               subtitle="Negative delay means finished early"),
 
         footnote("v90Info", [
             "Adherence is measured against PM_Plan_Calendar (frozen on the 25th), not against the work order's own planned date, which can be edited after the fact.",
             "Plan_Version 'V1 Forecast' rows are projections beyond the frozen month and never count in the denominator.",
-            "The Gantt bars are a stacked bar: an invisible offset series then a visible duration series.",
+            "Planned counts a work order by its committed end date; completed counts it by the date it actually finished. The two inactive date relationships are what let one month slicer answer both.",
         ]),
     ]
     return "pg03Schedule", "Monthly Schedule & Adherence", v
@@ -498,7 +496,7 @@ def pg04():
         kpi_card("v14KpiReset", 4, 14, "Reset Not Applied Count", "COMPLETED BUT NOT RESET"),
 
         table("v20OpenWO", cx(0), ROW2_Y, cw(7), 250, 2000, 20,
-              projections=[col(FW, "WO_No"), col(FW, "Cell_Name"), col(FW, "WO_Status"),
+              projections=[col(FW, "WO_No"), col(C, "Cell_Name"), col(FW, "WO_Status"),
                            col(FW, "Priority"), meas("Cell Completion %"),
                            col(FW, "Machines_In_Scope"), col(FW, "Machines_Completed"),
                            col(FW, "Planned_End_Date")],
@@ -514,7 +512,7 @@ def pg04():
 
         table("v30NotScanned", cx(0), 460, cw(6), 176, 2002, 30,
               projections=[col(FT, "Machine_ID"), col(FT, "Cell_ID"), col(FT, "WO_No"),
-                           col(FT, "Assigned_Tech_ID"), col(FT, "Task_Status")],
+                           col(FT, "Task_Status"), col(FT, "Scan_Start_Time")],
               title="Which machines in an open work order has nobody started?",
               subtitle="Pending with no scan-in time - the supervisor's chase list"),
 
@@ -546,14 +544,14 @@ def pg05():
 
         table("v20History", cx(0), ROW2_Y, cw(6), 250, 2000, 20,
               projections=[col(FT, "WO_No"), col(FT, "Completion_Date"), col(FT, "Task_Status"),
-                           col(FT, "Duration_Min"), col(FT, "NOT_OK_Count"), col(FT, "Completed_By")],
+                           col(FT, "Duration_Min"), meas("NOT OK Count"), col(FT, "Completed_By")],
               title="PM history for this machine",
               subtitle="Duration well below the checklist's expected time is the signature of a signed-not-done PM"),
 
         table("v21Findings", cx(6), ROW2_Y, cw(6), 250, 2001, 21,
               projections=[col(FR, "Submitted_DateTime"), col(FR, "Check_Point"),
                            col(FR, "Result"), col(FR, "Measured_Value"),
-                           col(FR, "Observation"), col(FR, "Action_Taken")],
+                           col(FR, "Observation")],
               title="Every check point result, newest first",
               subtitle="Measured_Value across successive PMs is what turns a checklist into condition monitoring"),
 
@@ -565,7 +563,7 @@ def pg05():
               subtitle="Symptom and root cause kept separate - that is what makes repeat-failure analysis possible"),
 
         table("v31Spares", cx(6), 460, cw(6), 176, 2003, 31,
-              projections=[col(FS, "Replaced_DateTime"), col(FS, "Spare_Description"),
+              projections=[col(FS, "Replaced_DateTime"), col(S, "Spare_Description"),
                            col(FS, "Qty_Used"), col(FS, "Total_Cost_INR"),
                            col(FS, "Failure_Mode")],
               title="Parts fitted to this machine",
@@ -605,7 +603,7 @@ def pg06():
         table("v30Safety", cx(0), 460, cw(6), 176, 2002, 30,
               projections=[col(FR, "Submitted_DateTime"), col(FR, "Machine_ID"),
                            col(FR, "Check_Point"), col(FR, "Measured_Value"),
-                           col(FR, "Observation"), col(FR, "Follow_Up_WO")],
+                           col(FR, "Observation"), col(FR, "Follow_Up_Required")],
               title="Safety-critical findings - every one of these blocks the task from closing",
               subtitle="Escalated immediately regardless of the severity anyone selected"),
 
@@ -679,7 +677,7 @@ def pg08():
         kpi_card("v10KpiCost", 0, 10, "Spare Cost", "TOTAL SPARE COST"),
         kpi_card("v11KpiPerPM", 1, 11, "Spare Cost per PM", "COST PER CELL PM"),
         kpi_card("v12KpiUnplanned", 2, 12, "Unplanned Spare Cost", "UNPLANNED SPEND"),
-        kpi_card("v13KpiPending", 3, 13, "Requests Pending Approval", "AWAITING APPROVAL"),
+        kpi_card("v13KpiWarranty", 3, 13, "Warranty Claims Flagged", "WARRANTY CLAIMS"),
         kpi_card("v14KpiBelowMin", 4, 14, "Stock Below Min Count", "PARTS BELOW MINIMUM"),
 
         combo("v20CostTrend", cx(0), ROW2_Y, cw(6), 250, 2000, 20,
@@ -708,14 +706,14 @@ def pg08():
               projections=[col(S, "Spare_Code"), col(S, "Spare_Description"),
                            col(S, "Current_Stock"), col(S, "Min_Stock"),
                            col(S, "Lead_Time_Days"), col(S, "Stockout_Risk_Score"),
-                           meas("Avg Approval Lead Time (Days)"), meas("Avg Issue Lead Time (Days)"),
-                           meas("Approved Not Issued Count"), col(S, "Preferred_Vendor")],
+                           meas("Spare Cost"), meas("Qty Replaced")],
               title="Which parts will stop a PM if they run out?",
               subtitle="Risk score weights how far below minimum a part is by how long it takes to replace"),
 
         footnote("v90Info", [
             "Unit cost is copied onto each replacement row at the time of use, so a price rise does not retrospectively rewrite last year's maintenance cost.",
             "Spare Cost per PM uses PM-sourced replacements only, divided by completed cell PMs.",
+            "Requisition and approval are left to the stores process. This page reports what was actually fitted.",
             "Stockout Risk Score = (1 - current/minimum, floored at 0) x lead time days.",
         ]),
     ]

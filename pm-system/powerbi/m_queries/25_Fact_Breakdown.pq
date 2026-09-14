@@ -9,18 +9,15 @@
 // the larger number, and using MTTR for availability makes availability look
 // flattering and wrong.
 //
-// Linked_PM_WO is populated by Flow 6 when a breakdown falls within 7 days of a
-// completed PM on that cell. It is EMPTY on the dummy data, so the
-// "Breakdowns After PM (7d)" measure does not depend on it - the measure derives
-// the relationship from dates instead, and works whether or not the flow has
-// backfilled the column. See dax/measures.dax.
+// Linked_PM_WO has been removed. The "Breakdowns After PM (7d)" measure always
+// derived the relationship from dates rather than trusting that column, so nothing
+// depended on it - it was a stored answer to a question the model already asks.
 // ===========================================================================
 let
     Source = fnGetTable("Breakdown_Log", "03_PM_Transactions_Dummy.xlsx", "Breakdown_Log"),
 
-    Keys = fnCleanKeys(Source, {"BD_ID", "Machine_ID", "Cell_ID",
-                                "Reported_By_Tech_ID", "Linked_PM_WO"}),
-    Bools = fnYesNo(Keys, {"Spare_Used", "Recurrence_Flag"}),
+    Keys = fnCleanKeys(Source, {"BD_ID", "Machine_ID", "Cell_ID", "Reported_By_Tech_ID"}),
+    Bools = fnYesNo(Keys, {"Recurrence_Flag"}),
 
     Typed = Table.TransformColumnTypes(Bools, {
         {"BD_ID",               type text},
@@ -36,14 +33,9 @@ let
         {"Response_DateTime",   type datetime},
         {"Repair_Start",        type datetime},
         {"Repair_End",          type datetime},
-        {"Response_Time_Min",   Int64.Type},
-        {"MTTR_Min",            Int64.Type},
         {"Production_Loss_Min", Int64.Type},
-        {"Spare_Used",          type logical},
         {"Status",              type text},
-        {"Recurrence_Flag",     type logical},
-        {"Linked_PM_WO",        type text},
-        {"Remarks",             type text}
+        {"Recurrence_Flag",     type logical}
     }),
 
     WithDate = Table.AddColumn(
@@ -51,17 +43,17 @@ let
         each if [Reported_DateTime] = null then null else DateTime.Date([Reported_DateTime]),
         type nullable date),
 
-    // Recomputed from the timestamps rather than trusted from the source column.
-    // If the two disagree, the timestamps are the evidence and the number is the
-    // claim - and the discrepancy is worth seeing.
+    // Computed from the timestamps, not stored. Flow 6 used to calculate and write
+    // both; the timestamps are the evidence, so the model derives the numbers from
+    // them and there is nothing to fall out of step.
     WithCalc = Table.AddColumn(
-        WithDate, "MTTR_Min_Calc",
+        WithDate, "MTTR_Min",
         each if [Repair_Start] = null or [Repair_End] = null then null
              else Duration.TotalMinutes([Repair_End] - [Repair_Start]),
         type nullable number),
 
     WithResp = Table.AddColumn(
-        WithCalc, "Response_Time_Min_Calc",
+        WithCalc, "Response_Time_Min",
         each if [Reported_DateTime] = null or [Response_DateTime] = null then null
              else Duration.TotalMinutes([Response_DateTime] - [Reported_DateTime]),
         type nullable number),

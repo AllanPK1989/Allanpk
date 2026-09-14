@@ -146,36 +146,12 @@
       "DisplayFormat": "DateTime"
     },
     {
-      "InternalName": "Response_Time_Min",
-      "DisplayName": "Response_Time_Min",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Number",
-      "Decimals": 0
-    },
-    {
-      "InternalName": "MTTR_Min",
-      "DisplayName": "MTTR_Min",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Number",
-      "Decimals": 0
-    },
-    {
       "InternalName": "Production_Loss_Min",
       "DisplayName": "Production_Loss_Min",
       "Required": false,
       "Indexed": false,
       "Type": "Number",
       "Decimals": 0
-    },
-    {
-      "InternalName": "Spare_Used",
-      "DisplayName": "Spare_Used",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Boolean",
-      "DefaultValue": "0"
     },
     {
       "InternalName": "Status",
@@ -197,24 +173,6 @@
       "Indexed": false,
       "Type": "Boolean",
       "DefaultValue": "0"
-    },
-    {
-      "InternalName": "Linked_PM_WO",
-      "DisplayName": "Linked_PM_WO",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Text",
-      "MaxLength": 255
-    },
-    {
-      "InternalName": "Remarks",
-      "DisplayName": "Remarks",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Note",
-      "NumberOfLines": 4,
-      "RichText": false,
-      "AppendOnly": false
     }
   ]
 }

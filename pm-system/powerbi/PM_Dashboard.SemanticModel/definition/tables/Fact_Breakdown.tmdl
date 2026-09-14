@@ -113,39 +113,12 @@ table Fact_Breakdown
 
 		annotation SummarizationSetBy = Automatic
 
-	column Response_Time_Min
-		dataType: int64
-		lineageTag: dc0adfc9-27ab-5280-acd7-6a24211e2af9
-		summarizeBy: none
-		sourceColumn: Response_Time_Min
-		formatString: #,##0
-
-		annotation SummarizationSetBy = Automatic
-
-	column MTTR_Min
-		dataType: int64
-		lineageTag: d51c20b1-a154-5a72-a4ae-008533a2ae86
-		summarizeBy: none
-		sourceColumn: MTTR_Min
-		formatString: #,##0
-
-		annotation SummarizationSetBy = Automatic
-
 	column Production_Loss_Min
 		dataType: int64
 		lineageTag: 6f45705d-1c62-5fa0-bd18-8a785b718dd0
 		summarizeBy: none
 		sourceColumn: Production_Loss_Min
 		formatString: #,##0
-
-		annotation SummarizationSetBy = Automatic
-
-	column Spare_Used
-		dataType: boolean
-		lineageTag: fd918721-9174-5e76-a2d2-3d94615160be
-		summarizeBy: none
-		sourceColumn: Spare_Used
-		formatString: "TRUE";;"FALSE"
 
 		annotation SummarizationSetBy = Automatic
 
@@ -166,22 +139,6 @@ table Fact_Breakdown
 
 		annotation SummarizationSetBy = Automatic
 
-	column Linked_PM_WO
-		dataType: string
-		lineageTag: 7672ce9c-97cb-5b3c-8fed-8d55087adeaf
-		summarizeBy: none
-		sourceColumn: Linked_PM_WO
-
-		annotation SummarizationSetBy = Automatic
-
-	column Remarks
-		dataType: string
-		lineageTag: bda3e157-abf1-5767-9c53-b49f495ed6d2
-		summarizeBy: none
-		sourceColumn: Remarks
-
-		annotation SummarizationSetBy = Automatic
-
 	column Reported_Date
 		dataType: dateTime
 		lineageTag: 7bda57a8-874b-5f60-9bfa-1425b0090627
@@ -192,20 +149,20 @@ table Fact_Breakdown
 
 		annotation SummarizationSetBy = Automatic
 
-	column MTTR_Min_Calc
+	column MTTR_Min
 		dataType: double
-		lineageTag: ac901903-c3b5-5089-a7da-325f0d94d74b
+		lineageTag: d51c20b1-a154-5a72-a4ae-008533a2ae86
 		summarizeBy: none
-		sourceColumn: MTTR_Min_Calc
+		sourceColumn: MTTR_Min
 		formatString: #,##0.00
 
 		annotation SummarizationSetBy = Automatic
 
-	column Response_Time_Min_Calc
+	column Response_Time_Min
 		dataType: double
-		lineageTag: a03afda7-20b0-5a2d-8f52-19f7fd93dc38
+		lineageTag: dc0adfc9-27ab-5280-acd7-6a24211e2af9
 		summarizeBy: none
-		sourceColumn: Response_Time_Min_Calc
+		sourceColumn: Response_Time_Min
 		formatString: #,##0.00
 
 		annotation SummarizationSetBy = Automatic
@@ -242,18 +199,15 @@ table Fact_Breakdown
 				// the larger number, and using MTTR for availability makes availability look
 				// flattering and wrong.
 				//
-				// Linked_PM_WO is populated by Flow 6 when a breakdown falls within 7 days of a
-				// completed PM on that cell. It is EMPTY on the dummy data, so the
-				// "Breakdowns After PM (7d)" measure does not depend on it - the measure derives
-				// the relationship from dates instead, and works whether or not the flow has
-				// backfilled the column. See dax/measures.dax.
+				// Linked_PM_WO has been removed. The "Breakdowns After PM (7d)" measure always
+				// derived the relationship from dates rather than trusting that column, so nothing
+				// depended on it - it was a stored answer to a question the model already asks.
 				// ===========================================================================
 				let
 				    Source = fnGetTable("Breakdown_Log", "03_PM_Transactions_Dummy.xlsx", "Breakdown_Log"),
 
-				    Keys = fnCleanKeys(Source, {"BD_ID", "Machine_ID", "Cell_ID",
-				                                "Reported_By_Tech_ID", "Linked_PM_WO"}),
-				    Bools = fnYesNo(Keys, {"Spare_Used", "Recurrence_Flag"}),
+				    Keys = fnCleanKeys(Source, {"BD_ID", "Machine_ID", "Cell_ID", "Reported_By_Tech_ID"}),
+				    Bools = fnYesNo(Keys, {"Recurrence_Flag"}),
 
 				    Typed = Table.TransformColumnTypes(Bools, {
 				        {"BD_ID",               type text},
@@ -269,14 +223,9 @@ table Fact_Breakdown
 				        {"Response_DateTime",   type datetime},
 				        {"Repair_Start",        type datetime},
 				        {"Repair_End",          type datetime},
-				        {"Response_Time_Min",   Int64.Type},
-				        {"MTTR_Min",            Int64.Type},
 				        {"Production_Loss_Min", Int64.Type},
-				        {"Spare_Used",          type logical},
 				        {"Status",              type text},
-				        {"Recurrence_Flag",     type logical},
-				        {"Linked_PM_WO",        type text},
-				        {"Remarks",             type text}
+				        {"Recurrence_Flag",     type logical}
 				    }),
 
 				    WithDate = Table.AddColumn(
@@ -284,17 +233,17 @@ table Fact_Breakdown
 				        each if [Reported_DateTime] = null then null else DateTime.Date([Reported_DateTime]),
 				        type nullable date),
 
-				    // Recomputed from the timestamps rather than trusted from the source column.
-				    // If the two disagree, the timestamps are the evidence and the number is the
-				    // claim - and the discrepancy is worth seeing.
+				    // Computed from the timestamps, not stored. Flow 6 used to calculate and write
+				    // both; the timestamps are the evidence, so the model derives the numbers from
+				    // them and there is nothing to fall out of step.
 				    WithCalc = Table.AddColumn(
-				        WithDate, "MTTR_Min_Calc",
+				        WithDate, "MTTR_Min",
 				        each if [Repair_Start] = null or [Repair_End] = null then null
 				             else Duration.TotalMinutes([Repair_End] - [Repair_Start]),
 				        type nullable number),
 
 				    WithResp = Table.AddColumn(
-				        WithCalc, "Response_Time_Min_Calc",
+				        WithCalc, "Response_Time_Min",
 				        each if [Reported_DateTime] = null or [Response_DateTime] = null then null
 				             else Duration.TotalMinutes([Response_DateTime] - [Reported_DateTime]),
 				        type nullable number),

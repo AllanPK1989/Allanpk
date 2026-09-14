@@ -66,11 +66,11 @@
                       "Entity": "Fact_MachineTask"
                     }
                   },
-                  "Property": "Assigned_Tech_ID"
+                  "Property": "Task_Status"
                 }
               },
-              "queryRef": "Fact_MachineTask.Assigned_Tech_ID",
-              "nativeQueryRef": "Assigned_Tech_ID"
+              "queryRef": "Fact_MachineTask.Task_Status",
+              "nativeQueryRef": "Task_Status"
             },
             {
               "field": {
@@ -80,11 +80,11 @@
                       "Entity": "Fact_MachineTask"
                     }
                   },
-                  "Property": "Task_Status"
+                  "Property": "Scan_Start_Time"
                 }
               },
-              "queryRef": "Fact_MachineTask.Task_Status",
-              "nativeQueryRef": "Task_Status"
+              "queryRef": "Fact_MachineTask.Scan_Start_Time",
+              "nativeQueryRef": "Scan_Start_Time"
             }
           ]
         }

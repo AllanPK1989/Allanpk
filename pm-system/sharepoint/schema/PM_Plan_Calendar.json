@@ -45,14 +45,6 @@
       "MaxLength": 255
     },
     {
-      "InternalName": "Cell_Name",
-      "DisplayName": "Cell_Name",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Text",
-      "MaxLength": 255
-    },
-    {
       "InternalName": "Planned_Date",
       "DisplayName": "Planned_Date",
       "Required": true,
@@ -61,34 +53,12 @@
       "DisplayFormat": "DateOnly"
     },
     {
-      "InternalName": "Planned_Shift",
-      "DisplayName": "Planned_Shift",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Choice",
-      "Choices": [
-        "A (06:00-14:00)",
-        "B (14:00-22:00)",
-        "C (22:00-06:00)"
-      ],
-      "Format": "Dropdown",
-      "FillInChoice": false
-    },
-    {
       "InternalName": "Planned_Tech_ID",
       "DisplayName": "Planned_Tech_ID",
       "Required": false,
       "Indexed": false,
       "Type": "Text",
       "MaxLength": 255
-    },
-    {
-      "InternalName": "Estimated_Duration_Hrs",
-      "DisplayName": "Estimated_Duration_Hrs",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Number",
-      "Decimals": 2
     },
     {
       "InternalName": "Plan_Version",
@@ -103,14 +73,6 @@
       ],
       "Format": "Dropdown",
       "FillInChoice": false
-    },
-    {
-      "InternalName": "Frozen_Date",
-      "DisplayName": "Frozen_Date",
-      "Required": false,
-      "Indexed": false,
-      "Type": "DateTime",
-      "DisplayFormat": "DateOnly"
     },
     {
       "InternalName": "WO_No",

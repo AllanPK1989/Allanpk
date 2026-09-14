@@ -13,7 +13,7 @@ let
     Source = fnGetTable("Abnormality_Log", "03_PM_Transactions_Dummy.xlsx", "Abnormality_Log"),
 
     Keys = fnCleanKeys(Source, {"Abn_ID", "Machine_ID", "Cell_ID", "Logged_By"}),
-    Bools = fnYesNo(Keys, {"Converted_To_WO"}),
+    Bools = fnYesNo(Keys, {}),
 
     Flattened = Table.TransformColumns(
         Bools,
@@ -34,13 +34,10 @@ let
         {"Description",      type text},
         {"Severity",         type text},
         {"Photo_Link",       type text},
-        {"Immediate_Action", type text},
         {"Responsibility",   type text},
         {"Target_Date",      type date},
         {"Status",           type text},
-        {"Closed_Date",      type date},
-        {"Closure_Remarks",  type text},
-        {"Converted_To_WO",  type logical}
+        {"Closed_Date",      type date}
     }),
 
     WithDate = Table.AddColumn(

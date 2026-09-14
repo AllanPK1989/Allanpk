@@ -62,38 +62,6 @@
       "FillInChoice": false
     },
     {
-      "InternalName": "Default_Shift",
-      "DisplayName": "Default_Shift",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Choice",
-      "Choices": [
-        "A (06:00-14:00)",
-        "B (14:00-22:00)",
-        "C (22:00-06:00)"
-      ],
-      "Format": "Dropdown",
-      "FillInChoice": false
-    },
-    {
-      "InternalName": "Contact_No",
-      "DisplayName": "Contact_No",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Text",
-      "MaxLength": 255
-    },
-    {
-      "InternalName": "Role_Scope",
-      "DisplayName": "Role_Scope",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Note",
-      "NumberOfLines": 4,
-      "RichText": false,
-      "AppendOnly": false
-    },
-    {
       "InternalName": "Active",
       "DisplayName": "Active",
       "Required": true,

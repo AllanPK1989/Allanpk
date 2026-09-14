@@ -110,7 +110,10 @@ Reach them with `USERELATIONSHIP`:
 | `Fact_WorkOrder` | `WO_Created_Date` | `Planned_End_Date` | `Planned WO Count` |
 | `Fact_WorkOrder` | `WO_Created_Date` | `Actual_End_Date` | `Completed WO Count (by Actual Date)` |
 | `Fact_Abnormality` | `Logged_Date` | `Target_Date` | *(available, not yet on a page)* |
-| `Fact_SpareRequest` | `Request_Date` | `Approved_Date` | *(available, not yet on a page)* |
+
+> `Fact_WorkOrder[Actual_End_Date]` is **computed in Power Query**, not loaded — it is
+> the latest `Scan_End_Time` across the work order's machine tasks. The work order no
+> longer stores its own end date, so it cannot disagree with the tasks underneath it.
 
 `Dim_Date` is generated in DAX with `CALENDAR`, covers **2025-04-01 to 2027-03-31**
 (two Indian financial years) and is marked as the date table — without that mark
@@ -132,20 +135,18 @@ the time-intelligence functions return wrong answers silently rather than errori
 | 8 | Spares & Cost | What is maintenance costing, and which parts will stop a PM? |
 | 9 | Technician Performance | Who is doing the work, how thoroughly, is the load shared? |
 
-### Two things to finish in Desktop
+### One thing to finish in Desktop
 
-Both are 60-second jobs that the file format cannot express on its own.
+A 60-second job that the file format cannot express on its own.
 
-**1. The drillthrough field on page 5.** Select `Machine 360`, then drag
+**The drillthrough field on page 5.** Select `Machine 360`, then drag
 `Dim_Machine[Machine_ID]` into the **Drill through** well in the Visualizations
 pane. Right-clicking a machine anywhere else then offers *Drill through → Machine 360*.
 
-**2. The Gantt offset series on page 3.** `v20Gantt` is a stacked bar whose first
-series is an **invisible offset** that positions the visible bar. Select the visual
-→ Format → Bars → Colors → set `Gantt Planned Offset (Days)` and
-`Gantt Actual Offset (Days)` to **no fill / 100% transparency**. What remains reads
-as a planned-vs-actual timeline. (Power BI has no native Gantt; this is the standard
-construction.)
+> There used to be a second step: setting two invisible offset series to no-fill, to
+> fake a Gantt out of a stacked bar. It had to be redone by hand on every rebuild, and
+> a rebuild that skipped it showed a chart that was wrong rather than broken. The five
+> measures behind it came out with the reduction, and the step went with them.
 
 ### Optional: turn the info footnote into a toggled panel
 

@@ -19,7 +19,7 @@
     "Machine_ID",
     "Cell_ID",
     "Task_Status",
-    "Completion_Date"
+    "Scan_End_Time"
   ],
   "Fields": [
     {
@@ -55,14 +55,6 @@
       "MaxLength": 255
     },
     {
-      "InternalName": "Assigned_Tech_ID",
-      "DisplayName": "Assigned_Tech_ID",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Text",
-      "MaxLength": 255
-    },
-    {
       "InternalName": "Task_Status",
       "DisplayName": "Task_Status",
       "Required": true,
@@ -89,49 +81,9 @@
       "InternalName": "Scan_End_Time",
       "DisplayName": "Scan_End_Time",
       "Required": false,
-      "Indexed": false,
+      "Indexed": true,
       "Type": "DateTime",
       "DisplayFormat": "DateTime"
-    },
-    {
-      "InternalName": "Duration_Min",
-      "DisplayName": "Duration_Min",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Number",
-      "Decimals": 0
-    },
-    {
-      "InternalName": "Checklist_Response_ID",
-      "DisplayName": "Checklist_Response_ID",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Text",
-      "MaxLength": 255
-    },
-    {
-      "InternalName": "NOT_OK_Count",
-      "DisplayName": "NOT_OK_Count",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Number",
-      "Decimals": 0
-    },
-    {
-      "InternalName": "Abnormality_Raised",
-      "DisplayName": "Abnormality_Raised",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Boolean",
-      "DefaultValue": "0"
-    },
-    {
-      "InternalName": "Spare_Used_Flag",
-      "DisplayName": "Spare_Used_Flag",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Boolean",
-      "DefaultValue": "0"
     },
     {
       "InternalName": "Completed_By",
@@ -140,14 +92,6 @@
       "Indexed": false,
       "Type": "Text",
       "MaxLength": 255
-    },
-    {
-      "InternalName": "Completion_Date",
-      "DisplayName": "Completion_Date",
-      "Required": false,
-      "Indexed": true,
-      "Type": "DateTime",
-      "DisplayFormat": "DateOnly"
     },
     {
       "InternalName": "Skip_Reason",

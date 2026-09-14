@@ -1,6 +1,6 @@
 # UAT test cases
 
-35 cases. Work through them in order — later ones depend on state the earlier ones
+36 cases. Work through them in order — later ones depend on state the earlier ones
 create. Record a name and a date against each; an unrecorded test is an untested
 system.
 
@@ -19,9 +19,9 @@ corrupt data to prove a guard works.
 
 ### UAT-01 — Lists are created with correct types · **CRITICAL**
 1. Run `provision_lists.ps1 -WhatIf`, then for real.
-2. Open each of the 16 lists → **List settings**.
+2. Open each of the 14 lists → **List settings**.
 
-**Expected:** 16 lists, 224 columns. Every Choice column shows its real values from
+**Expected:** 14 lists, 138 columns. Every Choice column shows its real values from
 the dictionary, not free text. Dates are Date-only or Date-and-Time as specified.
 Yes/No columns are Boolean, not text.
 
@@ -38,7 +38,21 @@ expression and every model reference, and the breakage is silent.
 1. Run `load_data.ps1`.
 2. Compare every list's item count against `sharepoint/data/_ROW_COUNTS.csv`.
 
-**Expected:** exact match. 2,822 rows total, of which 730 are the plant calendar.
+**Expected:** exact match. 2,422 rows total, of which 730 are the plant calendar.
+
+### UAT-03a — A completed work order that nothing can date is rejected · **HIGH**
+1. In the source workbook, blank `Scan_End_Time` on every machine task belonging to
+   one `Completed` work order.
+2. Run `python tools/prepare_sharepoint_data.py --strict`.
+
+**Expected:** an `R5b-completed-undated` **error** naming that work order, and **no
+CSVs written**.
+
+*Why it matters:* the work order no longer stores its own end date — the model takes
+the latest scan across its tasks. A completed work order with nothing scanned out
+therefore has no date at all, and drops silently out of `Breakdowns After PM`,
+`PM On-Time %` and `Avg PM Delay`. Every one of those reads *better* for the missing
+row, which is the wrong direction for a fault to fail in.
 
 ### UAT-04 — Validator rejects a bad row · **HIGH**
 1. In a copy of the source workbook, change one `Spare_Replaced.Total_Cost_INR` to a
@@ -114,15 +128,20 @@ someone closes the first.
 ### UAT-12 — Scan-in stamps the start time · **CRITICAL**
 1. Scan `MC-01-001`, submit the PM Start form.
 
-**Expected:** `Scan_Log` row with `Scan_Action = Start PM`. Task moves to
-`In Progress` with `Scan_Start_Time` stamped. Work order moves to `In Progress` with
-`Actual_Start_Date` set.
+**Expected:** the task moves to `In Progress` with `Scan_Start_Time` stamped, and the
+work order moves to `In Progress`.
+
+3. Now scan a machine that has **no** open task.
+
+**Expected:** an email back saying there is no open PM for that machine, and the run
+finishes as **Succeeded** — nothing failed, somebody scanned a machine with no job on
+it.
 
 ### UAT-13 — A duplicate scan does not double-count · **CRITICAL**
 1. Submit the PM Start form for the same machine a second time.
 
-**Expected:** a **second** `Scan_Log` row (the raw log records everything), but
-`Scan_Start_Time` on the task is **unchanged**.
+**Expected:** `Scan_Start_Time` on the task is **unchanged**, and the flow run shows
+green.
 
 *Why it matters:* a technician who taps twice because the page was slow must not
 restart his own clock. Otherwise a 40-minute job reads 4 minutes and looks like a
@@ -143,18 +162,24 @@ PM interval is wrong from that day on, and nothing on any dashboard will show it
 ### UAT-15 — The final machine triggers the reset · **CRITICAL**
 1. Complete the fourth machine's checklist.
 
-**Expected, all in the same item version:**
-- `WO_Status = Completed`, `Actual_End_Date` stamped
+**Expected on `PM_WorkOrder`:**
+- `WO_Status = Completed`, `Reset_Applied = Yes`
 - `Machines_Completed = 4`
+
+**Expected on `Cell_Master`, all three in the same item version:**
 - `Cum_Std_Hours_Since_PM = 0`
 - `Last_PM_Date` = today
-- `Last_PM_WO_No` = this work order
-- `Reset_Applied = Yes`, `Reset_Date` = today
 - `Next_PM_Due_Date_Calendar` = today + 6 months
 
-**Check the version history.** All five `Cell_Master` fields must change in **one**
+**Check the version history.** All three `Cell_Master` fields must change in **one**
 version. Two versions means the update was split, and a failure between them would
-leave a zeroed counter with no `Last_PM_Date`.
+leave a zeroed counter with no `Last_PM_Date` — which nothing downstream can tell
+apart from a genuine reset.
+
+3. In Power BI, refresh and open the work order.
+
+**Expected:** its start, end and total duration read back correctly from the four task
+rows, with nothing stored on the work order itself to disagree with them.
 
 ### UAT-16 — A skipped machine still lets the cell close · **HIGH**
 1. Set one task to `Skipped` with a `Skip_Reason`; complete the rest.
@@ -171,10 +196,20 @@ times is how a PM system quietly dies.
 **Expected:** task stays `In Progress`, **not** `Completed`. Teams and email
 escalation fire. The cell cannot close and the counter cannot reset.
 
-### UAT-18 — Duration is calculated · **MEDIUM**
-1. Scan in, wait 5 minutes, submit the checklist.
+### UAT-18 — A too-fast checklist is caught · **MEDIUM**
+1. Scan in, wait 5 minutes, submit a checklist whose items sum to 45 expected minutes.
 
-**Expected:** `Duration_Min` ≈ 5, `Scan_End_Time` stamped.
+**Expected:** `Scan_End_Time` stamped, and the supervisor receives the
+**closed-implausibly-fast** email — 5 minutes is under 30% of 45.
+
+2. Refresh Power BI.
+
+**Expected:** the task's duration reads ≈ 5 minutes, computed as `Scan_End_Time`
+minus `Scan_Start_Time`. Nothing stores it.
+
+*Why it matters:* the number moved out of the list, but the check it existed for did
+not. A 45-minute checklist closed in 4 minutes is a pencil-whipped PM whether or not
+anybody wrote the duration down.
 
 ---
 
@@ -182,7 +217,7 @@ escalation fire. The cell cannot close and the counter cannot reset.
 
 ### UAT-19 — Mid-month reset prorates by WORKING days · **CRITICAL**
 1. Confirm `Plant_Calendar` has April 2026 loaded with Sundays marked as non-working.
-2. Set `CELL-05` `Reset_Date` to `2026-04-02`, counter `0`.
+2. Set `CELL-05` `Last_PM_Date` to `2026-04-02`, counter `0`.
 3. Upload April 2026 with `Actual_Std_Hours = 780`.
 
 **Expected:**
@@ -236,29 +271,45 @@ row. Flow terminates as Failed.
 *Why it matters:* a half-imported month is far harder to unpick than a rejected one,
 because nothing on the surface says which half landed.
 
-### UAT-23 — The 3-month average recalculates · **MEDIUM**
-1. After three monthly uploads, complete a cell PM.
+### UAT-23 — The 3-month average is right without being stored · **MEDIUM**
+1. Load three monthly uploads for a cell. Refresh Power BI.
 
-**Expected:** `Avg_Monthly_Std_Hours_L3M` = mean of the last three months.
+**Expected:** `Avg Monthly Std Hours L3M` equals the mean of those three months.
+
+2. Now skip a month for that cell — load a fourth upload with no row for it.
+
+**Expected:** the average still uses the last three months **that have data**, not
+three calendar months with a zero in the middle.
+
+*Why it matters:* the average used to be written onto the cell by a flow at reset
+time, which meant it went stale between resets and silently read zero for a cell
+whose flow run had failed. Computed at refresh it cannot be stale, and this second
+step is the case the stored version got wrong.
 
 ---
 
 ## E. Findings, breakdowns, spares
 
-### UAT-24 — A NOT OK raises a follow-up work order · **HIGH**
-1. Submit a checklist with `Follow_Up_Required = Yes`. Run Flow 10.
+### UAT-24 — A NOT OK reaches the supervisor's queue · **HIGH**
+1. Submit a checklist answering one item **NOT OK — needs follow-up** and another
+   **NOT OK — fixed on the spot**.
+2. Open the **NOT OK Findings** view on `Checklist_Response`.
 
-**Expected:** corrective work order `CWO-…` created, `Trigger_Type = Manual`, and
-`Follow_Up_WO` written **back** onto the checklist response row.
+**Expected:** both rows carry `Result = NOT OK`; only the first has
+`Follow_Up_Required = Yes`, and only the first appears on the view. The view shows
+machine, check point, observation and who raised it, newest first.
 
-### UAT-25 — The follow-up does not repeat · **HIGH**
-1. Run Flow 10 again the next day.
+### UAT-25 — Nothing raises a work order behind the supervisor's back · **HIGH**
+1. Leave the finding from UAT-24 open overnight.
+2. Next morning, list `PM_WorkOrder` for that cell.
 
-**Expected:** no second corrective work order — the filter excludes rows where
-`Follow_Up_WO` is already set.
+**Expected:** **no** new work order. Then run Flow 2 and confirm the cell's normal
+4,000-hour trigger still evaluates — it is not being suppressed by anything.
 
-*Why it matters:* without the write-back the same finding raises a fresh corrective
-job every morning, and within a week nobody trusts the corrective queue.
+*Why it matters:* corrective work orders used to be raised automatically into
+`PM_WorkOrder`, where Flow 2's open-work-order check could not tell them apart from
+a live PM. One unclosed corrective job would have blocked that cell's next real PM
+trigger indefinitely, and nothing would have reported it.
 
 ### UAT-26 — A criticality-A breakdown alerts immediately · **HIGH**
 1. Report a breakdown on a criticality-A machine.
@@ -266,24 +317,30 @@ job every morning, and within a week nobody trusts the corrective queue.
 **Expected:** Teams message and email within a minute. Repeat on a criticality-C
 machine — **no** alert.
 
-### UAT-27 — Breakdown-after-PM linkage · **MEDIUM**
+### UAT-27 — Breakdown-after-PM is derived, not stamped · **MEDIUM**
 1. Complete a cell PM. Report a breakdown on that cell 3 days later.
+2. Report another on the same cell 10 days after the PM.
 
-**Expected:** `Linked_PM_WO` populated. In Power BI, `Breakdowns After PM (7d)`
-includes it — **and also includes historic ones where `Linked_PM_WO` is blank**,
-because the measure derives the link from dates.
+**Expected:** `Breakdowns After PM (7d)` counts the first and not the second — and
+counts historic breakdowns loaded before any flow existed, because the measure works
+from dates rather than from a column a flow had to remember to write.
 
-### UAT-28 — A rejected spare request is recorded · **HIGH**
-1. Submit a spare request, reject the approval.
+### UAT-28 — Stock cannot go negative · **HIGH**
+1. Submit Spare Replaced with `Qty_Used` greater than `Current_Stock`.
 
-**Expected:** `Approval_Status = Rejected`, `Approved_By` and `Approved_Date` set,
-requester emailed with the comment. Stock **unchanged**.
+**Expected:** `Current_Stock` clamps at **0**, never below — and the below-minimum
+alert is sent anyway.
+
+*Why it matters:* a negative stock figure means the physical count was already wrong.
+Clamping the number quietly would hide that; clamping it **and still alerting** shows
+it.
 
 ### UAT-29 — Replacing a part decrements stock and alerts · **HIGH**
 1. Submit Spare Replaced for a part with `Current_Stock` one above `Min_Stock`.
 
-**Expected:** `Total_Cost_INR = Qty_Used × Unit_Cost_INR`, stock decremented,
-below-minimum alert sent **including the lead time**.
+**Expected:** stock decremented, below-minimum alert sent **including the lead time**.
+In Power BI, `Spare Cost MTD` rises by `Qty_Used × Unit_Cost_INR` — computed at
+refresh, with no stored line total to disagree with it.
 
 ### UAT-30 — A high-severity abnormality escalates and follows up · **HIGH**
 1. Log a High severity abnormality. Leave it open 24 hours.
@@ -299,7 +356,7 @@ people to ignore reminders.
 ### UAT-30a — The Monday heartbeat arrives on a clean week · **CRITICAL**
 1. Clear every outstanding item: no overdue cells, no open work orders, nothing
    unscanned, no overdue abnormalities, no reset failures.
-2. Run Flow 11 manually on a **Monday**.
+2. Run Flow 9 manually on a **Monday**.
 3. Run it again on a **Tuesday** with the same clean state.
 
 **Expected:** Monday sends the one-line *"PM system healthy — nothing outstanding"*.
@@ -313,7 +370,7 @@ before go-live.
 
 ### UAT-30b — A reset failure alone triggers the digest · **HIGH**
 1. Clear everything else, then set one completed work order to `Reset_Applied = No`.
-2. Run Flow 11 on a **Tuesday** (so the Monday heartbeat is not what sends it).
+2. Run Flow 9 on a **Tuesday** (so the Monday heartbeat is not what sends it).
 
 **Expected:** the digest sends, with the reset-failure section populated.
 
@@ -334,7 +391,7 @@ see `expressions.md` §16.
 is unexpectedly blank.
 
 Spot-check these four by hand:
-- `Breakdowns After PM (7d)` = **9** of 88 (10.2%)
+- `Breakdowns After PM (7d)` = **7** of 88 (8.0%) — see `ASSUMPTIONS.md` §9.1 if you were expecting 9
 - `PM Compliance %` = **89.6%** (43 of 48)
 - `Reset Not Applied Count` = **0**
 - `Schedule Adherence %` = **54.9%** (28 of 51 committed rows, 4 forecast excluded)
@@ -343,8 +400,12 @@ Spot-check these four by hand:
 1. Open each page in Desktop.
 
 **Expected:** no error triangles, no "can't display this visual". Drillthrough from a
-machine on any page reaches Machine 360 filtered to that machine. The Gantt offset
-series is transparent. Slicers filter across the page.
+machine on any page reaches Machine 360 filtered to that machine. Slicers filter
+across the page.
+
+> There is no longer a Gantt offset series to set transparent. The five measures that
+> faked a Gantt out of a stacked bar went with the reduction, and with them the manual
+> "set two series to no fill" step in Desktop that had to be redone on every rebuild.
 
 ---
 

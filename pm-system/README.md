@@ -28,7 +28,7 @@ Power Apps canvas app.
 input/                  the three source workbooks and the data dictionary (unmodified)
 
 sharepoint/
-  provision_lists.ps1   creates 16 lists, 224 columns, indexes, 5 libraries
+  provision_lists.ps1   creates 14 lists, 138 columns, indexes, 5 libraries
   apply_views.ps1       12 views + the shop-floor column formatting
   load_data.ps1         batched CSV load with type conversion
   schema/*.json         one schema per list — the source of truth for the scripts
@@ -51,7 +51,7 @@ qr/
   README_QR.md
 
 automate/
-  FLOW_SPECS.md         build sheet for all 11 flows, action by action
+  FLOW_SPECS.md         build sheet for 5 forms and 9 flows, action by action
   expressions.md        every expression, copy-paste ready
 
 powerapps/              Phase 2 — specified and costed, not licensed today
@@ -65,7 +65,7 @@ docs/
   HANDOVER.md/.docx           START HERE if you are taking it over
   IMPLEMENTATION_RUNBOOK.md   step-numbered, start to finish
   ASSUMPTIONS.md              every judgement call, with verified figures
-  UAT_TEST_CASES.md           35 cases
+  UAT_TEST_CASES.md           36 cases
   TECHNICIAN_SOP_1PAGE.md     shop-floor SOP, printable, English + Tamil
   POWERAPPS_LICENCE_CASE.pptx business case for the Power Apps licence request
   DATA_DICTIONARY.md          copy of the input dictionary
@@ -158,8 +158,13 @@ Compliance can read 100% while this climbs. When it does, the checklist is being
 signed rather than performed, or it is checking the wrong things. It is the only
 measure that tells you whether the PM is real.
 
-On the supplied data it is **9 of 88 breakdowns (10.2%)**. Read it as a share, not a
+On the supplied data it is **7 of 88 breakdowns (8.0%)**. Read it as a share, not a
 count.
+
+*(It read 9 before the schema reduction. A PM is now dated from its own machine scans
+rather than from a stored column, and in the supplied data those two disagreed on 29
+of 43 completed work orders. `docs/ASSUMPTIONS.md` §9.1 has the working, including
+what it would mean if that lag is real rather than an artefact of the sample.)*
 
 ## Two paths for the shop floor
 
@@ -170,7 +175,7 @@ count.
 | Offline | No | Yes |
 | Barcode | Phone camera opens the URL | Reader inside the app |
 
-Both write to **identical lists with identical column names**, and the eleven flows
+Both write to **identical lists with identical column names**, and the nine flows
 do not care which produced the row.
 
 **The system goes live on Path A.** No Power Apps licence is available today, and

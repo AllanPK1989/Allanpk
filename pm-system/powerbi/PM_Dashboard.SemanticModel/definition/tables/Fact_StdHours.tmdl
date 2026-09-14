@@ -17,14 +17,6 @@ table Fact_StdHours
 
 		annotation SummarizationSetBy = Automatic
 
-	column Cell_Name
-		dataType: string
-		lineageTag: b4f0c8da-0da0-5b0b-9f27-7177033b8ad7
-		summarizeBy: none
-		sourceColumn: Cell_Name
-
-		annotation SummarizationSetBy = Automatic
-
 	column Actual_Std_Hours
 		dataType: double
 		lineageTag: e57738d0-71e3-5414-b5b8-81d845cf6d98
@@ -40,14 +32,6 @@ table Fact_StdHours
 		summarizeBy: none
 		sourceColumn: Production_Qty
 		formatString: #,##0
-
-		annotation SummarizationSetBy = Automatic
-
-	column Uploaded_By
-		dataType: string
-		lineageTag: e1969c79-f9e0-5fea-8e3a-021524028a99
-		summarizeBy: none
-		sourceColumn: Uploaded_By
 
 		annotation SummarizationSetBy = Automatic
 
@@ -140,10 +124,16 @@ table Fact_StdHours
 				            Parsed   = Table.AddColumn(OnlyXlsx, "Data", each TransformFile([Content])),
 				            Kept     = Table.SelectRows(Parsed,
 				                           each Table.HasColumns([Data], {"Upload_Month", "Cell_ID", "Actual_Std_Hours"})),
+				            // The six columns the StdHours_Monthly list actually holds. The supplied
+				            // template also has Cell_Name and Uploaded_By; both were cut - the name
+				            // is looked up from Cell_Master, and SharePoint stamps Created By on
+				            // every item without being asked. Expanding a column an older archived
+				            // workbook does not have yields nulls rather than failing, so files
+				            // saved in either shape still load.
 				            Expanded = Table.ExpandTableColumn(
 				                           Table.SelectColumns(Kept, {"Data"}), "Data",
-				                           {"Upload_Month", "Cell_ID", "Cell_Name", "Actual_Std_Hours",
-				                            "Production_Qty", "Uploaded_By", "Upload_Date", "Remarks"})
+				                           {"Upload_Month", "Cell_ID", "Actual_Std_Hours",
+				                            "Production_Qty", "Upload_Date", "Remarks"})
 				        in
 				            Expanded,
 
@@ -163,10 +153,8 @@ table Fact_StdHours
 				    Typed = Table.TransformColumnTypes(Keys, {
 				        {"Upload_Month",     type text},
 				        {"Cell_ID",          type text},
-				        {"Cell_Name",        type text},
 				        {"Actual_Std_Hours", type number},
 				        {"Production_Qty",   Int64.Type},
-				        {"Uploaded_By",      type text},
 				        {"Upload_Date",      type date},
 				        {"Remarks",          type text}
 				    }),

@@ -45,32 +45,8 @@
       "MaxLength": 255
     },
     {
-      "InternalName": "Cell_Name",
-      "DisplayName": "Cell_Name",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Text",
-      "MaxLength": 255
-    },
-    {
       "InternalName": "Machine_Family",
       "DisplayName": "Machine_Family",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Text",
-      "MaxLength": 255
-    },
-    {
-      "InternalName": "Make",
-      "DisplayName": "Make",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Text",
-      "MaxLength": 255
-    },
-    {
-      "InternalName": "Model",
-      "DisplayName": "Model",
       "Required": false,
       "Indexed": false,
       "Type": "Text",
@@ -83,14 +59,6 @@
       "Indexed": false,
       "Type": "Text",
       "MaxLength": 255
-    },
-    {
-      "InternalName": "Year_Installed",
-      "DisplayName": "Year_Installed",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Number",
-      "Decimals": 0
     },
     {
       "InternalName": "Location_Tag",
@@ -107,34 +75,6 @@
       "Indexed": true,
       "Type": "Text",
       "MaxLength": 255
-    },
-    {
-      "InternalName": "Checklist_Form_URL",
-      "DisplayName": "Checklist_Form_URL",
-      "Required": false,
-      "Indexed": false,
-      "Type": "URL"
-    },
-    {
-      "InternalName": "Breakdown_Form_URL",
-      "DisplayName": "Breakdown_Form_URL",
-      "Required": false,
-      "Indexed": false,
-      "Type": "URL"
-    },
-    {
-      "InternalName": "Spare_Request_Form_URL",
-      "DisplayName": "Spare_Request_Form_URL",
-      "Required": false,
-      "Indexed": false,
-      "Type": "URL"
-    },
-    {
-      "InternalName": "Abnormality_Form_URL",
-      "DisplayName": "Abnormality_Form_URL",
-      "Required": false,
-      "Indexed": false,
-      "Type": "URL"
     },
     {
       "InternalName": "QR_Payload_URL",

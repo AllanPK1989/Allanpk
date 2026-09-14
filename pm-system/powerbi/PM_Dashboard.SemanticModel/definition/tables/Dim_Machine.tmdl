@@ -25,14 +25,6 @@ table Dim_Machine
 
 		annotation SummarizationSetBy = Automatic
 
-	column Cell_Name
-		dataType: string
-		lineageTag: b47f68c0-d6ae-5095-a48c-73471cc759f6
-		summarizeBy: none
-		sourceColumn: Cell_Name
-
-		annotation SummarizationSetBy = Automatic
-
 	column Machine_Family
 		dataType: string
 		lineageTag: a75d92b2-1470-5b3c-b97b-cc572fb329fd
@@ -41,36 +33,11 @@ table Dim_Machine
 
 		annotation SummarizationSetBy = Automatic
 
-	column Make
-		dataType: string
-		lineageTag: 6793674a-50d5-577a-8e8d-f7e1afeb837f
-		summarizeBy: none
-		sourceColumn: Make
-
-		annotation SummarizationSetBy = Automatic
-
-	column Model
-		dataType: string
-		lineageTag: 4f9d690c-a88d-5c91-8cf4-efc6988e2e4b
-		summarizeBy: none
-		sourceColumn: Model
-
-		annotation SummarizationSetBy = Automatic
-
 	column Serial_No
 		dataType: string
 		lineageTag: 6e9c91c6-ae02-5d9c-909d-d39f16ea2600
 		summarizeBy: none
 		sourceColumn: Serial_No
-
-		annotation SummarizationSetBy = Automatic
-
-	column Year_Installed
-		dataType: int64
-		lineageTag: 15ea58fd-9fea-5c78-8357-5cf5cad24b08
-		summarizeBy: none
-		sourceColumn: Year_Installed
-		formatString: #,##0
 
 		annotation SummarizationSetBy = Automatic
 
@@ -87,38 +54,6 @@ table Dim_Machine
 		lineageTag: e7cd8c3a-57e4-5c4e-b961-2dc88a721295
 		summarizeBy: none
 		sourceColumn: Checklist_ID
-
-		annotation SummarizationSetBy = Automatic
-
-	column Checklist_Form_URL
-		dataType: string
-		lineageTag: 452cd28d-6f57-58ab-9837-7bc766017374
-		summarizeBy: none
-		sourceColumn: Checklist_Form_URL
-
-		annotation SummarizationSetBy = Automatic
-
-	column Breakdown_Form_URL
-		dataType: string
-		lineageTag: 5924706c-569e-50ce-adf4-69bdaa820578
-		summarizeBy: none
-		sourceColumn: Breakdown_Form_URL
-
-		annotation SummarizationSetBy = Automatic
-
-	column Spare_Request_Form_URL
-		dataType: string
-		lineageTag: 432963d7-f8dd-56ce-97b5-bc08fac1d519
-		summarizeBy: none
-		sourceColumn: Spare_Request_Form_URL
-
-		annotation SummarizationSetBy = Automatic
-
-	column Abnormality_Form_URL
-		dataType: string
-		lineageTag: 19eae50d-6b52-552d-81a5-f0de600deda6
-		summarizeBy: none
-		sourceColumn: Abnormality_Form_URL
 
 		annotation SummarizationSetBy = Automatic
 
@@ -148,15 +83,6 @@ table Dim_Machine
 
 		annotation SummarizationSetBy = Automatic
 
-	column Machine_Age_Years
-		dataType: int64
-		lineageTag: 80267fd4-01c8-5256-b661-9430e1b35ab4
-		summarizeBy: none
-		sourceColumn: Machine_Age_Years
-		formatString: #,##0
-
-		annotation SummarizationSetBy = Automatic
-
 	column Machine_Label
 		dataType: string
 		lineageTag: 828154fb-51c5-515d-83e9-88f231359630
@@ -181,13 +107,15 @@ table Dim_Machine
 				// ===========================================================================
 				// Dim_Machine  <- Machine_Master
 				// ---------------------------------------------------------------------------
-				// One row per machine. Carries the QR payload and the four pre-filled form URLs
-				// that become the Machine Hub buttons.
+				// One row per machine. Carries the QR payload the sticker encodes.
 				//
-				// Cell_Name is kept even though it is available through Dim_Cell. It is
-				// denormalised in the source for label printing and offline views, and dropping
-				// it here would mean the QR label generator and the model disagree about what
-				// the label says.
+				// The four per-machine form URLs are gone. They were 120 hyperlinks typed into a
+				// spreadsheet - one per machine per form - and every one of them a chance to point
+				// a button at the wrong machine. The Machine Hub now builds each link from the
+				// row it is drawing, so there is nothing per-machine left to maintain or to load.
+				//
+				// Cell_Name is gone too: it is reachable through Dim_Cell, and the QR label
+				// generator prints Cell_ID, so nothing needed the denormalised copy.
 				// ===========================================================================
 				let
 				    Source = fnGetTable("Machine_Master", "01_PM_Master_Data.xlsx", "Machine_Master"),
@@ -197,8 +125,7 @@ table Dim_Machine
 
 				    // SharePoint returns a Hyperlink column as a record {Url, Description}.
 				    // Excel returns plain text. Flatten to text so both look the same downstream.
-				    UrlColumns = {"Checklist_Form_URL", "Breakdown_Form_URL", "Spare_Request_Form_URL",
-				                  "Abnormality_Form_URL", "QR_Payload_URL"},
+				    UrlColumns = {"QR_Payload_URL"},
 				    Flattened = Table.TransformColumns(
 				        Bools,
 				        List.Transform(
@@ -212,18 +139,10 @@ table Dim_Machine
 				        {"Machine_ID",             type text},
 				        {"Machine_Name",           type text},
 				        {"Cell_ID",                type text},
-				        {"Cell_Name",              type text},
 				        {"Machine_Family",         type text},
-				        {"Make",                   type text},
-				        {"Model",                  type text},
 				        {"Serial_No",              type text},
-				        {"Year_Installed",         Int64.Type},
 				        {"Location_Tag",           type text},
 				        {"Checklist_ID",           type text},
-				        {"Checklist_Form_URL",     type text},
-				        {"Breakdown_Form_URL",     type text},
-				        {"Spare_Request_Form_URL", type text},
-				        {"Abnormality_Form_URL",   type text},
 				        {"QR_Payload_URL",         type text},
 				        {"Criticality",            type text},
 				        {"Active",                 type logical}
@@ -235,17 +154,9 @@ table Dim_Machine
 				        {"Criticality",    each if _ = null then null else Text.Upper(Text.Trim(_)), type nullable text}
 				    }),
 
-				    // Age is the evidence base for replacement capex, so it belongs in the
-				    // model rather than being recalculated in each visual.
-				    WithAge = Table.AddColumn(
-				        Trimmed, "Machine_Age_Years",
-				        each if [Year_Installed] = null then null
-				             else Date.Year(DateTime.Date(DateTime.LocalNow())) - [Year_Installed],
-				        Int64.Type),
-
 				    // A display label that is useful on a crowded axis without a tooltip.
 				    WithLabel = Table.AddColumn(
-				        WithAge, "Machine_Label",
+				        Trimmed, "Machine_Label",
 				        each Text.From([Machine_ID]) & " - " & Text.From([Machine_Name]),
 				        type text),
 

@@ -54,110 +54,85 @@ except ImportError:
 # --------------------------------------------------------------------------
 TYPES = {
     "Cell_Master": {
-        "Cell_ID": "id", "Cell_Name": "text", "Plant": "text", "Process_Area": "text",
-        "Machine_Count": "int", "PM_Trigger_Hours": "int", "Calendar_Backstop_Months": "int",
-        "Cum_Std_Hours_Since_PM": "dec", "Last_PM_Date": "date", "Last_PM_WO_No": "id",
-        "Next_PM_Due_Date_Calendar": "date", "Avg_Monthly_Std_Hours_L3M": "dec",
-        "Owner_Supervisor": "text", "Criticality": "text", "Active": "bool",
-    },
-    "Machine_Master": {
-        "Machine_ID": "id", "Machine_Name": "text", "Cell_ID": "id", "Cell_Name": "text",
-        "Machine_Family": "text", "Make": "text", "Model": "text", "Serial_No": "text",
-        "Year_Installed": "int", "Location_Tag": "text", "Checklist_ID": "id",
-        "Checklist_Form_URL": "url", "Breakdown_Form_URL": "url",
-        "Spare_Request_Form_URL": "url", "Abnormality_Form_URL": "url",
-        "QR_Payload_URL": "url", "Criticality": "text", "Active": "bool",
-    },
-    "Checklist_Master": {
-        "Checklist_ID": "id", "Checklist_Name": "text", "Item_No": "int",
-        "Check_Point": "text", "Check_Type": "text", "Acceptance_Standard": "text",
-        "Tool_Required": "text", "Frequency": "text", "Safety_Critical": "bool",
-        "Expected_Time_Min": "int", "Active": "bool",
+        "Cell_ID": "id", "Cell_Name": "text", "Process_Area": "text",
+        "Machine_Count": "int", "PM_Trigger_Hours": "int",
+        "Calendar_Backstop_Months": "int", "Cum_Std_Hours_Since_PM": "dec",
+        "Last_PM_Date": "date", "Next_PM_Due_Date_Calendar": "date",
+        "Owner_Supervisor": "text", "Criticality": "text", "Active": "bool"
     },
     "Technician_Master": {
-        "Tech_ID": "id", "Tech_Name": "text", "Skill_Level": "text", "Trade": "text",
-        "Default_Shift": "text", "Contact_No": "text", "Role_Scope": "text", "Active": "bool",
+        "Tech_ID": "id", "Tech_Name": "text", "Skill_Level": "text",
+        "Trade": "text", "Active": "bool"
     },
     "Spare_Master": {
-        "Spare_Code": "id", "Spare_Description": "text", "Category": "text", "UOM": "text",
-        "ABC_Class": "text", "FMR_Class": "text", "Unit_Cost_INR": "dec", "Min_Stock": "int",
+        "Spare_Code": "id", "Spare_Description": "text", "Category": "text",
+        "UOM": "text", "Unit_Cost_INR": "dec", "Min_Stock": "int",
         "Current_Stock": "int", "Lead_Time_Days": "int", "Bin_Location": "text",
-        "Preferred_Vendor": "text", "Active": "bool",
+        "Active": "bool"
+    },
+    "Checklist_Master": {
+        "Checklist_ID": "id", "Item_No": "int", "Check_Point": "text",
+        "Check_Type": "text", "Acceptance_Standard": "text",
+        "Safety_Critical": "bool", "Expected_Time_Min": "int", "Active": "bool"
+    },
+    "Machine_Master": {
+        "Machine_ID": "id", "Machine_Name": "text", "Cell_ID": "id",
+        "Machine_Family": "text", "Serial_No": "text", "Location_Tag": "text",
+        "Checklist_ID": "id", "QR_Payload_URL": "url", "Criticality": "text",
+        "Active": "bool"
+    },
+    "Plant_Calendar": {
+        "Calendar_Date": "date", "Is_Working_Day": "bool", "Day_Type": "text"
     },
     "StdHours_Monthly": {
-        "Upload_Month": "month", "Cell_ID": "id", "Cell_Name": "text",
-        "Actual_Std_Hours": "dec", "Production_Qty": "int", "Uploaded_By": "text",
-        "Upload_Date": "date", "Remarks": "text",
+        "Upload_Month": "month", "Cell_ID": "id", "Actual_Std_Hours": "dec",
+        "Production_Qty": "int", "Upload_Date": "date", "Remarks": "text"
     },
     "PM_WorkOrder": {
-        "WO_No": "id", "Cell_ID": "id", "Cell_Name": "text", "Trigger_Type": "text",
+        "WO_No": "id", "Cell_ID": "id", "Trigger_Type": "text",
         "Trigger_Hours_At_Creation": "dec", "WO_Created_Date": "date",
-        "Planned_Month": "month", "Planned_Start_Date": "date", "Planned_End_Date": "date",
-        "Lead_Tech_ID": "id", "Priority": "text", "Machines_In_Scope": "int",
-        "Machines_Completed": "int", "WO_Status": "text", "Actual_Start_Date": "date",
-        "Actual_End_Date": "date", "PM_Duration_Min": "int", "Reset_Applied": "bool",
-        "Reset_Date": "date", "Remarks": "text",
+        "Planned_Month": "month", "Planned_End_Date": "date", "Priority": "text",
+        "Machines_In_Scope": "int", "Machines_Completed": "int",
+        "WO_Status": "text", "Reset_Applied": "bool", "Remarks": "text"
     },
     "PM_Machine_Task": {
         "Task_ID": "id", "WO_No": "id", "Machine_ID": "id", "Cell_ID": "id",
-        "Assigned_Tech_ID": "id", "Task_Status": "text", "Scan_Start_Time": "dttm",
-        "Scan_End_Time": "dttm", "Duration_Min": "int", "Checklist_Response_ID": "id",
-        "NOT_OK_Count": "int", "Abnormality_Raised": "bool", "Spare_Used_Flag": "bool",
-        "Completed_By": "id", "Completion_Date": "date", "Skip_Reason": "text",
+        "Task_Status": "text", "Scan_Start_Time": "dttm",
+        "Scan_End_Time": "dttm", "Completed_By": "id", "Skip_Reason": "text"
     },
     "Checklist_Response": {
         "Response_ID": "id", "Submitted_DateTime": "dttm", "WO_No": "id",
-        "Machine_ID": "id", "Cell_ID": "id", "Checklist_ID": "id", "Item_No": "int",
+        "Machine_ID": "id", "Checklist_ID": "id", "Item_No": "int",
         "Check_Point": "text", "Result": "text", "Measured_Value": "dec",
-        "Observation": "text", "Photo_Link": "url", "Action_Taken": "text",
-        "Tech_ID": "id", "Follow_Up_Required": "bool", "Follow_Up_WO": "id",
-    },
-    "Scan_Log": {
-        "Scan_ID": "id", "Scan_DateTime": "dttm", "Machine_ID": "id", "Cell_ID": "id",
-        "Tech_ID": "id", "Scan_Action": "text", "Device": "text", "WO_No": "id",
-        "Comments": "text",
+        "Observation": "text", "Photo_Link": "url", "Tech_ID": "id",
+        "Follow_Up_Required": "bool"
     },
     "Breakdown_Log": {
-        "BD_ID": "id", "Reported_DateTime": "dttm", "Machine_ID": "id", "Cell_ID": "id",
-        "Reported_By_Tech_ID": "id", "Shift": "text", "Breakdown_Type": "text",
-        "Symptom": "text", "Root_Cause": "text", "Action_Taken": "text",
-        "Response_DateTime": "dttm", "Repair_Start": "dttm", "Repair_End": "dttm",
-        "Response_Time_Min": "int", "MTTR_Min": "int", "Production_Loss_Min": "int",
-        "Spare_Used": "bool", "Status": "text", "Recurrence_Flag": "bool",
-        "Linked_PM_WO": "id", "Remarks": "text",
-    },
-    "Spare_Request": {
-        "Req_ID": "id", "Request_DateTime": "dttm", "WO_No": "id", "Machine_ID": "id",
-        "Cell_ID": "id", "Spare_Code": "id", "Spare_Description": "text",
-        "Qty_Requested": "int", "Requested_By": "id", "Urgency": "text", "Reason": "text",
-        "Approval_Status": "text", "Approved_By": "text", "Approved_Date": "date",
-        "Issue_Status": "text", "Issued_Qty": "int", "Issue_Date": "date",
-        "Stock_At_Request": "int", "Remarks": "text",
+        "BD_ID": "id", "Reported_DateTime": "dttm", "Machine_ID": "id",
+        "Cell_ID": "id", "Reported_By_Tech_ID": "id", "Shift": "text",
+        "Breakdown_Type": "text", "Symptom": "text", "Root_Cause": "text",
+        "Action_Taken": "text", "Response_DateTime": "dttm",
+        "Repair_Start": "dttm", "Repair_End": "dttm",
+        "Production_Loss_Min": "int", "Status": "text",
+        "Recurrence_Flag": "bool"
     },
     "Spare_Replaced": {
         "Repl_ID": "id", "Replaced_DateTime": "dttm", "Source_Type": "text",
-        "Source_Ref": "id", "Machine_ID": "id", "Cell_ID": "id", "Spare_Code": "id",
-        "Spare_Description": "text", "Qty_Used": "int", "Unit_Cost_INR": "dec",
-        "Total_Cost_INR": "dec", "Old_Part_Condition": "text", "Failure_Mode": "text",
-        "Replaced_By": "id", "Expected_Life_Hours": "int", "Warranty_Claim": "bool",
-        "Remarks": "text",
+        "Source_Ref": "id", "Machine_ID": "id", "Cell_ID": "id",
+        "Spare_Code": "id", "Qty_Used": "int", "Unit_Cost_INR": "dec",
+        "Failure_Mode": "text", "Replaced_By": "id", "Warranty_Claim": "bool"
     },
     "Abnormality_Log": {
-        "Abn_ID": "id", "Logged_DateTime": "dttm", "Machine_ID": "id", "Cell_ID": "id",
-        "Logged_By": "id", "Category": "text", "Description": "text", "Severity": "text",
-        "Photo_Link": "url", "Immediate_Action": "text", "Responsibility": "text",
-        "Target_Date": "date", "Status": "text", "Closed_Date": "date",
-        "Closure_Remarks": "text", "Converted_To_WO": "bool",
-    },
-    "Plant_Calendar": {
-        "Calendar_Date": "date", "Day_Type": "text", "Is_Working_Day": "bool",
-        "Shift_Count": "int", "Remarks": "text",
+        "Abn_ID": "id", "Logged_DateTime": "dttm", "Machine_ID": "id",
+        "Cell_ID": "id", "Logged_By": "id", "Category": "text",
+        "Description": "text", "Severity": "text", "Photo_Link": "url",
+        "Responsibility": "text", "Target_Date": "date", "Status": "text",
+        "Closed_Date": "date"
     },
     "PM_Plan_Calendar": {
-        "Plan_ID": "id", "Plan_Month": "month", "Cell_ID": "id", "Cell_Name": "text",
-        "Planned_Date": "date", "Planned_Shift": "text", "Planned_Tech_ID": "id",
-        "Estimated_Duration_Hrs": "dec", "Plan_Version": "text", "Frozen_Date": "date",
-        "WO_No": "id", "Adherence_Status": "text",
+        "Plan_ID": "id", "Plan_Month": "month", "Cell_ID": "id",
+        "Planned_Date": "date", "Planned_Tech_ID": "id", "Plan_Version": "text",
+        "WO_No": "id", "Adherence_Status": "text"
     },
 }
 
@@ -172,9 +147,7 @@ SOURCES = {
     "PM_WorkOrder":       ("03_PM_Transactions_Dummy.xlsx", "PM_WorkOrder"),
     "PM_Machine_Task":    ("03_PM_Transactions_Dummy.xlsx", "PM_Machine_Task"),
     "Checklist_Response": ("03_PM_Transactions_Dummy.xlsx", "Checklist_Response"),
-    "Scan_Log":           ("03_PM_Transactions_Dummy.xlsx", "Scan_Log"),
     "Breakdown_Log":      ("03_PM_Transactions_Dummy.xlsx", "Breakdown_Log"),
-    "Spare_Request":      ("03_PM_Transactions_Dummy.xlsx", "Spare_Request"),
     "Spare_Replaced":     ("03_PM_Transactions_Dummy.xlsx", "Spare_Replaced"),
     "Abnormality_Log":    ("03_PM_Transactions_Dummy.xlsx", "Abnormality_Log"),
     "PM_Plan_Calendar":   ("03_PM_Transactions_Dummy.xlsx", "PM_Plan_Calendar"),
@@ -199,22 +172,22 @@ def build_plant_calendar():
     prorated by working days - otherwise a reset landing next to a run of Sundays
     posts hours the plant was never open to earn.
 
-    Seeded with Sunday as the weekly off and everything else working three shifts.
+    Seeded with Sunday as the weekly off and every other day working.
     Festival holidays and shutdowns are plant-specific and are NOT guessed here:
     mark them in the list after loading, or the proration will be wrong by exactly
     the number of days you did not mark.
     """
+    # Column order must match TYPES["Plant_Calendar"] exactly - these rows are
+    # written positionally, so a mismatch silently shifts every value one column
+    # left and the working-day flag ends up holding the day type.
     rows = []
     d = CALENDAR_START
     while d <= CALENDAR_END:
         sunday = d.weekday() == 6
         rows.append([
-            d.isoformat(),
-            "Weekly Off" if sunday else "Working",
-            "No" if sunday else "Yes",
-            "0" if sunday else "3",
-            "Seeded: Sunday weekly off. Mark festival holidays and shutdowns here."
-            if sunday else "",
+            d.isoformat(),                          # Calendar_Date
+            "No" if sunday else "Yes",              # Is_Working_Day
+            "Weekly Off" if sunday else "Working",  # Day_Type
         ])
         d += dt.timedelta(days=1)
     return rows
@@ -223,8 +196,8 @@ def build_plant_calendar():
 LOAD_ORDER = [
     "Cell_Master", "Technician_Master", "Spare_Master", "Checklist_Master",
     "Machine_Master", "Plant_Calendar", "StdHours_Monthly", "PM_WorkOrder", "PM_Machine_Task",
-    "Checklist_Response", "Scan_Log", "Breakdown_Log", "Spare_Request",
-    "Spare_Replaced", "Abnormality_Log", "PM_Plan_Calendar",
+    "Checklist_Response", "Breakdown_Log", "Spare_Replaced",
+    "Abnormality_Log", "PM_Plan_Calendar",
 ]
 
 TRUE_WORDS = {"yes", "y", "true", "1", "1.0"}
@@ -245,6 +218,10 @@ def err(table, rule, detail):
 
 def warn(table, rule, detail):
     issues.append(Issue("WARN", table, rule, detail))
+
+
+def note(table, rule, detail):
+    issues.append(Issue("NOTE", table, rule, detail))
 
 
 # --------------------------------------------------------------------------
@@ -372,8 +349,8 @@ def run_integrity_checks(data):
         "Cell_Master": "Cell_ID", "Machine_Master": "Machine_ID",
         "Technician_Master": "Tech_ID", "Spare_Master": "Spare_Code",
         "PM_WorkOrder": "WO_No", "PM_Machine_Task": "Task_ID",
-        "Checklist_Response": "Response_ID", "Scan_Log": "Scan_ID",
-        "Breakdown_Log": "BD_ID", "Spare_Request": "Req_ID",
+        "Checklist_Response": "Response_ID",
+        "Breakdown_Log": "BD_ID",
         "Spare_Replaced": "Repl_ID", "Abnormality_Log": "Abn_ID",
         "PM_Plan_Calendar": "Plan_ID",
     }
@@ -399,15 +376,12 @@ def run_integrity_checks(data):
         ("Machine_Master", "Checklist_ID", checklists, "Checklist_Master"),
         ("StdHours_Monthly", "Cell_ID", cells, "Cell_Master"),
         ("PM_WorkOrder", "Cell_ID", cells, "Cell_Master"),
-        ("PM_WorkOrder", "Lead_Tech_ID", techs, "Technician_Master"),
         ("PM_Machine_Task", "WO_No", wos, "PM_WorkOrder"),
         ("PM_Machine_Task", "Machine_ID", machines, "Machine_Master"),
         ("PM_Machine_Task", "Cell_ID", cells, "Cell_Master"),
         ("Checklist_Response", "WO_No", wos, "PM_WorkOrder"),
         ("Checklist_Response", "Machine_ID", machines, "Machine_Master"),
-        ("Scan_Log", "Machine_ID", machines, "Machine_Master"),
         ("Breakdown_Log", "Machine_ID", machines, "Machine_Master"),
-        ("Spare_Request", "Spare_Code", spares, "Spare_Master"),
         ("Spare_Replaced", "Spare_Code", spares, "Spare_Master"),
         ("Abnormality_Log", "Machine_ID", machines, "Machine_Master"),
         ("PM_Plan_Calendar", "Cell_ID", cells, "Cell_Master"),
@@ -445,12 +419,12 @@ def run_integrity_checks(data):
                 f"{wo} is Completed but {pending_by_wo[wo]} task(s) are still open")
 
     # Rule 3 - the reset quartet moves together, or not at all.
+    # Reset_Date was retired: it always equalled Cell_Master.Last_PM_Date, set in
+    # the same action, so the two could never legitimately differ. What remains is
+    # the check that actually catches a failure - a work order that says it is done
+    # while its counter was never zeroed.
     i_res = col("PM_WorkOrder", "Reset_Applied")
-    i_rd = col("PM_WorkOrder", "Reset_Date")
     for r in rows_of("PM_WorkOrder"):
-        if r[i_res] == "Yes" and not r[i_rd]:
-            err("PM_WorkOrder", "R3-reset-incomplete",
-                f"{r[i_wo]}: Reset_Applied=Yes but Reset_Date is blank")
         if r[i_st] == "Completed" and r[i_res] != "Yes":
             warn("PM_WorkOrder", "R3-completed-no-reset",
                  f"{r[i_wo]} is Completed with Reset_Applied={r[i_res] or 'blank'} "
@@ -469,21 +443,28 @@ def run_integrity_checks(data):
             f"{len(orphans)} WO/Machine combination(s) with no parent task: "
             f"{sorted(orphans)[:5]}")
 
-    # Rule 5 - Total_Cost_INR must equal Qty_Used x Unit_Cost_INR.
-    i_q = col("Spare_Replaced", "Qty_Used")
-    i_u = col("Spare_Replaced", "Unit_Cost_INR")
-    i_t = col("Spare_Replaced", "Total_Cost_INR")
-    i_rid = col("Spare_Replaced", "Repl_ID")
-    for r in rows_of("Spare_Replaced"):
-        try:
-            expected = float(r[i_q] or 0) * float(r[i_u] or 0)
-            actual = float(r[i_t] or 0)
-        except ValueError:
-            continue
-        if abs(expected - actual) > 0.01:
-            err("Spare_Replaced", "R5-cost-mismatch",
-                f"{r[i_rid]}: {r[i_q]} x {r[i_u]} = {expected:.2f} but "
-                f"Total_Cost_INR = {actual:.2f}")
+    # Rule 5 retired with Spare_Replaced.Total_Cost_INR. The total is now computed
+    # in the model as Qty_Used x Unit_Cost_INR, so the two can no longer disagree -
+    # the class of defect the rule existed to catch cannot occur.
+
+    # Rule 5b - a completed work order must have a last machine scan to be dated by.
+    #
+    # The work order no longer stores its own end date; the model takes MAX of its
+    # tasks' Scan_End_Time. That makes a stored rollup impossible to contradict, but
+    # it moves the failure: a completed work order with no scanned-out task has no
+    # end date at all, and silently drops out of every date-based measure -
+    # Breakdowns After PM, PM On-Time, Avg PM Delay. A missing row reads as good
+    # news on all three, which is the wrong direction to fail in.
+    i_ts = col("PM_Machine_Task", "Task_Status")
+    i_se = col("PM_Machine_Task", "Scan_End_Time")
+    i_tw = col("PM_Machine_Task", "WO_No")
+    scanned_out = {r[i_tw] for r in rows_of("PM_Machine_Task") if r[i_se]}
+    undated = [r[i_wo] for r in rows_of("PM_WorkOrder")
+               if r[i_st] == "Completed" and r[i_wo] not in scanned_out]
+    if undated:
+        err("PM_WorkOrder", "R5b-completed-undated",
+            f"{len(undated)} Completed work order(s) have no task Scan_End_Time, so "
+            f"nothing can date them: {undated[:5]}")
 
     # Rule 6 - never delete a master row; a master with Active blank is a defect.
     for table in ("Cell_Master", "Machine_Master", "Technician_Master",
@@ -577,7 +558,10 @@ def main():
         if missing:
             err(table, "missing-column", f"source sheet is missing: {missing}")
         if extra:
-            warn(table, "extra-column", f"source sheet has unmapped column(s): {extra}")
+            # Not a problem: these are the columns the essential schema deliberately
+            # leaves behind (tools/essential_schema.py). Reported so the reduction
+            # stays visible rather than silent, but they are not warnings.
+            note(table, "excluded-by-design", f"source columns not loaded: {extra}")
 
         out_cols = [c for c in typemap if c in header]
         idx = {c: header.index(c) for c in out_cols}
@@ -614,6 +598,7 @@ def main():
 
     errors = [i for i in issues if i.level == "ERROR"]
     warns = [i for i in issues if i.level == "WARN"]
+    notes = [i for i in issues if i.level == "NOTE"]
 
     lines = [
         "# Data Validation Report",
@@ -621,7 +606,8 @@ def main():
         f"Generated: {dt.datetime.now().strftime('%Y-%m-%d %H:%M')}",
         f"Source: `{args.input}`  ->  Output: `{args.out}`",
         "",
-        f"**{len(errors)} error(s), {len(warns)} warning(s).**",
+        f"**{len(errors)} error(s), {len(warns)} warning(s), "
+        f"{len(notes)} column group(s) excluded by design.**",
         "",
         "An ERROR means the row would break a documented integrity rule once it is in",
         "SharePoint. Fix it in the source workbook and re-run - do not load past it.",
@@ -636,7 +622,8 @@ def main():
         lines.append(f"| {i} | `{t}` | {r} | {c} |")
     lines += ["", f"**Total rows: {sum(r for _, r, _ in counts):,}**", ""]
 
-    for level, bucket in (("Errors", errors), ("Warnings", warns)):
+    for level, bucket in (("Errors", errors), ("Warnings", warns),
+                          ("Columns excluded by design", notes)):
         lines += [f"## {level}", ""]
         if not bucket:
             lines += [f"None. All {level.lower()[:-1]} checks passed.", ""]
@@ -655,9 +642,8 @@ def main():
         "| `FK-unmatched` | Every foreign key resolves to a master row. An unmatched `Cell_ID` is the single most common monthly-upload failure. |",
         "| `R1-task-count` | Task rows per work order equal `Machines_In_Scope`. A short work order closes early and resets the counter it should not have. |",
         "| `R2-premature-close` | No work order is Completed while a task is Pending or In Progress. |",
-        "| `R3-reset-incomplete` / `R3-completed-no-reset` | The reset quartet moves together: counter, date, work order number, flag. |",
+        "| `R3-completed-no-reset` | A completed work order whose counter was never zeroed. |",
         "| `R4-orphan-response` | Every checklist response has a parent machine task. |",
-        "| `R5-cost-mismatch` | `Total_Cost_INR` = `Qty_Used` x `Unit_Cost_INR` on every row. |",
         "| `R6-active-blank` | No master row has a blank `Active` - blank is neither in nor out of scope. |",
         "| `duplicate-month-cell` | One std-hours row per cell per month. Two rows double-count into the counter. |",
         "| `machine-count-mismatch` | `Cell_Master.Machine_Count` equals the active machines in that cell. |",
@@ -672,7 +658,8 @@ def main():
         fh.write("\n".join(lines))
 
     print(f"\n  wrote {report}")
-    print(f"\n{len(errors)} error(s), {len(warns)} warning(s).")
+    print(f"\n{len(errors)} error(s), {len(warns)} warning(s), "
+          f"{len(notes)} column group(s) excluded by design.")
     for i in errors[:20]:
         print(f"  ERROR  [{i.table}/{i.rule}] {i.detail}")
     for i in warns[:20]:

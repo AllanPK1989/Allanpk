@@ -355,7 +355,12 @@ VAR CompletedWOs =
 VAR CleanWOs =
     FILTER (
         CompletedWOs,
-        CALCULATE ( SUM ( Fact_MachineTask[NOT_OK_Count] ) ) = 0
+        // Counted from the responses themselves rather than from a tally a flow
+        // maintained on the task row. One source, so it cannot disagree.
+        CALCULATE (
+            COUNTROWS ( Fact_ChecklistResponse ),
+            KEEPFILTERS ( Fact_ChecklistResponse[Result] = "NOT OK" )
+        ) = 0
     )
 RETURN
     DIVIDE ( COUNTROWS ( CleanWOs ), COUNTROWS ( CompletedWOs ) )
@@ -672,6 +677,10 @@ DIVIDE ( SUM ( Fact_Breakdown[Production_Loss_Min] ), 60 )
 
 // ============================================================================
 // 06 Spares
+// ----------------------------------------------------------------------------
+// Spare_Request was removed with its requisition-and-approval loop, so the
+// approval lead-time measures went with it. What the PM system needs to know is
+// what was FITTED - cost, failure mode, which machine - and that is Spare_Replaced.
 // ============================================================================
 
 Spare Cost =
@@ -694,32 +703,6 @@ CALCULATE ( [Spare Cost], KEEPFILTERS ( Fact_SpareReplaced[Source_Type] = "Break
 
 Qty Replaced =
 SUM ( Fact_SpareReplaced[Qty_Used] ) + 0
-
-Requests Pending Approval =
-CALCULATE (
-    COUNTROWS ( Fact_SpareRequest ),
-    KEEPFILTERS ( Fact_SpareRequest[Approval_Status] = "Pending" )
-) + 0
-
-Avg Approval Lead Time (Days) =
-AVERAGEX (
-    FILTER ( Fact_SpareRequest, NOT ISBLANK ( Fact_SpareRequest[Approval_Lead_Days] ) ),
-    Fact_SpareRequest[Approval_Lead_Days]
-)
-
-// Approved but not yet issued. The gap nobody watches, because the approver's
-// job is done and the storekeeper was never told there was a clock running.
-Approved Not Issued Count =
-CALCULATE (
-    COUNTROWS ( Fact_SpareRequest ),
-    KEEPFILTERS ( Fact_SpareRequest[Is_Approved_Not_Issued] = TRUE () )
-) + 0
-
-Avg Issue Lead Time (Days) =
-AVERAGEX (
-    FILTER ( Fact_SpareRequest, NOT ISBLANK ( Fact_SpareRequest[Issue_Lead_Days] ) ),
-    Fact_SpareRequest[Issue_Lead_Days]
-)
 
 // Counted over active parts only. A superseded part sitting at zero stock is not
 // a stock-out, and counting it hides the ones that are.
@@ -776,10 +759,7 @@ AVERAGEX (
 // or within a month people will stop reporting findings to protect their number.
 Findings Raised per PM =
 DIVIDE (
-    CALCULATE (
-        SUM ( Fact_MachineTask[NOT_OK_Count] ),
-        KEEPFILTERS ( Fact_MachineTask[Task_Status] = "Completed" )
-    ),
+    [NOT OK Count],
     [Machine Tasks Completed]
 )
 
@@ -921,46 +901,17 @@ Spare Cost MTD =
 CALCULATE ( [Spare Cost], DATESMTD ( Dim_Date[Date] ) )
 
 // ----------------------------------------------------------------------------
-// Gantt-style planned-vs-actual bars.
+// The Gantt construction has been removed.
 //
-// Power BI has no native Gantt. The standard construction is a stacked bar with
-// two series: an INVISIBLE offset bar that pushes the visible bar to the right,
-// then the visible duration bar. Set the offset series to no fill in the visual
-// and what remains reads as a timeline.
+// It was a stacked bar with an invisible offset series, because Power BI has no
+// native timeline. It needed Planned_Start_Date and Actual_Start_Date on the work
+// order, five helper measures, and a manual "set two series to no fill" step in
+// Desktop that no file format can carry - so every rebuild had to remember it.
 //
-// The origin is the earliest planned start in the current selection, so the
-// chart re-bases itself when the month slicer moves rather than always starting
-// at some fixed date far off screen.
+// The schedule page now answers the same question with a plain planned-versus-
+// completed comparison per cell. Less precise about the exact window; nothing to
+// remember, nothing to set by hand, and five fewer measures to keep working.
 // ----------------------------------------------------------------------------
-Gantt Origin Date =
-CALCULATE (
-    MIN ( Fact_WorkOrder[Planned_Start_Date] ),
-    ALLSELECTED ( Fact_WorkOrder )
-)
-
-Gantt Planned Offset (Days) =
-VAR Origin = [Gantt Origin Date]
-VAR Start = MIN ( Fact_WorkOrder[Planned_Start_Date] )
-RETURN
-    IF ( NOT ISBLANK ( Start ) && NOT ISBLANK ( Origin ), DATEDIFF ( Origin, Start, DAY ) )
-
-Gantt Planned Duration (Days) =
-VAR S = MIN ( Fact_WorkOrder[Planned_Start_Date] )
-VAR E = MAX ( Fact_WorkOrder[Planned_End_Date] )
-RETURN
-    IF ( NOT ISBLANK ( S ) && NOT ISBLANK ( E ), DATEDIFF ( S, E, DAY ) + 1 )
-
-Gantt Actual Offset (Days) =
-VAR Origin = [Gantt Origin Date]
-VAR Start = MIN ( Fact_WorkOrder[Actual_Start_Date] )
-RETURN
-    IF ( NOT ISBLANK ( Start ) && NOT ISBLANK ( Origin ), DATEDIFF ( Origin, Start, DAY ) )
-
-Gantt Actual Duration (Days) =
-VAR S = MIN ( Fact_WorkOrder[Actual_Start_Date] )
-VAR E = MAX ( Fact_WorkOrder[Actual_End_Date] )
-RETURN
-    IF ( NOT ISBLANK ( S ) && NOT ISBLANK ( E ), DATEDIFF ( S, E, DAY ) + 1 )
 
 // Planned work orders in the month, using the INACTIVE Planned_End_Date
 // relationship. This is what the inactive relationships exist for: one month

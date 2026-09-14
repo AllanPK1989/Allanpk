@@ -1,6 +1,6 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.0.0/schema.json",
-  "name": "v13KpiPending",
+  "name": "v13KpiWarranty",
   "position": {
     "x": 771,
     "y": 74,
@@ -24,11 +24,11 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Requests Pending Approval"
+                  "Property": "Warranty Claims Flagged"
                 }
               },
-              "queryRef": "_Measures.Requests Pending Approval",
-              "nativeQueryRef": "Requests Pending Approval"
+              "queryRef": "_Measures.Warranty Claims Flagged",
+              "nativeQueryRef": "Warranty Claims Flagged"
             }
           ]
         }
@@ -110,7 +110,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'AWAITING APPROVAL'"
+                  "Value": "'WARRANTY CLAIMS'"
                 }
               }
             },

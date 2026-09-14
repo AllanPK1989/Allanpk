@@ -85,20 +85,6 @@
               },
               "queryRef": "Fact_ChecklistResponse.Observation",
               "nativeQueryRef": "Observation"
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Fact_ChecklistResponse"
-                    }
-                  },
-                  "Property": "Action_Taken"
-                }
-              },
-              "queryRef": "Fact_ChecklistResponse.Action_Taken",
-              "nativeQueryRef": "Action_Taken"
             }
           ]
         }

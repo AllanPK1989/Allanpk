@@ -27,14 +27,6 @@
       "DisplayFormat": "DateOnly"
     },
     {
-      "InternalName": "Day_Type",
-      "DisplayName": "Day_Type",
-      "Required": true,
-      "Indexed": false,
-      "Type": "Text",
-      "MaxLength": 255
-    },
-    {
       "InternalName": "Is_Working_Day",
       "DisplayName": "Is_Working_Day",
       "Required": true,
@@ -43,22 +35,12 @@
       "DefaultValue": "0"
     },
     {
-      "InternalName": "Shift_Count",
-      "DisplayName": "Shift_Count",
-      "Required": false,
+      "InternalName": "Day_Type",
+      "DisplayName": "Day_Type",
+      "Required": true,
       "Indexed": false,
-      "Type": "Number",
-      "Decimals": 0
-    },
-    {
-      "InternalName": "Remarks",
-      "DisplayName": "Remarks",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Note",
-      "NumberOfLines": 4,
-      "RichText": false,
-      "AppendOnly": false
+      "Type": "Text",
+      "MaxLength": 255
     }
   ]
 }

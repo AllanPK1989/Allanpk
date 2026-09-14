@@ -216,23 +216,9 @@ If(
     IsBlank(gblMachine),
     Notify("Sticker " & varScannedId & " is not in the machine list. Tell your supervisor - do not guess.", NotificationType.Error, 5000),
 
-    // Log every scan, including the ones that lead nowhere. The scans that never
-    // become a completion are the earliest sign of an adoption problem.
-    Patch(Scan_Log, Defaults(Scan_Log),
-        {
-            Title:         "SCN-" & Text(Now(), "yyyymmddhhmmss"),
-            Scan_ID:       "SCN-" & Text(Now(), "yyyymmddhhmmss"),
-            Scan_DateTime: Now(),
-            Machine_ID:    gblMachine.Machine_ID,
-            Cell_ID:       gblMachine.Cell_ID,
-            Tech_ID:       gblTech.Tech_ID,
-            Scan_Action:   "View",
-            Device:        "Android",
-            WO_No:         LookUp(PM_Machine_Task,
-                               Machine_ID = gblMachine.Machine_ID
-                               && Task_Status <> "Completed").WO_No
-        }
-    );
+    // Nothing is filed for a scan that leads nowhere. Scan_Log was cut - see
+    // ASSUMPTIONS.md section 10.2. If adoption is ever in doubt, reinstating that
+    // list and this Patch is the first thing to do.
     Set(gblCell, LookUp(Cell_Master, Cell_ID = gblMachine.Cell_ID));
     Set(gblTask, LookUp(PM_Machine_Task,
             Machine_ID = gblMachine.Machine_ID && Task_Status <> "Completed"));
@@ -326,22 +312,10 @@ If(
     IsBlank(gblTask.Scan_Start_Time),
     Patch(PM_Machine_Task, gblTask,
         {
-            Task_Status:      "In Progress",
-            Scan_Start_Time:  Now(),
-            Assigned_Tech_ID: gblTech.Tech_ID
-        }
-    );
-    Patch(Scan_Log, Defaults(Scan_Log),
-        {
-            Title:         "SCN-" & Text(Now(), "yyyymmddhhmmss"),
-            Scan_ID:       "SCN-" & Text(Now(), "yyyymmddhhmmss"),
-            Scan_DateTime: Now(),
-            Machine_ID:    gblMachine.Machine_ID,
-            Cell_ID:       gblMachine.Cell_ID,
-            Tech_ID:       gblTech.Tech_ID,
-            Scan_Action:   "Start PM",
-            Device:        "Android",
-            WO_No:         gblTask.WO_No
+            // Two fields. Assigned_Tech_ID was cut - Completed_By, stamped when
+            // the checklist is submitted, is the record that matters.
+            Task_Status:     "In Progress",
+            Scan_Start_Time: Now()
         }
     );
     Notify("PM started. Work through the checklist.", NotificationType.Success),
@@ -620,42 +594,54 @@ If(
 
 ```powerfx
 Set(gblSubmitting, true);
-Patch(Spare_Request, Defaults(Spare_Request),
+Patch(Spare_Replaced, Defaults(Spare_Replaced),
     {
-        Title:             "REQ-" & Text(Now(), "yyyymmddhhmmss"),
-        Req_ID:            "REQ-" & Text(Now(), "yyyymmddhhmmss"),
-        Request_DateTime:  Now(),
-        WO_No:             gblTask.WO_No,
+        Title:             "RPL-" & Text(Now(), "yyyymmddhhmmss"),
+        Repl_ID:           "RPL-" & Text(Now(), "yyyymmddhhmmss"),
+        Replaced_DateTime: Now(),
+        Source_Type:       "PM",
+        Source_Ref:        gblTask.WO_No,
         Machine_ID:        gblMachine.Machine_ID,
         Cell_ID:           gblMachine.Cell_ID,
         Spare_Code:        drpSpare.Selected.Spare_Code,
-        Spare_Description: drpSpare.Selected.Spare_Description,
-        Qty_Requested:     Value(inpQty.Text),
-        Requested_By:      gblTech.Tech_ID,
-        Urgency:           drpUrgency.Selected.Value,
-        Reason:            drpReason.Selected.Value,
-        Approval_Status:   "Pending",
-        Issue_Status:      "Not Issued",
-        Issued_Qty:        0,
-        // Snapshot now. It is the evidence for a min-stock revision six months
-        // later, when nobody remembers what the shelf looked like.
-        Stock_At_Request:  drpSpare.Selected.Current_Stock,
-        Remarks:           inpRemarks.Text
+        Qty_Used:          Value(inpQty.Text),
+        // Copied at the moment of use, so a price rise next year does not rewrite
+        // this year's maintenance cost. The line TOTAL is not stored - the report
+        // multiplies, and a stored product could disagree with its own factors.
+        Unit_Cost_INR:     drpSpare.Selected.Unit_Cost_INR,
+        Failure_Mode:      drpFailureMode.Selected.Value,
+        Replaced_By:       gblTech.Tech_ID,
+        Warranty_Claim:    tglWarranty.Value
+    }
+);
+// Decrement stock, clamped at zero. A negative figure means the physical count was
+// already wrong; clamping it quietly would hide that, so the alert still fires.
+Patch(Spare_Master, drpSpare.Selected,
+    {
+        Current_Stock: Max(0, drpSpare.Selected.Current_Stock - Value(inpQty.Text))
     }
 );
 Set(gblSubmitting, false);
 Navigate(scrDone, ScreenTransition.Fade)
 ```
 
+> **This screen records what was FITTED, not what was asked for.** The requisition
+> and approval loop was removed — it duplicated a stores process that already runs,
+> and it was the only part of this system with no PM rule behind it. `Failure_Mode`
+> is the column that pays for the screen: repeated "Contamination" on the same part
+> is a filtration problem, and no amount of buying more parts will fix it. Make it
+> mandatory.
+
 ### `btnSubmitSpare.DisplayMode`
 
 ```powerfx
-// Blocked offline on purpose: Stock_At_Request must be the real number at the
-// moment of asking, not whatever was cached this morning.
+// Blocked offline on purpose: the stock decrement has to read the real figure at
+// the moment of use, not whatever was cached this morning.
 If(
     !Connection.Connected
     || gblSubmitting
     || IsBlank(drpSpare.Selected)
+    || IsBlank(drpFailureMode.Selected)
     || IsBlank(inpQty.Text)
     || Value(inpQty.Text) <= 0,
     DisplayMode.Disabled,

@@ -37,14 +37,6 @@
       "MaxLength": 255
     },
     {
-      "InternalName": "Plant",
-      "DisplayName": "Plant",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Text",
-      "MaxLength": 255
-    },
-    {
       "InternalName": "Process_Area",
       "DisplayName": "Process_Area",
       "Required": false,
@@ -102,28 +94,12 @@
       "DisplayFormat": "DateOnly"
     },
     {
-      "InternalName": "Last_PM_WO_No",
-      "DisplayName": "Last_PM_WO_No",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Text",
-      "MaxLength": 255
-    },
-    {
       "InternalName": "Next_PM_Due_Date_Calendar",
       "DisplayName": "Next_PM_Due_Date_Calendar",
       "Required": false,
       "Indexed": false,
       "Type": "DateTime",
       "DisplayFormat": "DateOnly"
-    },
-    {
-      "InternalName": "Avg_Monthly_Std_Hours_L3M",
-      "DisplayName": "Avg_Monthly_Std_Hours_L3M",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Number",
-      "Decimals": 2
     },
     {
       "InternalName": "Owner_Supervisor",

@@ -21,13 +21,9 @@ let
         {"Plan_ID",                type text},
         {"Plan_Month",             type text},
         {"Cell_ID",                type text},
-        {"Cell_Name",              type text},
         {"Planned_Date",           type date},
-        {"Planned_Shift",          type text},
         {"Planned_Tech_ID",        type text},
-        {"Estimated_Duration_Hrs", type number},
         {"Plan_Version",           type text},
-        {"Frozen_Date",            type date},
         {"WO_No",                  type text},
         {"Adherence_Status",       type text}
     }),

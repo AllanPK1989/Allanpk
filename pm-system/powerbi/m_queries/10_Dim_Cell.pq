@@ -13,22 +13,19 @@
 let
     Source = fnGetTable("Cell_Master", "01_PM_Master_Data.xlsx", "Cell_Master"),
 
-    Keys = fnCleanKeys(Source, {"Cell_ID", "Last_PM_WO_No"}),
+    Keys = fnCleanKeys(Source, {"Cell_ID"}),
     Bools = fnYesNo(Keys, {"Active"}),
 
     Typed = Table.TransformColumnTypes(Bools, {
         {"Cell_ID",                   type text},
         {"Cell_Name",                 type text},
-        {"Plant",                     type text},
         {"Process_Area",              type text},
         {"Machine_Count",             Int64.Type},
         {"PM_Trigger_Hours",          Int64.Type},
         {"Calendar_Backstop_Months",  Int64.Type},
         {"Cum_Std_Hours_Since_PM",    type number},
         {"Last_PM_Date",              type date},
-        {"Last_PM_WO_No",             type text},
         {"Next_PM_Due_Date_Calendar", type date},
-        {"Avg_Monthly_Std_Hours_L3M", type number},
         {"Owner_Supervisor",          type text},
         {"Criticality",               type text},
         {"Active",                    type logical}

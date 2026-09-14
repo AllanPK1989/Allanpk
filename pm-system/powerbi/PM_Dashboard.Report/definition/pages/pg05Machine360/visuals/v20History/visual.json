@@ -74,17 +74,17 @@
             },
             {
               "field": {
-                "Column": {
+                "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Fact_MachineTask"
+                      "Entity": "_Measures"
                     }
                   },
-                  "Property": "NOT_OK_Count"
+                  "Property": "NOT OK Count"
                 }
               },
-              "queryRef": "Fact_MachineTask.NOT_OK_Count",
-              "nativeQueryRef": "NOT_OK_Count"
+              "queryRef": "_Measures.NOT OK Count",
+              "nativeQueryRef": "NOT OK Count"
             },
             {
               "field": {

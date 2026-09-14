@@ -17,14 +17,6 @@ table Fact_WorkOrder
 
 		annotation SummarizationSetBy = Automatic
 
-	column Cell_Name
-		dataType: string
-		lineageTag: 586cde83-4c02-51ff-94fa-4f307a91b467
-		summarizeBy: none
-		sourceColumn: Cell_Name
-
-		annotation SummarizationSetBy = Automatic
-
 	column Trigger_Type
 		dataType: string
 		lineageTag: 5ef8369f-4539-5560-8b4a-9b091302eb0d
@@ -60,16 +52,6 @@ table Fact_WorkOrder
 
 		annotation SummarizationSetBy = Automatic
 
-	column Planned_Start_Date
-		dataType: dateTime
-		lineageTag: efd95162-ad87-5dfd-9818-e5c6ae3f48e3
-		summarizeBy: none
-		sourceColumn: Planned_Start_Date
-		formatString: yyyy-mm-dd
-		annotation UnderlyingDateTimeDataType = Date
-
-		annotation SummarizationSetBy = Automatic
-
 	column Planned_End_Date
 		dataType: dateTime
 		lineageTag: 4a73425b-8740-5c80-b294-e11ca3593dfe
@@ -77,14 +59,6 @@ table Fact_WorkOrder
 		sourceColumn: Planned_End_Date
 		formatString: yyyy-mm-dd
 		annotation UnderlyingDateTimeDataType = Date
-
-		annotation SummarizationSetBy = Automatic
-
-	column Lead_Tech_ID
-		dataType: string
-		lineageTag: fc8a1f07-d59b-5109-a7a2-d13d7e05b7ab
-		summarizeBy: none
-		sourceColumn: Lead_Tech_ID
 
 		annotation SummarizationSetBy = Automatic
 
@@ -122,6 +96,23 @@ table Fact_WorkOrder
 
 		annotation SummarizationSetBy = Automatic
 
+	column Reset_Applied
+		dataType: boolean
+		lineageTag: 6f519c45-4482-50ad-999d-d81044a25047
+		summarizeBy: none
+		sourceColumn: Reset_Applied
+		formatString: "TRUE";;"FALSE"
+
+		annotation SummarizationSetBy = Automatic
+
+	column Remarks
+		dataType: string
+		lineageTag: 92b3c15b-5b67-5a7c-b497-ed5814afc7a4
+		summarizeBy: none
+		sourceColumn: Remarks
+
+		annotation SummarizationSetBy = Automatic
+
 	column Actual_Start_Date
 		dataType: dateTime
 		lineageTag: 04c0d4bd-196e-5191-a50b-69ebcb0c3929
@@ -143,38 +134,11 @@ table Fact_WorkOrder
 		annotation SummarizationSetBy = Automatic
 
 	column PM_Duration_Min
-		dataType: int64
+		dataType: double
 		lineageTag: 1680fc0a-9348-5c74-92af-055cd518fcd5
 		summarizeBy: none
 		sourceColumn: PM_Duration_Min
-		formatString: #,##0
-
-		annotation SummarizationSetBy = Automatic
-
-	column Reset_Applied
-		dataType: boolean
-		lineageTag: 6f519c45-4482-50ad-999d-d81044a25047
-		summarizeBy: none
-		sourceColumn: Reset_Applied
-		formatString: "TRUE";;"FALSE"
-
-		annotation SummarizationSetBy = Automatic
-
-	column Reset_Date
-		dataType: dateTime
-		lineageTag: 4fb4c50a-550f-5b40-bb47-7341cf194ee7
-		summarizeBy: none
-		sourceColumn: Reset_Date
-		formatString: yyyy-mm-dd
-		annotation UnderlyingDateTimeDataType = Date
-
-		annotation SummarizationSetBy = Automatic
-
-	column Remarks
-		dataType: string
-		lineageTag: 92b3c15b-5b67-5a7c-b497-ed5814afc7a4
-		summarizeBy: none
-		sourceColumn: Remarks
+		formatString: #,##0.00
 
 		annotation SummarizationSetBy = Automatic
 
@@ -231,37 +195,58 @@ table Fact_WorkOrder
 				let
 				    Source = fnGetTable("PM_WorkOrder", "03_PM_Transactions_Dummy.xlsx", "PM_WorkOrder"),
 
-				    Keys = fnCleanKeys(Source, {"WO_No", "Cell_ID", "Lead_Tech_ID"}),
+				    Keys = fnCleanKeys(Source, {"WO_No", "Cell_ID"}),
 				    Bools = fnYesNo(Keys, {"Reset_Applied"}),
 
 				    Typed = Table.TransformColumnTypes(Bools, {
 				        {"WO_No",                     type text},
 				        {"Cell_ID",                   type text},
-				        {"Cell_Name",                 type text},
 				        {"Trigger_Type",              type text},
 				        {"Trigger_Hours_At_Creation", type number},
 				        {"WO_Created_Date",           type date},
 				        {"Planned_Month",             type text},
-				        {"Planned_Start_Date",        type date},
 				        {"Planned_End_Date",          type date},
-				        {"Lead_Tech_ID",              type text},
 				        {"Priority",                  type text},
 				        {"Machines_In_Scope",         Int64.Type},
 				        {"Machines_Completed",        Int64.Type},
 				        {"WO_Status",                 type text},
-				        {"Actual_Start_Date",         type date},
-				        {"Actual_End_Date",           type date},
-				        {"PM_Duration_Min",           Int64.Type},
 				        {"Reset_Applied",             type logical},
-				        {"Reset_Date",                type date},
 				        {"Remarks",                   type text}
+				    }),
+
+				    // --- actual dates, rolled up from the machine tasks -------------------
+				    // Flow 5 used to stamp Actual_Start_Date, Actual_End_Date and PM_Duration_Min
+				    // onto the work order. They are not independent facts: the work order started
+				    // when its first machine was scanned in and finished when its last was scanned
+				    // out. Deriving them here means the flow has three fewer fields to set, and the
+				    // dates cannot contradict the tasks they came from.
+				    TaskRollup = Table.Group(
+				        Table.SelectRows(Fact_MachineTask, each [WO_No] <> null),
+				        {"WO_No"},
+				        {
+				            {"Actual_Start_Date", each List.Min([Scan_Start_Time]), type nullable datetime},
+				            {"Actual_End_Date",   each List.Max([Scan_End_Time]),   type nullable datetime},
+				            {"PM_Duration_Min",   each List.Sum([Duration_Min]),    type nullable number}
+				        }),
+
+				    Merged = Table.NestedJoin(Typed, {"WO_No"}, TaskRollup, {"WO_No"},
+				                              "_tasks", JoinKind.LeftOuter),
+				    Expanded = Table.ExpandTableColumn(
+				        Merged, "_tasks",
+				        {"Actual_Start_Date", "Actual_End_Date", "PM_Duration_Min"}),
+
+				    // The relationship to Dim_Date needs a date, not a datetime - a datetime joins
+				    // only to the rows that fall exactly at midnight, which is almost none of them.
+				    Dated = Table.TransformColumns(Expanded, {
+				        {"Actual_Start_Date", each if _ = null then null else DateTime.Date(_), type nullable date},
+				        {"Actual_End_Date",   each if _ = null then null else DateTime.Date(_), type nullable date}
 				    }),
 
 				    // Delay in days against the commitment. Negative means early. Computed here
 				    // rather than in DAX because it is a property of the row: a work order that
 				    // finished four days late finished four days late regardless of filter.
 				    WithDelay = Table.AddColumn(
-				        Typed, "Delay_Days",
+				        Dated, "Delay_Days",
 				        each if [Actual_End_Date] = null or [Planned_End_Date] = null then null
 				             else Duration.Days([Actual_End_Date] - [Planned_End_Date]),
 				        Int64.Type),

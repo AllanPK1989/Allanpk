@@ -14,7 +14,7 @@ SharePoint lists and the same flows:
 | Cost | Included everywhere | Needs a Power Apps licence — **not available today** |
 | Build effort | ~1 day | ~4–5 days |
 
-**Both write to the identical lists with identical column names.** The eleven flows
+**Both write to the identical lists with identical column names.** The nine flows
 do not care which one produced the row. That is the point of the design: you can go
 live on Path A next week and move to Path B later without touching the data model,
 the flows, or the Power BI report.
@@ -28,7 +28,7 @@ still writes valid data.
 **There is no Power Apps licence available at present, so the system goes live on
 Path A (Forms + list views).** Everything the brief asks for works that way.
 
-Nothing in the data model, the eleven flows or the Power BI report depends on this
+Nothing in the data model, the nine flows or the Power BI report depends on this
 app. That is the point of the design — the canvas app is an alternative front end
 over the same lists, not a foundation. It can be added at any time, or never.
 

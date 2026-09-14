@@ -170,21 +170,20 @@ expression fnGetTable = ```
 		    ExpectedColumns = (ListName as text) as list =>
 		        let
 		            m = [
-		                Cell_Master        = {"Cell_ID","Cell_Name","Plant","Process_Area","Machine_Count","PM_Trigger_Hours","Calendar_Backstop_Months","Cum_Std_Hours_Since_PM","Last_PM_Date","Last_PM_WO_No","Next_PM_Due_Date_Calendar","Avg_Monthly_Std_Hours_L3M","Owner_Supervisor","Criticality","Active"},
-		                Machine_Master     = {"Machine_ID","Machine_Name","Cell_ID","Cell_Name","Machine_Family","Make","Model","Serial_No","Year_Installed","Location_Tag","Checklist_ID","Checklist_Form_URL","Breakdown_Form_URL","Spare_Request_Form_URL","Abnormality_Form_URL","QR_Payload_URL","Criticality","Active"},
-		                Checklist_Master   = {"Checklist_ID","Checklist_Name","Item_No","Check_Point","Check_Type","Acceptance_Standard","Tool_Required","Frequency","Safety_Critical","Expected_Time_Min","Active"},
-		                Technician_Master  = {"Tech_ID","Tech_Name","Skill_Level","Trade","Default_Shift","Contact_No","Role_Scope","Active"},
-		                Spare_Master       = {"Spare_Code","Spare_Description","Category","UOM","ABC_Class","FMR_Class","Unit_Cost_INR","Min_Stock","Current_Stock","Lead_Time_Days","Bin_Location","Preferred_Vendor","Active"},
-		                StdHours_Monthly   = {"Upload_Month","Cell_ID","Cell_Name","Actual_Std_Hours","Production_Qty","Uploaded_By","Upload_Date","Remarks"},
-		                PM_WorkOrder       = {"WO_No","Cell_ID","Cell_Name","Trigger_Type","Trigger_Hours_At_Creation","WO_Created_Date","Planned_Month","Planned_Start_Date","Planned_End_Date","Lead_Tech_ID","Priority","Machines_In_Scope","Machines_Completed","WO_Status","Actual_Start_Date","Actual_End_Date","PM_Duration_Min","Reset_Applied","Reset_Date","Remarks"},
-		                PM_Machine_Task    = {"Task_ID","WO_No","Machine_ID","Cell_ID","Assigned_Tech_ID","Task_Status","Scan_Start_Time","Scan_End_Time","Duration_Min","Checklist_Response_ID","NOT_OK_Count","Abnormality_Raised","Spare_Used_Flag","Completed_By","Completion_Date","Skip_Reason"},
-		                Checklist_Response = {"Response_ID","Submitted_DateTime","WO_No","Machine_ID","Cell_ID","Checklist_ID","Item_No","Check_Point","Result","Measured_Value","Observation","Photo_Link","Action_Taken","Tech_ID","Follow_Up_Required","Follow_Up_WO"},
-		                Scan_Log           = {"Scan_ID","Scan_DateTime","Machine_ID","Cell_ID","Tech_ID","Scan_Action","Device","WO_No","Comments"},
-		                Breakdown_Log      = {"BD_ID","Reported_DateTime","Machine_ID","Cell_ID","Reported_By_Tech_ID","Shift","Breakdown_Type","Symptom","Root_Cause","Action_Taken","Response_DateTime","Repair_Start","Repair_End","Response_Time_Min","MTTR_Min","Production_Loss_Min","Spare_Used","Status","Recurrence_Flag","Linked_PM_WO","Remarks"},
-		                Spare_Request      = {"Req_ID","Request_DateTime","WO_No","Machine_ID","Cell_ID","Spare_Code","Spare_Description","Qty_Requested","Requested_By","Urgency","Reason","Approval_Status","Approved_By","Approved_Date","Issue_Status","Issued_Qty","Issue_Date","Stock_At_Request","Remarks"},
-		                Spare_Replaced     = {"Repl_ID","Replaced_DateTime","Source_Type","Source_Ref","Machine_ID","Cell_ID","Spare_Code","Spare_Description","Qty_Used","Unit_Cost_INR","Total_Cost_INR","Old_Part_Condition","Failure_Mode","Replaced_By","Expected_Life_Hours","Warranty_Claim","Remarks"},
-		                Abnormality_Log    = {"Abn_ID","Logged_DateTime","Machine_ID","Cell_ID","Logged_By","Category","Description","Severity","Photo_Link","Immediate_Action","Responsibility","Target_Date","Status","Closed_Date","Closure_Remarks","Converted_To_WO"},
-		                PM_Plan_Calendar   = {"Plan_ID","Plan_Month","Cell_ID","Cell_Name","Planned_Date","Planned_Shift","Planned_Tech_ID","Estimated_Duration_Hrs","Plan_Version","Frozen_Date","WO_No","Adherence_Status"}
+		                Cell_Master        = {"Cell_ID","Cell_Name","Process_Area","Machine_Count","PM_Trigger_Hours","Calendar_Backstop_Months","Cum_Std_Hours_Since_PM","Last_PM_Date","Next_PM_Due_Date_Calendar","Owner_Supervisor","Criticality","Active"},
+		                Machine_Master     = {"Machine_ID","Machine_Name","Cell_ID","Machine_Family","Serial_No","Location_Tag","Checklist_ID","QR_Payload_URL","Criticality","Active"},
+		                Checklist_Master   = {"Checklist_ID","Item_No","Check_Point","Check_Type","Acceptance_Standard","Safety_Critical","Expected_Time_Min","Active"},
+		                Technician_Master  = {"Tech_ID","Tech_Name","Skill_Level","Trade","Active"},
+		                Spare_Master       = {"Spare_Code","Spare_Description","Category","UOM","Unit_Cost_INR","Min_Stock","Current_Stock","Lead_Time_Days","Bin_Location","Active"},
+		                Plant_Calendar     = {"Calendar_Date","Is_Working_Day","Day_Type"},
+		                StdHours_Monthly   = {"Upload_Month","Cell_ID","Actual_Std_Hours","Production_Qty","Upload_Date","Remarks"},
+		                PM_WorkOrder       = {"WO_No","Cell_ID","Trigger_Type","Trigger_Hours_At_Creation","WO_Created_Date","Planned_Month","Planned_End_Date","Priority","Machines_In_Scope","Machines_Completed","WO_Status","Reset_Applied","Remarks"},
+		                PM_Machine_Task    = {"Task_ID","WO_No","Machine_ID","Cell_ID","Task_Status","Scan_Start_Time","Scan_End_Time","Completed_By","Skip_Reason"},
+		                Checklist_Response = {"Response_ID","Submitted_DateTime","WO_No","Machine_ID","Checklist_ID","Item_No","Check_Point","Result","Measured_Value","Observation","Photo_Link","Tech_ID","Follow_Up_Required"},
+		                Breakdown_Log      = {"BD_ID","Reported_DateTime","Machine_ID","Cell_ID","Reported_By_Tech_ID","Shift","Breakdown_Type","Symptom","Root_Cause","Action_Taken","Response_DateTime","Repair_Start","Repair_End","Production_Loss_Min","Status","Recurrence_Flag"},
+		                Spare_Replaced     = {"Repl_ID","Replaced_DateTime","Source_Type","Source_Ref","Machine_ID","Cell_ID","Spare_Code","Qty_Used","Unit_Cost_INR","Failure_Mode","Replaced_By","Warranty_Claim"},
+		                Abnormality_Log    = {"Abn_ID","Logged_DateTime","Machine_ID","Cell_ID","Logged_By","Category","Description","Severity","Photo_Link","Responsibility","Target_Date","Status","Closed_Date"},
+		                PM_Plan_Calendar   = {"Plan_ID","Plan_Month","Cell_ID","Planned_Date","Planned_Tech_ID","Plan_Version","WO_No","Adherence_Status"}
 		            ]
 		        in
 		            Record.FieldOrDefault(m, ListName, {})

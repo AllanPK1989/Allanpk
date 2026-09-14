@@ -35,13 +35,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Fact_WorkOrder"
+                      "Entity": "Dim_Cell"
                     }
                   },
                   "Property": "Cell_Name"
                 }
               },
-              "queryRef": "Fact_WorkOrder.Cell_Name",
+              "queryRef": "Dim_Cell.Cell_Name",
               "nativeQueryRef": "Cell_Name"
             },
             {
@@ -113,20 +113,6 @@
               },
               "queryRef": "Fact_WorkOrder.WO_Status",
               "nativeQueryRef": "WO_Status"
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Fact_WorkOrder"
-                    }
-                  },
-                  "Property": "Lead_Tech_ID"
-                }
-              },
-              "queryRef": "Fact_WorkOrder.Lead_Tech_ID",
-              "nativeQueryRef": "Lead_Tech_ID"
             }
           ]
         }

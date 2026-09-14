@@ -61,34 +61,6 @@
       "MaxLength": 255
     },
     {
-      "InternalName": "ABC_Class",
-      "DisplayName": "ABC_Class",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Choice",
-      "Choices": [
-        "A",
-        "B",
-        "C"
-      ],
-      "Format": "Dropdown",
-      "FillInChoice": false
-    },
-    {
-      "InternalName": "FMR_Class",
-      "DisplayName": "FMR_Class",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Choice",
-      "Choices": [
-        "F",
-        "M",
-        "R"
-      ],
-      "Format": "Dropdown",
-      "FillInChoice": false
-    },
-    {
       "InternalName": "Unit_Cost_INR",
       "DisplayName": "Unit_Cost_INR",
       "Required": true,
@@ -123,14 +95,6 @@
     {
       "InternalName": "Bin_Location",
       "DisplayName": "Bin_Location",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Text",
-      "MaxLength": 255
-    },
-    {
-      "InternalName": "Preferred_Vendor",
-      "DisplayName": "Preferred_Vendor",
       "Required": false,
       "Indexed": false,
       "Type": "Text",

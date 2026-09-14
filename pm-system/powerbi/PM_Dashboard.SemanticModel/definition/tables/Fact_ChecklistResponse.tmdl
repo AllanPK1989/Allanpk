@@ -35,14 +35,6 @@ table Fact_ChecklistResponse
 
 		annotation SummarizationSetBy = Automatic
 
-	column Cell_ID
-		dataType: string
-		lineageTag: 50aae37b-ce44-5ac2-b70f-654d8147f8d6
-		summarizeBy: none
-		sourceColumn: Cell_ID
-
-		annotation SummarizationSetBy = Automatic
-
 	column Checklist_ID
 		dataType: string
 		lineageTag: 8e687272-e40d-5c85-978f-4f5919059ac5
@@ -101,14 +93,6 @@ table Fact_ChecklistResponse
 
 		annotation SummarizationSetBy = Automatic
 
-	column Action_Taken
-		dataType: string
-		lineageTag: cdde88e1-ca6d-59e4-af58-fc0fa6d68b64
-		summarizeBy: none
-		sourceColumn: Action_Taken
-
-		annotation SummarizationSetBy = Automatic
-
 	column Tech_ID
 		dataType: string
 		lineageTag: ec95c7a2-e2f2-5ba3-aea4-98ef6f4e46d3
@@ -123,14 +107,6 @@ table Fact_ChecklistResponse
 		summarizeBy: none
 		sourceColumn: Follow_Up_Required
 		formatString: "TRUE";;"FALSE"
-
-		annotation SummarizationSetBy = Automatic
-
-	column Follow_Up_WO
-		dataType: string
-		lineageTag: e69e9d76-5905-5a82-b74b-09b7634b8e84
-		summarizeBy: none
-		sourceColumn: Follow_Up_WO
 
 		annotation SummarizationSetBy = Automatic
 
@@ -189,8 +165,7 @@ table Fact_ChecklistResponse
 				let
 				    Source = fnGetTable("Checklist_Response", "03_PM_Transactions_Dummy.xlsx", "Checklist_Response"),
 
-				    Keys = fnCleanKeys(Source, {"Response_ID", "WO_No", "Machine_ID", "Cell_ID",
-				                                "Checklist_ID", "Tech_ID", "Follow_Up_WO"}),
+				    Keys = fnCleanKeys(Source, {"Response_ID", "WO_No", "Machine_ID", "Checklist_ID", "Tech_ID"}),
 				    Bools = fnYesNo(Keys, {"Follow_Up_Required"}),
 
 				    // Photo_Link is a hyperlink in SharePoint and text in Excel - flatten both.
@@ -208,7 +183,6 @@ table Fact_ChecklistResponse
 				        {"Submitted_DateTime", type datetime},
 				        {"WO_No",              type text},
 				        {"Machine_ID",         type text},
-				        {"Cell_ID",            type text},
 				        {"Checklist_ID",       type text},
 				        {"Item_No",            Int64.Type},
 				        {"Check_Point",        type text},
@@ -216,10 +190,8 @@ table Fact_ChecklistResponse
 				        {"Measured_Value",     type number},
 				        {"Observation",        type text},
 				        {"Photo_Link",         type text},
-				        {"Action_Taken",       type text},
 				        {"Tech_ID",            type text},
-				        {"Follow_Up_Required", type logical},
-				        {"Follow_Up_WO",       type text}
+				        {"Follow_Up_Required", type logical}
 				    }),
 
 				    Trimmed = Table.TransformColumns(Typed, {

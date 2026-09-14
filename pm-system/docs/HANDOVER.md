@@ -41,8 +41,27 @@ Compliance can read 100% while this climbs. When it does, the checklist is being
 signed rather than performed, or it is checking the wrong things. It is the only
 measure that tells you whether the PM is real.
 
-On the 12 months of data supplied: **9 of 88 breakdowns (10.2%), carrying 34.4 of
-the 299.5 hours of annual production loss.** Read it as a share, not a count.
+On the 12 months of data supplied: **7 of 88 breakdowns (8.0%), carrying 28.1 of the
+299.5 hours of annual production loss.** Read it as a share, not a count.
+
+> **This figure was 9 (10.2%) in the first build.** A PM is now dated from the latest
+> machine scan on its work order, rather than from a stored `Actual_End_Date` column.
+> In the supplied data those two disagreed on **29 of the 43 completed work orders** —
+> always with the stored date a day or two *later* than the last machine scanned out —
+> and two breakdowns fell inside the seven-day window only on the strength of that gap.
+> On-time performance moved the same way, from 48.8% to 65.1%.
+>
+> **Flow 5 stamps a work order complete in the same run that sees its last machine
+> task finish**, so the system as built cannot produce a lag of days. That points to
+> the lag being an artefact of how the sample data was generated. But **if a work
+> order really is signed off a day or two after the last machine at your plant, that
+> is a business rule this build does not implement — raise it before go-live.**
+> `ASSUMPTIONS.md` §9.1 has the full working.
+>
+> Either way the two values can no longer disagree, because there is now only one of
+> them. That is the case for the reduction in one number: a stored rollup had already
+> drifted from the rows it summarised, in the measure the system's credibility rests
+> on, and nothing anywhere reported it.
 
 ---
 
@@ -50,13 +69,13 @@ the 299.5 hours of annual production loss.** Read it as a share, not a count.
 
 | Component | Contents |
 |---|---|
-| **SharePoint** | 16 lists, 224 columns, 5 document libraries, 12 views, 8 column-formatting files |
-| **Data** | 2,822 rows, typed and validated, ready to load |
-| **Power BI** | 17 tables, 42 relationships, 94 measures, 9 pages, 116 visuals, custom theme |
-| **Power Automate** | Build sheets for 11 flows, every expression written out |
+| **SharePoint** | 14 lists, 138 columns, 5 document libraries, 11 views, 7 column-formatting files |
+| **Data** | 2,422 rows, typed and validated, ready to load |
+| **Power BI** | 15 tables, 30 relationships, 85 measures, 9 pages, 116 visuals, custom theme |
+| **Power Automate** | Build sheets for 9 flows, every expression written out |
 | **QR labels** | 30 labels, 50×30 mm, tested; printable A4 sheets |
-| **Forms** | 5 forms specified, with the pre-filled-link procedure |
-| **Documentation** | Runbook, assumptions, 35 UAT cases, 1-page bilingual shop-floor SOP |
+| **Forms** | 5 forms, every question listed with the column it lands in, plus the pre-filled-link procedure |
+| **Documentation** | Runbook, assumptions, 36 UAT cases, 1-page bilingual shop-floor SOP |
 | **Power Apps** | Phase 2 spec + licence business case (not licensed today) |
 
 ### Data loaded per list
@@ -65,14 +84,12 @@ the 299.5 hours of annual production loss.** Read it as a share, not a count.
 Cell_Master              8      PM_WorkOrder            51
 Technician_Master        6      PM_Machine_Task        193
 Spare_Master            15      Checklist_Response     997
-Checklist_Master        51      Scan_Log               336
-Machine_Master          30      Breakdown_Log           88
-Plant_Calendar         730      Spare_Request           64
-StdHours_Monthly        96      Spare_Replaced          58
-                                Abnormality_Log         44
-                                PM_Plan_Calendar        55
-                                                    ------
-                                                     2,822
+Checklist_Master        51      Breakdown_Log           88
+Machine_Master          30      Spare_Replaced          58
+Plant_Calendar         730      Abnormality_Log         44
+StdHours_Monthly        96      PM_Plan_Calendar        55
+                                ------
+                                 2,422
 ```
 
 ---
@@ -89,8 +106,8 @@ without a reason, and record the reason if you do.
 | 3 | Is `Actual_Std_Hours` an actual or a capacity figure? | **Capacity** — so proration is by **working days** |
 | 4 | Is the Tamil label wording right? | **Yes** — approved for print |
 | 5 | Are Power Apps rights available? | **No** — go live on Forms; canvas app is Phase 2 |
-| 6 | Who owns the eleven flows? | **An individual account** — see §6, this needs managing |
-| 7 | Retention on `Scan_Log` / `Checklist_Response`? | **None** — keep everything |
+| 6 | Who owns the nine flows? | **An individual account** — see §6, this needs managing |
+| 7 | Retention on the transaction lists? | **None** — keep everything |
 | 8 | Is 4,000 hours right for every cell? | Held per cell; all eight currently 4,000 |
 
 Full reasoning and consequences: `docs/ASSUMPTIONS.md` §8.
@@ -128,9 +145,9 @@ The shape of it:
 | 1 (pm) | 2–3 | Provision SharePoint, load the data, **reconcile row counts** |
 | 2 | 4 | Build the 5 Forms and the pre-filled links |
 | 2 (pm) | 5 | Print, fit and **individually scan-test** the 30 QR labels |
-| 3–4 | 6 | Build the 11 flows |
+| 3–4 | 6 | Build the 9 flows |
 | 5 (am) | 7 | Open and publish the Power BI report |
-| 5 (pm) | 8 | UAT — all 35 cases |
+| 5 (pm) | 8 | UAT — all 36 cases |
 | 6 | 9 | Train, then go live **on a Monday** |
 
 ### Six things that will cost you a day each if you skip them
@@ -171,7 +188,7 @@ critical. These five matter most:
 | Case | What it proves |
 |---|---|
 | **UAT-14** | Three of four machines complete and **nothing** resets |
-| **UAT-15** | The fourth completes and all five `Cell_Master` fields move **in one version** |
+| **UAT-15** | The fourth completes and all three `Cell_Master` fields move **in one version** |
 | **UAT-19** | A mid-month reset prorates by working days to **720.00 h** — not 780, not 728 |
 | **UAT-21** | A duplicate month upload is rejected and **terminates as Failed** |
 | **UAT-30a** | The Monday heartbeat arrives on a clean week |
@@ -184,7 +201,7 @@ show it.
 
 ## 6. The one live risk, and how it is managed
 
-**The eleven flows are owned by an individual account.** No service account is
+**The nine flows are owned by an individual account.** No service account is
 available. This works — but the failure mode is silent, so it is managed rather than
 ignored.
 
@@ -193,18 +210,18 @@ ignored.
 A flow has **owners** and it has **connections**. Co-owners can edit and repair it.
 The connections belong to the **single account that created them** — SharePoint,
 Outlook, Forms, Teams, Approvals. When that account is disabled or unlicensed, every
-connection breaks and all eleven flows stop, regardless of who else owns them.
+connection breaks and all nine flows stop, regardless of who else owns them.
 
 **Co-ownership shortens the repair. It does not prevent the failure.** So the
 question is not "can someone fix it" but "how long before anyone notices".
 
 ### The answer: the Monday heartbeat
 
-Flow 11 sends the daily digest **only when something is outstanding** — otherwise it
+Flow 9 sends the daily digest **only when something is outstanding** — otherwise it
 stops being read within a fortnight. But that makes silence ambiguous: an empty inbox
 means either "nothing outstanding" or "the flows died three weeks ago".
 
-So Flow 11 also sends **every Monday when clean**, as a one-line
+So Flow 9 also sends **every Monday when clean**, as a one-line
 *"PM system healthy — nothing outstanding"*.
 
 > ### If no digest arrives on a Monday, the flows have stopped.
@@ -226,7 +243,7 @@ So Flow 11 also sends **every Monday when clean**, as a one-line
 
 Do it **before** the leaving date — once the licence is gone the connections are
 already broken. Full procedure in `ASSUMPTIONS.md` §8.2. Budget half a day; it is
-roughly forty connector steps across eleven flows.
+roughly thirty connector steps across nine flows.
 
 ---
 
@@ -244,7 +261,7 @@ roughly forty connector steps across eleven flows.
 | Quarterly | Review the `Trigger_Type` split. Mostly Calendar Backstop means 4,000 is too high | Manager |
 | Quarterly | Review `Min_Stock` against `Stock_At_Request` history | Stores |
 | Each December | Mark next year's holidays and shutdown in `Plant_Calendar` | Planner |
-| Year 4 | Extend `Plant_Calendar` past 2027-03-31; review `Scan_Log` archiving | IT |
+| Year 4 | Extend `Plant_Calendar` past 2027-03-31; check `Checklist_Response` against the 5,000-item threshold | IT |
 
 **Freezing the plan on the 25th is what makes adherence honest.** Without it you can
 measure "did we do it" but never "did we do it when we said we would" — and the
@@ -258,8 +275,8 @@ second question is the one production cares about.
 input/                  the three source workbooks + data dictionary (unmodified)
 
 sharepoint/
-  provision_lists.ps1   16 lists, 224 columns, indexes, 5 libraries
-  apply_views.ps1       12 views + shop-floor column formatting
+  provision_lists.ps1   14 lists, 138 columns, indexes, 5 libraries
+  apply_views.ps1       11 views + shop-floor column formatting
   load_data.ps1         batched CSV load with type conversion
   schema/*.json         one schema per list — the source of truth for the scripts
   views/_views.json     view definitions incl. "My Allotted PM List", "Machine Hub"
@@ -267,8 +284,8 @@ sharepoint/
 
 powerbi/
   PM_Dashboard.pbip     open this in Power BI Desktop
-  m_queries/*.pq        22 commented Power Query scripts — source of truth
-  dax/measures.dax      94 measures, each with a comment explaining it
+  m_queries/*.pq        20 commented Power Query scripts — source of truth
+  dax/measures.dax      85 measures, each with a comment explaining it
   README_PowerBI.md     open, refresh, repoint to SharePoint
 
 qr/
@@ -276,7 +293,7 @@ qr/
   labels/               30 PNGs + printable PDF
 
 automate/
-  FLOW_SPECS.md         all 11 flows, action by action
+  FLOW_SPECS.md         all 5 forms and all 9 flows, action by action
   expressions.md        every expression, copy-paste ready
 
 powerapps/              Phase 2 — specified and costed, not licensed
@@ -284,7 +301,7 @@ docs/
   STEP_BY_STEP_GUIDE.md       plain-English build walkthrough
   IMPLEMENTATION_RUNBOOK.md   the same steps, full technical detail
   ASSUMPTIONS.md              every judgement call, with verified figures
-  UAT_TEST_CASES.md           35 cases
+  UAT_TEST_CASES.md           36 cases
   TECHNICIAN_SOP_1PAGE.md     print, laminate, put at every cell
   POWERAPPS_LICENCE_CASE.pptx business case for the Power Apps licence
   DATA_DICTIONARY.md          copy of the input dictionary
@@ -309,7 +326,7 @@ python tools/validate_model.py   # every reference must resolve — run this las
 Five gates. All runnable now, all currently passing.
 
 ```bash
-python tools/prepare_sharepoint_data.py --strict   # 0 errors, 0 warnings, 2,822 rows
+python tools/prepare_sharepoint_data.py --strict   # 0 errors, 0 warnings, 2,422 rows
 python tools/validate_model.py                     # 0 errors, 0 orphaned measures
 python tools/verify_measures.py                    # 68 measures, none blank
 python qr/generate_qr_labels.py --test             # 30/30 QR round-trip
@@ -334,7 +351,7 @@ number, not a fact.
 | **No digest on a Monday** | **The flows have stopped** | Check `My flows` for a disabled flow or an "Invalid connection" banner — usually the owning account. `ASSUMPTIONS.md` §8.2 |
 | Counter did not reset after all machines done | Flow 5 failed, or a task is `Pending` not `Completed` | Check the run history and the `Get items pending tasks` filter |
 | Two work orders for the same cell | Flow 2's open-WO check missing | Cancel one, fix the condition |
-| Counter jumped a whole month after a mid-month PM | Proration not applied | Check `Reset_Date` is populated and inside the uploaded month |
+| Counter jumped a whole month after a mid-month PM | Proration not applied | Check `Cell_Master.Last_PM_Date` is inside the uploaded month, and that `Get item cell` is the **first** action in Flow 1's row loop |
 | Monthly import fails naming a month | `Plant_Calendar` has no working days for it | Add the dates and mark working days |
 | Proration posts slightly too many hours | Holidays not marked in `Plant_Calendar` | Mark them — the divisor counts working days only |
 | Scan opens a blank hub | `QR_Payload_URL` points at a renamed view | Re-run `apply_views.ps1`, update the column, reprint |
@@ -346,10 +363,12 @@ number, not a fact.
 
 ## 11. Known limits — stated, not hidden
 
-- **Two things must be finished by hand in Power BI Desktop**: the drillthrough field
-  on page 5, and setting the Gantt offset series to no-fill on page 3. Neither can be
-  expressed in the file format. Both take under a minute; both are in
-  `README_PowerBI.md`.
+- **One thing must be finished by hand in Power BI Desktop**: the drillthrough field
+  on page 5. It cannot be expressed in the file format. It takes under a minute and
+  is in `README_PowerBI.md`. *(There used to be a second — setting the Gantt offset
+  series to no-fill — which had to be redone on every rebuild. The five measures that
+  faked a Gantt out of a stacked bar came out with the reduction, and that step with
+  them.)*
 - **The Power BI info panel is a footnote, not a bookmark toggle.** It uses 40 px of
   every page. A footnote cannot be left switched off by whoever used the report last.
   Conversion steps are in `README_PowerBI.md` if you prefer a toggle.
@@ -362,6 +381,21 @@ number, not a fact.
 - **The licence business case deck has not been visually proof-read** — the rendering
   tool was unavailable when it was produced. It opens correctly and passes structural
   checks; give it one pass before presenting.
+- **Four things the system deliberately does not record.** The schema was cut from
+  224 columns to 138, and these went with it. None is recoverable from history, so if
+  one matters, reinstate it **before** go-live:
+  1. **The scan that led nowhere** — a QR scan against a machine with no open work
+     order. The technician is still told; the fact is no longer filed. This is the
+     first thing to bring back if take-up is ever in doubt.
+  2. **Spare approval lead time and stock at the moment of asking** — gone with the
+     requisition loop, which duplicated a stores process that already exists.
+  3. **Who *started* a PM**, as distinct from who finished it.
+  4. **Make, model and year installed** — asset-register detail. Age-versus-breakdown
+     analysis now needs the asset register.
+
+  `ASSUMPTIONS.md` §10 has the full record: the three rules the cuts were made
+  against, what each one bought, and the reason for every one of the 58 columns
+  removed.
 - **The dummy data is dummy data.** Every figure quoted in this handover comes from
   the 12 months supplied for building and testing. Re-run `verify_measures.py`
   against real data once loaded.
@@ -382,10 +416,10 @@ number, not a fact.
 - [ ] `python qr/generate_qr_labels.py --base-url <site> --test` → 30/30
 - [ ] Print on polyester at 100% scale, fit, and scan-test every one
 - [ ] Build flows 5, 2, 1 first; concurrency OFF on 1 and 5
-- [ ] Two co-owners on all 11 flows, failure branches to the shared mailbox
+- [ ] Two co-owners on all 9 flows, failure branches to the shared mailbox
 - [ ] Export the flow package to `.zip`
 - [ ] Publish Power BI, schedule refresh 06:00 and 14:00 IST
-- [ ] All 35 UAT cases, recorded with a name and date
+- [ ] All 36 UAT cases, recorded with a name and date
 - [ ] Print and laminate the SOP at every cell
 - [ ] Put *"no Monday digest = flows stopped"* in the handover note
 - [ ] Go live on a Monday. Run the first monthly upload with someone watching

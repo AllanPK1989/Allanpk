@@ -1,22 +1,47 @@
 {
   "_comment": [
-    "MACHINE HUB - this is what a technician sees after scanning the QR sticker.",
+    "MACHINE HUB - what a technician sees after scanning the QR sticker.",
     "",
-    "Applied as a row formatter on the 'Machine Hub' view of Machine_Master. The view",
-    "is reached with ?FilterField1=Machine_ID&FilterValue1=<id>&FilterType1=Text, so it",
-    "renders exactly one card: the machine that was just scanned.",
+    "THE FORM LINKS ARE BUILT HERE, NOT STORED ON THE LIST.",
+    "",
+    "Machine_Master used to carry four hyperlink columns per machine - checklist,",
+    "breakdown, spare, abnormality - which meant 120 URLs (30 machines x 4) typed",
+    "into a spreadsheet and pasted in, every one of them a chance to point a button",
+    "at the wrong machine. They are now assembled from the machine's own ID at",
+    "render time, so there is nothing per-machine to maintain and a button cannot",
+    "disagree with the row it sits on.",
+    "",
+    "WHAT YOU MUST EDIT BEFORE THIS WORKS  -  11 placeholders, once.",
+    "",
+    "For each form, open it and take a prefilled link:",
+    "     Forms > Collect responses > Get a link to prefill answers",
+    "Fill in Machine ID = MC-01-001 and Cell ID = CELL-01 (and on the checklist,",
+    "pick a Checklist ID too), leave everything else blank, and Get link. You get:",
+    "",
+    "     https://forms.office.com/r/AbCdEf?id=XXXX&r1a2b3c4=MC-01-001&r5d6e7f8=CELL-01",
+    "      \\________________ up to and including the = ________________/           ",
+    "                                                        \\___________/          ",
+    "",
+    "Cut it into two pieces and paste them over the placeholders below:",
+    "  FORM_<NAME>_UPTO_MACHINE   everything before the machine ID   ...&r1a2b3c4=",
+    "  FORM_<NAME>_UPTO_CELL      the next key, with its & and =     &r5d6e7f8=",
+    "The checklist has a third, FORM_CHECKLIST_UPTO_CLID, for its question 3.",
+    "",
+    "Do NOT retype these by hand. Copy and paste both halves out of one real link.",
+    "Those r-codes are that form's question IDs. They are stable for the life of the",
+    "form, which is why Machine ID and Cell ID must stay as questions 1 and 2 (and",
+    "Checklist ID as question 3 on the checklist) and must never be reordered.",
     "",
     "Design constraints that are not negotiable:",
-    "  * Every button is 48 px tall. These are pressed with gloved fingers, often with",
-    "    one hand, standing next to a running machine. 44 px is the accessibility floor;",
+    "  * Every button is 48 px tall. These are pressed with gloved fingers, one",
+    "    handed, next to a running machine. 44 px is the accessibility floor;",
     "    48 gives margin for a glove.",
-    "  * The machine name is shown large at the top so the technician can confirm he",
-    "    scanned the sticker he thinks he scanned. A wrong sticker discovered later is a",
-    "    field problem that takes a month to find.",
-    "  * Buttons are ordered by how often they are pressed, not by importance:",
-    "    Start PM and Checklist are the daily path and sit first.",
-    "  * The URLs come from the stored per-machine form links, so Machine_ID and Cell_ID",
-    "    arrive at the form pre-filled. The technician types nothing the system knows."
+    "  * Machine name is shown large so the technician confirms he scanned the",
+    "    sticker he thinks he scanned. A wrong sticker found later is a field problem",
+    "    that takes a month to trace.",
+    "  * REPORT BREAKDOWN is the only red button on the card. It sits fourth because",
+    "    the three above it are the daily path, but it is found by colour, not by",
+    "    position - which is how it stays findable by someone who is in a hurry."
   ],
 
   "ViewFormat": {
@@ -41,9 +66,7 @@
           {
             "elmType": "div",
             "txt": "=[$Machine_ID]",
-            "style": {
-              "font-size": "26px", "font-weight": "700", "color": "#0C3549", "letter-spacing": "0.5px"
-            }
+            "style": { "font-size": "26px", "font-weight": "700", "color": "#0C3549", "letter-spacing": "0.5px" }
           },
           {
             "elmType": "div",
@@ -63,7 +86,7 @@
       },
       {
         "elmType": "div",
-        "txt": "=[$Cell_ID] + ' · ' + [$Cell_Name] + '  |  ' + [$Location_Tag] + '  |  Checklist ' + [$Checklist_ID]",
+        "txt": "=[$Cell_ID] + '  |  ' + [$Location_Tag] + '  |  Checklist ' + [$Checklist_ID]",
         "style": { "font-size": "13px", "color": "#7B8794", "margin-bottom": "16px" }
       },
 
@@ -74,7 +97,10 @@
           {
             "elmType": "a",
             "txt": "▶   START PM  (scan in)",
-            "attributes": { "href": "=[$Checklist_Form_URL]", "target": "_blank", "role": "button" },
+            "attributes": {
+              "href": "='FORM_START_UPTO_MACHINE' + [$Machine_ID] + 'FORM_START_UPTO_CELL' + [$Cell_ID]",
+              "target": "_blank", "role": "button"
+            },
             "style": {
               "display": "flex", "align-items": "center", "justify-content": "center",
               "height": "48px", "min-height": "48px", "margin-bottom": "10px",
@@ -86,7 +112,10 @@
           {
             "elmType": "a",
             "txt": "☑   COMPLETE CHECKLIST",
-            "attributes": { "href": "=[$Checklist_Form_URL]", "target": "_blank", "role": "button" },
+            "attributes": {
+              "href": "='FORM_CHECKLIST_UPTO_MACHINE' + [$Machine_ID] + 'FORM_CHECKLIST_UPTO_CELL' + [$Cell_ID] + 'FORM_CHECKLIST_UPTO_CLID' + [$Checklist_ID]",
+              "target": "_blank", "role": "button"
+            },
             "style": {
               "display": "flex", "align-items": "center", "justify-content": "center",
               "height": "48px", "min-height": "48px", "margin-bottom": "10px",
@@ -97,8 +126,26 @@
           },
           {
             "elmType": "a",
+            "txt": "🔧   SPARE FITTED",
+            "attributes": {
+              "href": "='FORM_SPARE_UPTO_MACHINE' + [$Machine_ID] + 'FORM_SPARE_UPTO_CELL' + [$Cell_ID]",
+              "target": "_blank", "role": "button"
+            },
+            "style": {
+              "display": "flex", "align-items": "center", "justify-content": "center",
+              "height": "48px", "min-height": "48px", "margin-bottom": "10px",
+              "border-radius": "8px", "text-decoration": "none",
+              "font-size": "16px", "font-weight": "700",
+              "background-color": "#5B7B8A", "color": "#FFFFFF", "border": "none"
+            }
+          },
+          {
+            "elmType": "a",
             "txt": "⚠   REPORT BREAKDOWN",
-            "attributes": { "href": "=[$Breakdown_Form_URL]", "target": "_blank", "role": "button" },
+            "attributes": {
+              "href": "='FORM_BREAKDOWN_UPTO_MACHINE' + [$Machine_ID] + 'FORM_BREAKDOWN_UPTO_CELL' + [$Cell_ID]",
+              "target": "_blank", "role": "button"
+            },
             "style": {
               "display": "flex", "align-items": "center", "justify-content": "center",
               "height": "48px", "min-height": "48px", "margin-bottom": "10px",
@@ -109,20 +156,11 @@
           },
           {
             "elmType": "a",
-            "txt": "🔧   REQUEST SPARE",
-            "attributes": { "href": "=[$Spare_Request_Form_URL]", "target": "_blank", "role": "button" },
-            "style": {
-              "display": "flex", "align-items": "center", "justify-content": "center",
-              "height": "48px", "min-height": "48px", "margin-bottom": "10px",
-              "border-radius": "8px", "text-decoration": "none",
-              "font-size": "16px", "font-weight": "700",
-              "background-color": "#FFFFFF", "color": "#0C3549", "border": "2px solid #0C3549"
-            }
-          },
-          {
-            "elmType": "a",
             "txt": "👁   LOG ABNORMALITY",
-            "attributes": { "href": "=[$Abnormality_Form_URL]", "target": "_blank", "role": "button" },
+            "attributes": {
+              "href": "='FORM_ABNORMALITY_UPTO_MACHINE' + [$Machine_ID] + 'FORM_ABNORMALITY_UPTO_CELL' + [$Cell_ID]",
+              "target": "_blank", "role": "button"
+            },
             "style": {
               "display": "flex", "align-items": "center", "justify-content": "center",
               "height": "48px", "min-height": "48px",

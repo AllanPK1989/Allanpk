@@ -99,12 +99,42 @@ def main():
     wos = load("PM_WorkOrder")
     tasks = load("PM_Machine_Task")
     resp = load("Checklist_Response")
-    scans = load("Scan_Log")
     bds = load("Breakdown_Log")
-    sreq = load("Spare_Request")
     srep = load("Spare_Replaced")
     abns = load("Abnormality_Log")
     plan = load("PM_Plan_Calendar")
+
+    # ------------------------------------------------------------------
+    # Derived values. These columns are no longer stored in SharePoint - the
+    # model computes them at refresh. Recomputing them here, independently, is
+    # what makes this file a check on the DAX rather than a restatement of it.
+    def minutes(a, b):
+        """Whole minutes from a to b, or None if either end is missing."""
+        ta, tb = dtm(a), dtm(b)
+        return (tb - ta).total_seconds() / 60 if ta and tb else None
+
+    task_duration = {t["Task_ID"]: minutes(t["Scan_Start_Time"], t["Scan_End_Time"])
+                     for t in tasks}
+
+    # NOT OK findings live on the response rows now, not as a count on the task.
+    notok_by_task = Counter()
+    task_by_key = {(t["WO_No"], t["Machine_ID"]): t["Task_ID"] for t in tasks}
+    for r in resp:
+        if r["Result"] == "NOT OK":
+            key = task_by_key.get((r["WO_No"], r["Machine_ID"]))
+            if key:
+                notok_by_task[key] += 1
+
+    # A work order's start, end and duration roll up from its tasks.
+    wo_end = {}
+    for t in tasks:
+        e = dtm(t["Scan_End_Time"])
+        if e and (t["WO_No"] not in wo_end or e > wo_end[t["WO_No"]]):
+            wo_end[t["WO_No"]] = e
+
+    # A spare line total is quantity times the unit cost copied at the time of use.
+    def line_cost(r):
+        return num(r["Qty_Used"], 0) * num(r["Unit_Cost_INR"], 0)
 
     print("=" * 78)
     print(f"  Measure verification against dummy data   (TODAY = {today})")
@@ -118,8 +148,8 @@ def main():
                and date(w["Planned_End_Date"]) and date(w["Planned_End_Date"]) < today]
     inprog = [w for w in wos if w["WO_Status"] == "In Progress"]
     ontime = [w for w in completed
-              if date(w["Actual_End_Date"]) and date(w["Planned_End_Date"])
-              and date(w["Actual_End_Date"]) <= date(w["Planned_End_Date"])]
+              if w["WO_No"] in wo_end and date(w["Planned_End_Date"])
+              and wo_end[w["WO_No"]].date() <= date(w["Planned_End_Date"])]
 
     record("01 PM Compliance", "PM Due Count", len(due))
     record("01 PM Compliance", "PM Completed Count", len(completed))
@@ -138,8 +168,8 @@ def main():
            f"{len(adh_ontime)} on time of {len(committed)} committed plan rows "
            f"({len(plan) - len(committed)} forecast rows excluded)")
 
-    delays = [(date(w["Actual_End_Date"]) - date(w["Planned_End_Date"])).days
-              for w in completed if date(w["Actual_End_Date"]) and date(w["Planned_End_Date"])]
+    delays = [(wo_end[w["WO_No"]].date() - date(w["Planned_End_Date"])).days
+              for w in completed if w["WO_No"] in wo_end and date(w["Planned_End_Date"])]
     record("01 PM Compliance", "Avg PM Delay (Days)",
            statistics.fmean(delays) if delays else None, "days")
     cal_trig = [w for w in due if w["Trigger_Type"] == "Calendar Backstop"]
@@ -192,16 +222,16 @@ def main():
     record("03 Execution", "Machine Tasks Pending", len(t_pending))
     record("03 Execution", "Cell Completion %", len(t_completed) / len(tasks) if tasks else None, "%")
 
-    durs = [num(t["Duration_Min"]) for t in t_completed
-            if num(t["Duration_Min"]) and num(t["Duration_Min"]) > 0]
+    durs = [task_duration[t["Task_ID"]] for t in t_completed
+            if task_duration.get(t["Task_ID"])]
     record("03 Execution", "Avg PM Duration (Hrs)",
            statistics.fmean(durs) / 60 if durs else None, "h")
     record("03 Execution", "Total PM Man-Hours",
-           sum(num(t["Duration_Min"], 0) for t in tasks) / 60, "h")
+           sum(task_duration.get(t["Task_ID"]) or 0 for t in tasks) / 60, "h")
 
     notok_by_wo = defaultdict(int)
     for t in tasks:
-        notok_by_wo[t["WO_No"]] += int(num(t["NOT_OK_Count"], 0))
+        notok_by_wo[t["WO_No"]] += notok_by_task.get(t["Task_ID"], 0)
     clean = [w for w in completed if notok_by_wo.get(w["WO_No"], 0) == 0]
     record("03 Execution", "First-Pass PM %",
            len(clean) / len(completed) if completed else None, "%",
@@ -213,7 +243,7 @@ def main():
             exp_by_checklist[c["Checklist_ID"]] += int(num(c["Expected_Time_Min"], 0))
     checklist_of = {m["Machine_ID"]: m["Checklist_ID"] for m in machines}
     expected_total = sum(exp_by_checklist.get(checklist_of.get(t["Machine_ID"], ""), 0) for t in tasks)
-    actual_total = sum(num(t["Duration_Min"], 0) for t in tasks)
+    actual_total = sum(task_duration.get(t["Task_ID"]) or 0 for t in tasks)
     record("03 Execution", "Expected PM Duration (Min)", expected_total, "min")
     record("03 Execution", "PM Duration vs Expected %",
            actual_total / expected_total if expected_total else None, "%",
@@ -225,7 +255,7 @@ def main():
     record("03 Execution", "Open WO Ageing (Days)", statistics.fmean(ages) if ages else None, "days")
     record("03 Execution", "Reset Not Applied Count",
            len([w for w in completed if not yes(w["Reset_Applied"])]), "",
-           "must be 0 - integrity rule 3 says the reset quartet moves together")
+           "must be 0 - integrity rule 3 says the three reset fields move together")
 
     # ---------------------------------------------------------------- 04
     checked = [r for r in resp if r["Result"] in ("OK", "NOT OK")]
@@ -262,8 +292,9 @@ def main():
     # ADJACENT PM cycles. Cycle order comes from the machine task completion date.
     cycles = defaultdict(list)
     for t in tasks:
-        if date(t["Completion_Date"]):
-            cycles[t["Machine_ID"]].append((date(t["Completion_Date"]), t["WO_No"]))
+        # Completion date is the date part of the end scan - derived, not stored.
+        if dtm(t["Scan_End_Time"]):
+            cycles[t["Machine_ID"]].append((dtm(t["Scan_End_Time"]).date(), t["WO_No"]))
     seq = {}
     for mid, lst in cycles.items():
         for i, (_, wo) in enumerate(sorted(lst), start=1):
@@ -279,9 +310,11 @@ def main():
 
     # ---------------------------------------------------------------- 05
     record("05 Reliability", "Breakdown Count", len(bds))
-    mttrs = [num(b["MTTR_Min"]) for b in bds if num(b["MTTR_Min"]) is not None]
+    mttrs = [m for m in (minutes(b["Repair_Start"], b["Repair_End"]) for b in bds)
+             if m is not None]
     record("05 Reliability", "MTTR (Min)", statistics.fmean(mttrs) if mttrs else None, "min")
-    rts = [num(b["Response_Time_Min"]) for b in bds if num(b["Response_Time_Min"]) is not None]
+    rts = [m for m in (minutes(b["Reported_DateTime"], b["Response_DateTime"]) for b in bds)
+           if m is not None]
     record("05 Reliability", "Avg Response Time (Min)", statistics.fmean(rts) if rts else None, "min")
     loading = sum(num(s["Actual_Std_Hours"], 0) for s in std)
     downtime = sum(num(b["Production_Loss_Min"], 0) for b in bds) / 60
@@ -292,8 +325,8 @@ def main():
            (loading - downtime) / loading if loading else None, "%")
 
     # Breakdowns After PM (7d)
-    pm_ends = [(w["Cell_ID"], date(w["Actual_End_Date"]))
-               for w in completed if date(w["Actual_End_Date"])]
+    pm_ends = [(w["Cell_ID"], wo_end[w["WO_No"]].date())
+               for w in completed if w["WO_No"] in wo_end]
     after_pm = []
     for b in bds:
         bd = dtm(b["Reported_DateTime"])
@@ -313,24 +346,15 @@ def main():
     record("05 Reliability", "Open Breakdowns", len([b for b in bds if b["Status"] != "Closed"]))
 
     # ---------------------------------------------------------------- 06
-    spare_cost = sum(num(r["Total_Cost_INR"], 0) for r in srep)
-    pm_cost = sum(num(r["Total_Cost_INR"], 0) for r in srep if r["Source_Type"] == "PM")
-    bd_cost = sum(num(r["Total_Cost_INR"], 0) for r in srep if r["Source_Type"] == "Breakdown")
+    spare_cost = sum(line_cost(r) for r in srep)
+    pm_cost = sum(line_cost(r) for r in srep if r["Source_Type"] == "PM")
+    bd_cost = sum(line_cost(r) for r in srep if r["Source_Type"] == "Breakdown")
     record("06 Spares", "Spare Cost", spare_cost, "INR")
     record("06 Spares", "Planned Spare Cost", pm_cost, "INR")
     record("06 Spares", "Unplanned Spare Cost", bd_cost, "INR")
     record("06 Spares", "Spare Cost per PM",
            pm_cost / len(completed) if completed else None, "INR/PM")
     record("06 Spares", "Qty Replaced", sum(num(r["Qty_Used"], 0) for r in srep))
-    record("06 Spares", "Requests Pending Approval",
-           len([r for r in sreq if r["Approval_Status"] == "Pending"]))
-    leads = [(date(r["Approved_Date"]) - dtm(r["Request_DateTime"]).date()).days
-             for r in sreq if date(r["Approved_Date"]) and dtm(r["Request_DateTime"])]
-    record("06 Spares", "Avg Approval Lead Time (Days)",
-           statistics.fmean(leads) if leads else None, "days")
-    record("06 Spares", "Approved Not Issued Count",
-           len([r for r in sreq if r["Approval_Status"] == "Approved" and r["Issue_Status"] != "Issued"]),
-           "", "the gap nobody watches - approval is done, the PM still waits")
     below = [s for s in spares if yes(s["Active"])
              and num(s["Current_Stock"]) is not None and num(s["Min_Stock"]) is not None
              and num(s["Current_Stock"]) <= num(s["Min_Stock"])]
@@ -348,7 +372,7 @@ def main():
            ", ".join(f"{k}={v}" for k, v in sorted(by_tech.items())))
     record("07 Technician", "Avg Task Duration by Tech",
            statistics.fmean(durs) if durs else None, "min")
-    total_notok_completed = sum(int(num(t["NOT_OK_Count"], 0)) for t in t_completed)
+    total_notok_completed = sum(notok_by_task.get(t["Task_ID"], 0) for t in t_completed)
     record("07 Technician", "Findings Raised per PM",
            total_notok_completed / len(t_completed) if t_completed else None, "findings/PM",
            "higher means more thorough - label it that way on the page")
@@ -436,6 +460,9 @@ def main():
 
     plant = load("Plant_Calendar")
     ex_cell, ex_month, ex_hours = "CELL-05", "2026-04", 780.0
+    # The reset date is Cell_Master.Last_PM_Date. The work order's separate
+    # Reset_Date column was retired - it always held the same instant, written by
+    # the same action, so the two could never legitimately differ.
     ex_reset = dt.date(2026, 4, 2)
 
     month_days = [p for p in plant if p["Calendar_Date"][:7] == ex_month]

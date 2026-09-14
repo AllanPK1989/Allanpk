@@ -25,14 +25,6 @@ table Fact_PlanCalendar
 
 		annotation SummarizationSetBy = Automatic
 
-	column Cell_Name
-		dataType: string
-		lineageTag: 1f3c6a73-63ae-5e88-b7a0-013c75d1ddfd
-		summarizeBy: none
-		sourceColumn: Cell_Name
-
-		annotation SummarizationSetBy = Automatic
-
 	column Planned_Date
 		dataType: dateTime
 		lineageTag: 067b180a-bb69-51fa-a9ca-1c6592db68d1
@@ -40,14 +32,6 @@ table Fact_PlanCalendar
 		sourceColumn: Planned_Date
 		formatString: yyyy-mm-dd
 		annotation UnderlyingDateTimeDataType = Date
-
-		annotation SummarizationSetBy = Automatic
-
-	column Planned_Shift
-		dataType: string
-		lineageTag: eb60e1b3-95a9-5379-a4a2-c04c56c76441
-		summarizeBy: none
-		sourceColumn: Planned_Shift
 
 		annotation SummarizationSetBy = Automatic
 
@@ -59,30 +43,11 @@ table Fact_PlanCalendar
 
 		annotation SummarizationSetBy = Automatic
 
-	column Estimated_Duration_Hrs
-		dataType: double
-		lineageTag: ca4acab0-384b-50b4-9512-d1d33d5b546c
-		summarizeBy: none
-		sourceColumn: Estimated_Duration_Hrs
-		formatString: #,##0.00
-
-		annotation SummarizationSetBy = Automatic
-
 	column Plan_Version
 		dataType: string
 		lineageTag: 154731f5-3dd9-58cd-8d10-cd9870d7f055
 		summarizeBy: none
 		sourceColumn: Plan_Version
-
-		annotation SummarizationSetBy = Automatic
-
-	column Frozen_Date
-		dataType: dateTime
-		lineageTag: 5e8df8f1-3c7d-577c-b2e6-d11aa72cd173
-		summarizeBy: none
-		sourceColumn: Frozen_Date
-		formatString: yyyy-mm-dd
-		annotation UnderlyingDateTimeDataType = Date
 
 		annotation SummarizationSetBy = Automatic
 
@@ -156,13 +121,9 @@ table Fact_PlanCalendar
 				        {"Plan_ID",                type text},
 				        {"Plan_Month",             type text},
 				        {"Cell_ID",                type text},
-				        {"Cell_Name",              type text},
 				        {"Planned_Date",           type date},
-				        {"Planned_Shift",          type text},
 				        {"Planned_Tech_ID",        type text},
-				        {"Estimated_Duration_Hrs", type number},
 				        {"Plan_Version",           type text},
-				        {"Frozen_Date",            type date},
 				        {"WO_No",                  type text},
 				        {"Adherence_Status",       type text}
 				    }),

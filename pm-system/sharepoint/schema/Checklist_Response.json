@@ -55,14 +55,6 @@
       "MaxLength": 255
     },
     {
-      "InternalName": "Cell_ID",
-      "DisplayName": "Cell_ID",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Text",
-      "MaxLength": 255
-    },
-    {
       "InternalName": "Checklist_ID",
       "DisplayName": "Checklist_ID",
       "Required": false,
@@ -126,16 +118,6 @@
       "Type": "URL"
     },
     {
-      "InternalName": "Action_Taken",
-      "DisplayName": "Action_Taken",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Note",
-      "NumberOfLines": 4,
-      "RichText": false,
-      "AppendOnly": false
-    },
-    {
       "InternalName": "Tech_ID",
       "DisplayName": "Tech_ID",
       "Required": true,
@@ -150,14 +132,6 @@
       "Indexed": true,
       "Type": "Boolean",
       "DefaultValue": "0"
-    },
-    {
-      "InternalName": "Follow_Up_WO",
-      "DisplayName": "Follow_Up_WO",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Text",
-      "MaxLength": 255
     }
   ]
 }

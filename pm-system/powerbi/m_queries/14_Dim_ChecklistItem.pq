@@ -16,13 +16,10 @@ let
 
     Typed = Table.TransformColumnTypes(Bools, {
         {"Checklist_ID",        type text},
-        {"Checklist_Name",      type text},
         {"Item_No",             Int64.Type},
         {"Check_Point",         type text},
         {"Check_Type",          type text},
         {"Acceptance_Standard", type text},
-        {"Tool_Required",       type text},
-        {"Frequency",           type text},
         {"Safety_Critical",     type logical},
         {"Expected_Time_Min",   Int64.Type},
         {"Active",              type logical}

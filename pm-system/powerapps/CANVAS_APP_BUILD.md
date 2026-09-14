@@ -255,24 +255,30 @@ good.
 
 ---
 
-## Step 7 — `scrSpare`
+## Step 7 — `scrSpare` — what was *fitted*
 
 | Control | Notes |
 |---|---|
 | `drpSpare` | Active parts only |
 | `lblStock` | Current stock, minimum, bin, and a lead-time warning if below minimum |
 | `inpQty` | Number |
-| `drpUrgency`, `drpReason` | |
-| `inpRemarks` | |
+| `drpFailureMode` | **Mandatory.** Wear / Contamination / Fatigue / Overload / Corrosion / Electrical / End of life / Other |
+| `tglWarranty` | Warranty claim, yes or no |
 | `btnSubmitSpare` | `DisplayMode` blocks submission **offline** |
 
-Showing stock before the request stops the request that was never needed, and warns
-about the one that cannot be filled this week.
+`drpFailureMode` is the control that pays for this screen. Repeated "Contamination"
+on the same part is a filtration problem, not a spares problem, and no amount of
+buying more parts will fix it.
 
-**This screen is blocked offline on purpose.** `Stock_At_Request` has to be the real
-number at the moment of asking — it is the evidence for a min-stock revision six
-months later. Capturing it against a cached figure from this morning would make
-that evidence worthless, so the app says "you need a network for this" instead.
+**There is no requisition or approval here.** That loop was removed — it duplicated a
+stores process that already runs, and it was the only part of this system with no PM
+rule behind it. What the PM system needs to know is what was *fitted*: cost, failure
+mode, which machine.
+
+**This screen is blocked offline on purpose.** The stock decrement has to read the
+real figure at the moment of use; applying it against a cached number from this
+morning puts the shelf and the system out of step with no record of when it happened.
+The app says "you need a network for this" instead.
 
 ---
 
@@ -318,7 +324,7 @@ real thing he just did, rather than an administrative rule he complied with.
 **What works offline:** the allotted list (from cache), the machine hub, the
 checklist, the abnormality log.
 
-**What does not, deliberately:** spare requests, because `Stock_At_Request` must be
+**What does not, deliberately:** spare replacement, because the stock decrement must be
 live. Better to block the action with a clear reason than to capture a number that
 is quietly wrong.
 
@@ -356,9 +362,9 @@ count clears.
 
 | Never | Why |
 |---|---|
-| Set `Cum_Std_Hours_Since_PM` to 0 | Only Flow 5 resets the counter, and only together with `Last_PM_Date`, `Last_PM_WO_No`, `Reset_Applied` and `Reset_Date`. All five move together or none do |
+| Set `Cum_Std_Hours_Since_PM` to 0 | Only Flow 5 resets the counter, and only together with `Last_PM_Date` and `Next_PM_Due_Date_Calendar`, in one action. All three move together or none do |
 | Create a `PM_WorkOrder` | Flow 2 owns the trigger rule, so it lives in exactly one place |
-| Compute `Total_Cost_INR` | Flow 8 copies the master price at the time of use, so a later price rise does not rewrite last year's cost |
+| Compute a spare line total | The app copies the master price onto the row at the time of use; the report multiplies it by quantity. Nothing stores the product |
 | Delete any master row | Set `Active = No`. Deleting orphans every fact that references it |
 | Hard-code 4000 | Read `PM_Trigger_Hours` from the cell. A hard-coded trigger anywhere is a defect |
 

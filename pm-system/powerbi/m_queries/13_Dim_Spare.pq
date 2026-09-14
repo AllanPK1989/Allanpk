@@ -1,10 +1,13 @@
 // ===========================================================================
 // Dim_Spare  <- Spare_Master
 // ---------------------------------------------------------------------------
-// Current_Stock is a snapshot maintained by Flow 8, not a history, so it is
-// only meaningful at the row level. The ABC/FMR pair combine into the nine-box
-// class used on the spares page: AR (high value, rarely moves) is the one to
-// review, CF (low value, moves constantly) is the one to bulk order.
+// Current_Stock is a snapshot maintained by Flow 8, not a history, so it is only
+// meaningful at the row level.
+//
+// ABC_Class and FMR_Class were dropped: a stored classification has to be reviewed
+// and re-entered as usage changes, and nobody ever does. The spares page ranks by
+// actual cost and actual movement instead, which is the same judgement made from
+// evidence that updates itself.
 // ===========================================================================
 let
     Source = fnGetTable("Spare_Master", "01_PM_Master_Data.xlsx", "Spare_Master"),
@@ -17,31 +20,21 @@ let
         {"Spare_Description", type text},
         {"Category",          type text},
         {"UOM",               type text},
-        {"ABC_Class",         type text},
-        {"FMR_Class",         type text},
         {"Unit_Cost_INR",     type number},
         {"Min_Stock",         Int64.Type},
         {"Current_Stock",     Int64.Type},
         {"Lead_Time_Days",    Int64.Type},
         {"Bin_Location",      type text},
-        {"Preferred_Vendor",  type text},
         {"Active",            type logical}
     }),
 
     Trimmed = Table.TransformColumns(Typed, {
         {"Spare_Description", each if _ = null then null else Text.Trim(_), type nullable text},
-        {"Category",          each if _ = null then null else Text.Trim(_), type nullable text},
-        {"ABC_Class",         each if _ = null then null else Text.Upper(Text.Trim(_)), type nullable text},
-        {"FMR_Class",         each if _ = null then null else Text.Upper(Text.Trim(_)), type nullable text}
+        {"Category",          each if _ = null then null else Text.Trim(_), type nullable text}
     }),
 
-    WithMatrix = Table.AddColumn(
-        Trimmed, "ABC_FMR_Class",
-        each Text.From([ABC_Class]) & Text.From([FMR_Class]),
-        type text),
-
     WithBelowMin = Table.AddColumn(
-        WithMatrix, "Below_Min_Stock",
+        Trimmed, "Below_Min_Stock",
         each [Current_Stock] <> null and [Min_Stock] <> null and [Current_Stock] <= [Min_Stock],
         type logical),
 

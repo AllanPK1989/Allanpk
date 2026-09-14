@@ -53,28 +53,26 @@ FORMAT = {"int64": "#,##0", "double": "#,##0.00", "dateTime": "yyyy-mm-dd",
 DERIVED = {
     "Dim_Cell": [("Calendar_Due_Date", "dateTime"), ("Amber_Threshold_Hours", "double"),
                  ("Criticality_Sort", "int64")],
-    "Dim_Machine": [("Machine_Age_Years", "int64"), ("Machine_Label", "string"),
-                    ("Criticality_Sort", "int64")],
+    "Dim_Machine": [("Machine_Label", "string"), ("Criticality_Sort", "int64")],
     "Dim_Technician": [("Skill_Sort", "int64"), ("Tech_Label", "string")],
-    "Dim_Spare": [("ABC_FMR_Class", "string"), ("Below_Min_Stock", "boolean"),
-                  ("Stockout_Risk_Score", "double")],
+    "Dim_Spare": [("Below_Min_Stock", "boolean"), ("Stockout_Risk_Score", "double")],
     "Dim_ChecklistItem": [("Checklist_Item_Key", "string"), ("Check_Point_Short", "string")],
     "Fact_StdHours": [("Month_Start_Date", "dateTime")],
-    "Fact_WorkOrder": [("Delay_Days", "int64"), ("Is_On_Time", "boolean"),
-                       ("Trigger_Overshoot_Hours", "double"), ("Completion_Ratio", "double")],
-    "Fact_MachineTask": [("Is_Completed", "boolean"), ("Is_Open", "boolean"),
-                         ("Is_Clean_Pass", "boolean"), ("Status_Sort", "int64")],
+    # Actual dates and duration are rolled up from the machine tasks at refresh,
+    # not written onto the row by a flow.
+    "Fact_WorkOrder": [("Actual_Start_Date", "dateTime"), ("Actual_End_Date", "dateTime"),
+                       ("PM_Duration_Min", "double"), ("Delay_Days", "int64"),
+                       ("Is_On_Time", "boolean"), ("Trigger_Overshoot_Hours", "double"),
+                       ("Completion_Ratio", "double")],
+    "Fact_MachineTask": [("Duration_Min", "double"), ("Completion_Date", "dateTime"),
+                         ("Is_Completed", "boolean"), ("Is_Open", "boolean"),
+                         ("Status_Sort", "int64")],
     "Fact_ChecklistResponse": [("Checklist_Item_Key", "string"), ("Submitted_Date", "dateTime"),
                                ("Is_Not_OK", "boolean"), ("Is_Checked", "boolean")],
-    "Fact_ScanLog": [("Scan_Date", "dateTime"), ("Scan_Hour", "int64"),
-                     ("Is_Orphan_Scan", "boolean")],
-    "Fact_Breakdown": [("Reported_Date", "dateTime"), ("MTTR_Min_Calc", "double"),
-                       ("Response_Time_Min_Calc", "double"), ("Production_Loss_Hrs", "double"),
+    "Fact_Breakdown": [("Reported_Date", "dateTime"), ("MTTR_Min", "double"),
+                       ("Response_Time_Min", "double"), ("Production_Loss_Hrs", "double"),
                        ("Is_Open", "boolean")],
-    "Fact_SpareRequest": [("Request_Date", "dateTime"), ("Approval_Lead_Days", "int64"),
-                          ("Issue_Lead_Days", "int64"), ("Is_Pending_Approval", "boolean"),
-                          ("Is_Approved_Not_Issued", "boolean")],
-    "Fact_SpareReplaced": [("Replaced_Date", "dateTime"), ("Cost_Integrity_OK", "boolean"),
+    "Fact_SpareReplaced": [("Total_Cost_INR", "double"), ("Replaced_Date", "dateTime"),
                            ("Is_Planned_Spend", "boolean")],
     "Fact_Abnormality": [("Logged_Date", "dateTime"), ("Age_Days", "int64"),
                          ("Is_Open", "boolean"), ("Is_Overdue", "boolean"),
@@ -94,9 +92,7 @@ TABLES = {
     "Fact_WorkOrder":         ("PM_WorkOrder", "21_Fact_WorkOrder.pq"),
     "Fact_MachineTask":       ("PM_Machine_Task", "22_Fact_MachineTask.pq"),
     "Fact_ChecklistResponse": ("Checklist_Response", "23_Fact_ChecklistResponse.pq"),
-    "Fact_ScanLog":           ("Scan_Log", "24_Fact_ScanLog.pq"),
     "Fact_Breakdown":         ("Breakdown_Log", "25_Fact_Breakdown.pq"),
-    "Fact_SpareRequest":      ("Spare_Request", "26_Fact_SpareRequest.pq"),
     "Fact_SpareReplaced":     ("Spare_Replaced", "27_Fact_SpareReplaced.pq"),
     "Fact_Abnormality":       ("Abnormality_Log", "28_Fact_Abnormality.pq"),
     "Fact_PlanCalendar":      ("PM_Plan_Calendar", "29_Fact_PlanCalendar.pq"),
@@ -136,32 +132,23 @@ RELS = [
     ("Dim_Cell", "Cell_ID", "Fact_StdHours", "Cell_ID", True),
     ("Dim_Cell", "Cell_ID", "Fact_WorkOrder", "Cell_ID", True),
     ("Dim_Cell", "Cell_ID", "Fact_MachineTask", "Cell_ID", True),
-    ("Dim_Cell", "Cell_ID", "Fact_ChecklistResponse", "Cell_ID", True),
-    ("Dim_Cell", "Cell_ID", "Fact_ScanLog", "Cell_ID", True),
     ("Dim_Cell", "Cell_ID", "Fact_Breakdown", "Cell_ID", True),
-    ("Dim_Cell", "Cell_ID", "Fact_SpareRequest", "Cell_ID", True),
     ("Dim_Cell", "Cell_ID", "Fact_SpareReplaced", "Cell_ID", True),
     ("Dim_Cell", "Cell_ID", "Fact_Abnormality", "Cell_ID", True),
     ("Dim_Cell", "Cell_ID", "Fact_PlanCalendar", "Cell_ID", True),
     # Dim_Machine -> machine-level facts
     ("Dim_Machine", "Machine_ID", "Fact_MachineTask", "Machine_ID", True),
     ("Dim_Machine", "Machine_ID", "Fact_ChecklistResponse", "Machine_ID", True),
-    ("Dim_Machine", "Machine_ID", "Fact_ScanLog", "Machine_ID", True),
     ("Dim_Machine", "Machine_ID", "Fact_Breakdown", "Machine_ID", True),
-    ("Dim_Machine", "Machine_ID", "Fact_SpareRequest", "Machine_ID", True),
     ("Dim_Machine", "Machine_ID", "Fact_SpareReplaced", "Machine_ID", True),
     ("Dim_Machine", "Machine_ID", "Fact_Abnormality", "Machine_ID", True),
     # Dim_Technician -> the person who did the work
     ("Dim_Technician", "Tech_ID", "Fact_MachineTask", "Completed_By", True),
     ("Dim_Technician", "Tech_ID", "Fact_ChecklistResponse", "Tech_ID", True),
-    ("Dim_Technician", "Tech_ID", "Fact_ScanLog", "Tech_ID", True),
     ("Dim_Technician", "Tech_ID", "Fact_Breakdown", "Reported_By_Tech_ID", True),
-    ("Dim_Technician", "Tech_ID", "Fact_SpareRequest", "Requested_By", True),
     ("Dim_Technician", "Tech_ID", "Fact_SpareReplaced", "Replaced_By", True),
     ("Dim_Technician", "Tech_ID", "Fact_Abnormality", "Logged_By", True),
-    ("Dim_Technician", "Tech_ID", "Fact_WorkOrder", "Lead_Tech_ID", False),
     # Dim_Spare -> spares facts
-    ("Dim_Spare", "Spare_Code", "Fact_SpareRequest", "Spare_Code", True),
     ("Dim_Spare", "Spare_Code", "Fact_SpareReplaced", "Spare_Code", True),
     # Dim_ChecklistItem -> responses, on the composite key
     ("Dim_ChecklistItem", "Checklist_Item_Key", "Fact_ChecklistResponse", "Checklist_Item_Key", True),
@@ -170,9 +157,7 @@ RELS = [
     ("Dim_Date", "Date", "Fact_WorkOrder", "WO_Created_Date", True),
     ("Dim_Date", "Date", "Fact_MachineTask", "Completion_Date", True),
     ("Dim_Date", "Date", "Fact_ChecklistResponse", "Submitted_Date", True),
-    ("Dim_Date", "Date", "Fact_ScanLog", "Scan_Date", True),
     ("Dim_Date", "Date", "Fact_Breakdown", "Reported_Date", True),
-    ("Dim_Date", "Date", "Fact_SpareRequest", "Request_Date", True),
     ("Dim_Date", "Date", "Fact_SpareReplaced", "Replaced_Date", True),
     ("Dim_Date", "Date", "Fact_Abnormality", "Logged_Date", True),
     ("Dim_Date", "Date", "Fact_PlanCalendar", "Planned_Date", True),
@@ -181,7 +166,6 @@ RELS = [
     ("Dim_Date", "Date", "Fact_WorkOrder", "Planned_End_Date", False),
     ("Dim_Date", "Date", "Fact_WorkOrder", "Actual_End_Date", False),
     ("Dim_Date", "Date", "Fact_Abnormality", "Target_Date", False),
-    ("Dim_Date", "Date", "Fact_SpareRequest", "Approved_Date", False),
 ]
 
 
@@ -415,11 +399,21 @@ def parse_measures(path):
 
         # Ordinary body line. Anything still buffered was an in-body comment, so
         # put it back where it was rather than losing it.
+        #
+        # A BLANK line must not do that. A comment block sitting between two
+        # measures is followed by blank lines, and treating one as body content
+        # flushed the whole block into the measure above - so a note explaining a
+        # removal ended up inside the previous measure's expression, where it
+        # would have been written into the model as DAX.
         if cur is not None:
-            if pending:
-                body.extend("// " + c for c in pending)
-                pending = []
-            body.append(line)
+            if line.strip() == "":
+                if body:
+                    body.append(line)
+            else:
+                if pending:
+                    body.extend("// " + c for c in pending)
+                    pending = []
+                body.append(line)
 
     flush()
     return out

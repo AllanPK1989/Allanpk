@@ -27,14 +27,6 @@
       "MaxLength": 255
     },
     {
-      "InternalName": "Checklist_Name",
-      "DisplayName": "Checklist_Name",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Text",
-      "MaxLength": 255
-    },
-    {
       "InternalName": "Item_No",
       "DisplayName": "Item_No",
       "Required": true,
@@ -73,28 +65,6 @@
       "NumberOfLines": 4,
       "RichText": false,
       "AppendOnly": false
-    },
-    {
-      "InternalName": "Tool_Required",
-      "DisplayName": "Tool_Required",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Text",
-      "MaxLength": 255
-    },
-    {
-      "InternalName": "Frequency",
-      "DisplayName": "Frequency",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Choice",
-      "Choices": [
-        "Monthly (per PM cycle)",
-        "Quarterly",
-        "Annual"
-      ],
-      "Format": "Dropdown",
-      "FillInChoice": false
     },
     {
       "InternalName": "Safety_Critical",

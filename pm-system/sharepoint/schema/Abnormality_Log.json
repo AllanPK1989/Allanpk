@@ -113,16 +113,6 @@
       "Type": "URL"
     },
     {
-      "InternalName": "Immediate_Action",
-      "DisplayName": "Immediate_Action",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Note",
-      "NumberOfLines": 4,
-      "RichText": false,
-      "AppendOnly": false
-    },
-    {
       "InternalName": "Responsibility",
       "DisplayName": "Responsibility",
       "Required": false,
@@ -159,24 +149,6 @@
       "Indexed": false,
       "Type": "DateTime",
       "DisplayFormat": "DateOnly"
-    },
-    {
-      "InternalName": "Closure_Remarks",
-      "DisplayName": "Closure_Remarks",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Note",
-      "NumberOfLines": 4,
-      "RichText": false,
-      "AppendOnly": false
-    },
-    {
-      "InternalName": "Converted_To_WO",
-      "DisplayName": "Converted_To_WO",
-      "Required": false,
-      "Indexed": false,
-      "Type": "Boolean",
-      "DefaultValue": "0"
     }
   ]
 }

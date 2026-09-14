@@ -17,14 +17,6 @@ table Dim_Cell
 
 		annotation SummarizationSetBy = Automatic
 
-	column Plant
-		dataType: string
-		lineageTag: a0b17df8-bfed-53b4-af85-77352e67c222
-		summarizeBy: none
-		sourceColumn: Plant
-
-		annotation SummarizationSetBy = Automatic
-
 	column Process_Area
 		dataType: string
 		lineageTag: 7a6cd2a6-1635-5a66-bee5-a1514ba84b61
@@ -79,14 +71,6 @@ table Dim_Cell
 
 		annotation SummarizationSetBy = Automatic
 
-	column Last_PM_WO_No
-		dataType: string
-		lineageTag: c8fc54f7-feed-50c5-be95-acec50d8d2ce
-		summarizeBy: none
-		sourceColumn: Last_PM_WO_No
-
-		annotation SummarizationSetBy = Automatic
-
 	column Next_PM_Due_Date_Calendar
 		dataType: dateTime
 		lineageTag: f03a9f32-13d9-56a3-af95-358ff3dd6ab1
@@ -94,15 +78,6 @@ table Dim_Cell
 		sourceColumn: Next_PM_Due_Date_Calendar
 		formatString: yyyy-mm-dd
 		annotation UnderlyingDateTimeDataType = Date
-
-		annotation SummarizationSetBy = Automatic
-
-	column Avg_Monthly_Std_Hours_L3M
-		dataType: double
-		lineageTag: 46b598c8-5cec-5171-ad59-bc019567b2dc
-		summarizeBy: none
-		sourceColumn: Avg_Monthly_Std_Hours_L3M
-		formatString: #,##0.00
 
 		annotation SummarizationSetBy = Automatic
 
@@ -180,22 +155,19 @@ table Dim_Cell
 				let
 				    Source = fnGetTable("Cell_Master", "01_PM_Master_Data.xlsx", "Cell_Master"),
 
-				    Keys = fnCleanKeys(Source, {"Cell_ID", "Last_PM_WO_No"}),
+				    Keys = fnCleanKeys(Source, {"Cell_ID"}),
 				    Bools = fnYesNo(Keys, {"Active"}),
 
 				    Typed = Table.TransformColumnTypes(Bools, {
 				        {"Cell_ID",                   type text},
 				        {"Cell_Name",                 type text},
-				        {"Plant",                     type text},
 				        {"Process_Area",              type text},
 				        {"Machine_Count",             Int64.Type},
 				        {"PM_Trigger_Hours",          Int64.Type},
 				        {"Calendar_Backstop_Months",  Int64.Type},
 				        {"Cum_Std_Hours_Since_PM",    type number},
 				        {"Last_PM_Date",              type date},
-				        {"Last_PM_WO_No",             type text},
 				        {"Next_PM_Due_Date_Calendar", type date},
-				        {"Avg_Monthly_Std_Hours_L3M", type number},
 				        {"Owner_Supervisor",          type text},
 				        {"Criticality",               type text},
 				        {"Active",                    type logical}
