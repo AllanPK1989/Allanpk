@@ -170,3 +170,26 @@ def test_health_says_what_is_configured_without_disclosing_it(monkeypatch):
         cfg = c.get("/api/health").json()["config"]
     assert cfg == {"app_token_set": True, "app_token_length": 12, "finnhub_key_set": True}
     assert "s3cret-value" not in str(cfg)
+
+
+def test_wealth_endpoint_returns_both_books_and_one_total(client):
+    w = client.get("/api/wealth").json()
+    assert {"totals", "sides", "by_class", "positions", "us", "india"} <= set(w)
+    assert w["totals"]["value_inr"] > 0
+    assert len(w["sides"]) == 2
+    # the combined total is the two books at one rate, not two separate sums
+    assert w["totals"]["value_inr"] == pytest.approx(
+        w["india"]["totals"]["value"] + w["us"]["totals"]["value"] * w["usdinr"], abs=2)
+
+
+def test_india_endpoint_is_gated_and_shaped(client):
+    b = client.get("/api/india").json()
+    assert b["totals"]["holdings"] == 39
+    assert set(b["by_class"]) >= {"India equity", "Debt / cash", "Unlisted / pre-IPO"}
+    assert b["feed"]["priceable"] == 36        # the 3 unlisted have no market price
+
+
+def test_health_reports_india_and_fx(client):
+    h = client.get("/api/health").json()
+    assert h["india"]["holdings"] == 39
+    assert "rate" in h["fx"] and h["fx"]["rate"] > 0

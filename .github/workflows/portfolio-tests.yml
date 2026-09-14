@@ -30,7 +30,8 @@ jobs:
         working-directory: us-portfolio
         run: |
           python build_data.py
+          python build_india.py
           python webapp/build_frontend.py
           git diff --exit-code -- dashboard.html dashboard.local.html \
-            webapp/static/index.html data/portfolio.json \
+            webapp/static/index.html data/portfolio.json data/india.json \
           || { echo "::error::Generated files are stale. Run build_data.py and webapp/build_frontend.py, then commit."; exit 1; }

@@ -23,7 +23,10 @@ from fastapi.staticfiles import StaticFiles
 
 from . import calendar_us
 from .book import Book
+from .fx import FxRate
+from .india import AmfiNavs, IndiaBook
 from .providers import QuoteService
+from .wealth import combine
 
 logging.basicConfig(level=os.environ.get("LOG_LEVEL", "INFO"))
 log = logging.getLogger("portfolio")
@@ -37,7 +40,10 @@ APP_TOKEN = (os.environ.get("APP_TOKEN") or "").strip()
 FINNHUB_SET = bool((os.environ.get("FINNHUB_API_KEY") or "").strip())
 
 book = Book()
+india = IndiaBook()
 quotes = QuoteService(ttl=CACHE_TTL)
+navs = AmfiNavs()
+fx = FxRate()
 
 
 @asynccontextmanager
@@ -52,10 +58,16 @@ async def lifespan(_app: FastAPI):
     if not os.environ.get("SKIP_WARMUP"):
         async def warm():
             try:
-                got = await quotes.get(book.tickers)
-                log.info("warm-up: %d/%d quotes", len(got), len(book.tickers))
+                got = await quotes.get(book.tickers + india.etf_symbols)
+                log.info("warm-up: %d/%d quotes", len(got),
+                         len(book.tickers) + len(india.etf_symbols))
             except Exception as e:                        # noqa: BLE001
                 log.warning("warm-up failed, serving reference prices: %s", e)
+            for coro, what in ((navs.load(), "AMFI NAVs"), (fx.get(), "FX")):
+                try:
+                    await coro
+                except Exception as e:                    # noqa: BLE001
+                    log.warning("%s unavailable: %s", what, e)
         task = asyncio.create_task(warm())
     yield
     if task and not task.done():
@@ -77,8 +89,21 @@ def require_token(x_app_token: str | None = Header(default=None),
         raise HTTPException(status_code=401, detail="bad or missing token")
 
 
+async def _india_payload(quotes_got: dict) -> dict:
+    marked = india.mark(await navs.load(), quotes_got)
+    marked["feed"] = {
+        "live": marked["live_count"] > 0,
+        "live_count": marked["live_count"],
+        "priceable": marked["priceable"],
+        "total": marked["totals"]["holdings"],
+        "navs": navs.health(),
+        "reference_date": marked["as_of"],
+    }
+    return marked
+
+
 async def _payload(force: bool = False) -> dict:
-    got = await quotes.get(book.tickers, force=force)
+    got = await quotes.get(book.tickers + india.etf_symbols, force=force)
     marked = book.mark(got)
     now = time.time()
     ages = []
@@ -104,6 +129,24 @@ async def _payload(force: bool = False) -> dict:
 @app.get("/api/portfolio", dependencies=[Depends(require_token)])
 async def api_portfolio():
     return await _payload()
+
+
+@app.get("/api/india", dependencies=[Depends(require_token)])
+async def api_india():
+    got = await quotes.get(india.etf_symbols)
+    return await _india_payload(got)
+
+
+@app.get("/api/wealth", dependencies=[Depends(require_token)])
+async def api_wealth(force: bool = Query(default=False)):
+    """Both books and one net worth, at a single fetched rate."""
+    us = await _payload(force=force)
+    ind = await _india_payload(await quotes.get(india.etf_symbols))
+    rate = await fx.get(force=force)
+    out = combine(us, ind, rate, fx.health())
+    out["us"], out["india"] = us, ind
+    out["market"] = us["market"]
+    return out
 
 
 @app.post("/api/refresh", dependencies=[Depends(require_token)])
@@ -132,6 +175,9 @@ async def api_health():
     h = quotes.health()
     return JSONResponse(
         {"ok": healthy,
+         "india": {"holdings": india.base["totals"]["holdings"],
+                   "navs": navs.health()},
+         "fx": fx.health(),
          "degraded": h["cached_tickers"] == 0,
          # Enough to diagnose a rejected token without disclosing it. The
          # length separates "I pasted nothing" from "I pasted the wrong

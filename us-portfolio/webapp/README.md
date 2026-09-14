@@ -19,6 +19,24 @@ published Artifact the content policy blocks the request before it is sent.
 Neither is fixable from the page, which is why the earlier static version could
 never go live. This app fetches server-side, where those rules do not apply.
 
+## Three views
+
+**Wealth** — one net worth across both books, converted at a fetched USD/INR
+rate. Four allocation buckets that actually change the risk, and every holding
+from both books in one ranked list, because single-name concentration does not
+respect a border.
+
+**India** — 39 holdings: 28 mutual funds from the CAS, 8 listed ETFs, and 3
+unlisted pre-IPO positions. Funds reprice against AMFI's daily NAV file, ETFs
+against their NSE lines, and the unlisted names stay at the statement value and
+say so.
+
+**US** — the dashboard as it was: calls, valuation map, holdings, watchlist.
+
+Foreign equity bought through Indian funds — the FANG+ feeder, the China fund,
+the global innovation FoF — is counted as overseas rather than India. Calling it
+India would understate how much of the book really sits abroad.
+
 ## What it does
 
 - **Three quote sources, tried in order, each with a cooldown.** Yahoo first,
@@ -55,7 +73,7 @@ Copy `.env.example`. Every value has a working default.
 
 | | |
 |---|---|
-| `FINNHUB_API_KEY` | free key from finnhub.io; needed for live quotes on a deployed host |
+| `FINNHUB_API_KEY` | free key from finnhub.io; needed for live US quotes on a deployed host |
 | `QUOTE_TTL` | seconds a quote is reused before refetching (default 60) |
 | `APP_TOKEN` | shared secret; empty means no auth. The page prompts for it and remembers it per browser |
 | `PORT` | listen port (container hosts set this) |
