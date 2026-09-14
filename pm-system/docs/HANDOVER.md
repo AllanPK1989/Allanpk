@@ -75,7 +75,7 @@ On the 12 months of data supplied: **7 of 88 breakdowns (8.0%), carrying 28.1 of
 | **Power Automate** | Build sheets for 9 flows, every expression written out |
 | **QR labels** | 30 labels, 50×30 mm, tested; printable A4 sheets |
 | **Forms** | 5 forms, every question listed with the column it lands in, plus the pre-filled-link procedure |
-| **Documentation** | Runbook, assumptions, 36 UAT cases, 1-page bilingual shop-floor SOP |
+| **Documentation** | Runbook, assumptions, 36 UAT cases, 1-page shop-floor SOP |
 | **Power Apps** | Phase 2 spec + licence business case (not licensed today) |
 
 ### Data loaded per list
@@ -104,7 +104,7 @@ without a reason, and record the reason if you do.
 | 1 | Do cancelled work orders count against compliance? | **No** — excluded from `PM Due Count` |
 | 2 | Does a skipped machine block cell closure? | **No** — the cell closes, flagged partial |
 | 3 | Is `Actual_Std_Hours` an actual or a capacity figure? | **Capacity** — so proration is by **working days** |
-| 4 | Is the Tamil label wording right? | **Yes** — approved for print |
+| 4 | Should the sticker carry a second language? | **No — English only** |
 | 5 | Are Power Apps rights available? | **No** — go live on Forms; canvas app is Phase 2 |
 | 6 | Who owns the nine flows? | **An individual account** — see §6, this needs managing |
 | 7 | Retention on the transaction lists? | **None** — keep everything |
@@ -349,7 +349,7 @@ Five more gates, all currently passing. **None is needed to build or run the sys
 they are for whoever maintains it.
 
 ```bash
-python tools/check_consistency.py                  # 44 checks: everything agrees
+python tools/check_consistency.py                  # 46 checks: everything agrees
 python tools/prepare_sharepoint_data.py --strict   # 0 errors, 0 warnings, 2,422 rows
 python tools/validate_model.py                     # 0 errors, 0 orphaned measures
 python tools/verify_measures.py                    # 65 measures, none blank

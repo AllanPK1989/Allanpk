@@ -370,6 +370,36 @@ def main():
           else f"switch not found" if not handled
           else f"UNHANDLED: {sorted(types_used - handled)}")
 
+    # ---------------------------------------------------------------- label language
+    # The plant asked for English-only stickers. Both generators and the shop-floor
+    # SOP have to agree on that, and a stray Tamil string in one of them would print
+    # thirty times before anyone noticed.
+    print("\nSticker and SOP language")
+    tamil = re.compile("[\u0B80-\u0BFF]")
+    offenders = []
+    for f in ROOT.rglob("*"):
+        if not f.is_file() or {"node_modules", ".git", "input"} & set(f.parts):
+            continue
+        if f.suffix.lower() in (".png", ".pdf", ".xlsx", ".docx", ".pptx"):
+            continue
+        try:
+            body = f.read_text(errors="ignore")
+        except OSError:
+            continue
+        for i, line in enumerate(body.splitlines(), 1):
+            if tamil.search(line):
+                offenders.append(f"{f.relative_to(ROOT)}:{i}")
+    check("no deliverable carries a second-language string", not offenders,
+          "; ".join(offenders[:4]) if offenders else "English only, as asked")
+
+    # Both label generators must print the same instruction, or the two paths
+    # produce different stickers for the same machine.
+    py_line = re.search(r'ENGLISH_LINE\s*=\s*"([^"]*)"', read("qr/generate_qr_labels.py"))
+    js_line = re.search(r'var ENGLISH\s*=\s*"([^"]*)"', read("qr/browser/qr_labels.html"))
+    check("both label generators print the same instruction",
+          bool(py_line) and bool(js_line) and py_line.group(1) == js_line.group(1),
+          repr(py_line.group(1)) if py_line else "not found")
+
     # ---------------------------------------------------------------- the constraint
     print("\nDelivery constraint")
     banned = re.compile(r"\bclaude\b|\banthropic\b|\bchatgpt\b|\bcopilot\b|\bllm\b|"

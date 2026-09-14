@@ -30,7 +30,7 @@ Output lands in `qr/labels/`:
 │  ███ ▄▄ ███      MC-01-001               │   50 × 30 mm
 │  █ ▄ █ ▀ █       Power Press 25T         │
 │  ███ ▀▀ ███      CELL-01  Bay-6          │
-│  ▀▄▀ █▄█ ▀       தொடங்கும் முன் ஸ்கேன்…    │
+│  ▀▄▀ █▄█ ▀                               │
 │  ███ ▄▄ ███      Scan before starting PM │
 └──────────────────────────────────────────┘
    ≥ 25 mm QR
@@ -53,15 +53,8 @@ actually has.
 **Quiet zone of 2 modules.** The white border is part of the code. Do not crop it,
 and do not let the sticker cutter eat into it.
 
-**Tamil first, then English.** Tamil is the language most of this shop floor reads
-first. If no Tamil font is installed the line is **omitted**, not printed as empty
-boxes — a row of boxes on a sticker looks broken and undermines confidence in every
-other sticker on the floor. Install one and re-run:
-
-```bash
-sudo apt-get install fonts-lohit-taml       # Linux
-# Windows: Nirmala UI ships with the OS and is found automatically
-```
+**English only.** The label carries one instruction line, sized to use the space a
+second language would have taken, so it reads at arm's length under bay lighting.
 
 **Text is auto-fitted, never clipped.** Each line is measured against the space
 actually available beside the QR and the font shrinks until it fits. Machine_ID is

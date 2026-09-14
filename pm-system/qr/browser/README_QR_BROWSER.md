@@ -78,6 +78,6 @@ to exist before a sticker can point at it.
   reads. A label on a fuse machine gets oil, swarf and a wipe with solvent.
 - **25 mm minimum** — below that a phone struggles at arm's length under bay lighting.
 - **Machine ID printed large** — it is how a wrong sticker gets spotted by eye.
-- **Tamil above English.** It is the language most of the shop floor reads first. The
-  text auto-shrinks to fit rather than truncating: a half-printed instruction is worse
-  than none.
+- **One instruction line, English.** It is sized to use the space a second language
+  would have taken, so it reads at arm's length under bay lighting. All text auto-shrinks
+  to fit rather than truncating — a half-printed line is worse than none.

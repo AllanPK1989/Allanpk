@@ -72,9 +72,8 @@
            white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .mname { font-size:2.0mm; color:#1F2933; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .mctx  { font-size:1.6mm; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .mta   { font-size:1.7mm; color:var(--navy); margin-top:.7mm; white-space:nowrap;
-           overflow:hidden; text-overflow:ellipsis; }
-  .men   { font-size:1.7mm; color:var(--navy); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .men   { font-size:2.1mm; font-weight:600; color:var(--navy); margin-top:1.1mm;
+           white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
   /* ------------------------------------------------------------- checklist */
   .checklist { width:210mm; min-height:297mm; margin:0 auto 18px; background:#fff;
@@ -153,15 +152,13 @@
 (function () {
   "use strict";
 
-  var TAMIL   = "தொடங்கும் முன் " +
-                "ஸ்கேன் செய்யவும்";
   var ENGLISH = "Scan before starting PM";
   var PER_PAGE = 24;              // 3 across x 8 down
 
-  // Lines whose width has to be measured once they are in the document. A
-  // hard-coded font size was the first version, and it clipped the Tamil line on
-  // every label - which is the line most of the shop floor reads first, so a
-  // truncated one is worse than none at all.
+  // Lines whose width has to be measured once they are in the document. Hard-coded
+  // font sizes were the first version and they clipped text off the right edge,
+  // Machine_ID included - and that is the one thing on the sticker that must never
+  // be unreadable, because it is how a wrong sticker gets spotted by eye.
   var FIT = [];
 
   var siteEl = document.getElementById("site");
@@ -243,11 +240,10 @@
     // never be unreadable, because it is how a wrong sticker gets spotted.
     t.innerHTML =
       '<div class="mid"></div><div class="mname"></div><div class="mctx"></div>' +
-      '<div class="mta"></div><div class="men"></div>';
+      '<div class="men"></div>';
     t.querySelector(".mid").textContent = m.id;
     t.querySelector(".mname").textContent = m.name;
     t.querySelector(".mctx").textContent = m.cell + "  " + m.loc;
-    t.querySelector(".mta").textContent = TAMIL;
     t.querySelector(".men").textContent = ENGLISH;
     wrap.appendChild(t);
     FIT.push(t);
@@ -274,7 +270,7 @@
 
   // Shrink a line until it fits the width actually available beside the QR.
   // Measured, not assumed: the label has to survive whatever font the printing
-  // machine substitutes, and Tamil metrics vary more than Latin ones.
+  // machine substitutes.
   function shrinkToFit(el, startMm, minMm) {
     var avail = el.parentNode.clientWidth;
     if (!avail) return;
@@ -295,8 +291,7 @@
       shrinkToFit(t.querySelector(".mid"),   3.4, 2.0);
       shrinkToFit(t.querySelector(".mname"), 2.0, 1.4);
       shrinkToFit(t.querySelector(".mctx"),  1.6, 1.2);
-      shrinkToFit(t.querySelector(".mta"),   1.7, 1.1);
-      shrinkToFit(t.querySelector(".men"),   1.7, 1.1);
+      shrinkToFit(t.querySelector(".men"),   2.1, 1.4);
     });
     FIT.length = 0;
   }
@@ -382,7 +377,7 @@
 
     // The sheets have to be VISIBLE before anything is measured. Fitting while
     // the container is display:none measures every width as zero, the fit
-    // silently does nothing, and the Tamil line ships clipped.
+    // silently does nothing, and long lines ship clipped.
     sheetsEl.style.display = "block";
     fitAll();
 

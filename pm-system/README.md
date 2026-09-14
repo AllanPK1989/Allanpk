@@ -74,7 +74,7 @@ docs/
   IMPLEMENTATION_RUNBOOK.md   step-numbered, start to finish
   ASSUMPTIONS.md              every judgement call, with verified figures
   UAT_TEST_CASES.md           36 cases
-  TECHNICIAN_SOP_1PAGE.md     shop-floor SOP, printable, English + Tamil
+  TECHNICIAN_SOP_1PAGE.md     shop-floor SOP, printable
   POWERAPPS_LICENCE_CASE.pptx business case for the Power Apps licence request
   DATA_DICTIONARY.md          copy of the input dictionary
 
@@ -161,7 +161,7 @@ completed work order left with its counter unreset.
 **With the optional Python toolkit**, five more, all currently passing:
 
 ```bash
-python tools/check_consistency.py         # 44 checks: schema, data, model, docs agree
+python tools/check_consistency.py         # 46 checks: schema, data, model, docs agree
 python tools/prepare_sharepoint_data.py   # 0 errors, 0 warnings on the supplied data
 python tools/validate_model.py            # 0 errors, 0 orphaned measures
 python tools/verify_measures.py           # 65 measures recomputed, none blank

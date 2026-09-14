@@ -540,7 +540,7 @@ each one as you do it.
 
 ### Print the SOP
 
-`docs\TECHNICIAN_SOP_1PAGE.md` — one page, English and Tamil. Print it, laminate it,
+`docs\TECHNICIAN_SOP_1PAGE.md` — one page. Print it, laminate it,
 put one at every cell.
 
 ### Train the technicians — 30 minutes, standing at a machine

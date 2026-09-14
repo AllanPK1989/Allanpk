@@ -1,6 +1,6 @@
 # Data Validation Report
 
-Generated: 2026-09-14 12:47
+Generated: 2026-09-14 12:52
 Source: `input`  ->  Output: `sharepoint/data`
 
 **0 error(s), 0 warning(s), 13 column group(s) excluded by design.**

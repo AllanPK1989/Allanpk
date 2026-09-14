@@ -401,7 +401,7 @@ four, every PM interval is wrong from that day on and no dashboard will tell you
 
 - **Technicians, 30 min:** scan, start, checklist, submit. Why the name dropdown
   matters — it is the only record of who did the work. (`docs/TECHNICIAN_SOP_1PAGE.md`
-  is a bilingual one-pager to print and laminate at every cell.)
+  is a one-pager to print and laminate at every cell.)
 - **Supervisors, 1 h:** the allotted list, the daily digest, the **NOT OK Findings**
   view and deciding which findings become work orders.
 - **Go live on a Monday**, not a Friday. Run the first monthly upload with someone
@@ -422,7 +422,7 @@ docs/
   DATA_DICTIONARY.md        every one of the 138 columns, and why it exists
   ASSUMPTIONS.md            every judgement call, with verified figures
   UAT_TEST_CASES.md         36 cases
-  TECHNICIAN_SOP_1PAGE.md   bilingual shop-floor sheet, print and laminate
+  TECHNICIAN_SOP_1PAGE.md   shop-floor sheet, print and laminate
   POWERAPPS_LICENCE_CASE.pptx   business case for the Phase 2 canvas app
 
 sharepoint/
@@ -475,7 +475,7 @@ later, and for the day the source data changes.
 | `tools/generate_sharepoint_schema.py` | Rebuilds the 14 schema files and the manifest | You added or removed a column |
 | `tools/verify_measures.py` | Recomputes 65 dashboard measures in plain Python, independently of the DAX | You want the dashboard's numbers checked by something other than the dashboard |
 | `tools/validate_model.py` | Confirms every reference in every visual, relationship and measure resolves | You edited the Power BI model |
-| `tools/check_consistency.py` | 44 checks that the schema, data, model, flows, views and all documents agree | You changed anything and want one command that says whether it still hangs together |
+| `tools/check_consistency.py` | 46 checks that the schema, data, model, flows, views and all documents agree | You changed anything and want one command that says whether it still hangs together |
 | `qr/generate_qr_labels.py` | The original QR generator, with optical decode verification | You prefer a command line to the browser page |
 
 If you can run Python 3.9+:

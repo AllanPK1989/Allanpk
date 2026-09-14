@@ -1,4 +1,4 @@
-# PM — what to do  ·  பிஎம் — என்ன செய்வது
+# PM — what to do
 
 **Print this. Laminate it. Put one at every cell.**
 
@@ -11,21 +11,18 @@
 
 > Everyone signs in with the same account. Your name here is the **only** record of
 > who did the work. Wrong name — someone else gets asked about your job.
->
-> எல்லோரும் ஒரே கணக்கில் உள்நுழைகிறோம். உங்கள் பெயர் மட்டுமே யார்
-> வேலை செய்தார் என்பதைக் காட்டும். எப்போதும் தேர்ந்தெடுக்கவும்.
 
 ---
 
-## To do a PM  ·  பிஎம் செய்ய
+## To do a PM
 
-| | Step | செய்ய வேண்டியது |
-|---|---|---|
-| **1** | **SCAN** the sticker on the machine | ஸ்டிக்கரை ஸ்கேன் செய்யவும் |
-| **2** | Check the **machine name** on screen is the machine in front of you | திரையில் உள்ள பெயரைச் சரிபார்க்கவும் |
-| **3** | Tap **START PM** | START PM அழுத்தவும் |
-| **4** | Work the checklist — **one check at a time** | ஒவ்வொன்றாகச் சரிபார்க்கவும் |
-| **5** | Tap **SUBMIT** at the end | SUBMIT அழுத்தவும் |
+| | Step |
+|---|---|
+| **1** | **SCAN** the sticker on the machine |
+| **2** | Check the **machine name** on screen is the machine in front of you |
+| **3** | Tap **START PM** |
+| **4** | Work the checklist — **one check at a time** |
+| **5** | Tap **SUBMIT** at the end |
 
 **The machine leaves your list when you submit.** That is how you know it is done.
 
@@ -56,7 +53,7 @@ in 4 minutes gets flagged and someone will come and ask.
 | **START PM** | Beginning a planned PM |
 | **COMPLETE CHECKLIST** | Doing the checks |
 | **REPORT BREAKDOWN** | The machine has stopped or failed |
-| **REQUEST SPARE** | You need a part |
+| **SPARE FITTED** | You have replaced a part — record what failed and why |
 | **LOG ABNORMALITY** | Something is not right yet, but has not failed — a leak, a noise, heat, vibration |
 
 **Log abnormalities.** An air leak takes 20 seconds to record and costs money every

@@ -575,7 +575,8 @@ def main():
     run_integrity_checks(data)
 
     # Write one CSV per list. UTF-8 with BOM so Excel and SharePoint both read
-    # Tamil/rupee characters correctly, and CRLF so PnP's CSV reader is happy.
+    # the rupee sign and any other non-ASCII correctly, and CRLF so PnP's CSV
+    # reader is happy.
     counts = []
     for table in LOAD_ORDER:
         if table not in data:

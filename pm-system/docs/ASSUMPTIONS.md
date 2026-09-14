@@ -249,16 +249,12 @@ people the system is broken.
 **6.2 Minimum 25 mm square.** Below that a mid-range Android camera struggles at the
 distance a technician actually holds a phone, in the light a shop floor actually has.
 
-**6.3 The Tamil line is omitted when no Tamil font is present**, rather than printed
-as empty boxes. A row of boxes on a sticker looks broken and undermines confidence in
-every other sticker on the floor.
+**6.3 The label is English only.** A second language was specified and then withdrawn
+at the plant's request — see decision 4 in §8. The instruction line now takes the space
+the second line held, so it reads at arm's length under bay lighting rather than being
+squinted at.
 
-**6.4 Tamil text contains no Latin characters.** A Tamil font has no Latin glyphs, so
-an embedded "PM" renders as two boxes. The line reads
-"தொடங்கும் முன் ஸ்கேன் செய்யவும்" — *scan before starting*.
-**CONFIRM** the wording with a Tamil-speaking supervisor before printing 30 stickers.
-
-**6.5 Label text is auto-fitted, never clipped.** Machine_ID is the one thing on the
+**6.4 Label text is auto-fitted, never clipped.** Machine_ID is the one thing on the
 sticker that must always be readable.
 
 ---
@@ -300,7 +296,7 @@ All eight confirmed by the system owner. Recorded here as the decisions of recor
 | 1 | Should cancelled work orders count against compliance? | **No** | As built — excluded from `PM Due Count` |
 | 2 | Should a skipped machine block cell closure? | **No — closes, flagged partial** | As built. Review `Skip_Reason` monthly |
 | 3 | Is `Actual_Std_Hours` an actual or a capacity figure? | **Capacity** | **Changed.** Proration is now by working days via `Plant_Calendar` (§2.5) |
-| 4 | Is the Tamil label wording right? | **Yes** | "தொடங்கும் முன் ஸ்கேன் செய்யவும்" — approved for print |
+| 4 | Should the sticker carry a second language? | **No — English only** | **Reversed.** Originally specified bilingual and approved for print; the plant then asked for English only. Removed from the sticker, the technician SOP and both label generators. The instruction line was enlarged to use the freed space |
 | 5 | Are Power Apps rights available? | **No licence currently** | Path A (Forms) is the go-live route. Canvas app is Phase 2, subject to a licence request — see §8.1 |
 | 6 | Who owns the nine flows? | **An individual account** | Accepted with mitigations — see §8.2. Flow 9 becomes a weekly heartbeat so a silent failure is detectable |
 | 7 | Retention on the transaction lists? | **None — keep everything** | Accepted. Growth and the one real risk are in §8.3 |

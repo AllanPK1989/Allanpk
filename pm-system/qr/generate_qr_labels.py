@@ -8,7 +8,7 @@ Each label carries:
     * the QR itself, encoding QR_Payload_URL (the Machine Hub view for that machine)
     * Machine_ID in large bold text, so a technician can read it without a phone
     * Machine_Name and Cell_ID, so a wrong sticker is obvious immediately
-    * "Scan before starting PM" in Tamil and English
+    * "Scan before starting PM"
 
 Label geometry: 50 x 30 mm, laid out 3 across x 8 down on A4, matching standard
 pre-cut sticker sheets.
@@ -63,10 +63,6 @@ MARGIN_Y_MM = (SHEET_H_MM - ROWS * LABEL_H_MM) / 2
 
 QR_MIN_MM = 25.0          # never smaller: below this a phone struggles at arm's length
 
-# Tamil script only - no Latin characters. A Tamil font has no Latin glyphs, so
-# an embedded "PM" renders as two empty boxes, which looks like a broken label
-# and undermines confidence in every sticker on the shop floor.
-TAMIL_LINE = "தொடங்கும் முன் ஸ்கேன் செய்யவும்"
 ENGLISH_LINE = "Scan before starting PM"
 
 PRIMARY = (12, 53, 73)
@@ -85,12 +81,6 @@ FONT_CANDIDATES = {
              "C:/Windows/Fonts/segoeuib.ttf", "C:/Windows/Fonts/arialbd.ttf"],
     "regular": ["DejaVuSans.ttf", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
                 "C:/Windows/Fonts/segoeui.ttf", "C:/Windows/Fonts/arial.ttf"],
-    # Latin fonts have no Tamil glyphs. Without one of these the Tamil line
-    # renders as a row of boxes, which is worse than printing nothing.
-    "tamil": ["/usr/share/fonts/truetype/lohit-tamil/Lohit-Tamil.ttf",
-              "/usr/share/fonts/truetype/Lohit-Tamil.ttf",
-              "/usr/share/fonts/truetype/noto/NotoSansTamil-Regular.ttf",
-              "C:/Windows/Fonts/Nirmala.ttf", "C:/Windows/Fonts/Latha.ttf"],
 }
 
 
@@ -235,13 +225,9 @@ def render_label(machine):
         ctx = ellipsize(draw, ctx, f, avail)
         lines.append((f, ctx, MUTED, text_size(draw, ctx, f)[1]))
 
-    # Tamil first - it is the language most of the shop floor reads first.
-    # Omitted entirely rather than printed as boxes when no Tamil font is present.
-    ft, _, fth = fit_font(draw, "tamil", TAMIL_LINE, avail, 1.7, 1.2)
-    if ft:
-        lines.append((ft, TAMIL_LINE, PRIMARY, fth))
-
-    fe, _, feh = fit_font(draw, "regular", ENGLISH_LINE, avail, 1.7, 1.2)
+    # The instruction line carries the space the second language used to take, so
+    # it reads at arm's length under bay lighting rather than being squinted at.
+    fe, _, feh = fit_font(draw, "bold", ENGLISH_LINE, avail, 2.1, 1.4)
     if fe:
         lines.append((fe, ENGLISH_LINE, PRIMARY, feh))
 
@@ -383,11 +369,6 @@ def main():
 
     print(f"Rendering {len(machines)} label(s) at {DPI} dpi "
           f"({LABEL_W_MM:g} x {LABEL_H_MM:g} mm, QR >= {QR_MIN_MM:g} mm, ECC level H)")
-
-    if load_font("tamil", 20) is None:
-        print("  NOTE: no Tamil font found. The Tamil instruction line is omitted rather")
-        print("        than printed as boxes. Install Lohit-Tamil or Noto Sans Tamil,")
-        print("        or on Windows use Nirmala UI, then re-run.")
 
     for m in machines:
         img = render_label(m)
