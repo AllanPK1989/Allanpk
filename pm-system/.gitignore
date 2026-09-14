@@ -12,7 +12,8 @@ cache.abf
 # Generated label images are committed on purpose (they are a deliverable),
 # but the working folder Desktop creates next to a .pbip is not.
 
-# npm working files for the deck generator
+# npm working files for the document generators.
+# package.json IS tracked - without it nobody can reinstall the two dependencies
+# and regenerate the Word files or the licence deck from a fresh clone.
 node_modules/
 package-lock.json
-package.json

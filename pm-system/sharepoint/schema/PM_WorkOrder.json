@@ -19,7 +19,8 @@
     "WO_Status",
     "Planned_Month",
     "WO_Created_Date",
-    "Planned_End_Date"
+    "Planned_End_Date",
+    "Reset_Applied"
   ],
   "Fields": [
     {
@@ -134,7 +135,7 @@
       "InternalName": "Reset_Applied",
       "DisplayName": "Reset_Applied",
       "Required": false,
-      "Indexed": false,
+      "Indexed": true,
       "Type": "Boolean",
       "DefaultValue": "0"
     },

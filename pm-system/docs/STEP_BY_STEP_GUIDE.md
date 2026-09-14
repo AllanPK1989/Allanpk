@@ -161,6 +161,32 @@ is created. It prints every list and column it *would* make.
 
 Read it. You should see **14 lists, 138 columns, 5 libraries** and `Failed : 0`.
 
+### ⚠ If it says you need admin approval
+
+Many corporate tenants block unapproved applications, and `Connect-PnPOnline` then
+fails with a consent error that does not tell you what to do. It is not a problem
+with these scripts and it is not something you can click past.
+
+Someone with Entra (Azure AD) rights registers an application **once**:
+
+```powershell
+Register-PnPEntraIDAppForInteractiveLogin `
+    -ApplicationName "EPQPL PM Provisioning" `
+    -Tenant yourcompany.onmicrosoft.com `
+    -Interactive
+```
+
+It prints a **client id**. Add `-ClientId "<that id>"` to all three scripts from then
+on:
+
+```powershell
+.\provision_lists.ps1 -SiteUrl "<your site>" -ClientId "<that id>" -WhatIf
+```
+
+Ask for this **before** your provisioning day if you are not sure. It is a ten-minute
+job for whoever holds the rights, and a half-day delay if you discover it at 9 a.m.
+on the day.
+
 **3. Now do it for real.** Same command, without `-WhatIf`:
 
 ```powershell
@@ -540,7 +566,7 @@ and it is the step nobody will remember in a year.
 | 5th | Review cells at 90%+. Agree PM dates with production | Supervisor |
 | **25th** | **Freeze next month's plan** | Supervisor |
 | Monthly | Review every skipped machine and why | Manager |
-| Monthly | Check `Breakdowns After PM` — **is the PM actually working?** | Manager |
+| Monthly | Check `Breakdowns After PM (7d)` — **is the PM actually working?** | Manager |
 | Each December | Mark next year's holidays in `Plant_Calendar` | Planner |
 
 ---

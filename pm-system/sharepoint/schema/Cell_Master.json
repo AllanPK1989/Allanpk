@@ -17,7 +17,8 @@
     "Cell_ID",
     "Active",
     "Cum_Std_Hours_Since_PM",
-    "Last_PM_Date"
+    "Last_PM_Date",
+    "Next_PM_Due_Date_Calendar"
   ],
   "Fields": [
     {
@@ -97,7 +98,7 @@
       "InternalName": "Next_PM_Due_Date_Calendar",
       "DisplayName": "Next_PM_Due_Date_Calendar",
       "Required": false,
-      "Indexed": false,
+      "Indexed": true,
       "Type": "DateTime",
       "DisplayFormat": "DateOnly"
     },

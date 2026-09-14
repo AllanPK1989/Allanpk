@@ -51,6 +51,21 @@ param(
     [ValidatePattern('^https://')]
     [string]$SiteUrl,
 
+    # Entra (Azure AD) application id to authenticate with.
+    #
+    # Leave it unset and PnP uses its own multi-tenant app, which is what most
+    # tenants allow. Many corporate tenants do not: an administrator has blocked
+    # unapproved applications, and Connect-PnPOnline fails with a consent error
+    # that does not say what to do about it.
+    #
+    # The fix is a one-time registration by someone with the rights:
+    #     Register-PnPEntraIDAppForInteractiveLogin `
+    #         -ApplicationName "EPQPL PM Provisioning" `
+    #         -Tenant yourcompany.onmicrosoft.com `
+    #         -Interactive
+    # It prints a client id. Pass it here, and to the other two scripts.
+    [string]$ClientId,
+
     [string]$SchemaPath = (Join-Path $PSScriptRoot 'schema'),
 
     [switch]$SkipLibraries,
@@ -295,7 +310,12 @@ if (-not $WhatIfPreference) {
     Import-Module PnP.PowerShell -ErrorAction Stop
 
     Write-Step 'Connecting'
-    Connect-PnPOnline -Url $SiteUrl -Interactive -ErrorAction Stop
+    $connect = @{ Url = $SiteUrl; Interactive = $true; ErrorAction = 'Stop' }
+    if ($ClientId) {
+        $connect.ClientId = $ClientId
+        Write-Ok "using registered application $ClientId"
+    }
+    Connect-PnPOnline @connect
     $web = Get-PnPWeb
     Write-Ok "connected to '$($web.Title)'"
 }

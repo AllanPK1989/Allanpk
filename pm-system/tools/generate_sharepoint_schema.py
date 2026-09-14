@@ -11,9 +11,12 @@ Run this only when the data dictionary changes.
 
 import json
 import os
+import pathlib
+import re
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+HERE = pathlib.Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
 from prepare_sharepoint_data import TYPES, LOAD_ORDER  # noqa: E402
 
 # --------------------------------------------------------------------------
@@ -132,6 +135,11 @@ ALSO_REQUIRED = {
 # Indexed columns. SharePoint allows 20 indexes per list; every column used in a
 # view filter or a Power Automate "Get items" filter query needs one, or the
 # 5,000-item list view threshold will stop the flow dead one day without warning.
+#
+# Declared here are the columns the FLOWS filter on. The columns the VIEWS filter
+# on are added automatically below, read out of views/_views.json - a hand-kept
+# list drifts the moment somebody adds a view, and the symptom appears years later
+# as a query that suddenly fails on a list that grew.
 INDEXES = {
     "Cell_Master": ["Cell_ID", "Active", "Cum_Std_Hours_Since_PM", "Last_PM_Date"],
     "Machine_Master": ["Machine_ID", "Cell_ID", "Active", "Checklist_ID"],
@@ -139,8 +147,11 @@ INDEXES = {
     "Technician_Master": ["Tech_ID", "Active"],
     "Spare_Master": ["Spare_Code", "Active"],
     "StdHours_Monthly": ["Upload_Month", "Cell_ID"],
+    # Reset_Applied: the daily digest filters completed work orders on it to find
+    # a PM that closed without zeroing its counter. No view filters on it, so it
+    # cannot be derived - and it is the query whose silent failure costs most.
     "PM_WorkOrder": ["WO_No", "Cell_ID", "WO_Status", "Planned_Month",
-                     "WO_Created_Date", "Planned_End_Date"],
+                     "WO_Created_Date", "Planned_End_Date", "Reset_Applied"],
     "PM_Machine_Task": ["Task_ID", "WO_No", "Machine_ID", "Cell_ID", "Task_Status",
                         "Scan_End_Time"],
     "Checklist_Response": ["Response_ID", "WO_No", "Machine_ID", "Result",
@@ -151,6 +162,28 @@ INDEXES = {
     "PM_Plan_Calendar": ["Plan_Month", "Cell_ID", "Adherence_Status", "Planned_Date"],
     "Plant_Calendar": ["Calendar_Date", "Is_Working_Day"],
 }
+
+
+def _index_columns_from_views():
+    """Union in every column a provisioned view filters on.
+
+    A view's CAML query names its filter columns in <FieldRef Name='...'>. Any of
+    those that is a real column on that list must be indexed, or the view breaks
+    once the list passes 5,000 items - silently, and long after anyone remembers
+    why the view was written.
+    """
+    import json as _json
+    views_file = HERE.parent / "sharepoint" / "views" / "_views.json"
+    if not views_file.exists():
+        return
+    for v in _json.loads(views_file.read_text())["Views"]:
+        lst, cols = v["List"], TYPES.get(v["List"], [])
+        for name in re.findall(r"<FieldRef Name='([^']+)'", v.get("Query", "")):
+            if name in cols and name not in INDEXES.setdefault(lst, []):
+                INDEXES[lst].append(name)
+
+
+_index_columns_from_views()
 
 DESCRIPTIONS = {
     "Cell_Master": "One row per production cell. Holds the running standard-hours counter that triggers PM.",

@@ -4,7 +4,7 @@
 
 ```
 PM_Dashboard.pbip                  entry point — open this in Power BI Desktop
-PM_Dashboard.SemanticModel/        TMDL: 17 tables, 42 relationships, 94 measures
+PM_Dashboard.SemanticModel/        TMDL: 15 tables, 30 relationships, 85 measures
 PM_Dashboard.Report/               PBIR: 9 pages, 116 visuals
 theme/EPQPL_PM_Theme.json          report theme (also registered inside the report)
 m_queries/*.pq                     one Power Query script per table, commented

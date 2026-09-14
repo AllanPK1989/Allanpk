@@ -15,7 +15,8 @@
   "PrimaryKey": "Spare_Code",
   "IndexedColumns": [
     "Spare_Code",
-    "Active"
+    "Active",
+    "Current_Stock"
   ],
   "Fields": [
     {
@@ -80,7 +81,7 @@
       "InternalName": "Current_Stock",
       "DisplayName": "Current_Stock",
       "Required": false,
-      "Indexed": false,
+      "Indexed": true,
       "Type": "Number",
       "Decimals": 0
     },

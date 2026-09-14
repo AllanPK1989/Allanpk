@@ -43,7 +43,7 @@
       "Title": "Cell_Master",
       "SchemaFile": "Cell_Master.json",
       "FieldCount": 12,
-      "IndexCount": 4
+      "IndexCount": 5
     },
     {
       "Title": "Technician_Master",
@@ -55,7 +55,7 @@
       "Title": "Spare_Master",
       "SchemaFile": "Spare_Master.json",
       "FieldCount": 10,
-      "IndexCount": 2
+      "IndexCount": 3
     },
     {
       "Title": "Checklist_Master",
@@ -85,7 +85,7 @@
       "Title": "PM_WorkOrder",
       "SchemaFile": "PM_WorkOrder.json",
       "FieldCount": 13,
-      "IndexCount": 6
+      "IndexCount": 7
     },
     {
       "Title": "PM_Machine_Task",

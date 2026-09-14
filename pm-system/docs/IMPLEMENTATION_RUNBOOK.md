@@ -102,6 +102,21 @@ cd sharepoint
 .\provision_lists.ps1 -SiteUrl "https://<tenant>.sharepoint.com/sites/Maintenance" -WhatIf
 ```
 
+> **If this fails with a consent or admin-approval error**, your tenant blocks
+> unapproved applications. Someone with Entra rights registers one, once:
+>
+> ```powershell
+> Register-PnPEntraIDAppForInteractiveLogin -ApplicationName "EPQPL PM Provisioning" `
+>     -Tenant yourcompany.onmicrosoft.com -Interactive
+> ```
+>
+> Then pass the client id it prints as `-ClientId "<id>"` to all three scripts.
+> Confirm this **before** provisioning day — it is ten minutes for whoever holds
+> the rights and half a day lost if you find out on the morning.
+
+```powershell
+```
+
 Nothing is changed. It prints every list, every column and every index it would
 create. Read it. Confirm 14 lists, 138 columns, 5 libraries.
 
@@ -464,7 +479,7 @@ and the second question is the one production actually cares about.
 - [ ] All 14 lists created, row counts reconciled against `_ROW_COUNTS.csv`
 - [ ] `Plant_Calendar` holidays and shutdowns marked for the next 12 months
 - [ ] Column internal names verified unmangled on at least three lists
-- [ ] 12 views created; Machine Hub renders the five buttons on a phone
+- [ ] 11 views created; Machine Hub renders the five buttons on a phone
 - [ ] 5 Forms built, technician dropdown mandatory on all but **PM Start** (which asks nothing)
 - [ ] All 30 pre-filled URLs tested on a real phone
 - [ ] 30 QR labels printed, fitted and **individually scan-tested**

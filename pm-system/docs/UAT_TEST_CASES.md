@@ -50,8 +50,8 @@ CSVs written**.
 
 *Why it matters:* the work order no longer stores its own end date — the model takes
 the latest scan across its tasks. A completed work order with nothing scanned out
-therefore has no date at all, and drops silently out of `Breakdowns After PM`,
-`PM On-Time %` and `Avg PM Delay`. Every one of those reads *better* for the missing
+therefore has no date at all, and drops silently out of `Breakdowns After PM (7d)`,
+`PM On-Time %` and `Avg PM Delay (Days)`. Every one of those reads *better* for the missing
 row, which is the wrong direction for a fault to fail in.
 
 ### UAT-04 — Validator rejects a bad row · **HIGH**

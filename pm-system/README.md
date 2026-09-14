@@ -4,6 +4,14 @@ A complete preventive maintenance system for a fuse manufacturing plant, running
 SharePoint Online, Microsoft Forms, Power Automate, Power BI and (optionally) a
 Power Apps canvas app.
 
+> ## ▶ To build it: **[`BUILD.md`](BUILD.md)**
+>
+> One ordered guide, six stages, about six working days. It is the only document you
+> need open — everything else is detail it sends you to fetch.
+>
+> Prefer plain English at every step? `docs/STEP_BY_STEP_GUIDE.md` (also as `.docx`).
+> Handing the whole thing over to someone? `docs/HANDOVER.md`.
+
 ## The rules the system implements
 
 1. **PM is triggered per CELL, not per machine.** A cell is 3–4 machines.
@@ -29,7 +37,7 @@ input/                  the three source workbooks and the data dictionary (unmo
 
 sharepoint/
   provision_lists.ps1   creates 14 lists, 138 columns, indexes, 5 libraries
-  apply_views.ps1       12 views + the shop-floor column formatting
+  apply_views.ps1       11 views + the shop-floor column formatting
   load_data.ps1         batched CSV load with type conversion
   schema/*.json         one schema per list — the source of truth for the scripts
   views/_views.json     view definitions incl. "My Allotted PM List" and "Machine Hub"
@@ -38,7 +46,7 @@ sharepoint/
 
 powerbi/
   PM_Dashboard.pbip     open this in Power BI Desktop
-  PM_Dashboard.SemanticModel/   TMDL: 17 tables, 42 relationships, 94 measures
+  PM_Dashboard.SemanticModel/   TMDL: 15 tables, 30 relationships, 85 measures
   PM_Dashboard.Report/          PBIR: 9 pages, 116 visuals
   m_queries/*.pq        one commented Power Query script per table
   dax/measures.dax      every measure with a comment explaining it
@@ -139,7 +147,7 @@ Three independent checks, all runnable now:
 ```bash
 python tools/prepare_sharepoint_data.py   # 0 errors, 0 warnings on the supplied data
 python tools/validate_model.py            # 0 errors, 0 orphaned measures
-python tools/verify_measures.py           # 68 measures recomputed, none blank
+python tools/verify_measures.py           # 65 measures recomputed, none blank
 python qr/generate_qr_labels.py --test    # 30/30 QR codes round-trip
 pwsh sharepoint/provision_lists.ps1 -SiteUrl https://example.sharepoint.com/sites/x -WhatIf
 ```

@@ -189,8 +189,10 @@ def main():
     l3m = months[-3:]
     l3_rows = [s for s in std if s["Upload_Month"] in l3m]
     l3_total = sum(num(s["Actual_Std_Hours"], 0) for s in l3_rows)
-    record("02 Hours & Forecast", "Avg Monthly Std Hours L3M (all cells)",
-           l3_total / len(l3m), "h/month", f"window {l3m[0]} .. {l3m[-1]}")
+    record("02 Hours & Forecast", "Avg Monthly Std Hours L3M",
+           l3_total / len(l3m), "h/month",
+           f"all cells together, window {l3m[0]} .. {l3m[-1]} "
+           f"(in Power BI this measure evaluates per cell)")
 
     per_cell_l3m = {}
     for c in cells:
@@ -367,9 +369,9 @@ def main():
 
     # ---------------------------------------------------------------- 07
     by_tech = Counter(t["Completed_By"] for t in t_completed if t["Completed_By"])
-    record("07 Technician", "PMs Completed by Tech (max)",
+    record("07 Technician", "PMs Completed by Tech",
            max(by_tech.values()) if by_tech else None, "tasks",
-           ", ".join(f"{k}={v}" for k, v in sorted(by_tech.items())))
+           "highest of: " + ", ".join(f"{k}={v}" for k, v in sorted(by_tech.items())))
     record("07 Technician", "Avg Task Duration by Tech",
            statistics.fmean(durs) if durs else None, "min")
     total_notok_completed = sum(notok_by_task.get(t["Task_ID"], 0) for t in t_completed)

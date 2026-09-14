@@ -141,9 +141,9 @@ function footer(slide, text) {
 {
   const s = lightSlide("The system is already live", "Delivered on Microsoft 365 E3. No additional licence was purchased.");
   const cols = [
-    ["16", "SharePoint lists", "Every PM record, indexed and versioned"],
-    ["11", "Automated flows", "Trigger, reset, escalation, digest"],
-    ["9", "Dashboard pages", "94 measures, refreshed twice daily"],
+    ["14", "SharePoint lists", "Every PM record, indexed and versioned"],
+    ["9", "Automated flows", "Trigger, reset, escalation, digest"],
+    ["9", "Dashboard pages", "85 measures, refreshed twice daily"],
     ["30", "QR-tagged machines", "Scan opens that machine's hub"],
   ];
   const cw = (W - 2 * M - 3 * 0.3) / 4;
@@ -183,7 +183,7 @@ function footer(slide, text) {
     ["Scan inside the workflow",
      "The camera app opens a browser, which opens a form. Three context switches per machine, and any one of them can drop the pre-filled machine ID."],
     ["Show the technician what he needs to know",
-     "Current stock before he requests a part. Whether his machine is the last one in the cell. Forms shows a blank page and asks him to type."],
+     "Current stock and lead time before he fits a part. Whether his machine is the last one in the cell, and the counter is about to reset. Forms shows a blank page and asks him to type."],
   ];
   const rowH = 1.06;
   gaps.forEach((g, i) => {
@@ -209,7 +209,7 @@ function footer(slide, text) {
     "Twelve months of this plant's own breakdown data - not an industry benchmark.");
 
   card(s, M, 1.8, 4.35, 3.5, NAVY);
-  s.addText("34.4", {
+  s.addText("28.1", {
     x: M + 0.35, y: 2.15, w: 3.7, h: 1.15,
     fontSize: 68, bold: true, color: AMBER, fontFace: HEAD, isTextBox: true, margin: 0,
   });
@@ -219,14 +219,14 @@ function footer(slide, text) {
   });
   s.addText(
     "to breakdowns that happened within seven days of a completed PM on that same cell.\n\n" +
-    "9 of 88 breakdowns. 11.5% of all downtime, on machines we had just maintained.",
+    "7 of 88 breakdowns. 9.4% of all downtime, on machines we had just maintained.",
     { x: M + 0.35, y: 3.72, w: 3.7, h: 1.35, fontSize: 12.5, color: PALE, fontFace: BODY, isTextBox: true, margin: 0, lineSpacingMultiple: 1.2 }
   );
 
   s.addChart(pres.ChartType.doughnut, [{
     name: "Annual downtime",
     labels: ["Within 7 days of a PM", "All other causes"],
-    values: [34.4, 265.1],
+    values: [28.1, 271.4],
   }], {
     x: 5.35, y: 1.75, w: 3.7, h: 3.6,
     chartColors: [AMBER, "D9E2E6"],
@@ -251,12 +251,12 @@ function footer(slide, text) {
   );
 
   s.addText(
-    "Compliance is 89.6% and on-time is 48.8%. Neither number would tell you any of this. " +
+    "Compliance is 89.6% and on-time is 65.1%. Neither number would tell you any of this. " +
     "A PM programme can be fully compliant and still not be working.",
     { x: M, y: 5.55, w: W - 2 * M, h: 0.6, fontSize: 13.5, italic: true, color: NAVY, fontFace: BODY, isTextBox: true, margin: 0 }
   );
   footer(s, "Source: Breakdown_Log and PM_WorkOrder, 12 months. Measure definition and verification in docs/ASSUMPTIONS.md.");
-  s.addNotes("This is the slide that carries the argument. 34.4 hours is measured from our own data, not estimated.");
+  s.addNotes("This is the slide that carries the argument. 28.1 hours is measured from our own data, not estimated. If asked why it is not the 34.4 quoted earlier: a PM is now dated from its own machine scans rather than a stored column, and docs/ASSUMPTIONS.md section 9.1 shows the working.");
 }
 
 // ================================================================ 5. Where it concentrates
@@ -266,8 +266,8 @@ function footer(slide, text) {
 
   s.addChart(pres.ChartType.bar, [{
     name: "Hours lost within 7 days of a PM",
-    labels: ["Curing / Autoclave", "Testing & Calibration", "Cap Fitting", "Assembly NH", "Element Welding", "Sand Filling", "Element Punching", "Marking & Packing"],
-    values: [10.2, 9.0, 8.4, 3.0, 2.1, 1.6, 0, 0],
+    labels: ["Curing / Autoclave", "Cap Fitting", "Testing & Calibration", "Assembly NH", "Sand Filling", "Element Punching", "Element Welding", "Marking & Packing"],
+    values: [10.2, 8.4, 4.9, 3.0, 1.6, 0, 0, 0],
   }], {
     x: M, y: 1.85, w: 7.55, h: 4.0,
     barDir: "bar", chartColors: [AMBER],
@@ -284,7 +284,7 @@ function footer(slide, text) {
   });
 
   const notes = [
-    ["4 cells", "carry 30.6 of the 34.4 hours", AMBER],
+    ["4 cells", "carry 26.5 of the 28.1 hours", AMBER],
     ["15 machines", "in those four cells", NAVY],
     ["6 technicians", "would need a licence", NAVY],
   ];
@@ -296,7 +296,7 @@ function footer(slide, text) {
     "A pilot on those four cells tests the case before the plant commits to all eight.",
     { x: 8.5, y: 5.85, w: 4.0, h: 0.5, fontSize: 12, italic: true, color: NAVY, fontFace: BODY, isTextBox: true, margin: 0 }
   );
-  footer(s, "Two cells lost nothing to post-PM breakdowns in twelve months. Whatever they do differently is worth copying either way.");
+  footer(s, "Three cells lost nothing to post-PM breakdowns in twelve months. Whatever they do differently is worth copying either way.");
   s.addNotes("Pre-empt 'this is a big rollout'. It is four cells and six people. It can be piloted and reversed.");
 }
 
@@ -343,7 +343,7 @@ function footer(slide, text) {
   });
 
   s.addText(
-    "The lists, the eleven flows and the dashboard are unchanged. The app is an alternative " +
+    "The lists, the nine flows and the dashboard are unchanged. The app is an alternative " +
     "front end over the same data - which is why Forms stays available as the fallback.",
     { x: M, y: 6.0, w: W - 2 * M, h: 0.55, fontSize: 12.5, italic: true, color: NAVY, fontFace: BODY, isTextBox: true, margin: 0 }
   );
@@ -389,7 +389,7 @@ function footer(slide, text) {
 
   s.addText(
     "Read a row: at ₹1,500 per user per month and ₹10,000 an hour of downtime, the licence " +
-    "pays for itself if it prevents 14.4 hours a year — 42% of the 34.4 hours currently lost " +
+    "pays for itself if it prevents 14.4 hours a year — 51% of the 28.1 hours currently lost " +
     "to breakdowns that follow a PM.",
     { x: M, y: 5.55, w: W - 2 * M, h: 0.75, fontSize: 13, color: NAVY, fontFace: BODY, isTextBox: true, margin: 0, lineSpacingMultiple: 1.2 }
   );
@@ -414,7 +414,7 @@ function footer(slide, text) {
 
   const asks = [
     ["1", "Approve 8 licences", "6 technicians, 2 supervisors. Standard connectors only."],
-    ["2", "Pilot on 4 cells", "Curing, Testing, Cap Fitting, Assembly - the four carrying 30.6 of the 34.4 hours (89%)."],
+    ["2", "Pilot on 4 cells", "Curing, Cap Fitting, Testing, Assembly - the four carrying 26.5 of the 28.1 hours (94%)."],
     ["3", "Review after 6 months", "Against post-PM breakdown hours on those four cells versus the other four."],
   ];
   asks.forEach((a, i) => {
@@ -454,10 +454,10 @@ function footer(slide, text) {
      { text: "Value", options: { bold: true } },
      { text: "Source", options: { bold: true } }],
     ["Annual production loss", "299.5 h", "Breakdown_Log, sum of Production_Loss_Min, 12 months"],
-    ["Breakdowns within 7 days of a PM", "9 of 88", "Breakdown_Log paired to completed PM_WorkOrder by cell and date"],
-    ["Downtime from those breakdowns", "34.4 h  (11.5%)", "Same 9 rows, sum of Production_Loss_Min"],
-    ["Concentration in four cells", "30.6 h  (89%)", "Curing 10.2, Testing 9.0, Cap Fitting 8.4, Assembly 3.0"],
-    ["PM compliance / on-time", "89.6%  /  48.8%", "43 of 48 completed; 21 of 43 by the committed date"],
+    ["Breakdowns within 7 days of a PM", "7 of 88", "Breakdown_Log paired to completed PM_WorkOrder, by cell, dated from the last machine scan"],
+    ["Downtime from those breakdowns", "28.1 h  (9.4%)", "Same 7 rows, sum of Production_Loss_Min"],
+    ["Concentration in four cells", "26.5 h  (94%)", "Curing 10.2, Cap Fitting 8.4, Testing 4.9, Assembly 3.0"],
+    ["PM compliance / on-time", "89.6%  /  65.1%", "43 of 48 completed; 28 of 43 by the committed date"],
     ["Machines in the pilot cells", "15", "Machine_Master, Active = Yes, those four cells"],
     ["Technicians", "6", "Technician_Master, Active = Yes"],
   ];

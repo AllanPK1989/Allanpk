@@ -328,7 +328,7 @@ Five gates. All runnable now, all currently passing.
 ```bash
 python tools/prepare_sharepoint_data.py --strict   # 0 errors, 0 warnings, 2,422 rows
 python tools/validate_model.py                     # 0 errors, 0 orphaned measures
-python tools/verify_measures.py                    # 68 measures, none blank
+python tools/verify_measures.py                    # 65 measures, none blank
 python qr/generate_qr_labels.py --test             # 30/30 QR round-trip
 pwsh sharepoint/provision_lists.ps1 -SiteUrl <url> -WhatIf   # 0 failures
 ```

@@ -300,7 +300,8 @@ zero — so it terminates as Failed with a message naming the month instead, and
    The work order no longer stores its own end date — the model takes the latest scan
    across its tasks. That makes a stored rollup impossible to contradict, but it moves
    the failure: a completed work order with nothing scanned out has no date at all and
-   drops silently out of `Breakdowns After PM`, `PM On-Time %` and `Avg PM Delay`. A
+   drops silently out of `Breakdowns After PM (7d)`, `PM On-Time %` and
+   `Avg PM Delay (Days)`. A
    missing row reads as good news on all three, which is the wrong direction to fail
    in. See `ASSUMPTIONS.md` §9.1 for what this rule is guarding against.
 6. Never delete a master row. Set `Active = No`.

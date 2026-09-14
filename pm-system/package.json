@@ -1,0 +1,17 @@
+{
+  "name": "epqpl-pm-system-docs",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Document generators for the EPQPL cell-based PM system. Only needed to REGENERATE the Word files and the licence deck - the built copies are committed in docs/, so you do not need Node.js to use this project.",
+  "scripts": {
+    "docs": "node tools/build_docx.js BUILD.md docs/BUILD.docx && node tools/build_docx.js docs/HANDOVER.md && node tools/build_docx.js docs/STEP_BY_STEP_GUIDE.md",
+    "handover": "node tools/build_docx.js docs/HANDOVER.md",
+    "guide": "node tools/build_docx.js docs/STEP_BY_STEP_GUIDE.md",
+    "build-doc": "node tools/build_docx.js BUILD.md docs/BUILD.docx",
+    "deck": "node tools/build_licence_deck.js"
+  },
+  "dependencies": {
+    "docx": "^9.7.1",
+    "pptxgenjs": "^4.0.1"
+  }
+}

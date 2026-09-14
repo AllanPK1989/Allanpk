@@ -602,7 +602,7 @@ every one returning a value.
 | `PM Trigger Hours` | 32,000 | h |
 | `Hours to Next PM` | 11,660 | h |
 | `Hours Utilisation %` | 0.6356 | % |
-| `Avg Monthly Std Hours L3M (all cells)` | 6,131.7 | h/month |
+| `Avg Monthly Std Hours L3M` | 6,131.7 | h/month |
 | `Total Std Hours` | 74,619.7 | h |
 | `Production Qty` | 13,465,232 |  |
 | `Cells Due Soon Count` | 2 | cells |
@@ -648,7 +648,7 @@ every one returning a value.
 | `Stock Below Min Count` | 1 |  |
 | `Stock Value (INR)` | 221,390 | INR |
 | `Warranty Claims Flagged` | 15 |  |
-| `PMs Completed by Tech (max)` | 34 | tasks |
+| `PMs Completed by Tech` | 34 | tasks |
 | `Avg Task Duration by Tech` | 93.4286 | min |
 | `Findings Raised per PM` | 0.5595 | findings/PM |
 | `Active Technicians` | 6 |  |

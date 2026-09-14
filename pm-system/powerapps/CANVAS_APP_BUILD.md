@@ -25,7 +25,7 @@ empty lists looks finished and falls over on the first real record.
    > and silently returning wrong numbers in production.
 
 5. **Settings → General → Auto start / Auto pause** → off
-6. **Data → Add data → SharePoint** → your site → select all 13 lists and the two
+6. **Data → Add data → SharePoint** → your site → select all 14 lists and the two
    photo libraries listed in `app_manifest.json`
 
 ### Theme
