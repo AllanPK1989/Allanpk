@@ -149,7 +149,9 @@ def main():
         hits = []
         for name, text in D.items():
             for i, line in enumerate(text.splitlines(), 1):
-                for found in re.findall(rf"\b(\d+) {noun}\b", line):
+                # (?<!§) so "§9 lists all 65 measures" is not read as a claim
+                # that there are nine lists.
+                for found in re.findall(rf"(?<!§)\b(\d+) {noun}\b", line):
                     if int(found) not in ok_values:
                         hits.append(f"{name}:{i} says {found} {noun}")
         check(f"every '<n> {noun}' in the documents is a real figure",
@@ -255,6 +257,50 @@ def main():
     check("every path the documents tell you to open exists", not missing,
           "; ".join(missing[:3]) if missing else "")
 
+    # ---------------------------------------------------------------- BUILD.md
+    # The build guide is the one document a reader follows literally, so its
+    # claims are checked hardest.
+    print("\nBUILD.md")
+    build = read("BUILD.md")
+    main_part = build.split('<a name="appendix-a"></a>')[0]
+
+    py_cmds = re.findall(r"^(?:python3?|pip) .*", main_part, re.M)
+    check("the main build path names no Python command", not py_cmds,
+          str(py_cmds[:2]) if py_cmds else "Python is confined to the appendix")
+
+    ps_used = sorted(set(re.findall(r"\.\\(\w+\.ps1)", build)))
+    missing_ps = [n for n in ps_used if not (ROOT / "sharepoint" / n).exists()]
+    check("every PowerShell script the build runs exists", not missing_ps,
+          str(missing_ps) if missing_ps else ", ".join(ps_used))
+
+    no_clientid = [n for n in ps_used
+                   if "[string]$ClientId" not in (ROOT / "sharepoint" / n).read_text()]
+    check("every script the build runs accepts -ClientId", not no_clientid,
+          str(no_clientid) if no_clientid else "blocked-tenant path works throughout")
+
+    anchors = set(re.findall(r'<a name="([^"]+)">', build))
+    links = set(re.findall(r"\]\(#([a-z0-9\-]+)\)", build))
+    check("every internal link in BUILD.md has an anchor", links <= anchors,
+          str(sorted(links - anchors)) if links - anchors else f"{len(links)} links")
+
+    check("the browser QR page and its two files are present",
+          all((ROOT / "qr/browser" / f).exists()
+              for f in ("qr_labels.html", "machines.js", "qrcode.js")),
+          "the no-install sticker path")
+
+    # The browser machine list and Machine_Master must not drift apart.
+    mjs = read("qr/browser/machines.js")
+    js_ids = re.findall(r'"id":\s*"([^"]+)"', mjs)
+    declared = re.search(r"MACHINE_COUNT_EXPECTED\s*=\s*(\d+)", mjs)
+    active = [r["Machine_ID"] for r in csv.DictReader(
+        open(ROOT / "sharepoint/data/Machine_Master.csv", encoding="utf-8-sig"))
+        if r["Active"] == "Yes"]
+    check("the browser machine list matches Machine_Master", js_ids == active,
+          f"{len(js_ids)} machines" if js_ids == active else "lists differ")
+    check("machines.js declares its own length correctly",
+          bool(declared) and int(declared.group(1)) == len(js_ids),
+          f"MACHINE_COUNT_EXPECTED = {declared.group(1) if declared else '?'}")
+
     # ---------------------------------------------------------------- PowerShell
     # pwsh is not always available to run these, so check statically what can be.
     print("\nPowerShell scripts")
@@ -284,11 +330,21 @@ def main():
     check("every Write-* a script calls is a built-in or defined in it", not bad,
           "; ".join(bad) if bad else f"{len(ps_files)} scripts")
 
-    check("all three scripts support -WhatIf",
-          all("SupportsShouldProcess = $true" in t for t in ps_files.values()),
-          "the documents tell the reader to dry-run first")
+    # Only the scripts that CHANGE the tenant need -WhatIf; requiring it on a
+    # read-only one would be noise, and would hide the thing worth checking -
+    # that the read-only one really is read-only.
+    WRITERS = {"provision_lists.ps1", "apply_views.ps1", "load_data.ps1"}
+    READONLY = {"verify_load.ps1"}
+    no_whatif = [n for n in WRITERS if "SupportsShouldProcess = $true" not in ps_files.get(n, "")]
+    check("every script that changes the tenant supports -WhatIf", not no_whatif,
+          str(no_whatif) if no_whatif else ", ".join(sorted(WRITERS)))
 
-    check("all three scripts accept -ClientId",
+    MUTATING = r"\b(?:New|Set|Add|Remove|Invoke)-PnP\w+"
+    writes = [n for n in READONLY if re.search(MUTATING, ps_files.get(n, ""))]
+    check("the verification script only reads", not writes,
+          str(writes) if writes else "verify_load.ps1 cannot change anything it checks")
+
+    check("every script accepts -ClientId",
           all(re.search(r"\[string\]\$ClientId", t) and "$connect.ClientId = $ClientId" in t
               for t in ps_files.values()),
           "tenants that block the default PnP app need their own registration")

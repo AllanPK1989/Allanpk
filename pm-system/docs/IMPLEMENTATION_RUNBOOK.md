@@ -57,31 +57,44 @@ connector steps.
 Install-Module PnP.PowerShell -Scope CurrentUser
 ```
 
-```bash
-pip install -r tools/requirements.txt
-pip install -r qr/requirements.txt
-```
+That is the only thing to install. **No Python, no Node.js** — every file they would
+have produced ships with the project, and the QR stickers are made by a web page that
+runs from a file on your desktop.
+
+*(A Python toolkit lives in `tools/` for regenerating the data and running extra
+cross-checks. It is optional and not part of this runbook; `BUILD.md` Appendix A
+covers it.)*
 
 ---
 
-## Step 1 — Prepare the data (30 min)
+## Step 1 — Confirm the prepared data (10 min)
 
-**1.1** Put the three workbooks and the dictionary in `input/`.
+The import-ready CSVs are already generated and included. This step is confirming they
+arrived intact, not producing them.
 
-**1.2** Generate the import-ready CSVs and run the integrity checks:
+**1.1** Check the file counts:
 
-```bash
-python tools/prepare_sharepoint_data.py --strict
+```powershell
+Get-ChildItem sharepoint\data\*.csv   | Measure-Object     # Count : 14
+Get-ChildItem sharepoint\schema\*.json | Measure-Object    # Count : 15
 ```
 
-**1.3** Read `sharepoint/data/_VALIDATION_REPORT.md`. **It must show 0 errors.**
+**1.2** Read `sharepoint/data/_VALIDATION_REPORT.md`. **It shows 0 errors, 0 warnings.**
 
-An ERROR means the row would break a documented integrity rule once it is in
-SharePoint. Fix it in the source workbook and re-run. Do not load past it — a bad
-`Cell_ID` that reaches production becomes a fact table full of orphaned rows that
-join to nothing, and nothing announces it.
+That is the record of the integrity run against the three workbooks in `input/`: unique
+keys, task counts matching machine counts, no work order closed with open tasks, the
+reset fields moving together, every checklist response having a parent task, and every
+completed work order having a scan to date it by.
 
-**1.4** Note the totals in `_ROW_COUNTS.csv`. You reconcile against these in step 3.
+An ERROR would mean a row that breaks a documented rule once it is in SharePoint — a
+bad `Cell_ID` that reaches production becomes a fact table full of orphaned rows that
+join to nothing, and nothing announces it. There are none.
+
+**1.3** Note the totals in `_ROW_COUNTS.csv`. You reconcile against these in step 3.
+
+> **If the source workbooks ever change**, the CSVs have to be regenerated and
+> re-validated. That is the one job needing the Python toolkit — `BUILD.md`
+> Appendix A.
 
 > Why CSVs rather than uploading the Excel file: SharePoint's "Import from Excel"
 > guesses column types, and it guesses wrong on IDs that look numeric, on Yes/No,
@@ -287,13 +300,18 @@ Put it in `Machine_Master.QR_Payload_URL` for all 30 machines.
 
 ## Step 5 — Print and fit the QR labels (half a day)
 
-**5.1** Regenerate against your real site and **test**:
+**5.1** Open `qr/browser/qr_labels.html` in a browser — nothing to install, and it
+runs entirely locally. Paste your site address and click **Generate 30 stickers**.
 
-```bash
-python qr/generate_qr_labels.py --base-url https://<tenant>.sharepoint.com/sites/Maintenance --test
-```
+It must report **30 stickers generated**. If it says **STOP** it names the machine that
+is wrong; do not print otherwise.
 
-It must report **30 passed, 0 failed**. Do not print otherwise.
+Before showing the sheets it re-encodes what each label *should* say and compares the
+two symbols module by module, so a code that does not match the machine printed beside
+it cannot reach the printer.
+
+**5.1a** **Scan one off the screen with a real phone before printing thirty.** That is
+the only check covering the whole chain, camera included, and it takes ten seconds.
 
 > A wrong sticker on a machine is a field problem that takes about a month to
 > surface, and by then it has been scanned two hundred times against the wrong
@@ -369,14 +387,14 @@ same afternoon.
 
 **7.3** Check every page opens with no visual errors.
 
-**7.4** Cross-check the numbers:
+**7.4** Cross-check the numbers against `ASSUMPTIONS.md` §9, which lists all 65
+measures with the values they return on the supplied data. Spot-check at least
+`Breakdowns After PM (7d)` = **7**, `PM Compliance %` = **89.6%** and
+`Reset Not Applied Count` = **0**.
 
-```bash
-python tools/verify_measures.py --asof 2026-08-30
-```
-
-Compare against the same measures in Desktop. They should agree. Expected values are
-in `ASSUMPTIONS.md` §9.
+Those figures were produced by recomputing every measure independently of the DAX, so
+agreement between the dashboard and §9 means two separate derivations agree — not that
+one read back what the other stored.
 
 **7.5** Repoint to SharePoint: `pSourceMode` → `SharePoint`, set `pSharePointSite`,
 refresh.

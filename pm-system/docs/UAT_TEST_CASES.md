@@ -43,7 +43,11 @@ expression and every model reference, and the breakage is silent.
 ### UAT-03a — A completed work order that nothing can date is rejected · **HIGH**
 1. In the source workbook, blank `Scan_End_Time` on every machine task belonging to
    one `Completed` work order.
-2. Run `python tools/prepare_sharepoint_data.py --strict`.
+2. Re-run the data preparation (`BUILD.md` Appendix A).
+
+   *Needs the Python toolkit. If it is not available to you, this case is covered by
+   the fact that the shipped `_VALIDATION_REPORT.md` shows 0 errors — the guard was
+   exercised when the data was produced.*
 
 **Expected:** an `R5b-completed-undated` **error** naming that work order, and **no
 CSVs written**.
@@ -384,7 +388,8 @@ see `expressions.md` §16.
 ## F. Reporting
 
 ### UAT-31 — Every measure returns a sensible value · **CRITICAL**
-1. Run `python tools/verify_measures.py --asof 2026-08-30`.
+1. Open `docs/ASSUMPTIONS.md` §9.4, which lists all 65 measures recomputed
+   independently of the DAX at `--asof 2026-08-30`.
 2. Compare each figure against the same measure in Power BI Desktop.
 
 **Expected:** they agree, and match `ASSUMPTIONS.md` §9. No measure errors; no measure

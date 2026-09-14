@@ -103,31 +103,37 @@ Word versions of both are in `docs/` alongside the markdown. Regenerate after an
 edit so they cannot drift from the source:
 
 ```bash
-node tools/build_docx.js docs/STEP_BY_STEP_GUIDE.md
-node tools/build_docx.js docs/HANDOVER.md
+npm install && npm run docs
 ```
 
-## Quick start
+*(Optional. The built `.docx` files are already in `docs/`.)*
 
-```bash
-pip install -r tools/requirements.txt -r qr/requirements.txt
+## Quick start — PowerShell and a browser, nothing else
 
-# 1. prepare and validate the data
-python tools/prepare_sharepoint_data.py --strict
+The data, the list definitions and the dashboard are all generated and included.
+Building means installing them.
 
-# 2. provision SharePoint (dry run first, always)
+```powershell
+Install-Module PnP.PowerShell -Scope CurrentUser
+
+# 1. provision SharePoint (dry run first, always)
 pwsh sharepoint/provision_lists.ps1 -SiteUrl https://<tenant>.sharepoint.com/sites/Maintenance -WhatIf
 pwsh sharepoint/provision_lists.ps1 -SiteUrl https://<tenant>.sharepoint.com/sites/Maintenance
 pwsh sharepoint/apply_views.ps1     -SiteUrl https://<tenant>.sharepoint.com/sites/Maintenance
+
+# 2. load the 2,422 rows, then prove it worked
 pwsh sharepoint/load_data.ps1       -SiteUrl https://<tenant>.sharepoint.com/sites/Maintenance
+pwsh sharepoint/verify_load.ps1     -SiteUrl https://<tenant>.sharepoint.com/sites/Maintenance
 
-# 3. print the QR labels (test before printing)
-python qr/generate_qr_labels.py --base-url https://<tenant>.sharepoint.com/sites/Maintenance --test
-
-# 4. open powerbi/PM_Dashboard.pbip, then follow docs/IMPLEMENTATION_RUNBOOK.md
+# 3. QR stickers - open qr/browser/qr_labels.html in a browser, paste the site URL
+# 4. open powerbi/PM_Dashboard.pbip
 ```
 
-Then work through **`docs/IMPLEMENTATION_RUNBOOK.md`** from step 1.
+Then work through **`BUILD.md`** from Stage 0.
+
+> **No Python needed.** There is an optional toolkit in `tools/` for regenerating the
+> data and running extra cross-checks — `BUILD.md` Appendix A. You can build, test and
+> run the whole system without it.
 
 ## Regenerating the Power BI project
 
@@ -142,14 +148,24 @@ python tools/validate_model.py   # every reference must resolve — run this las
 
 ## Verifying it works
 
-Three independent checks, all runnable now:
+**Against a live site, PowerShell only:**
+
+```powershell
+pwsh sharepoint/verify_load.ps1 -SiteUrl https://<tenant>.sharepoint.com/sites/Maintenance
+```
+
+Seven checks: lists and columns present, no mangled internal names, row counts
+reconciling, every view-filtered column indexed, views and libraries created, and no
+completed work order left with its counter unreset.
+
+**With the optional Python toolkit**, five more, all currently passing:
 
 ```bash
+python tools/check_consistency.py         # 44 checks: schema, data, model, docs agree
 python tools/prepare_sharepoint_data.py   # 0 errors, 0 warnings on the supplied data
 python tools/validate_model.py            # 0 errors, 0 orphaned measures
 python tools/verify_measures.py           # 65 measures recomputed, none blank
 python qr/generate_qr_labels.py --test    # 30/30 QR codes round-trip
-pwsh sharepoint/provision_lists.ps1 -SiteUrl https://example.sharepoint.com/sites/x -WhatIf
 ```
 
 `verify_measures.py` recomputes every headline measure in plain Python,

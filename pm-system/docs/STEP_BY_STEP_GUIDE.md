@@ -60,7 +60,7 @@ the filing cabinet, and the dashboard shows what it all means.
 
 ### Software on your laptop
 
-Three things. Install them once.
+**Two things, and you probably have one of them already.**
 
 **1. PowerShell 7** — this is the tool that creates the SharePoint lists for you, so
 you do not have to click through 138 columns by hand.
@@ -73,17 +73,20 @@ Install-Module PnP.PowerShell -Scope CurrentUser
 ```
 
 Press Y if it asks. PnP is a free Microsoft toolkit for talking to SharePoint.
+`-Scope CurrentUser` installs it for you alone, so it does not need an administrator.
 
-**2. Python** — this prepares your data and generates the QR stickers. Install from
-python.org, **ticking "Add Python to PATH"** during setup. Then open a Command
-Prompt in the project folder and run:
+**2. Power BI Desktop** — free from the Microsoft Store.
 
-```
-pip install -r tools/requirements.txt
-pip install -r qr/requirements.txt
-```
+**And a web browser**, which you already have. That is what makes the QR stickers.
 
-**3. Power BI Desktop** — free from the Microsoft Store.
+> ### No programming tools needed
+>
+> You do **not** need Python, Node.js or anything else. Every file that would have
+> been generated is already in the folder — the data, the list definitions, the
+> dashboard. You are installing the lists and loading data that is already prepared.
+>
+> There is a toolkit in `tools\` for whoever maintains this later, if the source data
+> ever changes. You do not need it to build or run the system.
 
 ### The project folder
 
@@ -96,40 +99,41 @@ Prompt or PowerShell window **open inside that folder**.
 
 ---
 
-# Stage 1 — Check the data  ·  30 minutes
+# Stage 1 — Check the files arrived  ·  10 minutes
 
-**What you are doing:** turning the three Excel workbooks into clean files that
-SharePoint will accept, and checking nothing in them is broken.
+**What you are doing:** confirming the prepared data is all there before you start
+installing anything.
 
 ### Do this
 
-1. Make sure the three workbooks and the data dictionary are in the `input` folder.
-2. Run:
+Open PowerShell in the project folder and run:
 
-```
-python tools/prepare_sharepoint_data.py --strict
-```
-
-### How you know it worked
-
-The last line says:
-
-```
-0 error(s), 0 warning(s).
+```powershell
+Get-ChildItem sharepoint\data\*.csv  | Measure-Object      # expect  Count : 14
+Get-ChildItem sharepoint\schema\*.json | Measure-Object    # expect  Count : 15
+Test-Path qr\browser\qr_labels.html                        # expect  True
 ```
 
-You will also find new files in `sharepoint\data\` — one `.csv` per list, plus a
-report.
+> **Tip:** open the folder in File Explorer, click in the address bar, type
+> `powershell` and press Enter. That opens a window already in the right place.
 
-### If it goes wrong
+If those three are right, you have everything you need.
 
-If it says anything other than 0 errors, **stop and fix the workbook**. Open
-`sharepoint\data\_VALIDATION_REPORT.md` — it names the exact row and what is wrong
-with it.
+### Where this data came from
 
-> **Why not just skip it?** Because a bad `Cell_ID` that reaches SharePoint becomes
-> a record that belongs to no cell. Nothing will tell you. It just quietly makes a
-> number wrong forever.
+The three Excel workbooks in `input\` were converted into the 14 `.csv` files in
+`sharepoint\data\` and checked against six rules — every ID unique, every work order's
+task count matching its machine count, no work order marked finished with tasks still
+open, the counter reset moving all its fields together, every checklist answer
+belonging to a real task, and every finished work order having a scan to date it by.
+
+**They passed with 0 errors and 0 warnings.** `sharepoint\data\_VALIDATION_REPORT.md`
+is that report — worth two minutes of reading, because it tells you what the data
+actually contains.
+
+> **Why the checking mattered.** A bad `Cell_ID` that reaches SharePoint becomes a
+> record that belongs to no cell. Nothing tells you. It just quietly makes a number
+> wrong forever.
 
 ### Before you move on
 
@@ -380,20 +384,30 @@ are already filled in, and that the first thing you have to touch is a real ques
 
 **What you are doing:** making the stickers that go on the machines.
 
-### Do this
+### Do this — it is a web page, nothing to install
 
-1. Generate them against your real site address:
+1. Open the `qr\browser` folder and **double-click `qr_labels.html`**. It opens in your
+   browser and runs entirely on your own machine — nothing is sent anywhere.
 
-```
-python qr/generate_qr_labels.py --base-url https://yourcompany.sharepoint.com/sites/Maintenance --test
-```
+2. Paste your SharePoint site address into the box — the same one you used in Stage 2,
+   ending at the site name with nothing after it.
 
-2. **It must say `passed: 30    failed: 0`.** If it does not, do not print.
+3. Click **Generate 30 stickers**.
 
-> `--test` reads every sticker back with a scanner and checks it points at its own
-> machine. A wrong sticker takes about a month to notice, and by then it has been
-> scanned two hundred times against the wrong machine — every one of those a record
-> you cannot easily unpick.
+4. **It must say `30 stickers generated`.** If it says **STOP**, it names the machine
+   that is wrong. Do not print until it is green.
+
+   > Before showing you anything, the page checks that each code really does encode the
+   > machine printed next to it — it rebuilds what the label *should* say and compares
+   > the two codes square by square. A wrong sticker takes about a month to notice, and
+   > by then it has been scanned two hundred times against the wrong machine — every
+   > one of those a record you cannot easily unpick.
+
+5. **Scan the first label off your screen with your phone**, before printing anything.
+   It must open the Machine Hub page for `MC-01-001`. This is the only check that tests
+   the whole chain including the camera, and it takes ten seconds.
+
+6. Click **Print**.
 
 3. Print `qr\labels\PM_QR_Labels.pdf`:
 
@@ -615,9 +629,9 @@ Once the licence is gone the connections are already broken.
 
 # Quick reference — every command
 
-```
-# Stage 1 — check and prepare the data
-python tools/prepare_sharepoint_data.py --strict
+```powershell
+# Stage 1 — check the files arrived
+Get-ChildItem sharepoint\data\*.csv | Measure-Object      # Count : 14
 
 # Stage 2 — build the site  (practice run first, always)
 cd sharepoint
@@ -626,17 +640,16 @@ cd sharepoint
 .\apply_views.ps1     -SiteUrl "<your site>" -WhatIf
 .\apply_views.ps1     -SiteUrl "<your site>"
 
-# Stage 3 — load the data
+# Stage 3 — load the data, then prove it worked
 .\load_data.ps1       -SiteUrl "<your site>" -WhatIf
 .\load_data.ps1       -SiteUrl "<your site>"
+.\verify_load.ps1     -SiteUrl "<your site>"
 
-# Stage 5 — QR stickers  (must say 30 passed, 0 failed)
-python qr/generate_qr_labels.py --base-url "<your site>" --test
-
-# Any time — check the whole system is still sound
-python tools/validate_model.py
-python tools/verify_measures.py
+# If your tenant blocks the default app, add -ClientId "<id>" to all four.
 ```
+
+**Stage 5 — QR stickers.** Not a command. Open `qr\browser\qr_labels.html` in a
+browser, paste your site address, click Generate, scan one with your phone, Print.
 
 ---
 

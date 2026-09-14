@@ -8,7 +8,24 @@ Everything else is detail you go and fetch when a step tells you to.
 | **What you are building** | A preventive-maintenance system for EPQPL Pondicherry: 8 cells, 30 machines, PM triggered per cell at 4,000 accumulated standard hours with a 6-month calendar backstop |
 | **Runs on** | SharePoint Online, Power Automate, Microsoft Forms, Power BI — all Microsoft 365 E3, **no extra licence** |
 | **Total effort** | About **6 working days**, one person |
-| **Prerequisites** | A SharePoint site you own, PowerShell 7, Python 3.9+ |
+
+## ✅ No Python needed
+
+**This build uses PowerShell and a web browser. Nothing else.** Every file Python
+would have produced is already generated and included — the 14 data files, the 14
+schema files, the Power BI model, all of it.
+
+| You need | Why | Usually already installed? |
+|---|---|---|
+| **PowerShell 7** + the `PnP.PowerShell` module | Creates the SharePoint lists and loads the data | PowerShell 7 is a standard Microsoft download; the module installs from the PowerShell Gallery with one command |
+| **A web browser** | Generates the QR stickers | Yes |
+| **Power BI Desktop** | Opens and publishes the dashboard | Standard Microsoft download |
+| **A Microsoft 365 account** with Site Owner rights on a SharePoint site | Everything | Yes |
+
+That is the whole list. There is a Python toolkit in `tools/` that regenerates the
+data and runs extra cross-checks — **it is optional**, it is covered in
+[Appendix A](#appendix-a), and you can build, test and run the entire system without
+ever touching it.
 
 ---
 
@@ -16,16 +33,17 @@ Everything else is detail you go and fetch when a step tells you to.
 
 | # | Stage | Time | You end with |
 |---|---|---:|---|
-| 0 | [Set up your machine](#stage-0) | 30 min | Tools installed, checks passing |
-| 1 | [Prepare and validate the data](#stage-1) | 2 h | 14 CSVs, 0 errors |
-| 2 | [Provision SharePoint](#stage-2) | 3 h | 14 lists, 138 columns, 11 views, 5 libraries, data loaded |
-| 3 | [Build the forms](#stage-3) | 4 h | 5 Forms, pre-filled links wired into the Machine Hub |
-| 4 | [Print and fit the QR stickers](#stage-4) | 4 h | 30 stickers on machines, every one scan-tested |
+| 0 | [Set up and check the files](#stage-0) | 30 min | PowerShell ready, files confirmed present |
+| 1 | [Provision SharePoint](#stage-1) | 3 h | 14 lists, 138 columns, 11 views, 5 libraries |
+| 2 | [Load and verify the data](#stage-2) | 1 h | 2,422 rows, every check passing |
+| 3 | [Build the forms](#stage-3) | 4 h | 5 Forms, wired into the Machine Hub |
+| 4 | [Print and fit the QR stickers](#stage-4) | 4 h | 30 stickers, every one scan-tested |
 | 5 | [Build the flows](#stage-5) | 2 days | 9 automations running unattended |
-| 6 | [Publish Power BI, test, go live](#stage-6) | 1.5 days | 9-page dashboard, 36 UAT cases signed off |
+| 6 | [Power BI, UAT, go live](#stage-6) | 1.5 days | 9-page dashboard, 36 UAT cases signed off |
 
 **Do the stages in order.** Stage 5 cannot be built before Stage 3 exists, because a
-flow's trigger has nothing to point at.
+flow's trigger has nothing to point at. Stage 4 needs Stage 1 done, because the
+sticker points at a view that has to exist.
 
 ---
 
@@ -50,93 +68,52 @@ Full reasoning and the reassignment procedure: `docs/ASSUMPTIONS.md` §8.2.
 ---
 
 <a name="stage-0"></a>
-## Stage 0 — Set up your machine · 30 minutes
+## Stage 0 — Set up and check the files · 30 minutes
 
-### Install three things
+### Install PowerShell 7 and the SharePoint module
 
-```bash
-# 1. Python 3.9 or newer - check what you have
-python3 --version
+Download PowerShell 7 from Microsoft and install it. Then open it and run:
 
-# 2. Python packages
-pip install -r tools/requirements.txt
-pip install -r qr/requirements.txt
-
-# 3. PowerShell 7 and the SharePoint module
-#    Download PowerShell 7 from Microsoft, then:
+```powershell
 Install-Module PnP.PowerShell -Scope CurrentUser
 ```
 
-> **`pyzbar` needs a system library.** On Debian/Ubuntu: `sudo apt install libzbar0`.
-> Without it the QR round-trip test falls back to a weaker check, and that test is
-> the thing standing between you and 30 wrong stickers.
+`-Scope CurrentUser` installs it for you alone, so it does not need an administrator.
 
-**Node.js is optional.** It only regenerates the Word files and the licence deck,
-and both are already built in `docs/`. If you want to regenerate them: `npm install`.
+### Confirm the files arrived intact
 
-### Prove the project is intact
+Everything you need is already in this folder. Check the four that matter:
 
-```bash
-python3 tools/check_consistency.py
+```powershell
+cd sharepoint
+Get-ChildItem data\*.csv   | Measure-Object      # expect Count : 14
+Get-ChildItem schema\*.json | Measure-Object     # expect Count : 15  (14 lists + manifest)
+Get-Content data\_ROW_COUNTS.csv | Measure-Object -Line   # expect Lines : 15  (header + 14)
+Test-Path ..\qr\browser\qr_labels.html           # expect True
 ```
 
-This checks 36 things — that the schema, the exported data, the Power BI model, the
-flow specifications, the views and every document all agree with each other. It must
-print:
+If those four are right, the data is complete and you can build.
 
-```
-  Everything agrees. Schema, data, model, flows, views and documents.
-```
-
-If it does not, stop and read what it says. It names the file and the line.
+> **Where the data came from.** The 14 CSVs were generated from the three workbooks in
+> `input/` and validated against six cross-table integrity rules — unique keys, a work
+> order's task count matching its machine count, a completed work order having no open
+> tasks, the counter reset moving all three cell fields together, every checklist
+> response having a parent task, and every completed work order having a scanned-out
+> task to date it by. They passed with **0 errors and 0 warnings**;
+> `sharepoint/data/_VALIDATION_REPORT.md` is that run's report. You do not need to
+> rerun it — but [Appendix A](#appendix-a) says how if you ever want to.
 
 ---
 
 <a name="stage-1"></a>
-## Stage 1 — Prepare and validate the data · 2 hours
+## Stage 1 — Provision SharePoint · 3 hours
 
-**What you are doing:** turning the three supplied workbooks into typed, validated
-CSVs that SharePoint can accept, and proving the data is sound before it goes
-anywhere.
+**What you are doing:** creating the lists, columns, indexes, views and libraries.
 
-```bash
-python3 tools/prepare_sharepoint_data.py --strict
-```
+### 1.1 Dry-run first
 
-**It must end with `0 error(s), 0 warning(s)`.** With `--strict` it refuses to write
-anything if it finds a problem, which is the point — a half-valid load is far harder
-to unpick than a rejected one.
-
-You get 14 files in `sharepoint/data/`, plus `_VALIDATION_REPORT.md` (read it) and
-`_ROW_COUNTS.csv` (keep it; you reconcile against it in Stage 2).
-
-**Expect 2,422 rows across 14 lists.** 730 of them are the plant calendar.
-
-### What it is actually checking
-
-Six integrity rules that the business depends on, not just column types:
-
-1. Every primary key is present and unique
-2. A work order's machine-task count equals its `Machines_In_Scope`
-3. A work order is only `Completed` when no task is still open
-4. The counter reset moves all three cell fields together, or not at all
-5. Every checklist response has a parent machine task
-6. **A completed work order has at least one scanned-out task** — without one, nothing
-   can date it, and it vanishes silently from three measures that all read *better*
-   for its absence
-
----
-
-<a name="stage-2"></a>
-## Stage 2 — Provision SharePoint · 3 hours
-
-**What you are doing:** creating the lists, columns, indexes, views and libraries,
-then loading the data.
-
-### 2.1 Dry-run everything first
-
-All three scripts support `-WhatIf`, which shows you exactly what they would do
-without touching the tenant.
+Every script supports `-WhatIf`, which shows exactly what it would do without
+touching the tenant.
 
 ```powershell
 cd sharepoint
@@ -154,37 +131,76 @@ cd sharepoint
 >     -Tenant yourcompany.onmicrosoft.com -Interactive
 > ```
 >
-> It prints a client id. Pass it as `-ClientId "<id>"` to **all three** scripts from
+> It prints a client id. Pass it as `-ClientId "<id>"` to **all four** scripts from
 > then on.
 >
 > **Confirm this before provisioning day.** It is ten minutes for whoever holds the
 > rights, and half a day lost if you discover it at 9 a.m. on the morning.
 
-### 2.2 Run for real, in this order
+### 1.2 Run for real
 
 ```powershell
-.\provision_lists.ps1 -SiteUrl "<your site>"      # 14 lists, 138 columns, 5 libraries
-.\apply_views.ps1     -SiteUrl "<your site>"      # 11 views + shop-floor formatting
-.\load_data.ps1       -SiteUrl "<your site>" -WhatIf   # dry run first
-.\load_data.ps1       -SiteUrl "<your site>"      # 2,422 rows
+.\provision_lists.ps1 -SiteUrl "<your site>"    # 14 lists, 138 columns, 5 libraries
+.\apply_views.ps1     -SiteUrl "<your site>"    # 11 views + shop-floor formatting
 ```
 
-**Then reconcile.** Open each list and compare its item count against
-`sharepoint/data/_ROW_COUNTS.csv`. A list short by even one row means a row was
-dropped silently — find it now, not in six months.
+### 1.3 Check the internal names are not mangled
 
-### 2.3 Two things to check before moving on
+Open `Cell_Master` → List settings → click `Cell_ID` and read the browser address bar.
+It must say `Field=Cell_ID`, **not** `Field=Cell%5Fx005f%5FID`.
 
-**Column internal names must not be mangled.** Open `Cell_Master` → List settings →
-click `Cell_ID` and read the browser URL. It must say `Field=Cell_ID`, **not**
-`Field=Cell%5Fx005f%5FID`. If it is mangled, the Power BI model will load blank
-columns and you will not know why. The field XML sets `Name`, `StaticName` and
-`DisplayName` identically to prevent exactly this.
+If it is mangled, the Power BI model will load blank columns and nothing will tell you
+why. The field XML sets `Name`, `StaticName` and `DisplayName` identically to prevent
+exactly this — but check, because it is five seconds now and a lost afternoon later.
 
-**Mark your holidays.** Open `Plant_Calendar` and set `Is_Working_Day = No` for
-Pongal, Diwali and any plant shutdown. This list is the divisor in the mid-month
-proration rule. **Maintain it every December for the year ahead** — if it runs out,
-the monthly import terminates rather than dividing by zero.
+*(Stage 2's verification script checks this across all 138 columns automatically.)*
+
+---
+
+<a name="stage-2"></a>
+## Stage 2 — Load and verify the data · 1 hour
+
+```powershell
+.\load_data.ps1 -SiteUrl "<your site>" -WhatIf   # dry run first
+.\load_data.ps1 -SiteUrl "<your site>"           # 2,422 rows
+```
+
+### Then prove it worked
+
+```powershell
+.\verify_load.ps1 -SiteUrl "<your site>"
+```
+
+This is your gate. It checks the seven things that go wrong quietly:
+
+1. Every list exists, with every column
+2. **No column name was mangled** into `Cell_x005f_ID`
+3. **Row counts reconcile** against `data\_ROW_COUNTS.csv`, list by list
+4. **Every column a view filters on is indexed** — an unindexed filter works
+   perfectly until the list passes 5,000 items, then fails silently, years later
+5. Every view was created
+6. Every document library was created
+7. **No completed work order left its counter unreset** — the failure that costs most
+   and announces itself least
+
+It must end with:
+
+```
+  Everything checks out. SharePoint is provisioned and loaded correctly.
+```
+
+A list short by even one row means a row was dropped silently. Find it now, not in six
+months.
+
+### ⚠ Then mark your holidays
+
+Open the **`Plant_Calendar`** list and set `Is_Working_Day = No` for Pongal, Diwali and
+any plant shutdown.
+
+This list is the divisor in the mid-month proration rule — it is what stops a cell that
+resets mid-month from being credited hours the plant was never open to earn.
+**Maintain it every December for the year ahead.** If it runs out, the monthly import
+terminates with a message naming the month rather than dividing by zero.
 
 ---
 
@@ -248,7 +264,11 @@ Cut it in two and paste the halves into
 question id by hand gives you a button that opens the form with nothing filled in,
 and nothing about it looks wrong until somebody uses it.
 
-Then re-run `.\apply_views.ps1 -SiteUrl "<your site>"` to push the formatting up.
+Then push the formatting up:
+
+```powershell
+.\apply_views.ps1 -SiteUrl "<your site>"
+```
 
 **Test one on a real phone before you go on.** The first thing you touch should be a
 real question — not the keyboard.
@@ -258,27 +278,32 @@ real question — not the keyboard.
 <a name="stage-4"></a>
 ## Stage 4 — Print and fit the QR stickers · 4 hours
 
-```bash
-python3 qr/generate_qr_labels.py --base-url https://yourcompany.sharepoint.com/sites/Maintenance --test
-```
+**No install. Open a file in your browser.**
 
-**It must say `passed: 30    failed: 0`. If it does not, do not print.** `--test`
-reads every sticker back with a scanner and checks it points at its own machine. A
-wrong sticker takes about a month to notice, and by then it has been scanned two
-hundred times against the wrong machine.
+1. Open **`qr/browser/qr_labels.html`** by double-clicking it. It runs entirely on your
+   machine — no network, no Python, no Node.js.
+2. Paste your SharePoint site address.
+3. Click **Generate**. It builds 30 stickers and checks each one before showing them.
+4. **Scan the first label off your screen with a real phone.** It must open the Machine
+   Hub filtered to `MC-01-001`.
+5. Click **Print**.
 
-Print `qr/labels/PM_QR_Labels.pdf`:
+Full detail, including what the page checks and what it cannot: `qr/browser/README_QR_BROWSER.md`.
+
+### Print settings
 
 | Setting | Value | Why |
 |---|---|---|
 | Paper | **Polyester or vinyl**, 3 × 8 pre-cut at 50 × 30 mm | Paper does not survive a fuse plant — oil soaks in and the code is gone in weeks |
 | Scale | **100% / Actual size** | "Fit to page" shrinks the code below what a phone reads reliably |
 | Printer | **Laser**, not inkjet | Inkjet runs the moment someone wipes the machine with solvent |
+| Margins | **None**, headers and footers **off** | Otherwise every label shifts and the pre-cut sheet no longer lines up |
 
 Stick them at **chest height**, flat, away from coolant spray.
 
-**Then walk the floor and scan every single one.** Two people, one hour. This removes
-an entire class of problem permanently.
+**Then walk the floor and scan every single one.** Two people, one hour — the last
+printed page is a fitting checklist for exactly this. It removes an entire class of
+problem permanently.
 
 ---
 
@@ -340,15 +365,7 @@ the file format. It takes under a minute.
 
 ### 6.2 Cross-check the numbers
 
-```bash
-python3 tools/verify_measures.py
-```
-
-This recomputes 65 measures in plain Python, independently of the DAX, from the same
-source data. Compare against the dashboard. Two independent derivations agreeing is a
-check; one reading back what the other stored is not.
-
-Spot-check these four by hand:
+Open the dashboard and confirm these four against `docs/ASSUMPTIONS.md` §9:
 
 | Measure | Expected on the supplied data |
 |---|---|
@@ -356,6 +373,9 @@ Spot-check these four by hand:
 | `PM Compliance %` | **89.6%** (43 of 48) |
 | `Reset Not Applied Count` | **0** |
 | `Schedule Adherence %` | **54.9%** (28 of 51 committed rows) |
+
+Every measure in the model was independently recomputed and checked before delivery;
+§9.4 of `ASSUMPTIONS.md` lists all 65 with their values.
 
 ### 6.3 UAT — all 36 cases
 
@@ -389,20 +409,6 @@ four, every PM interval is wrong from that day on and no dashboard will tell you
 
 ---
 
-## The five commands that prove it still works
-
-Run these any time you change something. All five should be clean.
-
-```bash
-python3 tools/check_consistency.py          # 36 checks: everything agrees
-python3 tools/prepare_sharepoint_data.py --strict   # 0 errors, 0 warnings, 2,422 rows
-python3 tools/validate_model.py             # 0 errors: every reference resolves
-python3 tools/verify_measures.py            # 65 measures, none blank
-python3 qr/generate_qr_labels.py --test     # 30/30 optical decode
-```
-
----
-
 ## Where everything lives
 
 ```
@@ -423,6 +429,7 @@ sharepoint/
   provision_lists.ps1       14 lists, 138 columns, indexes, 5 libraries
   apply_views.ps1           11 views + shop-floor column formatting
   load_data.ps1             batched CSV load with type conversion
+  verify_load.ps1           seven post-load checks - your gate
   schema/                   one JSON per list — what the scripts read
   views/, formatting/       view definitions and the Machine Hub card
   data/                     import-ready CSVs, validation report, row counts
@@ -431,15 +438,11 @@ automate/
   FLOW_SPECS.md             5 forms and 9 flows, action by action
   expressions.md            every expression, copy-paste ready
 
-powerbi/
-  PM_Dashboard.pbip         open this in Power BI Desktop
-  m_queries/                20 commented Power Query scripts
-  dax/measures.dax          85 measures, each with a comment
-
-qr/generate_qr_labels.py    --test decodes every label back to its own machine
-tools/                      data prep, schema generation, and the five checks
+qr/browser/                 open qr_labels.html in a browser - no install
+powerbi/PM_Dashboard.pbip   open this in Power BI Desktop
 powerapps/                  Phase 2 — specified and costed, not licensed
 input/                      the three supplied workbooks, unmodified
+tools/                      OPTIONAL Python toolkit - see Appendix A
 ```
 
 ---
@@ -456,3 +459,32 @@ before go-live, not after** — `docs/ASSUMPTIONS.md` §10 has the full reasonin
    loop was removed because the stores process already runs it.
 3. **Who *started* a PM**, as distinct from who finished it.
 4. **Make, model and year installed** — asset-register detail.
+
+---
+
+<a name="appendix-a"></a>
+## Appendix A — the optional Python toolkit
+
+**You do not need any of this to build, test or run the system.** Everything it
+produces is already in the repository. It is here for whoever maintains the system
+later, and for the day the source data changes.
+
+| Script | What it does | When you would want it |
+|---|---|---|
+| `tools/prepare_sharepoint_data.py` | Rebuilds the 14 CSVs from the workbooks in `input/`, enforcing six integrity rules | The source data changed and you need a fresh load file |
+| `tools/generate_sharepoint_schema.py` | Rebuilds the 14 schema files and the manifest | You added or removed a column |
+| `tools/verify_measures.py` | Recomputes 65 dashboard measures in plain Python, independently of the DAX | You want the dashboard's numbers checked by something other than the dashboard |
+| `tools/validate_model.py` | Confirms every reference in every visual, relationship and measure resolves | You edited the Power BI model |
+| `tools/check_consistency.py` | 44 checks that the schema, data, model, flows, views and all documents agree | You changed anything and want one command that says whether it still hangs together |
+| `qr/generate_qr_labels.py` | The original QR generator, with optical decode verification | You prefer a command line to the browser page |
+
+If you can run Python 3.9+:
+
+```bash
+pip install -r tools/requirements.txt
+python3 tools/check_consistency.py
+```
+
+**The browser QR page and the Python QR generator produce the same thing.** Both were
+verified by optically decoding all 30 rendered labels back to their own machine's link —
+30/30 from each. Use whichever your environment allows.

@@ -319,25 +319,49 @@ python tools/build_report.py     # regenerates pages, visuals, theme
 python tools/validate_model.py   # every reference must resolve — run this last
 ```
 
+*(This is the one area that needs the Python toolkit. Editing the model in Power BI
+Desktop directly works too — but then Desktop becomes the source of truth rather than
+these files, and the comments explaining each measure are lost.)*
+
 ---
 
 ## 9. How to prove it still works
 
-Five gates. All runnable now, all currently passing.
+### Without any tooling beyond PowerShell
+
+```powershell
+pwsh sharepoint/verify_load.ps1 -SiteUrl <url>
+```
+
+Seven checks against the live site: every list and column present, no mangled internal
+names, row counts reconciling list by list, every view-filtered column indexed, every
+view and library created, and **no completed work order left with its counter
+unreset** — the failure that costs most and announces itself least.
+
+It must end `Everything checks out.`
+
+Alongside it, `ASSUMPTIONS.md` §9 carries all 65 measures with the values they return
+on the supplied data. Compare the dashboard against that table.
+
+### If Python is available to you
+
+Five more gates, all currently passing. **None is needed to build or run the system** —
+they are for whoever maintains it.
 
 ```bash
+python tools/check_consistency.py                  # 44 checks: everything agrees
 python tools/prepare_sharepoint_data.py --strict   # 0 errors, 0 warnings, 2,422 rows
 python tools/validate_model.py                     # 0 errors, 0 orphaned measures
 python tools/verify_measures.py                    # 65 measures, none blank
 python qr/generate_qr_labels.py --test             # 30/30 QR round-trip
-pwsh sharepoint/provision_lists.ps1 -SiteUrl <url> -WhatIf   # 0 failures
 ```
 
 `verify_measures.py` recomputes every headline measure in plain Python,
 **independently of the DAX**, so the two can be compared rather than one trusted. It
 hand-works the three calculations the system's credibility rests on:
 `Breakdowns After PM (7d)`, `Projected PM Date`, and mid-month proration. Expected
-values are in `ASSUMPTIONS.md` §9.
+values are in `ASSUMPTIONS.md` §9 — which is why that table is usable as a check even
+if you never run the script.
 
 Run these after any change. A measure nobody has checked against a known answer is a
 number, not a fact.
@@ -407,13 +431,13 @@ number, not a fact.
 - [ ] Decide **which individual account** owns the flows and Forms
 - [ ] Identify the **two co-owners** and the **shared mailbox** for failure alerts
 - [ ] Create the SharePoint site
-- [ ] Run all three PowerShell scripts with `-WhatIf`, then for real
+- [ ] Run the three provisioning scripts with `-WhatIf`, then for real, then `verify_load.ps1`
 - [ ] Reconcile row counts against `_ROW_COUNTS.csv`
 - [ ] Verify one column's internal name is unmangled
 - [ ] Mark holidays and the annual shutdown in `Plant_Calendar` for 12 months
 - [ ] Build the 5 Forms — pre-filled fields first, technician dropdown mandatory
 - [ ] Test one pre-filled link on a real phone before building all 30
-- [ ] `python qr/generate_qr_labels.py --base-url <site> --test` → 30/30
+- [ ] QR stickers: open `qr/browser/qr_labels.html`, paste the site URL, Generate → 30 stickers, no STOP
 - [ ] Print on polyester at 100% scale, fit, and scan-test every one
 - [ ] Build flows 5, 2, 1 first; concurrency OFF on 1 and 5
 - [ ] Two co-owners on all 9 flows, failure branches to the shared mailbox
