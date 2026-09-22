@@ -80,6 +80,34 @@ docker run -p 8000:8000 -e APP_TOKEN=$(openssl rand -hex 16) us-book
 
 ---
 
+## If the site will not load
+
+Work down this list; the first two are far more common than a broken build.
+
+**1. It is asleep.** A free service spins down after 15 minutes idle and takes
+30-60 seconds to wake. A browser can give up first and show a connection error.
+Give it a full minute:
+
+```bash
+curl -m 90 https://<your-host>/api/ping
+```
+
+`{"ok": true}` means it woke and the app is fine.
+
+**2. The free hours are gone.** Render allows 750 instance-hours a month per
+workspace and suspends every free service once they are spent, until the 1st.
+Check the dashboard: a suspended service says so on its page, and **Billing →
+Usage** shows the hours consumed. A service kept permanently awake uses about
+720 hours by itself, which is why `render.yaml` no longer sets a health-check
+path on the free plan.
+
+**3. The last deploy failed.** Dashboard → your service → **Events**. A failed
+deploy leaves the previous version running, or nothing if it was the first.
+The **Logs** tab shows why.
+
+**4. It is running but the page is blank.** That is an app problem, not a
+hosting one — `curl https://<your-host>/api/health` and read `detail`.
+
 ## If the page rejects your token
 
 The two secrets are easy to swap. `APP_TOKEN` opens the page; `FINNHUB_API_KEY`

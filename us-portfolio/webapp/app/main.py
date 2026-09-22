@@ -63,7 +63,8 @@ async def lifespan(_app: FastAPI):
                          len(book.tickers) + len(india.etf_symbols))
             except Exception as e:                        # noqa: BLE001
                 log.warning("warm-up failed, serving reference prices: %s", e)
-            for coro, what in ((navs.load(), "AMFI NAVs"), (fx.get(), "FX")):
+            for coro, what in ((navs.load(wanted=india.fund_isins), "AMFI NAVs"),
+                               (fx.get(), "FX")):
                 try:
                     await coro
                 except Exception as e:                    # noqa: BLE001
@@ -90,7 +91,7 @@ def require_token(x_app_token: str | None = Header(default=None),
 
 
 async def _india_payload(quotes_got: dict) -> dict:
-    marked = india.mark(await navs.load(), quotes_got)
+    marked = india.mark(await navs.load(wanted=india.fund_isins), quotes_got)
     marked["feed"] = {
         "live": marked["live_count"] > 0,
         "live_count": marked["live_count"],
@@ -157,6 +158,12 @@ async def api_refresh():
 @app.get("/api/auth", dependencies=[Depends(require_token)])
 async def api_auth():
     """Cheap endpoint for the page to test a token against before storing it."""
+    return {"ok": True}
+
+
+@app.get("/api/ping", include_in_schema=False)
+async def api_ping():
+    """Cheapest possible liveness probe: no data, no fetch, no allocation."""
     return {"ok": True}
 
 

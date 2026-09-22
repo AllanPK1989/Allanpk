@@ -16,7 +16,11 @@ services:
     branch: claude/us-portfolio-dashboard-analysis-3ymsyv
     dockerfilePath: ./us-portfolio/webapp/Dockerfile
     dockerContext: ./us-portfolio           # the Dockerfile COPYs data/ and webapp/
-    healthCheckPath: /api/health
+    # No healthCheckPath on the free plan. Render polls it continuously, which
+    # keeps the instance awake; a service that never sleeps burns the whole
+    # 750-hour monthly free allowance and is then suspended until the 1st.
+    # Letting it spin down costs a slow first request instead. On a paid plan,
+    # put `healthCheckPath: /api/health` back.
     autoDeploy: true
     envVars:
       # Render generates this and shows it under Environment. Without it the

@@ -26,7 +26,17 @@ AMFI_URL = "https://www.amfiindia.com/spages/NAVAll.txt"
 
 
 class AmfiNavs:
-    """Daily scheme NAVs from AMFI, cached. ISIN -> (nav, date)."""
+    """Daily scheme NAVs from AMFI, cached. ISIN -> (nav, date).
+
+    AMFI publishes every scheme in the country as one plain-text file, several
+    megabytes of it. This streams the response and keeps only the ISINs the
+    book actually holds — 28 rather than roughly thirty thousand — because
+    buffering the whole file and indexing all of it spikes memory on a small
+    instance, and an out-of-memory restart loop looks exactly like the site
+    being down.
+    """
+
+    MAX_BYTES = 24 * 1024 * 1024          # hard stop; the file is far smaller
 
     def __init__(self, ttl: float = 3600.0):
         self.ttl = ttl
@@ -39,39 +49,62 @@ class AmfiNavs:
     def fresh(self) -> bool:
         return bool(self._navs) and time.time() - self._fetched < self.ttl
 
-    async def load(self, force: bool = False) -> dict[str, tuple[float, str]]:
+    @staticmethod
+    def _row(line: str, wanted: set[str] | None) -> list[tuple[str, float, str]]:
+        # Scheme Code;ISIN Growth;ISIN Reinvest;Scheme Name;NAV;Date
+        parts = line.split(";")
+        if len(parts) < 6:
+            return []
+        try:
+            nav = float(parts[4].strip())
+        except ValueError:
+            return []                                         # header or "N.A."
+        date_s = parts[5].strip()
+        out = []
+        for isin in (parts[1].strip().upper(), parts[2].strip().upper()):
+            if not isin or isin in ("", "-", "N.A."):
+                continue
+            if wanted is None or isin in wanted:
+                out.append((isin, nav, date_s))
+        return out
+
+    async def load(self, force: bool = False,
+                   wanted: set[str] | None = None) -> dict[str, tuple[float, str]]:
         if self.fresh and not force:
             return self._navs
         if time.time() < self.cooldown_until:
             return self._navs
+
+        navs: dict[str, tuple[float, str]] = {}
+        seen = 0
         try:
-            async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as c:
-                r = await c.get(AMFI_URL, headers={"User-Agent": "Mozilla/5.0"})
-                r.raise_for_status()
-                text = r.text
+            async with httpx.AsyncClient(timeout=45.0, follow_redirects=True) as c:
+                async with c.stream("GET", AMFI_URL,
+                                    headers={"User-Agent": "Mozilla/5.0"}) as r:
+                    r.raise_for_status()
+                    tail = ""
+                    async for chunk in r.aiter_text(chunk_size=65536):
+                        seen += len(chunk)
+                        if seen > self.MAX_BYTES:
+                            raise ValueError("AMFI response exceeded the size cap")
+                        tail += chunk
+                        lines = tail.split("\n")
+                        tail = lines.pop()                    # keep the partial line
+                        for line in lines:
+                            for isin, nav, date_s in self._row(line, wanted):
+                                navs[isin] = (nav, date_s)
+                    for isin, nav, date_s in self._row(tail, wanted):
+                        navs[isin] = (nav, date_s)
         except Exception as e:                                # noqa: BLE001
             self.last_error = f"{type(e).__name__}: {e}"
             self.cooldown_until = time.time() + 900
             log.warning("AMFI NAV fetch failed, keeping previous values: %s", e)
             return self._navs
 
-        navs: dict[str, tuple[float, str]] = {}
-        for line in text.splitlines():
-            # Scheme Code;ISIN Growth;ISIN Reinvest;Scheme Name;NAV;Date
-            parts = line.split(";")
-            if len(parts) < 6:
-                continue
-            nav_s, date_s = parts[4].strip(), parts[5].strip()
-            try:
-                nav = float(nav_s)
-            except ValueError:
-                continue                                      # header or "N.A."
-            for isin in (parts[1].strip(), parts[2].strip()):
-                if isin and isin.upper() not in ("", "-", "N.A."):
-                    navs[isin.upper()] = (nav, date_s)
         if navs:
             self._navs, self._fetched, self.last_error = navs, time.time(), None
-            log.info("AMFI: %d scheme NAVs", len(navs))
+            log.info("AMFI: kept %d of the schemes we hold from %.1f MB",
+                     len(navs), seen / 1e6)
         else:
             self.last_error = "AMFI returned no parseable rows"
         return self._navs
@@ -85,6 +118,12 @@ class AmfiNavs:
 class IndiaBook:
     def __init__(self, path: pathlib.Path = DATA):
         self.base = json.loads(path.read_text())
+
+    @property
+    def fund_isins(self) -> set[str]:
+        """Only these are worth keeping out of the national NAV file."""
+        return {(h.get("isin") or "").upper() for h in self.base["holdings"]
+                if h["kind"] == "mutual_fund" and h.get("isin")}
 
     @property
     def etf_symbols(self) -> list[str]:

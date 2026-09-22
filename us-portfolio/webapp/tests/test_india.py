@@ -59,19 +59,11 @@ def test_live_navs_reprice_funds_and_leave_pre_ipo_alone():
     assert marked["totals"]["value"] != b.base["totals"]["value"]
 
 
-def test_amfi_parses_the_published_nav_file():
-    body = (
-        "Scheme Code;ISIN Div Payout/ISIN Growth;ISIN Div Reinvestment;Scheme Name;"
-        "Net Asset Value;Date\n"
-        "Open Ended Schemes(Equity Scheme - Small Cap Fund)\n"
-        "Axis Mutual Fund\n"
-        "120503;INF846K01K35;INF846K01K27;Axis Small Cap Fund;137.5400;11-Sep-2026\n"
-        "120504;INF966L01986;-;quant ELSS;460.7493;11-Sep-2026\n"
-        "999999;INFBAD00001;-;Broken row;N.A.;11-Sep-2026\n")
-    navs = AmfiNavs()
+def _amfi_with(body: str):
+    """Run AmfiNavs against a canned response body."""
     import asyncio
 
-    async def go():
+    async def go(navs, wanted):
         transport = httpx.MockTransport(lambda r: httpx.Response(200, text=body))
         orig = httpx.AsyncClient
 
@@ -82,11 +74,54 @@ def test_amfi_parses_the_published_nav_file():
 
         httpx.AsyncClient = Patched
         try:
-            return await navs.load()
+            return await navs.load(wanted=wanted)
         finally:
             httpx.AsyncClient = orig
 
-    got = asyncio.get_event_loop().run_until_complete(go()) if False else asyncio.run(go())
+    return go
+
+
+def test_amfi_keeps_only_the_schemes_we_hold():
+    """AMFI publishes every scheme in the country. Indexing all of it spiked
+    memory on a small instance; an OOM restart loop reads as the site being
+    down, so only the held ISINs are retained."""
+    import asyncio
+    header = ("Scheme Code;ISIN Div Payout/ISIN Growth;ISIN Div Reinvestment;"
+              "Scheme Name;Net Asset Value;Date\n")
+    ours = "120504;INF966L01986;-;quant ELSS;460.7493;11-Sep-2026\n"
+    noise = "".join(f"9{i:05d};INFZZZ{i:05d};-;Some other fund;10.0;11-Sep-2026\n"
+                    for i in range(5000))
+    navs = AmfiNavs()
+    got = asyncio.run(_amfi_with(header + noise + ours)(navs, {"INF966L01986"}))
+    assert set(got) == {"INF966L01986"}, "the whole file was indexed"
+    assert got["INF966L01986"][0] == 460.7493
+    assert len(got) == 1 and len(navs._navs) == 1
+
+
+def test_amfi_handles_a_scheme_split_across_stream_chunks():
+    """The response is streamed, so a row can straddle two chunks."""
+    import asyncio
+    header = ("Scheme Code;ISIN Div Payout/ISIN Growth;ISIN Div Reinvestment;"
+              "Scheme Name;Net Asset Value;Date\n")
+    pad = "".join(f"9{i:05d};INFPAD{i:05d};-;Pad;10.0;11-Sep-2026\n" for i in range(3000))
+    last = "120503;INF846K01K35;INF846K01K27;Axis Small Cap;137.5400;11-Sep-2026"
+    navs = AmfiNavs()
+    got = asyncio.run(_amfi_with(header + pad + last)(navs, {"INF846K01K35"}))
+    assert got["INF846K01K35"] == (137.54, "11-Sep-2026"), "final row without a newline was lost"
+
+
+def test_amfi_parses_the_published_nav_file():
+    body = (
+        "Scheme Code;ISIN Div Payout/ISIN Growth;ISIN Div Reinvestment;Scheme Name;"
+        "Net Asset Value;Date\n"
+        "Open Ended Schemes(Equity Scheme - Small Cap Fund)\n"
+        "Axis Mutual Fund\n"
+        "120503;INF846K01K35;INF846K01K27;Axis Small Cap Fund;137.5400;11-Sep-2026\n"
+        "120504;INF966L01986;-;quant ELSS;460.7493;11-Sep-2026\n"
+        "999999;INFBAD00001;-;Broken row;N.A.;11-Sep-2026\n")
+    import asyncio
+    navs = AmfiNavs()
+    got = asyncio.run(_amfi_with(body)(navs, None))
     assert got["INF846K01K35"] == (137.54, "11-Sep-2026")
     assert got["INF846K01K27"] == (137.54, "11-Sep-2026")      # reinvest ISIN too
     assert got["INF966L01986"][0] == 460.7493
