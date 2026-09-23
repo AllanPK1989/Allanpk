@@ -25,6 +25,7 @@ from . import calendar_us
 from .book import Book
 from .fx import FxRate
 from .india import AmfiNavs, IndiaBook
+from .india_calls import annotate
 from .providers import QuoteService
 from .wealth import combine
 
@@ -90,8 +91,9 @@ def require_token(x_app_token: str | None = Header(default=None),
         raise HTTPException(status_code=401, detail="bad or missing token")
 
 
-async def _india_payload(quotes_got: dict) -> dict:
+async def _india_payload(quotes_got: dict, us_book: dict | None = None) -> dict:
     marked = india.mark(await navs.load(wanted=india.fund_isins), quotes_got)
+    annotate(marked, us_book)
     marked["feed"] = {
         "live": marked["live_count"] > 0,
         "live_count": marked["live_count"],
@@ -142,7 +144,7 @@ async def api_india():
 async def api_wealth(force: bool = Query(default=False)):
     """Both books and one net worth, at a single fetched rate."""
     us = await _payload(force=force)
-    ind = await _india_payload(await quotes.get(india.etf_symbols))
+    ind = await _india_payload(await quotes.get(india.etf_symbols), us)
     rate = await fx.get(force=force)
     out = combine(us, ind, rate, fx.health())
     out["us"], out["india"] = us, ind

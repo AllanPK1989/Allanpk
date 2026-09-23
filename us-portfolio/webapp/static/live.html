@@ -137,6 +137,32 @@ a{color:var(--gold)}
 .ti .f{font-size:9px;color:var(--ink3);border:1px solid var(--line2);border-radius:3px;
   padding:0 4px;align-self:center}
 
+/* ── india calls ───────────────────────────────────────────────────────── */
+#callHead{color:var(--ink2);font-size:13.5px;line-height:1.6;margin:0 0 16px;max-width:96ch}
+.idx{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:11px;
+  margin-bottom:18px}
+.ix{border:1px solid var(--line);border-radius:11px;padding:12px 14px;
+  background:rgba(255,255,255,.018)}
+.ix .n{font-family:var(--mono);font-size:10px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--ink3)}
+.ix .p{font-family:var(--mono);font-size:21px;margin-top:5px;font-weight:500}
+.ix .g{font-family:var(--mono);font-size:11.5px;margin-top:2px}
+.callgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(266px,1fr));gap:11px}
+.cc{border:1px solid var(--line);border-radius:12px;padding:14px 15px;
+  background:rgba(255,255,255,.018);display:flex;flex-direction:column;gap:8px}
+.cc.buy{border-color:rgba(76,195,138,.35)}
+.cc.sell{border-color:rgba(229,103,95,.35)}
+.cc .h{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.cc .sym{font-family:var(--mono);font-size:13.5px;font-weight:700}
+.cc .act{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;
+  padding:2px 7px;border-radius:5px;border:1px solid currentColor}
+.cc .act.buy{color:var(--up)} .cc .act.sell{color:var(--down)}
+.cc .act.hold{color:var(--gold)} .cc .act.none{color:var(--ink3)}
+.cc .val{margin-left:auto;font-family:var(--mono);font-size:11.5px;color:var(--ink3)}
+.cc .txt{font-size:12.5px;color:var(--ink2);line-height:1.55}
+.cc .ft{font-family:var(--mono);font-size:10.5px;color:var(--ink3);
+  border-top:1px solid var(--line);padding-top:8px;display:flex;gap:12px;flex-wrap:wrap}
+
 /* ── table ───────────────────────────────────────────────────────────────── */
 .scroll{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:13px;min-width:620px}
@@ -219,6 +245,13 @@ code{font-family:var(--mono);font-size:.9em;background:var(--surf2);padding:1px 
     <div class="tile c3" style="grid-column:span 3">
       <h2>Concentration</h2>
       <div id="conc"></div>
+    </div>
+
+    <div class="tile c12">
+      <h2>India calls &mdash; what the market is charging</h2>
+      <p id="callHead"></p>
+      <div class="idx" id="idxRow"></div>
+      <div class="callgrid" id="callGrid"></div>
     </div>
 
     <div class="tile c12">
@@ -438,6 +471,53 @@ function render() {
   fact("Held overseas", w.mix.overseas_pct.toFixed(1) + "%");
   fact("Largest", `${w.positions[0].symbol} ${w.positions[0].weight.toFixed(1)}%`);
   fact("Priced live", `${livePos} of ${w.positions.length}`);
+
+  // india calls
+  const ca = w.india.calls;
+  if (ca) {
+    $("#callHead").textContent = ca.headline;
+    const ir = $("#idxRow"); ir.textContent = "";
+    for (const ix of Object.values(ca.market.indices)) {
+      if (ix.label.startsWith("Broad")) continue;
+      const d = el("div", "ix");
+      d.append(el("div", "n", ix.label));
+      d.append(el("div", "p", ix.pe.toFixed(1) + "\u00d7"));
+      const gap = (1 - ix.pe / ix.median) * 100;
+      const g = el("div", "g " + (gap >= 0 ? "up" : "down"));
+      g.textContent = Math.abs(gap).toFixed(0) + "% "
+        + (gap >= 0 ? "below" : "above") + " " + ix.window + " median";
+      d.append(g); ir.append(d);
+    }
+    // actionable first and in both directions: a board that only ever shows
+    // things to buy has hidden the sharper half of the answer
+    const order = { ADD: 0, TRIM: 1, REDUCE: 2, PAUSE: 3, FAVOURED: 4,
+                    "CAP IT": 5, "KEEP BUYING": 6, HOLD: 7, "NO CALL": 8 };
+    const cg = $("#callGrid"); cg.textContent = "";
+    const seen = new Set();
+    w.india.holdings.slice()
+      .sort((a, b2) => (order[a.call.action] ?? 9) - (order[b2.call.action] ?? 9)
+                       || b2.value - a.value)
+      .forEach(h => {
+        const sig = h.call.action + "|" + h.symbol;
+        if (seen.has(sig) || seen.size >= 12) return;
+        seen.add(sig);
+        const t = h.call.tier === "buy" ? "buy" : h.call.tier === "sell" ? "sell"
+                : h.call.tier === "none" ? "none" : "hold";
+        const c2 = el("div", "cc " + (t === "buy" || t === "sell" ? t : ""));
+        const hd = el("div", "h");
+        hd.append(el("span", "sym", h.symbol), el("span", "act " + t, h.call.action),
+                  el("span", "val", "\u20b9" + lakh(h.value)));
+        c2.append(hd, el("div", "txt", h.call.why));
+        const ft = el("div", "ft");
+        ft.append(el("span", "", h.call.basis));
+        if (h.call.discount != null)
+          ft.append(el("span", h.call.discount >= 0 ? "up" : "down",
+            Math.abs(h.call.discount).toFixed(0) + "% "
+            + (h.call.discount >= 0 ? "below" : "above") + " median"));
+        ft.append(el("span", sgn(h.pl_pct), pc(h.pl_pct, 1)));
+        c2.append(ft); cg.append(c2);
+      });
+  }
 
   // tape — doubled so the loop is seamless
   const tp = $("#tape"); tp.textContent = "";

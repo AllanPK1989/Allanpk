@@ -165,3 +165,80 @@ def test_funds_get_a_readable_label_not_an_isin():
     by = {h["symbol"] for h in funds}
     assert "Mirae Asset NYSE FANG+" in by
     assert "quant ELSS Tax Saver" in by
+
+
+# ---- recommendations -------------------------------------------------------
+
+def _called():
+    from app.india_calls import annotate
+    import json as _j
+    us = _j.loads((ROOT / "us-portfolio/data/portfolio.json").read_text())
+    return annotate(IndiaBook().mark({}, {}), us)
+
+
+def test_every_holding_gets_a_call():
+    b = _called()
+    assert all(h.get("call") for h in b["holdings"])
+    assert not [h for h in b["holdings"] if h["call"]["basis"] == "No index benchmark"], \
+        "a holding fell through to no benchmark"
+
+
+def test_an_unlisted_holding_gets_no_call_rather_than_a_fabricated_one():
+    b = _called()
+    pre = [h for h in b["holdings"] if h["kind"] == "pre_ipo"]
+    assert pre and all(h["call"]["action"] == "NO CALL" for h in pre)
+    assert all("no market price" in h["call"]["why"].lower() for h in pre)
+
+
+def test_the_long_gilt_is_a_rate_call_not_a_value_call():
+    """A gilt fund has no P/E. Into a rising cycle the long one is the exposure
+    to cut, and the short one is where to sit."""
+    b = _called()
+    by = {h["symbol"]: h["call"] for h in b["holdings"]}
+    assert by["LTGILTBEES"]["action"] == "REDUCE"
+    assert by["LTGILTBEES"]["basis"] == "Rate cycle"
+    assert by["LIQUIDBEES"]["action"] == "FAVOURED"
+    assert by["GILT5YBEES"]["action"] == "HOLD"
+
+
+def test_cheap_and_dear_indices_produce_opposite_calls():
+    b = _called()
+    by = {h["symbol"]: h["call"] for h in b["holdings"]}
+    assert by["NIFTYBEES"]["action"] == "ADD"        # Nifty 50 below its median
+    assert by["BANKBEES"]["action"] == "ADD"         # Bank Nifty below its median
+    assert by["HDFCSML250"]["action"] == "PAUSE"     # smallcaps above theirs
+    assert by["NIFTYBEES"]["discount"] > 0 > by["HDFCSML250"]["discount"]
+
+
+def test_the_fang_feeder_is_flagged_as_duplicating_the_us_book():
+    b = _called()
+    fang = next(h for h in b["holdings"] if "FANG" in h["symbol"].upper())
+    assert fang["call"]["action"] == "TRIM"
+    assert fang["call"]["basis"] == "Duplicate exposure"
+
+
+def test_elss_calls_mention_the_lock_in():
+    b = _called()
+    elss = [h for h in b["holdings"] if h["sub_class"] == "ELSS"]
+    assert elss
+    for h in elss:
+        why = h["call"]["why"].lower()
+        assert "three years" in why or "lock-in" in why, \
+            f"the three-year lock-in is not mentioned: {h['call']['why']}"
+
+
+def test_active_funds_are_not_passed_off_as_index_trackers():
+    b = _called()
+    active = next(h for h in b["holdings"] if h["symbol"] == "Franklin India Small Cap")
+    why = active["call"]["why"].lower()
+    assert why.startswith("nifty smallcap 250")        # the index frames it
+    assert "active" in why, "an active fund is presented as if it tracked the index"
+    # and a genuine tracker says no such thing
+    tracker = next(h for h in b["holdings"] if h["symbol"] == "NIFTYBEES")
+    assert "active" not in tracker["call"]["why"].lower()
+
+
+def test_the_summary_totals_match_the_holdings():
+    b = _called()
+    total_called = sum(b["calls"]["by_action"].values())
+    assert total_called == pytest.approx(b["totals"]["value"], abs=1)

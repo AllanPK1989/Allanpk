@@ -134,6 +134,18 @@ INDIA_VIEW = """  <div id="view-india" hidden>
     <p class="note" id="iFeed" style="margin:14px 0 0;font-size:12px;
        font-family:var(--mono);color:var(--ink-3)"></p>
 
+    <section id="i-calls">
+      <div class="shead">
+        <h2>Today's calls</h2>
+        <p>An index fund is priced by its index, a gilt fund by the rate cycle,
+           and an unlisted holding by neither &mdash; so each is judged on what
+           actually moves it, not on one borrowed formula.</p>
+      </div>
+      <div class="alert" id="iHeadline"></div>
+      <div class="stat3" id="iMarket" style="margin-top:16px"></div>
+      <div class="calls" id="iCallList" style="margin-top:16px"></div>
+    </section>
+
     <section id="i-class">
       <div class="shead"><h2>By asset class</h2></div>
       <div class="stat3" id="iClasses"></div>
@@ -540,6 +552,60 @@ function renderIndia() {
     d.append(s); cl.append(d);
   }
 
+  // calls
+  const ca = b.calls;
+  $("#iHeadline").textContent = ca.headline;
+  const im = $("#iMarket"); im.textContent = "";
+  for (const [, ix] of Object.entries(ca.market.indices)) {
+    if (ix.label.startsWith("Broad")) continue;
+    const d = el("div", "stat");
+    d.append(el("div", "k", ix.label));
+    d.append(el("div", "n", ix.pe.toFixed(1) + "\u00d7"));
+    const gap = (1 - ix.pe / ix.median) * 100;
+    const s2 = el("div", "s");
+    s2.append(el("span", gap >= 0 ? "pos" : "neg",
+      `${Math.abs(gap).toFixed(0)}% ${gap >= 0 ? "below" : "above"}`));
+    s2.append(document.createTextNode(` its ${ix.window} median of ${ix.median.toFixed(1)}\u00d7`));
+    d.append(s2); im.append(d);
+  }
+
+  const order = { ADD: 0, TRIM: 1, REDUCE: 2, PAUSE: 3, FAVOURED: 4,
+                  "CAP IT": 5, "KEEP BUYING": 6, HOLD: 7, "NO CALL": 8 };
+  const cl2 = $("#iCallList"); cl2.textContent = "";
+  const seen = new Set();
+  const ranked = b.holdings.slice().sort((x, y) =>
+    (order[x.call.action] ?? 9) - (order[y.call.action] ?? 9) || y.value - x.value);
+  for (const h of ranked) {
+    // one card per distinct call, not per folio
+    const sig = h.call.action + "|" + h.call.basis + "|" + h.symbol;
+    if (seen.has(sig)) continue;
+    seen.add(sig);
+    const tier = h.call.tier === "buy" ? "buy" : h.call.tier === "sell" ? "sell" : "warn";
+    const card = el("div", "call");
+    card.append(el("div", "rank", String(seen.size)));
+    const box = el("div", "call-in");
+    const top = el("div", "call-top");
+    top.append(el("span", "tkr", h.symbol));
+    top.append(el("span", "co", h.sub_class + " \u00b7 " + h.account));
+    top.append(el("span", "chip " + tier, h.call.action));
+    top.append(el("span", "chip own", inrShort(h.value) + " \u00b7 "
+      + (h.value / b.totals.value * 100).toFixed(1) + "%"));
+    box.append(top);
+    box.append(el("p", "why", h.call.why));
+    const m2 = el("div", "mathline");
+    const bit = (k, v, c) => { const sp = el("span"); sp.append(k + " ");
+      sp.append(el("b", c || "", v)); return sp; };
+    m2.append(bit("basis", h.call.basis));
+    if (h.call.discount != null)
+      m2.append(bit("index", Math.abs(h.call.discount).toFixed(0) + "% "
+        + (h.call.discount >= 0 ? "below median" : "above median"),
+        h.call.discount >= 0 ? "pos" : "neg"));
+    m2.append(bit("your return", pct(h.pl_pct), sign(h.pl_pct)));
+    m2.append(bit("invested", inrShort(h.cost)));
+    box.append(m2);
+    card.append(box); cl2.append(card);
+  }
+
   let rows = b.holdings.filter(h => iFilter === "all" || h.kind === iFilter);
   rows.sort((x, y) => {
     const a = x[isort.k], c = y[isort.k];
@@ -560,6 +626,8 @@ function renderIndia() {
      ["cost", "Invested", r => inrFull(r.cost)],
      ["pl", "Gain", r => inrFull(r.pl), r => sign(r.pl)],
      ["pl_pct", "Return", r => pct(r.pl_pct), r => sign(r.pl_pct)],
+     ["call", "Call", r => el("span", "chip " + (r.call.tier === "buy" ? "buy"
+        : r.call.tier === "sell" ? "sell" : "warn"), r.call.action)],
      ["live", "Priced", r => el("span", "tagpill",
         r.live ? "live" : r.kind === "pre_ipo" ? "statement" : r.priced_on)]],
     rows, isort, k => { isort = { k, dir: isort.k === k ? -isort.dir : -1 };

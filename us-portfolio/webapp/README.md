@@ -34,7 +34,15 @@ rate. Four allocation buckets that actually change the risk, and every holding
 from both books in one ranked list, because single-name concentration does not
 respect a border.
 
-**India** — 39 holdings: 28 mutual funds from the CAS, 8 listed ETFs, and 3
+**India** — 39 holdings, each with a call. The US model does not transfer: a
+fund has no price target, an index ETF's valuation is the *index's*, a gilt
+fund is a rate call, and an unlisted holding has no market at all. So
+`app/india_calls.py` judges each on what moves it — index P/E against its own
+median, duration against the rate cycle, duplication against the US book — and
+returns NO CALL where no honest one exists. Market inputs are dated and shown
+on the page.
+
+The holdings: 28 mutual funds from the CAS, 8 listed ETFs, and 3
 unlisted pre-IPO positions. Funds reprice against AMFI's daily NAV file, ETFs
 against their NSE lines, and the unlisted names stay at the statement value and
 say so.
