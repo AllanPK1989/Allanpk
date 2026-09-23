@@ -12,6 +12,7 @@ rather than in book.py:
 """
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import pathlib
@@ -42,6 +43,7 @@ class AmfiNavs:
         self.ttl = ttl
         self._navs: dict[str, tuple[float, str]] = {}
         self._fetched = 0.0
+        self._bg: asyncio.Task | None = None
         self.last_error: str | None = None
         self.cooldown_until = 0.0
 
@@ -68,13 +70,24 @@ class AmfiNavs:
                 out.append((isin, nav, date_s))
         return out
 
-    async def load(self, force: bool = False,
-                   wanted: set[str] | None = None) -> dict[str, tuple[float, str]]:
+    async def load(self, force: bool = False, wanted: set[str] | None = None,
+                   wait: bool = False) -> dict[str, tuple[float, str]]:
+        """Cached NAVs, refreshed behind the response unless asked to wait."""
         if self.fresh and not force:
             return self._navs
         if time.time() < self.cooldown_until:
             return self._navs
+        if not force and not wait:
+            if not (self._bg and not self._bg.done()):
+                try:
+                    self._bg = asyncio.get_running_loop().create_task(
+                        self._load(wanted))
+                except RuntimeError:
+                    pass
+            return self._navs
+        return await self._load(wanted)
 
+    async def _load(self, wanted: set[str] | None) -> dict[str, tuple[float, str]]:
         navs: dict[str, tuple[float, str]] = {}
         seen = 0
         try:

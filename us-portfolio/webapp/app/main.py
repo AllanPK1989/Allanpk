@@ -59,15 +59,16 @@ async def lifespan(_app: FastAPI):
     if not os.environ.get("SKIP_WARMUP"):
         async def warm():
             try:
-                got = await quotes.get(book.tickers + india.etf_symbols)
+                got = await quotes.get(book.tickers + india.etf_symbols, wait=True)
                 log.info("warm-up: %d/%d quotes", len(got),
                          len(book.tickers) + len(india.etf_symbols))
             except Exception as e:                        # noqa: BLE001
                 log.warning("warm-up failed, serving reference prices: %s", e)
-            for coro, what in ((navs.load(wanted=india.fund_isins), "AMFI NAVs"),
-                               (fx.get(), "FX")):
+            for make, what in ((lambda: navs.load(wanted=india.fund_isins, wait=True),
+                                "AMFI NAVs"),
+                               (lambda: fx.get(wait=True), "FX")):
                 try:
-                    await coro
+                    await make()
                 except Exception as e:                    # noqa: BLE001
                     log.warning("%s unavailable: %s", what, e)
         task = asyncio.create_task(warm())
@@ -76,7 +77,7 @@ async def lifespan(_app: FastAPI):
         task.cancel()
 
 
-app = FastAPI(title="Consolidated US Book", docs_url="/api/docs",
+app = FastAPI(title="Consolidated Wealth Book", docs_url="/api/docs",
               redoc_url=None, lifespan=lifespan)
 
 
@@ -89,6 +90,25 @@ def require_token(x_app_token: str | None = Header(default=None),
     supplied = (x_app_token or token or "").strip()
     if not secrets.compare_digest(supplied, APP_TOKEN):
         raise HTTPException(status_code=401, detail="bad or missing token")
+
+
+REFRESH_DEADLINE = 20.0        # a request may never wait longer than this
+
+
+async def _within(coro, seconds: float, what: str, fallback):
+    """Await `coro`, but never past `seconds`. Falls back to what we have.
+
+    An explicit refresh is still allowed to reach the network, but a hung
+    upstream must not become a hung page: past the deadline the request is
+    answered from cache and the user sees stale prices rather than a spinner.
+    """
+    try:
+        return await asyncio.wait_for(coro, seconds)
+    except asyncio.TimeoutError:
+        log.warning("%s passed its %.0fs deadline; answering from cache", what, seconds)
+    except Exception as e:                                # noqa: BLE001
+        log.warning("%s failed: %s", what, e)
+    return fallback
 
 
 async def _india_payload(quotes_got: dict, us_book: dict | None = None) -> dict:
@@ -106,7 +126,14 @@ async def _india_payload(quotes_got: dict, us_book: dict | None = None) -> dict:
 
 
 async def _payload(force: bool = False) -> dict:
-    got = await quotes.get(book.tickers + india.etf_symbols, force=force)
+    symbols = book.tickers + india.etf_symbols
+    if force:
+        got = await _within(quotes.get(symbols, force=True, wait=True),
+                            REFRESH_DEADLINE, "quote refresh", None)
+        if got is None:
+            got = quotes.cached(symbols)
+    else:
+        got = await quotes.get(symbols)
     marked = book.mark(got)
     now = time.time()
     ages = []
@@ -124,6 +151,7 @@ async def _payload(force: bool = False) -> dict:
                            if r.get("quote_source")}),
         "age_seconds": round(max(ages), 1) if ages else None,
         "error": quotes.last_error,
+        "refreshing": quotes.refreshing,
         "reference_date": marked["as_of"],
     }
     return marked
@@ -144,8 +172,11 @@ async def api_india():
 async def api_wealth(force: bool = Query(default=False)):
     """Both books and one net worth, at a single fetched rate."""
     us = await _payload(force=force)
-    ind = await _india_payload(await quotes.get(india.etf_symbols), us)
-    rate = await fx.get(force=force)
+    ind = await _india_payload(quotes.cached(india.etf_symbols), us)
+    rate = (await _within(fx.get(force=True, wait=True), 10.0, "FX refresh", None)
+            if force else await fx.get())
+    if rate is None:
+        rate = fx.rate
     out = combine(us, ind, rate, fx.health())
     out["us"], out["india"] = us, ind
     out["market"] = us["market"]

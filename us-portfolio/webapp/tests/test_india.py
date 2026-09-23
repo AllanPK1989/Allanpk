@@ -74,7 +74,7 @@ def _amfi_with(body: str):
 
         httpx.AsyncClient = Patched
         try:
-            return await navs.load(wanted=wanted)
+            return await navs.load(wanted=wanted, wait=True)
         finally:
             httpx.AsyncClient = orig
 

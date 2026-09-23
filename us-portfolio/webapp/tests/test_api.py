@@ -1,3 +1,4 @@
+import asyncio
 import time
 
 import pytest
@@ -22,8 +23,10 @@ class Stub(Provider):
 def client(monkeypatch):
     main.quotes.providers = [Stub({"GOOGL": 400.0, "META": 700.0})]
     main.quotes._cache.clear()
+    main.quotes._bg_ended = 0.0
     monkeypatch.setenv("SKIP_WARMUP", "1")
     with TestClient(main.app) as c:
+        c.post("/api/refresh")      # stands in for the startup warm-up
         yield c
 
 
@@ -67,6 +70,7 @@ def test_health_stays_green_when_no_quote_source_is_reachable(client):
     blocked feed is a degraded feed, not a dead service — the app still serves
     every page from the reference close."""
     main.quotes._cache.clear()
+    main.quotes._bg_ended = 0.0
     r = client.get("/api/health")
     assert r.status_code == 200, "a degraded feed must not fail the platform health check"
     body = r.json()
@@ -98,7 +102,7 @@ def test_refresh_bypasses_the_cache(client):
 
 def test_index_is_served(client):
     r = client.get("/")
-    assert r.status_code == 200 and "Consolidated US Book" in r.text
+    assert r.status_code == 200 and "Consolidated Wealth Book" in r.text
 
 
 def test_token_gate_blocks_when_configured(monkeypatch):
@@ -205,3 +209,39 @@ def test_the_live_board_is_served_and_carries_no_data(monkeypatch):
             assert leak not in page.text, f"the live board leaked {leak!r}"
         assert c.head("/live").status_code == 200
         assert c.get("/api/wealth").status_code == 401     # data still gated
+
+
+class Hangs(Provider):
+    """An upstream that neither answers nor refuses."""
+    name = "hangs"
+    async def fetch(self, client, tickers):
+        await asyncio.sleep(3600)
+        return {}
+
+
+def test_a_page_request_never_waits_on_a_hung_upstream(monkeypatch):
+    """The deployed dashboard sat on "Connecting…" indefinitely because every
+    quote, NAV and FX fetch ran inside the request. None of them may again."""
+    main.quotes.providers = [Hangs()]
+    main.quotes._cache.clear()
+    main.quotes._bg_ended = 0.0
+    main.quotes._bg = None
+    main.quotes._bg_ended = 0.0
+    # pin the other two upstreams so this measures the quote path alone
+    main.navs.cooldown_until = time.time() + 3600
+    main.fx.source, main.fx.fetched_at = "pinned", time.time()
+    monkeypatch.setenv("SKIP_WARMUP", "1")
+
+    with TestClient(main.app) as c:
+        started = time.perf_counter()
+        r = c.get("/api/wealth")
+        took = time.perf_counter() - started
+        if main.quotes._bg:
+            main.quotes._bg.cancel()
+
+    assert r.status_code == 200
+    assert took < 2.0, f"the request blocked for {took:.1f}s"
+    body = r.json()
+    assert body["totals"]["value_inr"] > 0     # reference values beat a blank page
+    assert body["us"]["feed"]["live"] is False
+    assert body["us"]["feed"]["refreshing"] is True

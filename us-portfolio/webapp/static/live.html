@@ -578,20 +578,35 @@ function render() {
     + `Not investment advice.`;
 }
 
+let fastPolls = 0;
 async function load() {
+  // never sit on a pending request: abort and say so
+  const ac = new AbortController();
+  const bail = setTimeout(() => ac.abort(), 12000);
   try {
-    const r = await fetch("/api/wealth", { headers: auth(), cache: "no-store" });
+    const r = await fetch("/api/wealth",
+      { headers: auth(), cache: "no-store", signal: ac.signal });
     if (r.status === 401) { gate(Boolean(TOKEN)); TOKEN = ""; return; }
     if (!r.ok) throw new Error("server " + r.status);
     BOOK = await r.json();
     $("#gate").hidden = true; $("#app").hidden = false;
     render();
     clearTimeout(timer);
-    timer = setTimeout(load, (BOOK.market.poll_seconds || 300) * 1000);
+    // quotes land behind the response; come back for them promptly, but a few
+    // times only — an upstream that never answers must not become a poll loop
+    const f = BOOK.us.feed;
+    if (f.live) fastPolls = 0;
+    const fast = f.refreshing && fastPolls < 6;
+    if (fast) fastPolls++;
+    timer = setTimeout(load, (fast ? 4 : (BOOK.market.poll_seconds || 300)) * 1000);
   } catch (e) {
-    $("#sub").textContent = "reconnecting — " + (e.message || e);
+    const why = e.name === "AbortError" ? "server did not answer in time"
+                                        : (e.message || e);
+    $("#sub").textContent = "reconnecting — " + why;
     clearTimeout(timer);
     timer = setTimeout(load, 15000);
+  } finally {
+    clearTimeout(bail);
   }
 }
 

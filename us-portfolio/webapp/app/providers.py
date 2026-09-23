@@ -252,6 +252,9 @@ class QuoteService:
         self.ttl = ttl
         self._cache: dict[str, Quote] = {}
         self._lock = asyncio.Lock()
+        self._bg: asyncio.Task | None = None
+        self._bg_ended = 0.0
+        self.retry_gap = 30.0          # floor under back-to-back background tries
         self.last_error: str | None = None
         self.last_attempt: float = 0.0
 
@@ -264,10 +267,54 @@ class QuoteService:
             return False
         return all(now - q.fetched_at < self.ttl for q in have)
 
-    async def get(self, tickers: list[str], force: bool = False) -> dict[str, Quote]:
+    @property
+    def refreshing(self) -> bool:
+        """True while a background fetch is running, so the page polls sooner."""
+        return bool(self._bg and not self._bg.done())
+
+    def cached(self, tickers: list[str]) -> dict[str, Quote]:
+        return {t: self._cache[t] for t in tickers if t in self._cache}
+
+    async def get(self, tickers: list[str], force: bool = False,
+                  wait: bool = False) -> dict[str, Quote]:
+        """Quotes for these tickers, from cache unless asked to wait.
+
+        Fetching inside a page request is what left the deployed dashboard on
+        "connecting" forever: the quote hosts do not refuse Render's egress so
+        much as ignore it, and forty-one symbols over two providers is minutes
+        of a browser holding an open connection. A plain read now answers from
+        the cache and starts the refresh behind the response; the page picks
+        the new prices up on its next poll. Only an explicit refresh waits.
+        """
+        if not force and not wait:
+            if not self._fresh(tickers):
+                self._refresh_later(tickers)
+            return self.cached(tickers)
+        return await self._fetch(tickers, force)
+
+    def _refresh_later(self, tickers: list[str]) -> None:
+        """Start one background refresh, holding the reference so it survives."""
+        if self._bg and not self._bg.done():
+            return
+        # An upstream that never answers would otherwise have every poll start
+        # another attempt, which is a retry loop dressed up as a cache.
+        if time.time() - self._bg_ended < self.retry_gap:
+            return
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            return                                    # no loop: nothing to schedule
+        async def run():
+            try:
+                await self._fetch(list(tickers), False)
+            finally:
+                self._bg_ended = time.time()
+        self._bg = loop.create_task(run())
+
+    async def _fetch(self, tickers: list[str], force: bool) -> dict[str, Quote]:
         async with self._lock:
             if not force and self._fresh(tickers):
-                return {t: self._cache[t] for t in tickers if t in self._cache}
+                return self.cached(tickers)
 
             self.last_attempt = time.time()
             missing = list(tickers)
@@ -293,7 +340,7 @@ class QuoteService:
             self.last_error = "; ".join(errors) if missing and errors else None
             if missing:
                 log.warning("no quote for %d tickers: %s", len(missing), ", ".join(missing[:8]))
-            return {t: self._cache[t] for t in tickers if t in self._cache}
+            return self.cached(tickers)
 
     def health(self) -> dict:
         now = time.time()
@@ -308,6 +355,7 @@ class QuoteService:
                 for p in self.providers
             ],
             "cached_tickers": len(self._cache),
+            "refreshing": self.refreshing,
             "oldest_seconds": round(max(ages), 1) if ages else None,
             "newest_seconds": round(min(ages), 1) if ages else None,
             "last_error": self.last_error,

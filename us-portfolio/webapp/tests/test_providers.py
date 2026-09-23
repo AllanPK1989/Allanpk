@@ -1,3 +1,4 @@
+import asyncio
 import time
 import httpx
 import pytest
@@ -22,7 +23,7 @@ class Stub(Provider):
 async def test_second_provider_covers_what_the_first_missed():
     a, b = Stub("a", ["AAPL"]), Stub("b", ["AAPL", "MSFT"])
     svc = QuoteService([a, b])
-    got = await svc.get(["AAPL", "MSFT"])
+    got = await svc.get(["AAPL", "MSFT"], wait=True)
     assert got["AAPL"].source == "a"          # first provider wins where it answers
     assert got["MSFT"].source == "b"          # second fills the gap
     assert b.calls == 1
@@ -31,14 +32,14 @@ async def test_second_provider_covers_what_the_first_missed():
 @pytest.mark.asyncio
 async def test_a_dead_first_provider_does_not_stop_the_chain():
     svc = QuoteService([Stub("dead", [], fail=True), Stub("live", ["AAPL"])])
-    got = await svc.get(["AAPL"])
+    got = await svc.get(["AAPL"], wait=True)
     assert got["AAPL"].source == "live"
 
 
 @pytest.mark.asyncio
 async def test_total_outage_returns_nothing_and_records_why():
     svc = QuoteService([Stub("dead", [], fail=True)])
-    got = await svc.get(["AAPL"])
+    got = await svc.get(["AAPL"], wait=True)
     assert got == {}
     assert "provider down" in svc.last_error
 
@@ -47,8 +48,8 @@ async def test_total_outage_returns_nothing_and_records_why():
 async def test_cache_serves_repeat_calls_without_refetching():
     s = Stub("a", ["AAPL"])
     svc = QuoteService([s], ttl=60)
-    await svc.get(["AAPL"])
-    await svc.get(["AAPL"])
+    await svc.get(["AAPL"], wait=True)
+    await svc.get(["AAPL"], wait=True)
     assert s.calls == 1
     await svc.get(["AAPL"], force=True)
     assert s.calls == 2
@@ -58,9 +59,9 @@ async def test_cache_serves_repeat_calls_without_refetching():
 async def test_last_good_quotes_survive_a_later_outage():
     good, bad = Stub("good", ["AAPL"]), Stub("bad", [], fail=True)
     svc = QuoteService([good], ttl=0)
-    await svc.get(["AAPL"])
+    await svc.get(["AAPL"], wait=True)
     svc.providers = [bad]
-    got = await svc.get(["AAPL"])          # cache is stale and nothing answers
+    got = await svc.get(["AAPL"], wait=True)          # cache is stale and nothing answers
     assert got["AAPL"].price == 100.0      # stale beats blank; age is reported
     assert svc.health()["cached_tickers"] == 1
 
@@ -125,7 +126,7 @@ async def test_a_blanket_429_puts_the_provider_to_sleep():
     before = calls["n"]
 
     svc = QuoteService([p])
-    await svc.get(["AAPL"])
+    await svc.get(["AAPL"], wait=True)
     assert calls["n"] == before, "a resting provider must not be called again"
     assert "resting" in (svc.last_error or "")
 
@@ -135,7 +136,7 @@ async def test_a_resting_provider_is_skipped_but_the_chain_continues():
     dead = YahooProvider()
     dead.rest(600, "blocked")
     live = Stub("live", ["AAPL"])
-    got = await QuoteService([dead, live]).get(["AAPL"])
+    got = await QuoteService([dead, live]).get(["AAPL"], wait=True)
     assert got["AAPL"].source == "live"
 
 
@@ -192,3 +193,37 @@ async def test_health_lists_each_provider_and_why_it_is_resting():
     entry = h["providers"][0]
     assert entry["name"] == "yahoo" and entry["available"] is False
     assert entry["resting_for"] > 0 and "429" in entry["status"]
+
+
+# ---- the failure that left the deployed page on "connecting" --------------
+
+@pytest.mark.asyncio
+async def test_a_plain_read_answers_from_cache_and_fetches_behind_it():
+    """A read must not wait on the network. The first one has nothing to give
+    and says so; the fetch it started fills the cache for the next poll."""
+    s = Stub("slow", ["AAPL"])
+    svc = QuoteService([s], ttl=60)
+
+    assert await svc.get(["AAPL"]) == {}        # nothing cached, answers anyway
+    assert svc.refreshing, "the read should have started a fetch behind it"
+    await svc._bg
+
+    assert (await svc.get(["AAPL"]))["AAPL"].price == 100.0
+    assert s.calls == 1, "the second read is served from cache"
+
+
+@pytest.mark.asyncio
+async def test_a_hung_upstream_does_not_hold_up_a_read():
+    """Render's egress is ignored rather than refused, so a provider can hang
+    for minutes. Reads must not inherit that."""
+    class Hangs(Provider):
+        name = "hangs"
+        async def fetch(self, client, tickers):
+            await asyncio.sleep(3600)
+            return {}
+
+    svc = QuoteService([Hangs()], ttl=60)
+    t = time.perf_counter()
+    assert await svc.get(["AAPL"]) == {}
+    assert time.perf_counter() - t < 0.5
+    svc._bg.cancel()

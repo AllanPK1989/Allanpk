@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>Consolidated US Book</title>
+<title>Consolidated Wealth Book</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
@@ -264,7 +264,7 @@ code{font-family:var(--mono);font-size:.92em;background:var(--surface-2);
 <body>
 <div class="mast"><div class="mast-in">
   <div class="brand">
-    <h1>Consolidated US Book</h1>
+    <h1>Consolidated Wealth Book</h1>
     <div class="sub" id="asof">—</div>
   </div>
   <nav class="views" role="tablist"><button class="vbtn" data-view="wealth" role="tab" aria-selected="true">Wealth</button><button class="vbtn" data-view="india" role="tab" aria-selected="false">India</button><button class="vbtn" data-view="us" role="tab" aria-selected="false">US</button></nav>
@@ -951,9 +951,13 @@ async function load(force) {
   const btn = $("#refresh");
   btn.disabled = true;
   if (BOOK) btn.textContent = "Refreshing\u2026";
+  /* A fetch with no timeout is a page that can sit on "connecting" forever,
+     which is exactly what it used to do. Give up and say so instead. */
+  const ac = new AbortController();
+  const bail = setTimeout(() => ac.abort(), force ? 30000 : 12000);
   try {
     const r = await fetch("/api/wealth" + (force ? "?force=true" : ""),
-      { headers: authHeaders(), cache: "no-store" });
+      { headers: authHeaders(), cache: "no-store", signal: ac.signal });
     if (r.status === 401) {
       try { localStorage.removeItem(KEY); } catch { /* ignore */ }
       askForToken(Boolean(TOKEN));       // "wrong" only if we actually sent one
@@ -966,7 +970,8 @@ async function load(force) {
     paintFeed();
     schedule();
   } catch (e) {
-    const msg = String(e.message || e);
+    const msg = e.name === "AbortError"
+      ? "the server did not answer in time" : String(e.message || e);
     setFeed(false, "Disconnected", msg);
     $("#freshness").textContent =
       "Cannot reach the server \u2014 " + msg + ". Retrying every 15s.";
@@ -976,6 +981,7 @@ async function load(force) {
     clearTimeout(timer);
     timer = setTimeout(() => load(false), 15000);
   } finally {
+    clearTimeout(bail);
     btn.disabled = false;
     btn.textContent = "Refresh now";
   }
@@ -1001,8 +1007,10 @@ function paintFeed() {
         ? " \u00b7 " + (f.total - f.live_count) + " on the " + f.reference_date + " reference close"
         : "");
   } else {
-    setFeed(false, "Reference \u00b7 " + f.reference_date,
-      f.error || "No quote source reachable.");
+    setFeed(false,
+      f.refreshing ? "Fetching\u2026" : "Reference \u00b7 " + f.reference_date,
+      f.refreshing ? "Fetching live prices now."
+                   : (f.error || "No quote source reachable."));
     $("#freshness").textContent =
       "No live quotes \u2014 all " + f.total + " names show the " + f.reference_date +
       " statement close. " + (f.error ? "Server reported: " + f.error : "");
@@ -1011,9 +1019,19 @@ function paintFeed() {
 
 /* Poll at the cadence the market state justifies: every minute while it is
    open, rarely once it is shut. */
+let fastPolls = 0;
 function schedule() {
   clearTimeout(timer);
-  timer = setTimeout(() => load(false), (BOOK.market.poll_seconds || 300) * 1000);
+  const f = BOOK.us && BOOK.us.feed;
+  if (f && f.live) fastPolls = 0;          // prices arrived; normal cadence resumes
+  /* Prices are fetched behind the response, so a load that arrives mid-refresh
+     is answered from an empty or stale cache. Come back for it in seconds
+     rather than waiting out the market-state interval — but only a few times,
+     or an upstream that never answers turns this into a poll loop. */
+  const fast = Boolean(f && f.refreshing && fastPolls < 6);
+  if (fast) fastPolls++;
+  timer = setTimeout(() => load(false),
+                     (fast ? 4 : (BOOK.market.poll_seconds || 300)) * 1000);
 }
 
 /* The US renderers were written against a flat book and are shared with the

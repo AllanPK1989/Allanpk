@@ -7,6 +7,18 @@ drift apart visually.
 """
 import pathlib, re
 
+def swap(text: str, old: str, new: str, count: int = -1) -> str:
+    """Substring replace that refuses to no-op.
+
+    Every edit here is pinned to exact template text, so a template tweak can
+    silently drop one and the generated page ships half-updated. Fail loudly
+    instead: a build that cannot find its anchor is a broken build.
+    """
+    if old not in text:
+        raise SystemExit("build_frontend: nothing matched\n  " + old[:90])
+    return text.replace(old, new, count)
+
+
 ROOT = pathlib.Path(__file__).resolve().parent
 tpl = (ROOT.parent / "dashboard.template.html").read_text()
 
@@ -170,16 +182,20 @@ INDIA_VIEW = """  <div id="view-india" hidden>
 
 """
 
-markup = markup.replace(
+markup = swap(markup,
     '  <span class="badge" id="feed"><span class="dot"></span><span id="feedtxt">Snapshot</span></span>',
     '  <span class="badge" id="mkt"><span id="mkttxt">—</span></span>\n'
     '  <span class="badge" id="feed"><span class="dot"></span>'
     '<span id="feedtxt">Connecting…</span></span>')
-markup = markup.replace('<button class="btn" id="refresh">Refresh quotes</button>',
+markup = swap(markup, "<title>Consolidated US Book</title>",
+                      "<title>Consolidated Wealth Book</title>")
+markup = swap(markup, "<h1>Consolidated US Book</h1>",
+                      "<h1>Consolidated Wealth Book</h1>")
+markup = swap(markup, '<button class="btn" id="refresh">Refresh quotes</button>',
                         '<button class="btn" id="refresh">Refresh now</button>')
 
 # view switcher in the masthead
-markup = markup.replace(
+markup = swap(markup,
     '  <span class="badge" id="mkt">',
     '  <nav class="views" role="tablist">'
     '<button class="vbtn" data-view="wealth" role="tab" aria-selected="true">Wealth</button>'
@@ -188,14 +204,14 @@ markup = markup.replace(
     '</nav>\n  <span class="badge" id="mkt">')
 
 # the US dashboard becomes one of three views; wealth and india sit beside it
-markup = markup.replace('  <div class="hero">', WEALTH_VIEW + INDIA_VIEW +
+markup = swap(markup, '  <div class="hero">', WEALTH_VIEW + INDIA_VIEW +
                         '  <div id="view-us" hidden>\n  <div class="hero">')
-markup = markup.replace('  <footer>', '  </div>\n\n  <footer>')
-markup = markup.replace('  <section id="calls">',
+markup = swap(markup, '  <footer>', '  </div>\n\n  <footer>')
+markup = swap(markup, '  <section id="calls">',
     '  <p class="note" id="freshness" style="margin:14px 0 0;font-size:12px;'
     'font-family:var(--mono);color:var(--ink-3)"></p>\n\n  <section id="calls">')
-markup = markup.replace('</style>', EXTRA_CSS + '</style>')
-markup = re.sub(
+markup = swap(markup, '</style>', EXTRA_CSS + '</style>')
+markup, _hits = re.subn(
     r'    <p><b>Live quotes\.</b>.*?</p>\n',
     '    <p><b>Live quotes.</b> This server fetches prices itself and the page polls it, so quotes '
     'refresh without a rebuild. Two independent sources are tried in order, and the strip under the '
@@ -203,6 +219,8 @@ markup = re.sub(
     'good prices are served and marked stale rather than replaced with nothing; if none were ever '
     'fetched, the statement close is shown and labelled as such.</p>\n',
     markup, flags=re.S)
+if not _hits:
+    raise SystemExit("build_frontend: the live-quotes paragraph did not match")
 
 
 PREAMBLE = '''<script>
@@ -326,9 +344,13 @@ async function load(force) {
   const btn = $("#refresh");
   btn.disabled = true;
   if (BOOK) btn.textContent = "Refreshing\\u2026";
+  /* A fetch with no timeout is a page that can sit on "connecting" forever,
+     which is exactly what it used to do. Give up and say so instead. */
+  const ac = new AbortController();
+  const bail = setTimeout(() => ac.abort(), force ? 30000 : 12000);
   try {
     const r = await fetch("/api/wealth" + (force ? "?force=true" : ""),
-      { headers: authHeaders(), cache: "no-store" });
+      { headers: authHeaders(), cache: "no-store", signal: ac.signal });
     if (r.status === 401) {
       try { localStorage.removeItem(KEY); } catch { /* ignore */ }
       askForToken(Boolean(TOKEN));       // "wrong" only if we actually sent one
@@ -341,7 +363,8 @@ async function load(force) {
     paintFeed();
     schedule();
   } catch (e) {
-    const msg = String(e.message || e);
+    const msg = e.name === "AbortError"
+      ? "the server did not answer in time" : String(e.message || e);
     setFeed(false, "Disconnected", msg);
     $("#freshness").textContent =
       "Cannot reach the server \\u2014 " + msg + ". Retrying every 15s.";
@@ -351,6 +374,7 @@ async function load(force) {
     clearTimeout(timer);
     timer = setTimeout(() => load(false), 15000);
   } finally {
+    clearTimeout(bail);
     btn.disabled = false;
     btn.textContent = "Refresh now";
   }
@@ -376,8 +400,10 @@ function paintFeed() {
         ? " \\u00b7 " + (f.total - f.live_count) + " on the " + f.reference_date + " reference close"
         : "");
   } else {
-    setFeed(false, "Reference \\u00b7 " + f.reference_date,
-      f.error || "No quote source reachable.");
+    setFeed(false,
+      f.refreshing ? "Fetching\\u2026" : "Reference \\u00b7 " + f.reference_date,
+      f.refreshing ? "Fetching live prices now."
+                   : (f.error || "No quote source reachable."));
     $("#freshness").textContent =
       "No live quotes \\u2014 all " + f.total + " names show the " + f.reference_date +
       " statement close. " + (f.error ? "Server reported: " + f.error : "");
@@ -386,9 +412,19 @@ function paintFeed() {
 
 /* Poll at the cadence the market state justifies: every minute while it is
    open, rarely once it is shut. */
+let fastPolls = 0;
 function schedule() {
   clearTimeout(timer);
-  timer = setTimeout(() => load(false), (BOOK.market.poll_seconds || 300) * 1000);
+  const f = BOOK.us && BOOK.us.feed;
+  if (f && f.live) fastPolls = 0;          // prices arrived; normal cadence resumes
+  /* Prices are fetched behind the response, so a load that arrives mid-refresh
+     is answered from an empty or stale cache. Come back for it in seconds
+     rather than waiting out the market-state interval — but only a few times,
+     or an upstream that never answers turns this into a poll loop. */
+  const fast = Boolean(f && f.refreshing && fastPolls < 6);
+  if (fast) fastPolls++;
+  timer = setTimeout(() => load(false),
+                     (fast ? 4 : (BOOK.market.poll_seconds || 300)) * 1000);
 }
 
 /* The US renderers were written against a flat book and are shared with the
@@ -713,7 +749,7 @@ load(false);
 head = ('<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
         '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
         '<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>\n')
-markup = markup.replace('\n<div class="mast">', '\n</head>\n<body>\n<div class="mast">', 1)
+markup = swap(markup, '\n<div class="mast">', '\n</head>\n<body>\n<div class="mast">', 1)
 
 out = ROOT / "static" / "index.html"
 out.write_text(head + markup + PREAMBLE + render_block + TAIL + "\n</body>\n</html>\n")

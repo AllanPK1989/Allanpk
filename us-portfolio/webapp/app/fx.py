@@ -6,6 +6,7 @@ rate it used and where it came from.
 """
 from __future__ import annotations
 
+import asyncio
 import logging
 import time
 
@@ -22,15 +23,30 @@ class FxRate:
         self.rate = FALLBACK
         self.source = "fallback"
         self.fetched_at = 0.0
+        self._bg: asyncio.Task | None = None
+        self._tried = 0.0
         self.last_error: str | None = None
 
     @property
     def fresh(self) -> bool:
         return self.source != "fallback" and time.time() - self.fetched_at < self.ttl
 
-    async def get(self, force: bool = False) -> float:
+    async def get(self, force: bool = False, wait: bool = False) -> float:
+        """The cached rate, refreshed behind the response unless asked to wait."""
         if self.fresh and not force:
             return self.rate
+        if not force and not wait:
+            if (not (self._bg and not self._bg.done())
+                    and time.time() - self._tried > 120):
+                self._tried = time.time()
+                try:
+                    self._bg = asyncio.get_running_loop().create_task(self._fetch())
+                except RuntimeError:
+                    pass
+            return self.rate
+        return await self._fetch()
+
+    async def _fetch(self) -> float:
         attempts = (
             ("yahoo", "https://query1.finance.yahoo.com/v8/finance/chart/USDINR=X",
              lambda j: j["chart"]["result"][0]["meta"]["regularMarketPrice"]),
