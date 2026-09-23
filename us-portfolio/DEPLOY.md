@@ -80,6 +80,13 @@ docker run -p 8000:8000 -e APP_TOKEN=$(openssl rand -hex 16) us-book
 
 ---
 
+## The two pages
+
+`https://<your-host>/` is the working dashboard.
+`https://<your-host>/live` is the Wealth Pulse board — the same data, built to
+be left open rather than read. Both use the same token, and unlocking one
+unlocks the other in that browser.
+
 ## If the site will not load
 
 Work down this list; the first two are far more common than a broken build.

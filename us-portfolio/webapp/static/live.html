@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wealth Pulse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+/* ── A board, not a report. Dark by design: it is meant to sit open on a
+      second screen, so it commits to one visual world rather than following
+      the viewer's theme. ─────────────────────────────────────────────────── */
+:root{
+  --bg:#0F1216; --bg2:#12161C; --surf:#171C22; --surf2:#1D232B;
+  --line:#242C36; --line2:#323C49;
+  --ink:#ECE8E1; --ink2:#9AA5B2; --ink3:#65707E;
+  --india:#E0913A; --us:#5B93D8;
+  --up:#4CC38A; --down:#E5675F; --gold:#D9B46A;
+  --a1:#5AA0D6; --a2:#2C9A70; --a3:#C9A23A; --a4:#B57BAE;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --ui:"Archivo",system-ui,-apple-system,sans-serif;
+  --disp:"Instrument Serif",Georgia,serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--ui)}
+body{
+  min-height:100vh;
+  /* two quiet pools of light, one per market — the only decoration on the page */
+  background:
+    radial-gradient(1100px 620px at 12% -8%, rgba(224,145,58,.10), transparent 60%),
+    radial-gradient(1000px 600px at 92% 4%, rgba(91,147,216,.10), transparent 62%),
+    var(--bg);
+  background-attachment:fixed;
+}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.up{color:var(--up)} .down{color:var(--down)}
+.wrap{max-width:1500px;margin:0 auto;padding:22px 26px 64px}
+
+/* ── top bar ─────────────────────────────────────────────────────────────── */
+.bar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:26px}
+.brand{margin-right:auto;display:flex;align-items:baseline;gap:12px}
+.brand h1{font-family:var(--disp);font-size:27px;font-weight:400;margin:0;letter-spacing:.01em}
+.brand .sub{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ink3)}
+.pill{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;
+  border:1px solid var(--line2);background:rgba(255,255,255,.02);font-family:var(--mono);
+  font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink2)}
+.pill b{color:var(--ink);font-weight:500}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ink3);flex:none}
+.pill.on{border-color:rgba(76,195,138,.5);color:var(--up)}
+.pill.on .dot{background:var(--up);box-shadow:0 0 0 0 rgba(76,195,138,.6);
+  animation:ping 2.6s cubic-bezier(.2,.6,.3,1) infinite}
+.pill.warn{border-color:rgba(217,180,106,.45);color:var(--gold)}
+.pill.warn .dot{background:var(--gold)}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(76,195,138,.55)}
+  70%{box-shadow:0 0 0 7px rgba(76,195,138,0)}100%{box-shadow:0 0 0 0 rgba(76,195,138,0)}}
+button{font:inherit;cursor:pointer}
+.btn{padding:7px 14px;border-radius:9px;border:1px solid var(--line2);
+  background:rgba(255,255,255,.03);color:var(--ink);font-size:12.5px;font-weight:500}
+.btn:hover{background:rgba(255,255,255,.07);border-color:var(--gold)}
+.btn:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+a{color:var(--gold)}
+
+/* ── bento ───────────────────────────────────────────────────────────────── */
+.grid{display:grid;gap:14px;grid-template-columns:repeat(12,1fr)}
+.tile{background:linear-gradient(180deg,rgba(255,255,255,.028),rgba(255,255,255,.008));
+  border:1px solid var(--line);border-radius:16px;padding:20px 22px;min-width:0}
+.tile h2{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink3);margin:0 0 14px;font-weight:500}
+.c12{grid-column:span 12} .c7{grid-column:span 7} .c5{grid-column:span 5}
+.c6{grid-column:span 6} .c4{grid-column:span 4} .c8{grid-column:span 8}
+@media(max-width:1080px){.c7,.c5,.c6,.c4,.c8{grid-column:span 12}}
+
+/* ── hero ────────────────────────────────────────────────────────────────── */
+.hero{display:flex;align-items:flex-end;gap:38px;flex-wrap:wrap}
+.hero .big{font-family:var(--disp);font-size:clamp(54px,8.2vw,104px);line-height:.92;
+  letter-spacing:-.012em;font-variant-numeric:tabular-nums}
+.hero .big .cur{color:var(--ink3);font-size:.56em;margin-right:.06em}
+.hero .side{display:flex;flex-direction:column;gap:11px;padding-bottom:9px}
+.kv{display:flex;align-items:baseline;gap:9px;font-family:var(--mono);font-size:13px;
+  color:var(--ink2)}
+.kv b{color:var(--ink);font-weight:500}
+.daybox{display:inline-flex;align-items:baseline;gap:9px;padding:9px 15px;border-radius:11px;
+  border:1px solid var(--line2);background:rgba(255,255,255,.02);font-family:var(--mono)}
+.daybox .amt{font-size:19px;font-weight:500}
+.daybox .lbl{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
+.flash{animation:flash 1.05s ease-out}
+@keyframes flash{0%{background:rgba(217,180,106,.22)}100%{background:transparent}}
+
+/* ── the two books, as one bar ───────────────────────────────────────────── */
+.splitbar{display:flex;height:46px;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.splitbar div{display:flex;align-items:center;justify-content:space-between;padding:0 15px;
+  font-family:var(--mono);font-size:12px;font-weight:500;color:#0F1216;min-width:0;
+  transition:flex-basis .8s cubic-bezier(.25,.9,.3,1)}
+.splitbar .in{background:var(--india)} .splitbar .us{background:var(--us)}
+.splitbar span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.booknums{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:15px}
+.booknum .t{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink3);display:flex;align-items:center;gap:7px}
+.booknum .t i{width:9px;height:9px;border-radius:3px;display:inline-block}
+.booknum .v{font-family:var(--mono);font-size:22px;margin-top:5px;font-weight:500}
+.booknum .r{font-family:var(--mono);font-size:12px;color:var(--ink2);margin-top:2px}
+
+/* ── ring ────────────────────────────────────────────────────────────────── */
+.ringwrap{display:flex;gap:26px;align-items:center;flex-wrap:wrap}
+.ringlabels{display:flex;flex-direction:column;gap:11px;min-width:0;flex:1}
+.rl{display:flex;align-items:center;gap:10px;font-size:13px;min-width:0}
+.rl i{width:10px;height:10px;border-radius:3px;flex:none}
+.rl .nm{color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rl .vv{margin-left:auto;font-family:var(--mono);font-size:12.5px;color:var(--ink);flex:none}
+.rl .pp{font-family:var(--mono);font-size:11.5px;color:var(--ink3);width:46px;text-align:right;flex:none}
+
+/* ── movers ──────────────────────────────────────────────────────────────── */
+.movers{display:flex;flex-direction:column;gap:9px}
+.mv{display:flex;align-items:center;gap:12px;padding:9px 11px;border-radius:10px;
+  background:rgba(255,255,255,.022);border:1px solid transparent}
+.mv:hover{border-color:var(--line2)}
+.mv .tk{font-family:var(--mono);font-size:13px;font-weight:700;width:76px;flex:none}
+.mv .nm{color:var(--ink3);font-size:12px;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap;flex:1;min-width:0}
+.mv .ch{font-family:var(--mono);font-size:13.5px;font-weight:500;flex:none}
+.mv .bar{width:68px;height:4px;border-radius:2px;background:var(--surf2);
+  overflow:hidden;flex:none;display:flex;justify-content:center}
+.mv .bar i{display:block;height:100%;border-radius:2px}
+
+/* ── tape ────────────────────────────────────────────────────────────────── */
+.tape{overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  padding:13px 0;margin-top:20px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+.tapetrack{display:flex;gap:30px;width:max-content;animation:roll 78s linear infinite}
+.tape:hover .tapetrack{animation-play-state:paused}
+@keyframes roll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ti{display:inline-flex;align-items:baseline;gap:8px;font-family:var(--mono);font-size:12.5px;
+  white-space:nowrap}
+.ti .s{font-weight:700} .ti .v{color:var(--ink2)}
+.ti .f{font-size:9px;color:var(--ink3);border:1px solid var(--line2);border-radius:3px;
+  padding:0 4px;align-self:center}
+
+/* ── table ───────────────────────────────────────────────────────────────── */
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:620px}
+th,td{padding:9px 12px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink3);font-weight:500}
+tbody tr:hover td{background:rgba(255,255,255,.022)}
+tbody tr:last-child td{border-bottom:none}
+td.n{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.chip{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;
+  padding:2px 7px;border-radius:5px;border:1px solid var(--line2);color:var(--ink3)}
+.chip.in{color:var(--india);border-color:rgba(224,145,58,.4)}
+.chip.us{color:var(--us);border-color:rgba(91,147,216,.4)}
+.foot{margin-top:30px;font-family:var(--mono);font-size:11px;color:var(--ink3);line-height:1.8}
+#gate{max-width:27rem;margin:16vh auto;background:var(--surf);border:1px solid var(--line);
+  border-radius:16px;padding:28px 30px}
+#gate h2{font-family:var(--disp);font-size:23px;font-weight:400;margin:0 0 9px}
+#gate p{color:var(--ink2);font-size:13.5px;line-height:1.6;margin:0 0 16px}
+#gate input{width:100%;padding:10px 12px;font-family:var(--mono);font-size:13px;
+  border:1px solid var(--line2);border-radius:9px;background:var(--bg);color:var(--ink)}
+#gate .err{color:var(--down);font-size:12.5px;margin:10px 0 0}
+code{font-family:var(--mono);font-size:.9em;background:var(--surf2);padding:1px 5px;border-radius:4px}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<div class="wrap" id="app" hidden>
+  <div class="bar">
+    <div class="brand">
+      <h1>Wealth Pulse</h1>
+      <span class="sub" id="sub">connecting</span>
+    </div>
+    <span class="pill" id="mkt"><span class="dot"></span><span id="mktTxt">—</span></span>
+    <span class="pill" id="feed"><span class="dot"></span><span id="feedTxt">—</span></span>
+    <span class="pill"><span id="clock">—</span></span>
+    <button class="btn" id="refresh">Refresh</button>
+  </div>
+
+  <div class="grid">
+    <div class="tile c7">
+      <h2>Total net worth</h2>
+      <div class="hero">
+        <div class="big num"><span class="cur">₹</span><span id="heroVal">—</span></div>
+        <div class="side">
+          <div class="daybox" id="dayBox">
+            <span class="lbl">Today</span>
+            <span class="amt num" id="dayAmt">—</span>
+            <span class="num" id="dayPct" style="font-size:13px"></span>
+          </div>
+          <div class="kv">Invested <b id="cost">—</b></div>
+          <div class="kv">Total gain <b id="gain">—</b></div>
+          <div class="kv">In USD <b id="usd">—</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tile c5">
+      <h2>India &amp; United States</h2>
+      <div class="splitbar" id="split"></div>
+      <div class="booknums" id="bookNums"></div>
+    </div>
+
+    <div class="tile c5">
+      <h2>Allocation</h2>
+      <div class="ringwrap">
+        <svg id="ring" width="168" height="168" viewBox="0 0 168 168" role="img"
+             aria-label="Allocation by asset class"></svg>
+        <div class="ringlabels" id="ringLabels"></div>
+      </div>
+    </div>
+
+    <div class="tile c4">
+      <h2>Moving today</h2>
+      <div class="movers" id="movers"></div>
+    </div>
+
+    <div class="tile c3" style="grid-column:span 3">
+      <h2>Concentration</h2>
+      <div id="conc"></div>
+    </div>
+
+    <div class="tile c12">
+      <h2>Every position</h2>
+      <div class="scroll"><table id="pos"><thead></thead><tbody></tbody></table></div>
+    </div>
+  </div>
+
+  <div class="tape"><div class="tapetrack" id="tape"></div></div>
+
+  <div class="foot" id="foot"></div>
+</div>
+
+<div id="gate" hidden>
+  <h2>Wealth Pulse</h2>
+  <p>This board is private. Paste the access token — on Render it is your service
+     &rarr; <b>Environment</b> &rarr; <code>APP_TOKEN</code>. Not the Finnhub key.</p>
+  <form id="gateForm">
+    <input id="tok" type="password" autocomplete="current-password" placeholder="Access token">
+    <p class="err" id="gateErr" hidden></p>
+    <button class="btn" style="margin-top:14px;width:100%">Unlock</button>
+  </form>
+</div>
+
+<script>
+(() => {
+"use strict";
+const $ = s => document.querySelector(s);
+const el = (t, c, x) => { const n = document.createElement(t);
+  if (c) n.className = c; if (x != null) n.textContent = x; return n; };
+
+const KEY = "us-book-token";
+let TOKEN = "";
+try {
+  const q = new URLSearchParams(location.search).get("token");
+  if (q) { localStorage.setItem(KEY, q); history.replaceState(null, "", location.pathname); }
+  TOKEN = localStorage.getItem(KEY) || "";
+} catch { TOKEN = new URLSearchParams(location.search).get("token") || ""; }
+const auth = () => TOKEN ? { "X-App-Token": TOKEN } : {};
+
+const lakh = v => v == null ? "—"
+  : Math.abs(v) >= 1e7 ? (v / 1e7).toFixed(2) + " Cr" : (v / 1e5).toFixed(2) + " L";
+const rup  = v => v == null ? "—" : "₹" + Math.round(v).toLocaleString("en-IN");
+const usd0 = v => v == null ? "—" : "$" + Math.round(v).toLocaleString("en-US");
+const pc   = (v, d = 2) => v == null ? "—" : (v > 0 ? "+" : "") + v.toFixed(d) + "%";
+const sgn  = v => v == null ? "" : v >= 0 ? "up" : "down";
+const ago  = s => s == null ? "—" : s < 90 ? Math.round(s) + "s"
+  : s < 5400 ? Math.round(s / 60) + "m" : (s / 3600).toFixed(1) + "h";
+
+/* Count the hero number up to its new value; a board that is watched should
+   show that something moved, not silently swap the digits. */
+let heroShown = null;
+function countTo(node, to) {
+  const from = heroShown;
+  heroShown = to;
+  if (from == null || Math.abs(to - from) < 1 ||
+      matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    node.textContent = lakh(to); return;
+  }
+  const t0 = performance.now(), ms = 820;
+  const step = now => {
+    const k = Math.min(1, (now - t0) / ms);
+    const e = 1 - Math.pow(1 - k, 3);
+    node.textContent = lakh(from + (to - from) * e);
+    if (k < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+const BUCKETS = [
+  ["India equity",    ["India equity"],                                              "var(--a1)"],
+  ["Overseas equity", ["US equity", "US equity ETF", "International equity", "Crypto"], "var(--a2)"],
+  ["Debt & cash",     ["Debt / cash"],                                               "var(--a3)"],
+  ["Unlisted",        ["Unlisted / pre-IPO"],                                        "var(--a4)"],
+];
+
+let BOOK = null, timer = null, lastTotal = null;
+
+function ring(rows, total) {
+  const svg = $("#ring"), NS = "http://www.w3.org/2000/svg";
+  svg.textContent = "";
+  const cx = 84, cy = 84, r = 62, w = 20, C = 2 * Math.PI * r;
+  const track = document.createElementNS(NS, "circle");
+  for (const [k, v] of Object.entries({ cx, cy, r, fill: "none",
+      stroke: "var(--surf2)", "stroke-width": w })) track.setAttribute(k, v);
+  svg.append(track);
+  let off = 0;
+  for (const row of rows) {
+    const frac = row.value / total;
+    const arc = document.createElementNS(NS, "circle");
+    for (const [k, v] of Object.entries({
+      cx, cy, r, fill: "none", stroke: row.col, "stroke-width": w,
+      "stroke-dasharray": `${Math.max(0, C * frac - 2)} ${C}`,
+      "stroke-dashoffset": -off,
+      transform: `rotate(-90 ${cx} ${cy})`, "stroke-linecap": "butt"
+    })) arc.setAttribute(k, v);
+    const ttl = document.createElementNS(NS, "title");
+    ttl.textContent = `${row.name} · ₹${lakh(row.value)} · ${(frac * 100).toFixed(1)}%`;
+    arc.append(ttl);
+    svg.append(arc);
+    off += C * frac;
+  }
+  const mid = document.createElementNS(NS, "text");
+  for (const [k, v] of Object.entries({ x: cx, y: cy - 4, "text-anchor": "middle",
+    fill: "var(--ink)", "font-family": "var(--mono)", "font-size": 19 })) mid.setAttribute(k, v);
+  mid.textContent = lakh(total);
+  const sub = document.createElementNS(NS, "text");
+  for (const [k, v] of Object.entries({ x: cx, y: cy + 15, "text-anchor": "middle",
+    fill: "var(--ink3)", "font-family": "var(--mono)", "font-size": 9.5,
+    "letter-spacing": 1.4 })) sub.setAttribute(k, v);
+  sub.textContent = "TOTAL";
+  svg.append(mid, sub);
+}
+
+function render() {
+  const w = BOOK, t = w.totals;
+  $("#sub").textContent = `${t.holdings} holdings · ₹${w.usdinr}/USD`;
+
+  countTo($("#heroVal"), t.value_inr);
+  $("#cost").textContent = "₹" + lakh(t.cost_inr);
+  const g = $("#gain");
+  g.textContent = `₹${lakh(t.pl_inr)} (${pc(t.pl_pct, 1)})`;
+  g.className = sgn(t.pl_inr);
+  $("#usd").textContent = usd0(t.value_usd);
+
+  const d = w.day, box = $("#dayBox");
+  if (d && d.covered_pct > 0) {
+    $("#dayAmt").textContent = (d.value_inr >= 0 ? "+₹" : "−₹") + lakh(Math.abs(d.value_inr));
+    $("#dayAmt").className = "amt num " + sgn(d.value_inr);
+    $("#dayPct").textContent = pc(d.pct) + ` · ${d.covered_pct}% priced`;
+    $("#dayPct").className = "num " + sgn(d.value_inr);
+  } else {
+    $("#dayAmt").textContent = "—";
+    $("#dayAmt").className = "amt num";
+    $("#dayPct").textContent = "no live prices yet";
+    $("#dayPct").className = "num";
+  }
+  if (lastTotal != null && Math.abs(t.value_inr - lastTotal) > 1) {
+    box.classList.remove("flash"); void box.offsetWidth; box.classList.add("flash");
+  }
+  lastTotal = t.value_inr;
+
+  // the two books as one bar
+  const sb = $("#split"); sb.textContent = "";
+  const bn = $("#bookNums"); bn.textContent = "";
+  w.sides.forEach(s => {
+    const isIn = s.label === "India";
+    const seg = el("div", isIn ? "in" : "us");
+    seg.style.flex = `${s.share} 1 0`;
+    seg.append(el("span", "", isIn ? "India" : "US"),
+               el("span", "", s.share.toFixed(0) + "%"));
+    seg.title = `${s.label} · ₹${lakh(s.value_inr)} · ${s.share}%`;
+    sb.append(seg);
+
+    const b = el("div", "booknum");
+    const tt = el("div", "t");
+    const sw = el("i"); sw.style.background = isIn ? "var(--india)" : "var(--us)";
+    tt.append(sw, document.createTextNode(s.label));
+    b.append(tt);
+    b.append(el("div", "v num", "₹" + lakh(s.value_inr)));
+    const r = el("div", "r");
+    r.append(document.createTextNode(s.currency === "USD"
+      ? usd0(s.value_native) + " · " : ""));
+    r.append(el("span", sgn(s.pl_inr), pc(s.pl_pct, 1)));
+    b.append(r);
+    bn.append(b);
+  });
+
+  // allocation
+  const rows = BUCKETS.map(([name, keys, col]) => ({
+    name, col, value: keys.reduce((a, k) => a + (w.by_class[k] || 0), 0)
+  })).filter(r => r.value > 0).sort((a, b) => b.value - a.value);
+  ring(rows, t.value_inr);
+  const rl = $("#ringLabels"); rl.textContent = "";
+  for (const r of rows) {
+    const d2 = el("div", "rl");
+    const i = el("i"); i.style.background = r.col;
+    d2.append(i, el("span", "nm", r.name), el("span", "vv", "₹" + lakh(r.value)),
+              el("span", "pp", (r.value / t.value_inr * 100).toFixed(1) + "%"));
+    rl.append(d2);
+  }
+
+  // movers: only names that actually reported a move today
+  const moved = (w.us.universe || []).filter(r => r.held && r.day_pct != null)
+    .map(r => ({ tk: r.ticker, nm: r.name, ch: r.day_pct }))
+    .concat((w.india.holdings || []).filter(h => h.day_pct != null)
+      .map(h => ({ tk: h.symbol, nm: h.name, ch: h.day_pct })))
+    .sort((a, b) => Math.abs(b.ch) - Math.abs(a.ch)).slice(0, 7);
+  const mv = $("#movers"); mv.textContent = "";
+  if (!moved.length) {
+    mv.append(el("div", "rl", "Nothing is reporting a day move yet."));
+  } else {
+    const peak = Math.max(...moved.map(m => Math.abs(m.ch)), 1);
+    for (const m of moved) {
+      const row = el("div", "mv");
+      row.append(el("div", "tk", m.tk), el("div", "nm", m.nm));
+      const bar = el("div", "bar"), fill = el("i");
+      fill.style.width = (Math.abs(m.ch) / peak * 100).toFixed(0) + "%";
+      fill.style.background = m.ch >= 0 ? "var(--up)" : "var(--down)";
+      bar.append(fill);
+      row.append(bar, el("div", "ch " + sgn(m.ch), pc(m.ch, 1)));
+      mv.append(row);
+    }
+  }
+
+  // concentration
+  const livePos = w.positions.filter(p => p.live).length;
+  const c = $("#conc"); c.textContent = "";
+  const fact = (k, v, cls) => {
+    const d3 = el("div", "rl");
+    d3.append(el("span", "nm", k));
+    d3.append(el("span", "vv" + (cls ? " " + cls : ""), v));
+    c.append(d3);
+  };
+  fact("Top 5 names", w.mix.top5_pct.toFixed(1) + "%");
+  fact("In equities", w.mix.equity_pct.toFixed(1) + "%");
+  fact("Held overseas", w.mix.overseas_pct.toFixed(1) + "%");
+  fact("Largest", `${w.positions[0].symbol} ${w.positions[0].weight.toFixed(1)}%`);
+  fact("Priced live", `${livePos} of ${w.positions.length}`);
+
+  // tape — doubled so the loop is seamless
+  const tp = $("#tape"); tp.textContent = "";
+  const items = w.positions.slice(0, 26);
+  for (let pass = 0; pass < 2; pass++) {
+    for (const p of items) {
+      const i = el("span", "ti");
+      i.append(el("span", "s", p.symbol),
+               el("span", "v", "₹" + lakh(p.value_inr)),
+               el("span", sgn(p.pl_pct), pc(p.pl_pct, 1)));
+      if (!p.live) i.append(el("span", "f", "ref"));
+      tp.append(i);
+    }
+  }
+
+  // full table
+  const tb = $("#pos");
+  tb.tHead.textContent = ""; tb.tBodies[0].textContent = "";
+  const hr = el("tr");
+  for (const h of ["Holding", "Book", "Class", "Value", "Weight", "Return", ""])
+    hr.append(el("th", "", h));
+  tb.tHead.append(hr);
+  for (const p of w.positions) {
+    const r = el("tr");
+    const c1 = el("td");
+    const nm = el("div"); nm.style.cssText = "font-family:var(--mono);font-weight:500";
+    nm.textContent = p.symbol;
+    const sm = el("div"); sm.style.cssText = "font-size:11.5px;color:var(--ink3)";
+    sm.textContent = p.name;
+    c1.append(nm, sm); r.append(c1);
+    r.append(el("td", "n", "").appendChild(
+      el("span", "chip " + (p.book === "India" ? "in" : "us"), p.book)).parentNode);
+    r.append(el("td", "n", p.asset_class));
+    r.append(el("td", "n", rup(p.value_inr)));
+    r.append(el("td", "n", p.weight.toFixed(2) + "%"));
+    const rc = el("td", "n " + sgn(p.pl_pct), pc(p.pl_pct, 1)); r.append(rc);
+    r.append(el("td", "n").appendChild(
+      el("span", "chip", p.live ? "live" : "ref")).parentNode);
+    tb.tBodies[0].append(r);
+  }
+
+  // status pills
+  const m = w.market;
+  $("#mktTxt").textContent = m.label;
+  $("#mkt").className = "pill" + (m.is_open ? " on" : "");
+  // count the holdings, not the tracked universe: the watchlist is not owned
+  const f = w.us.feed;
+  const priceable = w.positions.filter(p => p.asset_class !== "Unlisted / pre-IPO").length;
+  $("#feedTxt").innerHTML = livePos
+    ? `Live <b>${livePos}/${priceable}</b> · ${ago(f.age_seconds)}`
+    : `Reference · ${f.reference_date}`;
+  $("#feed").className = "pill" + (livePos ? " on" : " warn");
+
+  $("#foot").textContent =
+    `Converted at ₹${w.usdinr}/USD from ${w.fx.source}. `
+    + `India funds price against AMFI NAVs, ETFs against their NSE lines; `
+    + `unlisted holdings sit at statement value and are marked "ref". `
+    + `Not investment advice.`;
+}
+
+async function load() {
+  try {
+    const r = await fetch("/api/wealth", { headers: auth(), cache: "no-store" });
+    if (r.status === 401) { gate(Boolean(TOKEN)); TOKEN = ""; return; }
+    if (!r.ok) throw new Error("server " + r.status);
+    BOOK = await r.json();
+    $("#gate").hidden = true; $("#app").hidden = false;
+    render();
+    clearTimeout(timer);
+    timer = setTimeout(load, (BOOK.market.poll_seconds || 300) * 1000);
+  } catch (e) {
+    $("#sub").textContent = "reconnecting — " + (e.message || e);
+    clearTimeout(timer);
+    timer = setTimeout(load, 15000);
+  }
+}
+
+function gate(wrong) {
+  clearTimeout(timer);
+  $("#app").hidden = true; $("#gate").hidden = false;
+  const err = $("#gateErr");
+  err.hidden = !wrong;
+  if (wrong) err.textContent = "That was not accepted. It should be APP_TOKEN, not the Finnhub key.";
+  try { localStorage.removeItem(KEY); } catch { /* private window */ }
+}
+$("#gateForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const v = $("#tok").value.trim(); if (!v) return;
+  const r = await fetch("/api/auth", { headers: { "X-App-Token": v } }).catch(() => ({ ok: false }));
+  if (!r.ok) { gate(true); return; }
+  try { localStorage.setItem(KEY, v); } catch { /* ignore */ }
+  TOKEN = v; load();
+});
+$("#refresh").addEventListener("click", () => {
+  fetch("/api/refresh", { method: "POST", headers: auth() }).finally(load);
+});
+addEventListener("visibilitychange", () => {
+  if (document.hidden) clearTimeout(timer); else load();
+});
+setInterval(() => {
+  $("#clock").textContent = new Date().toLocaleTimeString([],
+    { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+}, 1000);
+
+load();
+})();
+</script>
+</body>
+</html>

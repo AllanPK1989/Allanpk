@@ -8,7 +8,7 @@ Sources, all dated 14 Sep 2026
 
 Run:  python3 build_india.py  ->  data/india.json
 """
-import csv, json, pathlib
+import csv, json, pathlib, re
 
 HERE = pathlib.Path(__file__).parent
 AS_OF = "2026-09-14"
@@ -65,6 +65,38 @@ PRE_IPO = [
          note="Unlisted. Filed for an IPO; held at the statement price."),
 ]
 
+# Noise words that identify a share class, not a fund. Stripping them leaves
+# something a person recognises at a glance, which an ISIN never is.
+_DROP = (
+    "direct plan", "direct growth plan", "direct growth", "direct - growth",
+    "- direct", "direct", "growth plan", "growth", "plan", "non demat",
+    "non-demat", "regular", "(formerly", "fund of fund", "fund", "scheme",
+)
+
+
+def short_name(name: str) -> str:
+    """A label for a board that is glanced at rather than read."""
+    n = re.sub(r"\(.*?\)", " ", name)                  # drop parentheticals
+    n = re.sub(r"\s+-\s+", " ", n)
+    low = n.lower()
+    for token in _DROP:
+        low = low.replace(token, " ")
+    keep, seen = [], set()
+    for w in n.split():
+        wl = re.sub(r"[^a-z0-9+]", "", w.lower())
+        if not wl or wl in seen:
+            continue
+        if wl in {"direct", "growth", "plan", "fund", "scheme", "regular",
+                  "of", "the", "nondemat", "demat", "erstwhile", "formerly"}:
+            continue
+        seen.add(wl)
+        keep.append(w.strip("-,"))
+        if len(keep) >= 4:
+            break
+    out = " ".join(keep).strip()
+    return (out[:26].rstrip() or name[:26])
+
+
 def mask_folio(folio: str) -> str:
     """A folio number identifies a mutual fund account, so only enough of it is
     kept to tell two folios of the same scheme apart. The US side's broker
@@ -84,7 +116,7 @@ def build():
         holdings.append(dict(
             kind="mutual_fund", account="Mutual funds (CAS)",
             folio=mask_folio(r["folio"]),
-            name=r["name"], symbol=r["isin"], isin=r["isin"],
+            name=r["name"], symbol=short_name(r["name"]), isin=r["isin"],
             units=round(r["units"], 4), price=r["nav"], price_label="NAV",
             value=round(r["value"], 2), cost=round(r["cost"], 2),
             asset_class=cls, sub_class=sub, registrar=r["registrar"],

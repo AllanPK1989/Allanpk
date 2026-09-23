@@ -200,6 +200,16 @@ async def api_health():
         status_code=200 if healthy else 503)
 
 
+@app.api_route("/live", methods=["GET", "HEAD"])
+async def live_board():
+    """A second, glanceable board on the same data, at its own URL.
+
+    Served without a token for the same reason as /: it is an empty shell, and
+    every figure on it comes from /api/wealth, which is gated.
+    """
+    return FileResponse(STATIC / "live.html")
+
+
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
     return Response(

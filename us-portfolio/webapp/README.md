@@ -19,7 +19,15 @@ published Artifact the content policy blocks the request before it is sent.
 Neither is fixable from the page, which is why the earlier static version could
 never go live. This app fetches server-side, where those rules do not apply.
 
-## Three views
+## Two pages
+
+`/`      the working dashboard — three views, dense tables, the valuation model
+`/live`  **Wealth Pulse**, a glanceable board for a second screen: one big
+         number, the India/US split, an allocation ring, what is moving today,
+         and a ticker. Same data, same API, same token; a different job, so a
+         different design.
+
+## Three views (on `/`)
 
 **Wealth** — one net worth across both books, converted at a fetched USD/INR
 rate. Four allocation buckets that actually change the risk, and every holding
@@ -61,7 +69,8 @@ India would understate how much of the book really sits abroad.
 
 | Route | |
 |---|---|
-| `GET /` | the dashboard |
+| `GET /` | the working dashboard |
+| `GET /live` | the Wealth Pulse board |
 | `GET /api/portfolio` | the whole book, marked live |
 | `POST /api/refresh` | force a fetch, bypassing the cache |
 | `GET /api/health` | provider and cache state; 503 when nothing is cached |

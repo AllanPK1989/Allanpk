@@ -150,3 +150,18 @@ def test_the_fx_rate_moves_the_us_side_only():
     india_hi = next(s for s in hi["sides"] if s["label"] == "India")
     assert india_lo["value_inr"] == india_hi["value_inr"]          # unchanged
     assert hi["totals"]["value_inr"] > lo["totals"]["value_inr"]   # US worth more
+
+
+def test_funds_get_a_readable_label_not_an_isin():
+    """The board is glanced at; a column of INF… codes is unreadable."""
+    import re
+    b = IndiaBook().base
+    funds = [h for h in b["holdings"] if h["kind"] == "mutual_fund"]
+    assert funds
+    for h in funds:
+        assert not re.match(r"^INF[A-Z0-9]{9}", h["symbol"]), h["symbol"]
+        assert 0 < len(h["symbol"]) <= 26
+        assert h["isin"].startswith(("INF", "UNCLAIM"))      # still carried for AMFI
+    by = {h["symbol"] for h in funds}
+    assert "Mirae Asset NYSE FANG+" in by
+    assert "quant ELSS Tax Saver" in by

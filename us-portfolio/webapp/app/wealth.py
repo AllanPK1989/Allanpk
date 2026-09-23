@@ -65,6 +65,24 @@ def combine(us: dict, india: dict, usdinr: float, fx_meta: dict) -> dict:
                               currency="USD", asset_class="US equity",
                               value_inr=round(row["value"] * usdinr, 2),
                               pl_pct=row.get("pl_pct"), live=row.get("live", False)))
+    # Day change, for a board that is watched rather than read. Only names
+    # that actually returned a day move contribute, and the coverage is
+    # reported so a partial feed cannot masquerade as a whole-book move.
+    day_inr = 0.0
+    day_covered = 0.0
+    for row in us["universe"]:
+        if not row.get("held") or row.get("day_pct") is None:
+            continue
+        v = row["value"] * usdinr
+        day_inr += v * row["day_pct"] / 100.0
+        day_covered += v
+    for h in india["holdings"]:
+        dp = h.get("day_pct")
+        if dp is None:
+            continue
+        day_inr += h["value"] * dp / 100.0
+        day_covered += h["value"]
+
     positions.sort(key=lambda p: -p["value_inr"])
     for p in positions:
         p["weight"] = round(p["value_inr"] / total_inr * 100, 2) if total_inr else 0.0
@@ -85,6 +103,11 @@ def combine(us: dict, india: dict, usdinr: float, fx_meta: dict) -> dict:
             holdings=len(positions)),
         sides=sides,
         by_class=classes,
+        day=dict(
+            value_inr=round(day_inr, 2),
+            pct=round(day_inr / (day_covered - day_inr) * 100, 3) if day_covered else None,
+            covered_inr=round(day_covered, 2),
+            covered_pct=round(day_covered / total_inr * 100, 1) if total_inr else 0.0),
         mix=dict(
             equity_pct=round(equity_inr / total_inr * 100, 2) if total_inr else 0.0,
             overseas_pct=round(overseas_inr / total_inr * 100, 2) if total_inr else 0.0,

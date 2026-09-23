@@ -193,3 +193,15 @@ def test_health_reports_india_and_fx(client):
     h = client.get("/api/health").json()
     assert h["india"]["holdings"] == 39
     assert "rate" in h["fx"] and h["fx"]["rate"] > 0
+
+
+def test_the_live_board_is_served_and_carries_no_data(monkeypatch):
+    monkeypatch.setattr(main, "APP_TOKEN", "s3cret")
+    main.quotes.providers = [Stub({"GOOGL": 400.0})]
+    with TestClient(main.app) as c:
+        page = c.get("/live")
+        assert page.status_code == 200 and "Wealth Pulse" in page.text
+        for leak in ("GOOGL", "NIFTYBEES", "53,767", "3,526,511"):
+            assert leak not in page.text, f"the live board leaked {leak!r}"
+        assert c.head("/live").status_code == 200
+        assert c.get("/api/wealth").status_code == 401     # data still gated

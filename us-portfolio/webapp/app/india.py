@@ -149,6 +149,8 @@ class IndiaBook:
                     h["value"] = round(h["units"] * q.price, 2)
                     h["live"] = True
                     h["quote_source"] = q.source
+                    if getattr(q, "day_pct", None) is not None:
+                        h["day_pct"] = round(q.day_pct, 2)
                     live += 1
             h["pl"] = round(h["value"] - h["cost"], 2)
             h["pl_pct"] = round((h["value"] / h["cost"] - 1) * 100, 2) if h["cost"] else None
