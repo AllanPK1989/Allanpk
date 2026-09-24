@@ -7,8 +7,8 @@ People
   E   electrical supervisor (may share a shift with either tooling supervisor)
 
 Rules for T1/T2/E
-  * two consecutive days off every calendar week (Mon-Sun);
-  * 3-7 working days between two off blocks;
+  * two consecutive days off a week (5 off blocks in 28 Sep - 31 Oct);
+  * 3-6 working days between two off blocks (never more than 6 in a row);
   * shift switches (1st <-> 2nd) on the first day back after the days off.
 
 Cover
@@ -17,7 +17,8 @@ Cover
   * Sun: at least one supervisor (maintenance only).
 
 Two variants are solved: FIXED (same off days every week) and ROTATING (off
-days move week to week; Sunday offs shared fairly).
+days move; each off block falls after 3-6 working days, not on a fixed weekday,
+which is what lets Sunday duty rotate with one supervisor per Sunday).
 """
 import datetime as dt
 
@@ -29,7 +30,7 @@ NDAYS = (END - START).days + 1        # 34 days that must be covered
 HORIZON = NDAYS + 2                   # model runs to Mon 2 Nov so offs can spill over
 WEEKS = (NDAYS + 6) // 7
 PEOPLE = ["T1", "T2", "E"]
-MIN_RUN, MAX_RUN = 3, 7
+MIN_RUN, MAX_RUN = 3, 6
 
 
 def date(d):
@@ -67,18 +68,22 @@ def solve(fixed, time_limit=60):
                 m.AddImplication(start[p, d], start[p, g].Not())
             nxt = [start[p, g] for g in range(d + 2 + MIN_RUN, d + 3 + MAX_RUN)
                    if g < HORIZON]
-            if d + 2 + MAX_RUN < NDAYS:
+            # enforced up to Sun 1 Nov so nobody runs past 6 days at month end
+            if d + 2 + MAX_RUN < HORIZON - 1:
                 m.AddBoolOr(nxt).OnlyEnforceIf(start[p, d])
-        # the week before 28 Sep is unknown: first off block no later than the
-        # 8th day so nobody runs more than 7 days from the new start
+        # the week before 28 Sep is unknown: first off block by Sun 4 Oct so
+        # nobody works more than 6 days from the new start
         m.AddBoolOr([start[p, d] for d in range(MAX_RUN + 1)])
-        # exactly one off block starts in each calendar week
-        for k in range(WEEKS):
-            m.Add(sum(start[p, d] for d in range(7 * k, min(7 * k + 7, HORIZON))) == 1)
         m.Add(sum(start[p, d] for d in range(7 * WEEKS, HORIZON)) == 0)
         if fixed:
+            # one off block in each calendar week, same weekday every week
+            for k in range(WEEKS):
+                m.Add(sum(start[p, d] for d in range(7 * k, min(7 * k + 7, HORIZON))) == 1)
             for d in range(HORIZON - 7):
                 m.Add(start[p, d] == start[p, d + 7])
+        else:
+            # 2 days off a week: exactly 5 off blocks starting 28 Sep - 31 Oct
+            m.Add(sum(start[p, d] for d in range(NDAYS)) == WEEKS)
 
     for d in range(NDAYS):
         wd = date(d).weekday()
@@ -106,12 +111,12 @@ def solve(fixed, time_limit=60):
         # everyone gets at least one full Sat+Sun weekend off inside the period
         for p in PEOPLE:
             m.AddBoolOr([start[p, d] for d in saturdays if d + 1 < NDAYS])
-        # avoid 7-day stretches where possible
+        # prefer shorter stretches: penalise each full MAX_RUN-day run
         for p in PEOPLE:
-            for d in range(NDAYS - 7):
-                s7 = m.NewBoolVar("")
-                m.AddBoolOr([off[p, g] for g in range(d, d + 7)] + [s7])
-                obj -= 5 * s7
+            for d in range(NDAYS - MAX_RUN + 1):
+                full = m.NewBoolVar("")
+                m.AddBoolOr([off[p, g] for g in range(d, d + MAX_RUN)] + [full])
+                obj -= 5 * full
         # off days should actually move: penalise same weekday as last week
         same = []
         for p in PEOPLE:
@@ -125,7 +130,7 @@ def solve(fixed, time_limit=60):
 
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = time_limit
-    solver.parameters.num_workers = 8
+    solver.parameters.num_workers = 1  # deterministic: same roster every rebuild
     st = solver.Solve(m)
     if st not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
         return None
