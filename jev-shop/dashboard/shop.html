@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nifty Shop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#06080c;--panel:#0e131a;--line:#1a222d;--line2:#253041;--fg:#e9eef4;--muted:#8a95a5;--dim:#586272;
+--jev:#8b7bff;--good:#3fd68a;--bad:#ff5d6c;--amber:#f5b53d;--mono:"JetBrains Mono",ui-monospace,monospace}
+*{box-sizing:border-box}
+body{margin:0;color:var(--fg);font:14px/1.45 Inter,-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;
+background:radial-gradient(1000px 520px at 90% -15%,rgba(139,123,255,.16),transparent 60%),var(--bg);min-height:100vh}
+.app{max-width:1500px;margin:0 auto;padding:16px 18px 24px;display:grid;gap:12px}
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font:800 23px/1 Inter;letter-spacing:-.025em}
+.brand em{font-style:normal;background:linear-gradient(95deg,var(--jev),#d6ccff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.spacer{flex:1}
+.pill{font:500 11.5px var(--mono);padding:6px 10px;border-radius:999px;border:1px solid var(--line2);color:var(--muted);background:rgba(12,16,22,.7)}
+.pill.live{color:var(--bad);border-color:rgba(255,93,108,.5)} .pill.paper{color:var(--amber);border-color:rgba(245,181,61,.45)}
+.tiles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.card{background:linear-gradient(180deg,rgba(14,19,26,.95),rgba(12,16,22,.95));border:1px solid var(--line);border-radius:16px;padding:14px 16px;min-width:0}
+.tile span{display:block;font-size:11.5px;color:var(--muted)} .tile b{font:700 24px/1.25 var(--mono);letter-spacing:-.02em}
+.tile small{display:block;font:12px var(--mono);color:var(--dim)}
+.bar{height:7px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:6px} .bar i{display:block;height:100%;background:var(--jev);border-radius:99px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:12px;align-items:start}
+.eyebrow{font:600 10.5px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+table{width:100%;border-collapse:collapse;font:12.5px var(--mono)}
+th{color:var(--dim);font-weight:400;text-align:left;padding:5px 6px;border-bottom:1px solid var(--line)}
+td{padding:6px;border-bottom:1px solid rgba(26,34,45,.6);white-space:nowrap} td.r,th.r{text-align:right}
+.g{color:var(--good)} .r{color:var(--bad)} .a{color:var(--amber)} .d{color:var(--dim)}
+.act{font:600 13.5px/1.6 var(--mono)} .note{font:12px/1.6 var(--mono);color:var(--muted)}
+.gap{display:inline-block;height:8px;border-radius:4px;background:var(--bad);opacity:.75;vertical-align:middle;margin-right:6px}
+.prog{position:relative;height:8px;border-radius:99px;background:var(--line);width:120px;display:inline-block;vertical-align:middle}
+.prog i{position:absolute;top:0;bottom:0;border-radius:99px}
+.prog .t{position:absolute;right:0;top:-3px;bottom:-3px;width:2px;background:var(--good)}
+.chart{height:190px;position:relative} .chart svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.ax{fill:var(--dim);font:10.5px var(--mono)}
+.empty{color:var(--dim);font:13px var(--mono);padding:10px 0}
+@media (max-width:1000px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}.hideS{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand"><em>Nifty</em> Shop</div>
+    <div class="pill" id="mode">—</div>
+    <div class="spacer"></div>
+    <div class="pill" id="strat">—</div>
+    <div class="pill" id="updated">waiting for the first run…</div>
+  </header>
+  <div class="tiles">
+    <div class="card tile"><span>Invested now</span><b id="tInv">–</b><div class="bar"><i id="tCap" style="width:0"></i></div><small id="tCapTxt"></small></div>
+    <div class="card tile"><span>Open P&amp;L</span><b id="tOpen">–</b><small id="tOpenPct"></small></div>
+    <div class="card tile"><span>Profit booked</span><b id="tReal">–</b><small id="tSells"></small></div>
+    <div class="card tile"><span>Holdings</span><b id="tHold">–</b><small id="tLots"></small></div>
+    <div class="card tile"><span>Per buy</span><b id="tAmt">–</b><small id="tAvgAmt"></small></div>
+  </div>
+  <div class="grid">
+    <div style="display:grid;gap:12px">
+      <div class="card"><div class="eyebrow" id="todayTitle">Today</div><div id="today" class="empty">no run yet</div></div>
+      <div class="card"><div class="eyebrow">News watch-list · not bought or averaged until the date</div><div id="flags" class="empty">nothing on it</div></div>
+      <div class="card"><div class="eyebrow">Furthest below the 20-DMA · ★ = the 5 candidates</div>
+        <table><thead><tr><th>#</th><th>stock</th><th class="r">price</th><th class="r">vs DMA</th><th></th></tr></thead><tbody id="scan"></tbody></table></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <div class="card"><div class="eyebrow">What you hold</div>
+        <table><thead><tr><th>stock</th><th class="r">shares</th><th class="r">avg</th><th class="r">now</th><th class="r">P&amp;L</th><th>to target</th><th class="r hideS">lots</th><th class="r hideS">since</th></tr></thead><tbody id="hold"></tbody></table></div>
+      <div class="card"><div class="eyebrow">Sold (most recent first)</div>
+        <table><thead><tr><th>stock</th><th class="r">shares</th><th class="r">avg</th><th class="r">sold at</th><th class="r">profit</th><th class="r hideS">bought → sold</th></tr></thead><tbody id="closed"></tbody></table></div>
+      <div class="card" id="btCard" style="display:none"><div class="eyebrow" id="btTitle">Backtest</div><div class="note" id="btText"></div><div class="chart" id="btChart"></div></div>
+    </div>
+  </div>
+</div>
+<script>
+const $ = (id) => document.getElementById(id);
+const IN = (v, d = 2) => Number(v).toLocaleString("en-IN", {minimumFractionDigits: d, maximumFractionDigits: d});
+const inr = (v, sign) => (v < 0 ? "−₹" : sign ? "+₹" : "₹") + IN(Math.abs(v));
+const pct = (v, d = 1) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(100 * v).toFixed(d) + "%";
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+const tone = (v) => v > 0 ? "g" : v < 0 ? "r" : "";
+
+async function load(path) { try { const r = await fetch(path + "?_=" + Date.now(), {cache: "no-store"}); return r.ok ? r.json() : null; } catch (e) { return null; } }
+
+function render(S) {
+  $("mode").textContent = S.scan_only ? `${S.mode} · scan only` : S.mode === "live" ? "LIVE · real money" : "paper";
+  $("mode").className = "pill " + (S.mode === "live" ? "live" : "paper");
+  $("strat").textContent = S.strategy;
+  $("updated").textContent = "updated " + new Date(S.updated * 1000).toLocaleString("en-IN", {weekday: "short", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Kolkata"}) + " IST";
+  const H = Object.entries(S.holdings || {}), target = S.settings.target;
+  const open = H.reduce((a, [, h]) => a + (h.pnl || 0), 0);
+  $("tInv").textContent = inr(S.invested); $("tCap").style.width = Math.min(100, 100 * S.invested / S.max_capital) + "%";
+  $("tCapTxt").textContent = `${Math.round(100 * S.invested / S.max_capital)}% of the ${inr(S.max_capital)} cap`;
+  $("tOpen").textContent = inr(open, true); $("tOpen").className = tone(open); $("tOpenPct").textContent = S.invested ? pct(open / S.invested) + " on what's invested" : "";
+  $("tReal").textContent = inr(S.realised, true); $("tReal").className = tone(S.realised); $("tSells").textContent = `${S.closed_count} sells · ${S.wins} with a profit`;
+  $("tHold").textContent = H.length; $("tLots").textContent = H.reduce((a, [, h]) => a + h.lots, 0) + " lots";
+  $("tAmt").textContent = inr(S.buy_amount); $("tAvgAmt").textContent = `${inr(S.average_amount)} per average`;
+
+  const acts = (S.actions || []).map((a) => a.side === "sell"
+    ? `<div class="act"><span class="g">SOLD</span> ${a.qty} ${esc(a.symbol)} @ ₹${IN(a.price)} · profit <span class="${tone(a.pnl)}">${inr(a.pnl, true)}</span></div><div class="note">${esc(a.why)}</div>`
+    : `<div class="act"><span style="color:var(--jev)">BOUGHT</span> ${a.qty} ${esc(a.symbol)} @ ₹${IN(a.price)} · ${a.kind}</div><div class="note">${esc(a.why)}</div>`);
+  if (S.scan_only) {
+    const s = S.decision.sell, b = (S.decision.buys || [])[0];
+    acts.push(`<div class="act">would sell: ${s ? esc(s.symbol) + ` <span class="note">${esc(s.reason)}</span>` : "nothing"}</div>`,
+              `<div class="act">would buy: ${b ? esc(b.symbol) + ` (${b.kind}) <span class="note">${esc(b.reason)}</span>` : "nothing"}</div>`);
+  } else if (!acts.length) acts.push(`<div class="act d">no trades</div>`);
+  $("todayTitle").textContent = S.scan_only ? "Right now (scan, no orders)" : "Today's run";
+  $("today").className = ""; $("today").innerHTML = acts.join("") + (S.notes || []).map((n) => `<div class="note">· ${esc(n)}</div>`).join("");
+
+  const scan = (S.scan || []).slice(0, 12), worst = Math.max(0.001, ...scan.map((x) => -x.gap));
+  let starred = 0;
+  $("scan").innerHTML = scan.map((x, i) => {
+    const star = x.gap < 0 && starred < S.settings.candidates ? (starred++, "★") : "";
+    const held = S.holdings[x.symbol] ? ` <span class="d">held</span>` : "";
+    return `<tr><td class="d">${i + 1}</td><td>${star ? `<span class="a">★</span> ` : ""}${esc(x.symbol)}${held}</td><td class="r">₹${IN(x.ltp)}</td>` +
+      `<td class="r ${tone(x.gap)}">${pct(x.gap, 2)}</td><td>${x.gap < 0 ? `<span class="gap" style="width:${(90 * -x.gap / worst).toFixed(0)}px"></span>` : ""}</td></tr>`;
+  }).join("") || `<tr><td colspan="5" class="empty">no scan yet</td></tr>`;
+
+  $("hold").innerHTML = H.sort((a, b) => (b[1].pnl || 0) / b[1].cost - (a[1].pnl || 0) / a[1].cost).map(([sym, h]) => {
+    const ch = h.ltp ? h.ltp / h.avg - 1 : null, lo = -0.15;
+    const w = ch === null ? 0 : Math.max(0, Math.min(1, (ch - lo) / (target - lo)));
+    return `<tr><td>${esc(sym)}</td><td class="r">${h.qty}</td><td class="r">₹${IN(h.avg)}</td><td class="r">${h.ltp ? "₹" + IN(h.ltp) : "?"}</td>` +
+      `<td class="r ${tone(h.pnl)}">${h.pnl == null ? "?" : inr(h.pnl, true)} <span class="d">${ch == null ? "" : pct(ch)}</span></td>` +
+      `<td><span class="prog"><i style="left:0;width:${(100 * w).toFixed(0)}%;background:${ch >= 0 ? "var(--good)" : "var(--bad)"}"></i><span class="t"></span></span></td>` +
+      `<td class="r hideS">${h.lots}</td><td class="r d hideS">${esc(h.first_buy)}</td></tr>`;
+  }).join("") || `<tr><td colspan="8" class="empty">nothing yet: the first buy happens at the next 15:18 run</td></tr>`;
+
+  const F = Object.entries(S.news_flags || {});
+  $("flags").className = F.length ? "" : "empty";
+  $("flags").innerHTML = F.length ? F.map(([sym, f]) => `<div class="act"><span class="r">🚫 ${esc(sym)}</span> until ${esc(f.until)} <span class="note">· ${esc(f.why)} (${esc(f.by)})</span></div>` +
+    `<div class="note">“${esc(f.headline)}”</div>`).join("") : "nothing on it: no serious bad news about the Nifty 50 lately";
+  $("closed").innerHTML = (S.closed || []).slice().reverse().slice(0, 15).map((c) =>
+    `<tr><td>${esc(c.symbol)}</td><td class="r">${c.qty}</td><td class="r">₹${IN(c.avg)}</td><td class="r">₹${IN(c.price)}</td>` +
+    `<td class="r ${tone(c.pnl)}">${inr(c.pnl, true)}</td><td class="r d hideS">${esc(c.first_buy)} → ${esc(c.sold)}</td></tr>`).join("") ||
+    `<tr><td colspan="6" class="empty">no sells yet</td></tr>`;
+}
+
+function renderBacktest(B) {
+  if (!B) return;
+  $("btCard").style.display = "";
+  $("btTitle").textContent = `Backtest · ${B.from} → ${B.to} · ${B.stocks} stocks`;
+  $("btText").innerHTML = `${B.new_buys} buys + ${B.averages} averages · ${B.sells} sells · total <b class="${tone(B.total_pnl)}">${inr(B.total_pnl, true)}</b> after ${inr(B.charges)} charges · ` +
+    `peak invested ${inr(B.peak_invested)} · about ${pct(B.annualised_on_peak)} a year on it · worst drawdown ${inr(B.max_drawdown)}` +
+    (B.nifty_annualised != null ? ` · NIFTY ${pct(B.nifty_annualised)} a year` : "") + `<br><span class="d">today's Nifty 50 used for the whole period, so this is a best case</span>`;
+  const el = $("btChart"), W = el.clientWidth, Hh = el.clientHeight, c = B.curve || [];
+  if (c.length < 2 || W < 50) return;
+  const l = 70, r = 10, t = 10, b = 20, ys = c.flatMap((p) => [p[1], p[2]]).concat([0]);
+  const lo = Math.min(...ys), hi = Math.max(...ys);
+  const X = (i) => l + i / (c.length - 1) * (W - l - r), Y = (v) => t + (hi - v) / ((hi - lo) || 1) * (Hh - t - b);
+  const path = (k) => c.map((p, i) => `${i ? "L" : "M"}${X(i).toFixed(1)},${Y(p[k]).toFixed(1)}`).join("");
+  let s = `<svg viewBox="0 0 ${W} ${Hh}"><line x1="${l}" x2="${W - r}" y1="${Y(0)}" y2="${Y(0)}" stroke="#2e3949" stroke-dasharray="3 3"/>`;
+  for (const v of [hi, lo]) s += `<text class="ax" x="${l - 8}" y="${Y(v) + 4}" text-anchor="end">${inr(v)}</text>`;
+  s += `<path d="${path(1)}" fill="none" stroke="var(--dim)" stroke-width="1.4" stroke-dasharray="4 3"/><path d="${path(2)}" fill="none" stroke="var(--jev)" stroke-width="2.2"/>`;
+  s += `<text class="ax" x="${l}" y="${Hh - 4}">${c[0][0]}</text><text class="ax" x="${W - r}" y="${Hh - 4}" text-anchor="end">${c.at(-1)[0]}</text>`;
+  s += `<text x="${W - r}" y="${t + 10}" text-anchor="end" style="fill:var(--jev);font:600 10.5px var(--mono)">profit (after charges)</text>` +
+       `<text x="${W - r}" y="${t + 24}" text-anchor="end" style="fill:var(--dim);font:600 10.5px var(--mono)">money invested</text></svg>`;
+  el.innerHTML = s;
+}
+
+async function tick() {
+  const S = await load("/results/shop.json");
+  if (S) render(S);
+  renderBacktest(await load("/results/backtest.json"));
+}
+tick(); setInterval(tick, 5000);
+</script>
+</body>
+</html>

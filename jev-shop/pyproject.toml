@@ -1,0 +1,12 @@
+[project]
+name = "jev-shop"
+version = "1.0.0"
+description = "The Nifty Shop on Firstock: a once-a-day Nifty 50 dip-buying bot, built on jev-starter. Paper first, backtest included, Telegram alerts."
+requires-python = ">=3.10"
+dependencies = [
+    "requests>=2.31",
+    "pandas>=2.0",
+    "python-dotenv>=1.0",
+    "rich>=13",
+    "tzdata>=2024.1",
+]
