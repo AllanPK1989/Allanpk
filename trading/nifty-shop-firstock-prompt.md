@@ -6,14 +6,16 @@
 > **What it does:** once each trading day at 15:18 IST, it runs the **Nifty Shop** strategy (popularised by Mahesh
 > Chander Kaushik; FabTrader's "10-minute trading strategy for busy professionals"). It ranks the Nifty 50 by how far
 > each stock is below its 20-day moving average, buys one beaten-down stock for **₹5,000**, averages a holding that
-> has kept falling, and sells any holding once it's 5% up. At most one buy and one sell a day.
+> has kept falling, and sells any holding once it's 5% up. At most one buy and one sell a day. A **news check**
+> skips any stock with serious bad news (fraud, a regulator's ban, raids, insolvency…), so it doesn't buy a dip
+> that's happening for a very good reason.
 > - **Path 1, laptop (about 25 min):** set up, backtest the rules over 5 years, see today's picks, paper trade.
 > - **Path 2, server (about 45 min more):** the shop runs itself every trading day on a tiny server in India
 >   (free on Oracle Cloud, or about ₹250–450 a month), with Telegram on your phone for the daily login and report.
 >   It starts in **paper mode**. Real money only happens if you switch it on yourself.
 >
-> You need a Firstock trading account (Indian KYC, equity segment, 2FA with an authenticator app). Telegram and a
-> Vercel account (for Jev's optional news check) are optional.
+> You need a Firstock trading account (Indian KYC, equity segment, 2FA with an authenticator app). Recommended: a
+> free Vercel account, so Jev (a fast AI) reads the headlines for the news check, and Telegram for your phone.
 
 ---
 
@@ -27,9 +29,11 @@ those are their decisions.
 A bot that runs the Nifty Shop for them once a day, near the close. Every trading day at 15:18 it ranks the Nifty 50
 by how far each stock is below its 20-day average and does at most two things: **sell** a holding that's 5% or more
 above its average price, and **buy** ₹5,000 of the most beaten-down stock they don't own yet. If they already own all
-5 candidates, it adds ₹5,000 to the holding that has fallen furthest (once it's 3% below its last buy). It starts on
-paper, with a 5-year backtest first so they can see how the rules behaved. It runs on a free or very cheap server,
-with Telegram for the daily login and report.
+5 candidates, it adds ₹5,000 to the holding that has fallen furthest (once it's 3% below its last buy). Before any
+buy, a news check looks for serious bad news about that company (fraud, a regulator's ban or probe, raids or
+arrests, default or insolvency, the auditor quitting) and skips it if there is some. It starts on paper, with a
+5-year backtest first so they can see how the rules behaved. It runs on a free or very cheap server, with Telegram
+for the daily login and report.
 
 Then ask: **"Do you want just the laptop version (Path 1), or the bot running by itself every day (Path 2)? Either way
 we start on the laptop, so you can see the backtest and today's picks first."**
@@ -44,7 +48,10 @@ we start on the laptop, so you can see the backtest and today's picks first."**
   charges, the DP charge, GST), so a +5% winner of ₹250 nets about ₹220 before tax. Gains on shares held under a year
   are short-term capital gains (20% at the time of writing): ask a CA.
 - **Whole shares only:** a ₹4,000 share buys 1 share (₹4,000), and stocks above ₹5,000 a share are skipped.
-- The backtest uses today's Nifty 50 for the whole period, so it's a best case. Not financial advice.
+- The backtest uses today's Nifty 50 for the whole period, so it's a best case, and it can't test the news check
+  (there's no archive of old headlines).
+- The news check only stops **buying**. It never sells a stock they hold on news (it warns them on Telegram
+  instead), and no filter catches everything: headlines can lag the price. Not financial advice.
 
 ## Rules (never break these)
 
@@ -55,7 +62,8 @@ we start on the laptop, so you can see the backtest and today's picks first."**
      interval format: their API is young and changes), you may fix the parsing in `firstock.py`. Never touch
      `live_mode`, `LIVE_PHRASE`, the one-order-a-second throttle, or the delivery product code.
    - If a news feed in `jevlab/news.py` stops working, swap its URL for another markets feed from the same site. If
-     NSE's Nifty 50 list can't be downloaded, you may update `FALLBACK` in `jevlab/universe.py`.
+     NSE's Nifty 50 list can't be downloaded, you may update `FALLBACK` in `jevlab/universe.py`. If the user asks,
+     you may add words to `RED_FLAGS` in `jevlab/news.py` (never remove the fraud, ban, raid or insolvency ones).
 2. Never type, paste, print or echo any key, secret or password: the Firstock password, API key and vendor code, the
    session token in `results/session.json`, the Telegram bot token, the Vercel key, or a server password. The user puts
    their own into `.env`. Never `cat` `.env` or `results/session.json`. Copying `.env` to their own server is fine.
@@ -64,7 +72,8 @@ we start on the laptop, so you can see the backtest and today's picks first."**
    away (it expires within a minute and is useless without the password). Never ask for, store or automate the
    authenticator's secret key or QR code: that would defeat 2FA, which SEBI's rules require.
 4. Never set `FIRSTOCK_MODE=live` or `JEV_LIVE_CONFIRM` yourself, and never change `BUY_AMOUNT_INR`,
-   `AVERAGE_AMOUNT_INR` or `MAX_CAPITAL_INR` unless the user asks for a specific number. Real money is the user's own
+   `AVERAGE_AMOUNT_INR` or `MAX_CAPITAL_INR` unless the user asks for a specific number. Never switch the news
+   check off (`NEWS_CHECK=off`) or take a stock off its watch-list (`news --clear`) unless the user asks. Real money is the user's own
    deliberate step (Part C).
 5. Stay inside SEBI's retail algo rules: orders go only from the static IP registered with Firstock. Never route around
    it with proxies, VPNs or anyone else's IP. The shop sends at most one order action a second, far under the
@@ -90,8 +99,8 @@ Create a folder called `jev-shop`, write every file from the **Files** section i
 
 ## A3 · Test it before the keys
 
-Run `uv run python -m jevlab check`. "The Nifty 50 list" should show 50 stocks from NSE, and Firstock will say
-"not set up yet". That's expected.
+Run `uv run python -m jevlab check`. "The Nifty 50 list" should show 50 stocks from NSE, the news check should read
+headlines ("red-flag words on"), and Firstock will say "not set up yet". That's expected.
 
 ## A4 · Firstock API access (the user does this part)
 
@@ -134,15 +143,26 @@ If a stock shows "no history", mention it and move on.
 2. Run `uv run python -m jevlab dashboard` in the background. It opens http://127.0.0.1:8765: the ranking, what they
    hold, what's been sold, and the backtest curve (profit after charges vs. money invested).
 
-## A7 · Optional: Jev's news check
+## A7 · The news check (on from the start)
 
-The Nifty Shop buys dips. This option skips a dip that's happening for a very good reason: before buying, Jev reads
-the last day and a half of Indian market headlines (Economic Times, Moneycontrol, Livemint, Business Standard) that
-mention the company, and vetoes the buy if one is serious bad news (fraud, a regulator's ban, collapsing results). It
-makes 1–5 tiny calls a day, so Vercel's free tier is plenty. If they want it: open https://vercel.com/dashboard, and
-guide them to **AI Gateway → API Keys → Create key**, then paste it after `AI_GATEWAY_API_KEY=` in `.env` themselves.
-Re-run `check`: "Jev answered" should say ok. Without a key the shop simply runs without the check. The backtest can't
-test this (there's no archive of old headlines).
+Explain it in 4 lines: the Nifty Shop buys dips, and some dips happen for a very good reason. So before every buy or
+average, the shop reads the Indian market headlines (Economic Times, Moneycontrol, Livemint, Business Standard) about
+that company and **skips it** if there's serious bad news: fraud or accounting problems, a regulator's ban or probe
+(SEBI, RBI, USFDA…), raids or arrests, a default or insolvency, the auditor quitting, or a short-seller report. The
+stock then stays on a **watch-list for 10 days** (`NEWS_COOLOFF_DAYS`), even after the headline scrolls away, and the
+shop moves on to the next candidate. It only ever stops buying; it never sells on news.
+
+It works in two layers, and either one can skip a stock:
+1. **Red-flag words**: already on, free, no key needed.
+2. **Jev**: reads each headline about the company and judges it, catching what a word list misses ("licence
+   cancelled", "profits collapse after write-off") and knowing when a scary word is good news ("SEBI lifts ban").
+   Strongly recommended. Open https://vercel.com/dashboard for them and guide them to **AI Gateway → API Keys →
+   Create key**; they paste it after `AI_GATEWAY_API_KEY=` in `.env` themselves. It's a few calls a day, so the free
+   tier is plenty (no credits needed).
+
+Re-run `check`: section 3 should say "red-flag words on" and "Jev reads each headline too". Then run
+`uv run python -m jevlab news`: it reads the feeds, lists any stock on the watch-list, and explains why. If they ever
+disagree with a flag, `uv run python -m jevlab news --clear SYMBOL` takes it off (their call, not yours).
 
 ## A8 · Their own settings
 
@@ -158,8 +178,9 @@ between 15:15 and 15:29: `uv run python -m jevlab login`, then `uv run python -m
 # PART B · Path 2: the shop runs itself every day
 
 Tell them what's coming in 3 lines: a Telegram bot for their phone (optional but recommended), a tiny server in India
-with a fixed IP (free on Oracle Cloud, or about ₹250–450 a month), and three timers on it: a 14:30 login reminder, the
-15:18 run, and the Telegram listener. The one daily chore: send `/login 123456` to their bot before 15:15.
+with a fixed IP (free on Oracle Cloud, or about ₹250–450 a month), and timers on it: the news check every hour, a 14:30
+login reminder, the 15:18 run, and the Telegram listener. The one daily chore: send `/login 123456` to their bot
+before 15:15.
 
 ## B1 · The rules they trade under (tell them, briefly)
 
@@ -235,16 +256,18 @@ command runs in a fresh shell, so write the full command every time.
 
 ## B7 · Switch on the daily timers
 
-`$SSH "cd jev-shop && sudo bash deploy/install.sh"`. It installs the 14:30 reminder, the 15:18 run (Monday to Friday,
-India time), and the Telegram listener if Telegram is set up, and prints the next run times. Then
-`$SSH "systemctl list-timers 'jev-*' --no-pager"` should show both timers.
+`$SSH "cd jev-shop && sudo bash deploy/install.sh"`. It installs the hourly news check (07:05 to 23:05 every day, so
+morning and overnight news isn't missed), the 14:30 reminder, the 15:18 run (Monday to Friday, India time), and the
+Telegram listener if Telegram is set up, and prints the next run times. Then
+`$SSH "systemctl list-timers 'jev-*' --no-pager"` should show the three timers. If serious news hits a stock the shop
+already holds, they get a Telegram warning (the shop keeps it; selling is their call).
 Explain the routine: **every trading day, send `/login 123456` to the bot before 15:15** (the 14:30 reminder nudges
 them if they haven't). If they forget, the shop skips that day and tells them. Holidays and weekends are skipped
 automatically. The report arrives on Telegram at about 15:20.
 
 ## B8 · Watch it from the laptop
 
-- **Telegram:** `/status` any time: login state, holdings, profit booked.
+- **Telegram:** `/status` any time: login state, holdings, profit booked, and the news watch-list.
 - **Dashboard:** in the background, run
   `ssh -i ~/.ssh/jev_shop -L 8765:127.0.0.1:8765 <USER>@<IP> "cd jev-shop && ~/.local/bin/uv run python -m jevlab dashboard --no-open"`
   and open http://127.0.0.1:8765 (use `-L 8766:127.0.0.1:8765` and :8766 if 8765 is busy). It's never exposed to the
@@ -255,16 +278,18 @@ automatically. The report arrives on Telegram at about 15:20.
 - **Daily login:** `/login 123456` on Telegram (or `ssh -t -i ~/.ssh/jev_shop <USER>@<IP> "cd jev-shop && ~/.local/bin/uv run python -m jevlab login"`)
 - **Kill switch:** `/stop` on Telegram (or `$SSH "touch jev-shop/STOP"`): no orders until `/resume`. Existing holdings stay.
 - **What it did:** `$SSH "journalctl -u jev-shop -n 40 --no-pager"`, or `$SSH "cd jev-shop && ~/.local/bin/uv run python -m jevlab report"`
+- **News watch-list:** `$SSH "cd jev-shop && ~/.local/bin/uv run python -m jevlab news"` (or `/status`). To let a stock
+  back in early: add `--clear SYMBOL`.
 - **Change the rules:** edit `jevlab/strategy.py` on the laptop, run `backtest` and `scan`, then copy it up (re-run the
   B5.3 copy). The next 15:18 run uses it.
 - **Change the amounts:** `BUY_AMOUNT_INR`, `AVERAGE_AMOUNT_INR`, `MAX_CAPITAL_INR` in the server's `.env`.
-- **Stop for good:** `$SSH "sudo systemctl disable --now jev-shop.timer jev-remind.timer jev-telegram"`
+- **Stop for good:** `$SSH "sudo systemctl disable --now jev-shop.timer jev-remind.timer jev-news.timer jev-telegram"`
 - **The source of truth** is the Firstock app: holdings, orders, and the contract notes with the exact charges.
 
 ## B10 · Wrap up
 
 Tell them it now runs every trading day in **paper mode**: it picks, "buys" and "sells" at real 15:18 prices, with
-charges, and reports on Telegram. Because it trades once a day, paper results take a while to mean anything: suggest
+charges, skips stocks with serious bad news, and reports on Telegram. Because it trades once a day, paper results take a while to mean anything: suggest
 at least 1–2 months, compared against the backtest, before even thinking about real money.
 
 # PART C · Real money (only if they explicitly ask)
@@ -343,12 +368,15 @@ MAX_CAPITAL_INR=200000
 # Firstock's depository (DP) charge per stock sold per day, before GST. Check your contract notes.
 DP_CHARGE_INR=15
 
-# --- Optional: Jev's news check (skip buying into serious bad news) --------------
-# Vercel AI Gateway key: https://vercel.com/dashboard -> AI Gateway -> API Keys.
-# One to five Jev calls a day: the free tier is plenty. Leave blank to skip the check.
+# --- The news check (on): no buying into fraud, a regulator's ban, raids, insolvency… ---
+# Red-flag words work with no key. Add a Vercel AI Gateway key so Jev reads each headline
+# too (recommended; a few calls a day, the free tier is plenty):
+# https://vercel.com/dashboard -> AI Gateway -> API Keys -> Create key
+NEWS_CHECK=on
 AI_GATEWAY_API_KEY=
 TYPESAFE_API_KEY=
-NEWS_CHECK=on
+# Days a stock stays off the shopping list after serious bad news.
+NEWS_COOLOFF_DAYS=10
 
 # --- Optional: Telegram (daily report, login reminder, /login from your phone) ----
 # Bot token from @BotFather, and your own chat ID.
@@ -382,7 +410,7 @@ This is the Nifty Shop strategy popularised by Mahesh Chander Kaushik (FabTrader
 | **Your strategy** · `jevlab/strategy.py` | The one file you edit: the rules and their numbers (5% target, 3% averaging, 5 candidates, 20-DMA, 6 lots max per stock). |
 | **Dashboard** · `uv run python -m jevlab dashboard` | Holdings, today's ranking and trades, sells so far, and the backtest curve. |
 | **Telegram** (optional) | Daily report on your phone, a 14:30 reminder if you haven't logged in, and `/login 123456`, `/status`, `/stop`, `/resume`. |
-| **News check** (optional) | Before buying, Jev reads the day's Indian market headlines about that company and skips the buy if one is serious bad news. |
+| **News check** (on) | Before every buy it looks for serious bad news about the company (fraud, a regulator's ban or probe, raids or arrests, default or insolvency, the auditor quitting, a short-seller report) and skips it. Red-flag words work with no key; with a Vercel key Jev reads each headline too. A flagged stock stays off the shopping list for 10 days. `uv run python -m jevlab news` shows the watch-list. |
 
 ## Setup
 
@@ -402,6 +430,7 @@ The bot itself costs ₹0 to ₹450 a month: a free Oracle Cloud server in India
 - **The backtest is a best case.** It uses today's Nifty 50 for the whole period, so stocks that fell out of the index are missing.
 - **Selling needs DDPI** (or eDIS) switched on in your Firstock account, or sell orders get rejected.
 - **Live orders need a static IP** registered with Firstock (SEBI's rule), from a server in India.
+- **The news check only stops buying.** It never sells a stock you hold on news (it tells you on Telegram instead), and no filter catches everything.
 - **Tax:** gains on shares held under a year are short-term capital gains (20% at the time of writing). Ask a CA.
 
 Real money needs `FIRSTOCK_MODE=live` **and** the exact phrase in `JEV_LIVE_CONFIRM`. Set those yourself, after weeks of paper results. Not financial advice.
@@ -428,6 +457,8 @@ Real money needs `FIRSTOCK_MODE=live` **and** the exact phrase in `JEV_LIVE_CONF
   uv run python -m jevlab telegram          # listen for /login, /status, /stop, /resume on Telegram
   uv run python -m jevlab telegram-id       # find your Telegram chat ID (message your bot first)
   uv run python -m jevlab remind            # Telegram nudge if you haven't logged in today (the server runs it at 14:30)
+  uv run python -m jevlab news              # read the news now: flag stocks with serious bad news (the server runs it hourly)
+  uv run python -m jevlab news --clear INFY # take a stock off the news watch-list, if you disagree
   uv run python -m jevlab logout            # end today's Firstock session early
 
 Flags: --paper (run: paper mode whatever .env says) · --years 10 (backtest) · --totp 123456 (login) ·
@@ -482,7 +513,7 @@ def check() -> None:
     from .core import console, inr, ist_now
     from .firstock import FirstockError, cash, credentials, live_mode, load_session, ltps, public_ip
     from .judges import JevJudge, JudgeError
-    from .news import FEEDS, check_enabled, fetch_headlines
+    from .news import FEEDS, Flags, check_enabled, collect
     from .shop import amounts
     from .universe import nifty50
     from . import telegram
@@ -511,23 +542,27 @@ def check() -> None:
     console.print("  [bold]2. The Nifty 50 list[/]")
     stocks, source = nifty50()
     console.print(f"     {len(stocks)} stocks from {source}  " + (ok if source in ("NSE", "cache") else "[#f5b53d]check[/]"))
-    console.print("  [bold]3. News check (optional)[/]")
+    console.print("  [bold]3. News check[/]")
     if not check_enabled():
-        console.print("     switched off (NEWS_CHECK=off)")
+        console.print("     [#f5b53d]switched off[/] (NEWS_CHECK=off): the shop buys without looking at the news")
     else:
-        n = len(fetch_headlines(24))
-        console.print(f"     {n} headlines in the last 24h from {len(FEEDS)} feeds  {ok}" if n
-                      else "     no headlines found  [#f5b53d]check your internet[/]")
+        _, fresh = collect(quiet=False)
+        console.print(f"     {fresh} headlines from {len(FEEDS)} feeds · red-flag words on (fraud, SEBI ban, raids, insolvency…)  {ok}"
+                      if fresh else "     no headlines from the feeds  [#f5b53d]check your internet[/] (the check can't see news)")
         try:
             jev = JevJudge()
-            q = {"x": {"type": "choice", "instructions": "Is this news good or bad for the company?",
-                       "criteria": {"good": None, "bad": None}}}
-            _, meta = jev.ask({"headline": "Company wins a large new order"}, q, timeout=15, retries=2)
-            console.print(f"     Jev answered in {meta['latency_ms']} ms  {ok}")
+            q = {"x": {"type": "choice", "instructions": "Is this serious bad news for the company?",
+                       "criteria": {"serious_bad_news": None, "not_serious": None}}}
+            _, meta = jev.ask({"headline": "SEBI bars company promoters from the market over fraud"}, q, timeout=15, retries=2)
+            console.print(f"     Jev reads each headline too (answered in {meta['latency_ms']} ms)  {ok}")
         except JudgeError as exc:
             msg = str(exc)
-            console.print("     no Jev key: the shop runs without the news check (fine)" if "no AI_GATEWAY" in msg
-                          else f"     [#ff5d6c]Jev failed[/]: {msg[:120]}")
+            console.print("     [#f5b53d]Jev's layer is off[/]: add AI_GATEWAY_API_KEY to .env so Jev reads each headline too "
+                          "(the free tier is plenty)" if "no AI_GATEWAY" in msg else f"     [#ff5d6c]Jev failed[/]: {msg[:120]}")
+        flagged = Flags().all_active(now.date())
+        if flagged:
+            listed = ", ".join(f"{sym} (until {f['until']})" for sym, f in sorted(flagged.items()))
+            console.print(f"     on the news watch-list: {listed}")
     console.print("  [bold]4. Telegram (optional)[/]")
     if telegram.enabled():
         console.print(f"     test message sent  {ok}" if telegram.send("✅ jev-shop check: Telegram works.")
@@ -596,10 +631,11 @@ def report_cmd() -> None:
 def main() -> None:
     ap = argparse.ArgumentParser(prog="jevlab")
     ap.add_argument("command", choices=["check", "login", "logout", "scan", "run", "backtest", "report", "dashboard",
-                                        "telegram", "telegram-id", "remind"])
+                                        "telegram", "telegram-id", "remind", "news"])
     ap.add_argument("--paper", action="store_true", help="run: paper mode (simulated fills), whatever .env says")
     ap.add_argument("--years", type=float, default=5.0, help="backtest: how many years back")
     ap.add_argument("--totp", default=None, help="login: the 6-digit code from your authenticator app")
+    ap.add_argument("--clear", default=None, metavar="SYMBOL", help="news: take a stock off the news watch-list")
     ap.add_argument("--port", type=int, default=8765, help="dashboard port")
     ap.add_argument("--no-open", action="store_true", help="don't open the dashboard in a browser")
     a = ap.parse_args()
@@ -623,6 +659,9 @@ def main() -> None:
     elif a.command == "remind":
         from .shop import remind
         remind()
+    elif a.command == "news":
+        from .shop import news_watch
+        news_watch(a.clear)
     elif a.command == "telegram":
         from .telegram import listen
         listen()
@@ -1412,7 +1451,8 @@ What a run does:
      no STOP file, and that it hasn't already run today.
   2. Ranks the Nifty 50 by distance below the 20-DMA (last price vs the 19 previous closes
      plus today's price), and prices everything you hold.
-  3. Asks strategy.decide() for at most one sell and one buy.
+  3. Asks strategy.decide() for at most one sell and one buy, and runs the news check on the buy:
+     no buying into fraud, a regulator's ban, raids, insolvency and the like (see news.py).
   4. Sells first, then buys: delivery (CNC) limit orders priced 0.5% through the market in
      live mode, or a simulated fill at the last price in paper mode. Charges included.
   5. Records it in the ledger, writes results/shop.json for the dashboard, and sends you
@@ -1422,7 +1462,7 @@ Safety, always on:
   * paper mode unless FIRSTOCK_MODE=live AND JEV_LIVE_CONFIRM is the exact phrase
   * BUY_AMOUNT_INR / AVERAGE_AMOUNT_INR per buy, and MAX_CAPITAL_INR caps the total invested
   * at most one buy and one sell a day, and one run a day (a re-run does nothing)
-  * a buy needs the cash in your Firstock account, and (optionally) Jev's news check
+  * a buy needs the cash in your Firstock account, and must pass the news check (news.py)
   * kill switch: a file called STOP in the project folder (or /stop on Telegram)
 """
 
@@ -1564,6 +1604,7 @@ def run_shop(force_paper: bool = False, scan_only: bool = False) -> int:
     actions: list[dict] = []
 
     if scan_only:
+        decision["buys"] = news_filter(decision["buys"], scan, held, universe, buy_amount, avg_amount, notes)
         _print_scan(scan, held, decision, notes)
         _write_status(mode, ledger, scan, held, decision, actions, notes, scan_only=True)
         return 0
@@ -1594,20 +1635,8 @@ def run_shop(force_paper: bool = False, scan_only: bool = False) -> int:
                              + (" (is DDPI/eDIS switched on in Firstock?)" if live else ""))
 
         # ---- 2. buy (at most one: the first candidate that passes every check)
-        buys = decision["buys"]
-        jev, headlines = None, []
-        if buys:
-            from .news import check_enabled, fetch_headlines
-            if check_enabled() and os.getenv("AI_GATEWAY_API_KEY", "").strip():
-                from .judges import JevJudge, JudgeError
-                try:
-                    jev = JevJudge()
-                    headlines = fetch_headlines(36, quiet=True)
-                except JudgeError:
-                    jev = None
+        queue = news_filter(decision["buys"], scan, held, universe, buy_amount, avg_amount, notes)
         invested = ledger.invested()
-        vetoed: set[str] = set()
-        queue = list(buys)
         while queue:
             b = queue.pop(0)
             sym, ref = b["symbol"], px.get(b["symbol"], 0.0)
@@ -1619,17 +1648,6 @@ def run_shop(force_paper: bool = False, scan_only: bool = False) -> int:
             if invested + cost > max_capital:
                 notes.append(f"no buy: {sym} would take the total invested past MAX_CAPITAL_INR ({inr(max_capital)})")
                 break
-            if jev:
-                from .news import veto
-                bad = veto(jev, sym, universe.get(sym, sym), headlines)
-                if bad:
-                    notes.append(f"skipped {sym}: Jev read serious bad news: “{bad[:90]}”")
-                    vetoed.add(sym)
-                    if not queue:  # every candidate vetoed: decide again as if they weren't there (so averaging can happen)
-                        again = strategy.decide([x for x in scan if x["symbol"] not in vetoed],
-                                                {k: v for k, v in held.items() if k not in vetoed}, buy_amount, avg_amount)
-                        queue = [x for x in again["buys"] if x["symbol"] not in vetoed]
-                    continue
             if live:
                 free = cash(session)
                 if free is not None and free < cost * 1.01 + charges("buy", cost):
@@ -1660,6 +1678,45 @@ def run_shop(force_paper: bool = False, scan_only: bool = False) -> int:
     _write_status(mode, ledger, scan, held, decision, actions, notes)
     telegram.send(_report(mode, actions, notes, held, ledger))
     return 0
+
+
+def news_filter(buys: list[dict], scan: list[dict], held: dict, universe: dict[str, str], buy_amount: float,
+                avg_amount: float, notes: list[str]) -> list[dict]:
+    """The buy candidates that pass the news check (see news.py), best first. If the news rules out
+    every candidate, decide again as if those stocks weren't there, so averaging can still happen."""
+    from .news import Flags, check_enabled, collect, screen
+    if not buys or not check_enabled():
+        return buys
+    jev = None
+    if os.getenv("AI_GATEWAY_API_KEY", "").strip() or os.getenv("TYPESAFE_API_KEY", "").strip():
+        from .judges import JevJudge, JudgeError
+        try:
+            jev = JevJudge()
+        except JudgeError:
+            jev = None
+    items, fresh = collect()
+    if not fresh:
+        notes.append("news check: the feeds couldn't be read just now, so it used the headlines collected earlier")
+    flags, deadline, today = Flags(), time.time() + 150, ist_now().date()
+    vetoed: set[str] = set()
+    queue, passed = list(buys), []
+    for _ in range(12):
+        while queue and len(passed) < 3:  # only one gets bought; a few spares cover cash or fill problems
+            b = queue.pop(0)
+            why = screen(jev, b["symbol"], universe.get(b["symbol"], b["symbol"]), items, flags, today, deadline)
+            if why:
+                notes.append(f"skipped {b['symbol']}: {why}")
+                vetoed.add(b["symbol"])
+            else:
+                passed.append(b)
+        if passed or not vetoed:
+            break
+        again = strategy.decide([x for x in scan if x["symbol"] not in vetoed],
+                                {k: v for k, v in held.items() if k not in vetoed}, buy_amount, avg_amount)
+        queue = [x for x in again["buys"] if x["symbol"] not in vetoed]
+        if not queue:
+            break
+    return passed
 
 
 # ---------------------------------------------------------------- reporting
@@ -1738,6 +1795,9 @@ def status_text() -> str:
         lines.append(f"{sym}: {h['qty']} @ ₹{h['avg']:,.2f} ({h['lots']} lots) {chg}")
     real, _, closed = ledger.realised()
     lines.append(f"Invested {inr(ledger.invested())} · booked {inr(real, True)} ({closed} sells)")
+    from .news import Flags
+    for sym, f in sorted(Flags().all_active(ist_now().date()).items()):
+        lines.append(f"🚫 {sym} not bought until {f['until']}: {f['why']}")
     return "\n".join(lines)
 
 
@@ -1752,11 +1812,50 @@ def _write_status(mode, ledger, scan, held, decision, actions, notes, scan_only:
         "prices": {x["symbol"]: x["ltp"] for x in scan} | {s: h["ltp"] for s, h in held.items() if h.get("ltp")},
         "invested": ledger.invested(), "realised": real, "wins": wins, "closed_count": closed,
         "closed": ledger.d["closed"][-60:], "runs": {d: ledger.d["runs"][d] for d in sorted(ledger.d["runs"])[-30:]},
+        "news_flags": _flags_now(),
     }
     RESULTS.mkdir(exist_ok=True)
     tmp = STATUS.with_suffix(".tmp")
     tmp.write_text(json.dumps(payload, default=str))
     os.replace(tmp, STATUS)
+
+
+def _flags_now() -> dict:
+    from .news import Flags, check_enabled
+    return Flags().all_active(ist_now().date()) if check_enabled() else {}
+
+
+def news_watch(clear: str | None = None) -> None:
+    """The hourly news job (`uv run python -m jevlab news`): collect headlines, put stocks with red-flag
+    news on the watch-list, tell you on Telegram if one you hold gets flagged, and show the list."""
+    from .news import Flags, check_enabled, cooloff_days, watch
+    today = ist_now().date()
+    if clear:
+        sym = clear.strip().upper()
+        found = Flags().clear(sym)
+        console.print(f"  {sym} {'is off the news watch-list: the shop may buy it again' if found else 'was not on the news watch-list'}")
+        return
+    if not check_enabled():
+        console.print("  the news check is switched off (NEWS_CHECK=off)")
+        return
+    universe, _ = nifty50()
+    try:
+        mode = live_mode()
+    except FirstockError:
+        mode = "paper"
+    held = Ledger(mode).holdings()
+    new, fresh, flags = watch(universe, list(held), today)
+    console.print(f"  {fresh} headlines from the feeds just now" if fresh else "  [#f5b53d]the news feeds couldn't be read just now[/]")
+    for sym, headline in new:
+        console.print(f"  [#ff5d6c]flagged {sym}[/]: {headline}")
+        if sym in held:
+            telegram.send(f"⚠️ Serious news about {sym}, which the shop holds ({held[sym]['qty']} shares):\n“{headline}”\n"
+                          f"The shop won't buy or average it for {cooloff_days()} days. It never sells on news: that's your call.")
+    active = flags.all_active(today)
+    if not active:
+        console.print("  news watch-list: empty")
+    for sym, f in sorted(active.items()):
+        console.print(f"  🚫 {sym:<12} not bought until {f['until']} · {f['why']} ({f['by']}) · “{f['headline'][:70]}”")
 
 
 def remind() -> None:
@@ -1996,24 +2095,43 @@ def run_backtest(years: float) -> None:
 ### `jev-shop/jevlab/news.py`
 
 ````python
-"""The news check: before buying a stock, Jev reads the last day and a half of Indian market
-headlines that mention the company, and vetoes the buy if one of them is serious bad news
-(fraud, a regulator's ban, a collapse in results). The Nifty Shop buys dips; this avoids
-buying the ones that are falling for a very good reason. Optional: it needs AI_GATEWAY_API_KEY,
-and NEWS_CHECK=off in .env switches it off. It costs a fraction of a cent a day.
-A vetoed stock is treated as if it weren't in the Nifty 50 that day, so the shop moves on to the next one.
+"""The news check (on unless NEWS_CHECK=off): before every buy or average, the shop looks for
+serious bad news about the company and skips the buy if it finds some. Serious means fraud or
+accounting problems, a regulator's ban, probe or penalty (SEBI, RBI, USFDA…), raids or arrests,
+a default or insolvency, the auditor quitting, or a short-seller report.
+
+Two layers, and either one can veto:
+  1. Red-flag words (always on, free, no key needed): a headline that names the company and
+     contains words like "fraud", "SEBI bans", "ED raids", "insolvency", "auditor resigns".
+  2. Jev (with AI_GATEWAY_API_KEY): reads each headline that names the company and says whether
+     it's serious bad news, catching what a word list misses ("licence cancelled", "profits
+     collapse after write-off") and knowing when a scary word isn't bad ("SEBI lifts ban").
+
+Serious news puts the stock on a watch-list for NEWS_COOLOFF_DAYS (10 by default): no buying or
+averaging it, even after the headline has scrolled off the feeds. News about a whole group
+("Adani Group") skips that day's buy for every company in the group, and goes on the watch-list
+too if Jev confirms it. Headlines are collected every hour (the server's jev-news timer) into
+results/headlines.json, so news from the morning or the night before isn't missed.
+A skipped stock is treated as if it weren't in the Nifty 50 that day: the shop moves on to the next.
+Nothing here sells: the check only stops new money going in. No filter is perfect, and the
+backtest can't test it (there's no archive of old headlines).
 """
 
 from __future__ import annotations
 
 import html
+import json
 import os
 import re
+import time
 import xml.etree.ElementTree as ET
+from datetime import date, timedelta
 from email.utils import parsedate_to_datetime
 
 import pandas as pd
 import requests
+
+from .core import RESULTS
 
 # If a feed stops working, swap in another markets feed from the same site.
 FEEDS = {
@@ -2022,8 +2140,38 @@ FEEDS = {
     "livemint": "https://www.livemint.com/rss/markets",
     "business standard": "https://www.business-standard.com/rss/markets-106.rss",
 }
+ARCHIVE = RESULTS / "headlines.json"
+FLAGS = RESULTS / "news_flags.json"
+KEEP_DAYS = 7  # headlines kept in the archive
 WEAK = {"the", "india", "indian", "asian", "state", "bharat", "power", "coal", "sun", "max", "hindustan"}
 
+# Red-flag words. Each pattern is matched against the lower-cased headline and summary.
+RED_FLAGS = {
+    "fraud or accounting problems": r"fraud|scam|forensic audit|accounting (irregularit|lapse|fraud)|misappropriat|siphon|"
+                                    r"embezzl|money[- ]laundering|round[- ]tripping|window[- ]dressing|whistle[- ]?blower",
+    "a regulator's ban or probe": r"(sebi|rbi|cci|irdai|usfda|us fda|regulator|nclt|sfio|dgca)\W+(\w+\W+){0,3}"
+                                  r"(bans?|barred|bars|debar|probe|probes|investigat|show[- ]cause|restrict|curbs?|"
+                                  r"suspend|cancel|order against|action against)|debarred|import alert|warning letter",
+    "raids or arrests": r"\braids?\b|\braided\b|searches at|\barrested\b|arrest of|arrests? (of )?(its )?(promoter|founder|"
+                        r"director|ceo|md|chairman|cfo|executive|official)|enforcement directorate|"
+                        r"\bed (probe|summons|attaches|searches)|\bcbi\b|income[- ]tax (raid|search)|\bi-t (raid|search)|\bfir\b",
+    "default or insolvency": r"insolven|bankrupt|\bdefault(s|ed)?\b|nclt admits|pledge invo|invocation of pledge|"
+                             r"downgrade(d)? to (junk|default|d\b)",
+    "the auditor quitting": r"auditor (resign|quits|steps down|exits)|(resignation|exit) of (the )?(statutory )?auditor",
+    "a short-seller report": r"short[- ]seller|hindenburg",
+}
+RED = {label: re.compile(p) for label, p in RED_FLAGS.items()}
+CLEARED = re.compile(r"lifts? ban|revok\w* (the )?ban|clean chit|clears?\b|cleared|quash|acquit|dismiss\w* (the )?(case|plea|charges)|"
+                     r"settles?\b|relief|no (fraud|wrongdoing)|denies|rejects? (the )?allegation")
+
+QUESTION = ("Is this headline serious bad news for {company} (NSE: {symbol}) shares? Serious means things like fraud or "
+            "accounting problems, a regulator's ban, probe or big penalty, raids or arrests of the company or its "
+            "promoters, a default or insolvency, the auditor quitting, a short-seller report, or a business-threatening "
+            "loss of a licence or major customer. Ordinary bad news (a weak quarter, a price target cut, a small fine) is "
+            "only mildly negative.")
+
+
+# ---------------------------------------------------------------- headlines
 
 def fetch_headlines(hours: float, quiet: bool = False) -> list[dict]:
     cutoff = pd.Timestamp.now(tz="UTC") - pd.Timedelta(hours=hours)
@@ -2055,43 +2203,174 @@ def fetch_headlines(hours: float, quiet: bool = False) -> list[dict]:
     return sorted(items, key=lambda x: x["published"])
 
 
-def mentions(symbol: str, company: str, items: list[dict], limit: int = 6) -> list[dict]:
-    """Headlines that name the company: by NSE symbol or name first ("Tata Steel"), then by the first word of
-    its name ("Tata"), which also catches group-wide news. Jev then decides whether it's really about them."""
+def collect(quiet: bool = True) -> tuple[list[dict], int]:
+    """Fetch the feeds, add anything new to the archive, and return the archive (newest last)
+    plus how many headlines the feeds returned just now (0 = the feeds couldn't be read)."""
+    fresh = fetch_headlines(48, quiet=quiet)
+    try:
+        old = json.loads(ARCHIVE.read_text())
+    except (OSError, ValueError):
+        old = []
+    cutoff = time.time() - KEEP_DAYS * 86400
+    merged = {x["headline"].lower(): x for x in old if x.get("t", 0) >= cutoff}
+    for it in fresh:
+        merged.setdefault(it["headline"].lower(), {"headline": it["headline"], "summary": it["summary"],
+                                                   "source": it["source"], "t": it["published"].timestamp()})
+    items = sorted(merged.values(), key=lambda x: x["t"])
+    RESULTS.mkdir(exist_ok=True)
+    tmp = ARCHIVE.with_suffix(".tmp")
+    tmp.write_text(json.dumps(items))
+    os.replace(tmp, ARCHIVE)
+    return items, len(fresh)
+
+
+def matches(symbol: str, company: str, items: list[dict]) -> tuple[list[dict], list[dict]]:
+    """Headlines naming the company (by NSE symbol, full name or its first two words: "Tata Steel"), and
+    headlines naming only its group (the first word of its name: "Tata"), each oldest first."""
     name = re.sub(r"\b(limited|ltd)\b\.?", "", company, flags=re.I).strip(" .").lower()
     words = name.split()
     strong = {symbol.lower(), name} | ({" ".join(words[:2])} if len(words) >= 2 else set())
     weak = {words[0]} if words and len(words[0]) >= 4 and words[0] not in WEAK else set()
 
     def hit(keys, it):
-        text = (it["headline"] + " " + it["summary"]).lower()
+        text = _text(it)
         return any(re.search(rf"(?<![a-z0-9]){re.escape(k)}(?![a-z0-9])", text) for k in keys if len(k) >= 2)
 
     first = [it for it in items if hit(strong, it)]
-    second = [it for it in items if it not in first and hit(weak, it)]
-    return (first[-limit:] + second[-limit:])[:limit]
+    return first, [it for it in items if it not in first and hit(weak, it)]
+
+
+def _text(it: dict) -> str:
+    return (it["headline"] + " " + it.get("summary", "")).lower()
+
+
+def red_flag(it: dict) -> str | None:
+    text = _text(it)
+    return next((label for label, pat in RED.items() if pat.search(text)), None)
 
 
 def check_enabled() -> bool:
     return os.getenv("NEWS_CHECK", "on").strip().lower() not in ("off", "false", "0", "no")
 
 
-def veto(jev, symbol: str, company: str, items: list[dict]) -> str | None:
-    """The headline that makes Jev say "don't buy", or None."""
-    q = {"impact": {"type": "choice",
-                    "instructions": f"How does this news affect {company} (NSE: {symbol}) shares over the next few weeks?",
+def cooloff_days() -> int:
+    try:
+        return max(0, int(os.getenv("NEWS_COOLOFF_DAYS", "10")))
+    except ValueError:
+        return 10
+
+
+# ---------------------------------------------------------------- the watch-list
+
+class Flags:
+    """Stocks with serious bad news, and until when they're off the shopping list."""
+
+    def __init__(self):
+        try:
+            self.d = json.loads(FLAGS.read_text())
+        except (OSError, ValueError):
+            self.d = {}
+
+    def save(self) -> None:
+        RESULTS.mkdir(exist_ok=True)
+        tmp = FLAGS.with_suffix(".tmp")
+        tmp.write_text(json.dumps(self.d, indent=1))
+        os.replace(tmp, FLAGS)
+
+    def active(self, symbol: str, today: date) -> dict | None:
+        f = self.d.get(symbol)
+        return f if f and f["until"] >= today.isoformat() else None
+
+    def all_active(self, today: date) -> dict[str, dict]:
+        return {s: f for s, f in self.d.items() if f["until"] >= today.isoformat()}
+
+    def add(self, symbol: str, today: date, headline: str, why: str, by: str) -> bool:
+        """Put a stock on the watch-list. Returns True if it wasn't already on it."""
+        new = self.active(symbol, today) is None
+        until = (today + timedelta(days=cooloff_days())).isoformat()
+        self.d[symbol] = {"until": max(until, self.d.get(symbol, {}).get("until", "")), "headline": headline[:200],
+                          "why": why, "by": by, "since": self.d.get(symbol, {}).get("since") if not new else today.isoformat()}
+        for s in [s for s, f in self.d.items() if f["until"] < (today - timedelta(days=30)).isoformat()]:
+            self.d.pop(s)  # forget flags a month after they end
+        self.save()
+        return new
+
+    def clear(self, symbol: str) -> bool:
+        found = self.d.pop(symbol, None) is not None
+        self.save()
+        return found
+
+
+# ---------------------------------------------------------------- the check
+
+def ask_jev(jev, symbol: str, company: str, it: dict) -> bool | None:
+    """True = Jev says serious bad news, False = not, None = Jev couldn't answer."""
+    q = {"impact": {"type": "choice", "instructions": QUESTION.format(company=company, symbol=symbol),
                     "criteria": {"serious_bad_news": None, "mildly_negative": None, "neutral_or_positive": None,
                                  "not_about_this_company": None}}}
-    for it in mentions(symbol, company, items):
-        try:
-            ans, _ = jev.ask({"headline": it["headline"], "summary": it["summary"], "source": it["source"]}, q,
-                             timeout=15, retries=2)
-        except Exception:
+    try:
+        ans, _ = jev.ask({"headline": it["headline"], "summary": it.get("summary", ""), "source": it.get("source", "")},
+                         q, timeout=8, retries=1)
+    except Exception:
+        return None
+    a = ans["impact"]
+    return a["choice"] == "serious_bad_news" and a["probs"].get("serious_bad_news", 0) >= 0.6
+
+
+def screen(jev, symbol: str, company: str, items: list[dict], flags: Flags, today: date,
+           deadline: float | None = None) -> str | None:
+    """Why this stock mustn't be bought today, or None if the news looks fine."""
+    f = flags.active(symbol, today)
+    if f:
+        return f"on the news watch-list until {f['until']} ({f['why']}: “{f['headline'][:80]}”)"
+    own, group = matches(symbol, company, items)
+    unclear = None
+    for it in reversed(own):  # newest first
+        label = red_flag(it)
+        if not label:
             continue
-        a = ans["impact"]
-        if a["choice"] == "serious_bad_news" and a["probs"].get("serious_bad_news", 0) >= 0.6:
-            return it["headline"]
+        if CLEARED.search(_text(it)):
+            unclear = unclear or (it, label)  # "SEBI lifts ban": let Jev judge it
+            continue
+        flags.add(symbol, today, it["headline"], label, "red-flag words")
+        return f"serious bad news ({label}): “{it['headline'][:90]}”"
+    group_hit = next(((it, red_flag(it)) for it in reversed(group) if red_flag(it) and not CLEARED.search(_text(it))), None)
+    judged = set()  # headlines Jev read and found NOT serious
+    if jev:
+        for it in (list(reversed(own)) + list(reversed(group)))[:6]:
+            if deadline and time.time() > deadline:
+                break
+            verdict = ask_jev(jev, symbol, company, it)
+            if verdict:
+                flags.add(symbol, today, it["headline"], "Jev: serious bad news", "Jev")
+                return f"Jev read serious bad news: “{it['headline'][:90]}”"
+            if verdict is False:
+                judged.add(it["headline"])
+    if unclear and unclear[0]["headline"] not in judged:  # a scary word that may be good news, unjudged: skip today only
+        it, label = unclear
+        return f"possible bad news ({label}), skipped today to be safe: “{it['headline'][:90]}”"
+    if group_hit and group_hit[0]["headline"] not in judged:
+        it, label = group_hit
+        return f"bad news for its group ({label}), skipped today: “{it['headline'][:90]}”"
     return None
+
+
+def watch(universe: dict[str, str], held: list[str], today: date) -> tuple[list[tuple[str, str]], int, Flags]:
+    """The hourly job: collect headlines, and put any stock with red-flag news about it on the watch-list.
+    Returns the newly flagged (symbol, headline), how many headlines the feeds returned, and the flags."""
+    items, fresh = collect()
+    flags = Flags()
+    new = []
+    recent = [it for it in items if it["t"] >= time.time() - 36 * 3600]
+    for sym in sorted(set(universe) | set(held)):
+        own, _ = matches(sym, universe.get(sym, sym), recent)
+        for it in reversed(own):
+            label = red_flag(it)
+            if label and not CLEARED.search(_text(it)):
+                if flags.add(sym, today, it["headline"], label, "red-flag words"):
+                    new.append((sym, it["headline"]))
+                break
+    return new, fresh, flags
 ````
 
 ### `jev-shop/jevlab/judges.py`
@@ -2423,8 +2702,9 @@ def serve(port: int = 8765, open_browser: bool = True, page: str = "shop.html") 
 # Works whether you log in as root (most VPS providers) or as ubuntu (Oracle Cloud).
 #   jev-shop.timer      the daily run, 15:18 India time, Monday to Friday
 #   jev-remind.timer    a Telegram nudge at 14:30 if you haven't logged in to Firstock yet
+#   jev-news.timer      reads the news every hour and keeps the watch-list of stocks with serious bad news
 #   jev-telegram        listens for /login, /status, /stop, /resume (only if Telegram is set up in .env)
-# Undo: sudo systemctl disable --now jev-shop.timer jev-remind.timer jev-telegram
+# Undo: sudo systemctl disable --now jev-shop.timer jev-remind.timer jev-news.timer jev-telegram
 set -euo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -2454,13 +2734,13 @@ Environment=PYTHONUNBUFFERED=1
 EOF
 }
 
-timer() {  # name, description, time of day
+timer() {  # name, description, calendar (India time)
   cat > "$UNIT_DIR/$1.timer" <<EOF
 [Unit]
 Description=$2
 
 [Timer]
-OnCalendar=Mon..Fri *-*-* $3 Asia/Kolkata
+OnCalendar=$3 Asia/Kolkata
 AccuracySec=1s
 
 [Install]
@@ -2470,10 +2750,13 @@ EOF
 
 service jev-shop "Nifty Shop: the daily run" run oneshot
 echo "TimeoutStartSec=900" >> "$UNIT_DIR/jev-shop.service"
-timer jev-shop "Run the Nifty Shop at 15:18 India time on weekdays" 15:18:00
+timer jev-shop "Run the Nifty Shop at 15:18 India time on weekdays" "Mon..Fri *-*-* 15:18:00"
 
 service jev-remind "Nifty Shop: remind me to log in" remind oneshot
-timer jev-remind "Remind me to log in to Firstock at 14:30 India time on weekdays" 14:30:00
+timer jev-remind "Remind me to log in to Firstock at 14:30 India time on weekdays" "Mon..Fri *-*-* 14:30:00"
+
+service jev-news "Nifty Shop: read the news, keep the watch-list" news oneshot
+timer jev-news "Read the news every hour, 07:05 to 23:05 India time, every day" "*-*-* 07..23:05:00"
 
 TELEGRAM=""
 if grep -Eq '^TELEGRAM_BOT_TOKEN=.+' "$DIR/.env" && grep -Eq '^TELEGRAM_CHAT_ID=.+' "$DIR/.env"; then
@@ -2485,7 +2768,7 @@ fi
 echo "wrote the units to $UNIT_DIR (running as $RUN_USER, project in $DIR)"
 if [ -n "${NO_SYSTEMCTL:-}" ]; then exit 0; fi
 systemctl daemon-reload
-systemctl enable --now jev-shop.timer jev-remind.timer
+systemctl enable --now jev-shop.timer jev-remind.timer jev-news.timer
 if [ -n "$TELEGRAM" ]; then
   systemctl enable jev-telegram.service
   systemctl restart jev-telegram.service
@@ -2561,6 +2844,7 @@ td{padding:6px;border-bottom:1px solid rgba(26,34,45,.6);white-space:nowrap} td.
   <div class="grid">
     <div style="display:grid;gap:12px">
       <div class="card"><div class="eyebrow" id="todayTitle">Today</div><div id="today" class="empty">no run yet</div></div>
+      <div class="card"><div class="eyebrow">News watch-list · not bought or averaged until the date</div><div id="flags" class="empty">nothing on it</div></div>
       <div class="card"><div class="eyebrow">Furthest below the 20-DMA · ★ = the 5 candidates</div>
         <table><thead><tr><th>#</th><th>stock</th><th class="r">price</th><th class="r">vs DMA</th><th></th></tr></thead><tbody id="scan"></tbody></table></div>
     </div>
@@ -2626,6 +2910,10 @@ function render(S) {
       `<td class="r hideS">${h.lots}</td><td class="r d hideS">${esc(h.first_buy)}</td></tr>`;
   }).join("") || `<tr><td colspan="8" class="empty">nothing yet: the first buy happens at the next 15:18 run</td></tr>`;
 
+  const F = Object.entries(S.news_flags || {});
+  $("flags").className = F.length ? "" : "empty";
+  $("flags").innerHTML = F.length ? F.map(([sym, f]) => `<div class="act"><span class="r">🚫 ${esc(sym)}</span> until ${esc(f.until)} <span class="note">· ${esc(f.why)} (${esc(f.by)})</span></div>` +
+    `<div class="note">“${esc(f.headline)}”</div>`).join("") : "nothing on it: no serious bad news about the Nifty 50 lately";
   $("closed").innerHTML = (S.closed || []).slice().reverse().slice(0, 15).map((c) =>
     `<tr><td>${esc(c.symbol)}</td><td class="r">${c.qty}</td><td class="r">₹${IN(c.avg)}</td><td class="r">₹${IN(c.price)}</td>` +
     `<td class="r ${tone(c.pnl)}">${inr(c.pnl, true)}</td><td class="r d hideS">${esc(c.first_buy)} → ${esc(c.sold)}</td></tr>`).join("") ||
