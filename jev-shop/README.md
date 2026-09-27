@@ -29,7 +29,7 @@ SEBI's rules end every API session daily, so you log in once each trading day be
 
 ## Costs
 
-The bot itself costs ₹0 to ₹450 a month: a free Oracle Cloud server in India (or a small paid VPS with a fixed IP), Firstock's API, Telegram, and Jev's free tier. Trading costs are separate. Firstock charges no delivery brokerage, but each ₹5,000 round trip still pays about ₹29 in STT, stamp duty, exchange charges, the DP charge and GST (about 0.6%). A 5% winner on ₹5,000 is ₹250 before tax.
+The bot itself costs ₹0 to ₹600 a month: a free Oracle Cloud server in India (or a small paid VPS with a fixed IP, about ₹400–600 including GST), Firstock's API, Telegram, and Jev's free tier. Trading costs are separate. Firstock charges no delivery brokerage, but each ₹5,000 round trip still pays about ₹29 in STT, stamp duty, exchange charges, the DP charge and GST (about 0.6%). A 5% winner on ₹5,000 is ₹250 before tax.
 
 ## Things to know
 

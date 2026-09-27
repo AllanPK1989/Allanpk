@@ -1,4 +1,4 @@
-# Jev Starter · Nifty Shop edition: a ₹5,000-a-day Nifty 50 bot on Firstock, for ₹0–₹450 a month
+# Jev Starter · Nifty Shop edition: a ₹5,000-a-day Nifty 50 bot on Firstock, for ₹0–₹600 a month
 
 > **How to use this:** open Claude Code in an empty folder, drag this file in (or paste it), and say "go".
 > Claude sets everything up and talks you through it. Mac, Windows and Linux.
@@ -11,7 +11,7 @@
 > that's happening for a very good reason.
 > - **Path 1, laptop (about 25 min):** set up, backtest the rules over 5 years, see today's picks, paper trade.
 > - **Path 2, server (about 45 min more):** the shop runs itself every trading day on a tiny server in India
->   (free on Oracle Cloud, or about ₹250–450 a month), with Telegram on your phone for the daily login and report.
+>   (free on Oracle Cloud, or about ₹400–600 a month including GST), with Telegram on your phone for the daily login and report.
 >   It starts in **paper mode**. Real money only happens if you switch it on yourself.
 >
 > You need a Firstock trading account (Indian KYC, equity segment, 2FA with an authenticator app). Recommended: a
@@ -178,7 +178,7 @@ between 15:15 and 15:29: `uv run python -m jevlab login`, then `uv run python -m
 # PART B · Path 2: the shop runs itself every day
 
 Tell them what's coming in 3 lines: a Telegram bot for their phone (optional but recommended), a tiny server in India
-with a fixed IP (free on Oracle Cloud, or about ₹250–450 a month), and timers on it: the news check every hour, a 14:30
+with a fixed IP (free on Oracle Cloud, or about ₹400–600 a month), and timers on it: the news check every hour, a 14:30
 login reminder, the 15:18 run, and the Telegram listener. The one daily chore: send `/login 123456` to their bot
 before 15:15.
 
@@ -207,7 +207,7 @@ Explain the choice and what it costs each month:
 | | Monthly cost | Notes |
 |---|---|---|
 | **Oracle Cloud Always Free**, home region **Mumbai or Hyderabad** | ₹0 | The home region is chosen at sign-up and can't be changed. Sign-up needs a card for verification. Free machines are sometimes "out of capacity" (try again later, or another availability domain). Oracle may reclaim Always Free machines that sit idle, and this bot is idle most of the day: upgrading the account to Pay As You Go avoids that and stays ₹0 within the free limits (check Oracle's current terms). |
-| **Smallest paid VPS in India** with a dedicated IPv4 (DigitalOcean Bangalore, Vultr Mumbai or Delhi, AWS Lightsail Mumbai, Hostinger India…) | about ₹250–450 | Simpler and dependable. Check the plan includes an IPv4 address, not IPv6 only. |
+| **Smallest paid VPS in India** with a dedicated IPv4 (DigitalOcean Bangalore $4 Basic droplet, Vultr Mumbai or Delhi, AWS Lightsail Mumbai, Hostinger India…) | about ₹400–600 including 18% GST | Simpler and dependable. Check the plan includes an IPv4 address, not IPv6 only. Dollar-billed providers need a card that allows international payments; if recurring charges get declined, prepay some credit instead. Hostinger bills in rupees but its low prices need a 1–2 year commitment and renew higher. |
 | Firstock API · Telegram · Jev's news check (free tier) | ₹0 | Check Firstock's API page for any API charges. |
 
 The shop only needs about 2 minutes of computing a day, so the smallest machine of any kind is plenty. Ubuntu 24.04.
@@ -422,7 +422,7 @@ SEBI's rules end every API session daily, so you log in once each trading day be
 
 ## Costs
 
-The bot itself costs ₹0 to ₹450 a month: a free Oracle Cloud server in India (or a small paid VPS with a fixed IP), Firstock's API, Telegram, and Jev's free tier. Trading costs are separate. Firstock charges no delivery brokerage, but each ₹5,000 round trip still pays about ₹29 in STT, stamp duty, exchange charges, the DP charge and GST (about 0.6%). A 5% winner on ₹5,000 is ₹250 before tax.
+The bot itself costs ₹0 to ₹600 a month: a free Oracle Cloud server in India (or a small paid VPS with a fixed IP, about ₹400–600 including GST), Firstock's API, Telegram, and Jev's free tier. Trading costs are separate. Firstock charges no delivery brokerage, but each ₹5,000 round trip still pays about ₹29 in STT, stamp duty, exchange charges, the DP charge and GST (about 0.6%). A 5% winner on ₹5,000 is ₹250 before tax.
 
 ## Things to know
 
