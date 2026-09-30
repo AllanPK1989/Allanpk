@@ -57,6 +57,28 @@ Installed under `.claude/`, so any Claude Code session opened in this repo picks
 Each skill ships `references/` (API guides, optimization checklists), `assets/` (runnable Vite starter
 projects), and `scripts/` (Python code generators).
 
+## Additional plugins & skills
+
+Outside the 3D bundle, four third-party add-ons are installed. Sources, pinned commits and licenses
+are in `.claude/skills/THIRD-PARTY-NOTICES.md`.
+
+| Add-on | Installed as | What it gives you |
+|---|---|---|
+| [grill-me](https://skills.sh/mattpocock/skills/grill-me) | `.claude/skills/grill-me` + `grilling` | `/grill-me`: a round-by-round interview that stress-tests a plan. User-invoked only; `grilling` is the skill it delegates to. |
+| [one-skill-to-rule-them-all](https://github.com/rebelytics/one-skill-to-rule-them-all) | `.claude/skills/task-observer` | Watches work sessions and logs observations that could improve skills. |
+| [omniroute](https://github.com/sumanthbolle/omniroute) | `.claude/skills/omni-*`, `cli-*`, `config-codex-cli` (43 skills) | API and CLI reference for driving an OmniRoute AI gateway. They need a running OmniRoute server; the server itself is not installed. |
+| [claude-mem](https://github.com/thedotmack/claude-mem) | Plugin `claude-mem@thedotmack`, declared in `.claude/settings.json` | Hooks that record tool use into a local SQLite store and inject past context into new sessions, plus a `mem-search` MCP server and ~22 skills. |
+
+claude-mem notes:
+
+- It stores memory under `~/.claude-mem`, outside the repo. In Claude Code on the web, each session
+  gets a fresh container, so memory doesn't carry over between cloud sessions. It does persist on a
+  local machine.
+- Its anonymous PostHog telemetry is on by default upstream. Here it is turned off with
+  `CLAUDE_MEM_TELEMETRY=0` in `.claude/settings.json`; delete that line to opt in.
+- The Setup hook may print `runtime not yet set up - run: npx claude-mem@latest install`. That
+  message refers to an optional marker file; the worker starts and serves without it.
+
 ## Usage
 
 Invoke a skill by name, or use a slash command directly. The generators run standalone too:
