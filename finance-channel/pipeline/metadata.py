@@ -72,13 +72,14 @@ def description(s: Script, fmt: str, info: dict, other_url: str | None = None) -
         label = "📺 முழு விளக்கம் (Full video)" if fmt == "short" else "📱 ஒரு நிமிட Short"
         link = f"{label}: {other_url}"
     summary = [f"• {_clean(x)}" for x in (s.get("summary") or [])]
+    summary_label = "இந்த வீடியோவில்:" if fmt == "long" else "முழு விளக்க வீடியோவில்:"
     chaps = info.get("chapters") or [] if fmt == "long" else []
     chapters = "⏱️ Chapters\n" + "\n".join(f"{_fmt_ts(t)} {_clean(n)}" for t, n in chaps) if chaps else ""
 
     def build(summary_lines: list[str], with_chapters: bool) -> str:
         parts = [
             _clean(hook), link,
-            ("இந்த வீடியோவில்:\n" + "\n".join(summary_lines)) if summary_lines else "",
+            ((summary_label + "\n") + "\n".join(summary_lines)) if summary_lines else "",
             chapters if with_chapters else "",
             f"📌 “{brand}” — தினமும் ஒரு எளிய நிதி பாடம், தமிழில். பாகம் #{int(s.id)}.",
             _clean(d["description_ta"]).strip(),

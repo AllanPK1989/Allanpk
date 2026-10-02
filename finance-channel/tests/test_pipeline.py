@@ -104,3 +104,33 @@ def test_next_slot_skips_taken_days(tmp_path, monkeypatch):
 
 def test_load_script_by_id():
     assert load_script("001").id == "001"
+
+
+def test_publish_youtube_mode_uploads_long_then_short(tmp_path, monkeypatch):
+    import json
+    from pipeline import __main__ as cli
+    from pipeline import config as cfgmod
+    from pipeline import youtube
+
+    monkeypatch.setattr(state, "STATE_FILE", tmp_path / "state.json")
+    real = cfgmod.config()
+    patched = {**real, "publish": {**real["publish"], "mode": "youtube", "audited": True}}
+    monkeypatch.setattr(cfgmod, "config", lambda: patched)
+    calls = []
+    monkeypatch.setattr(youtube, "configured", lambda: True)
+    monkeypatch.setattr(youtube, "upload", lambda video, body, thumb=None: calls.append((video.name, body)) or f"vid{len(calls)}")
+    d = tmp_path / "001"
+    d.mkdir()
+    for f in ("short", "long"):
+        (d / f"001-{f}.json").write_text(json.dumps({"file": f"001-{f}.mp4", "duration": 60, "chapters": []}))
+    cli.main(["publish", "001", "--dir", str(d), "--comment-file", str(tmp_path / "c.md")])
+
+    assert [c[0] for c in calls] == ["001-long.mp4", "001-short.mp4"]
+    long_body, short_body = calls[0][1], calls[1][1]
+    assert long_body["status"]["privacyStatus"] == "private"
+    assert long_body["status"]["publishAt"].endswith("Z")
+    assert "https://youtu.be/vid1" in short_body["snippet"]["description"]
+    assert short_body["snippet"]["defaultAudioLanguage"] == "ta"
+    item = state.get("001")
+    assert item["status"] == "scheduled" and item["youtube"]["short"]["id"] == "vid2"
+    assert "youtu.be/vid2" in (tmp_path / "c.md").read_text(encoding="utf-8")
