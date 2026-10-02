@@ -134,3 +134,43 @@ def test_publish_youtube_mode_uploads_long_then_short(tmp_path, monkeypatch):
     item = state.get("001")
     assert item["status"] == "scheduled" and item["youtube"]["short"]["id"] == "vid2"
     assert "youtu.be/vid2" in (tmp_path / "c.md").read_text(encoding="utf-8")
+
+
+def test_generator_retries_until_lint_passes(tmp_path, monkeypatch):
+    """Stubbed Claude: first reply breaks the rules, second is valid."""
+    import types
+    import anthropic
+    from pipeline import generate
+
+    good = (Path(__file__).parent.parent / "content" / "002-compounding.yaml").read_text(encoding="utf-8")
+    bad = good.replace("கூட்டு வட்டியின் சக்தி\"", "Reliance பங்கு\"", 1)
+    replies = iter([bad, good])
+    sent = []
+
+    class Stream:
+        def __init__(self, text): self.text = text
+        def __enter__(self): return self
+        def __exit__(self, *a): return False
+        def get_final_message(self):
+            block = types.SimpleNamespace(type="text", text=f"```yaml\n{self.text}```")
+            return types.SimpleNamespace(stop_reason="end_turn", content=[block])
+
+    class FakeClient:
+        def __init__(self, *a, **k):
+            self.beta = types.SimpleNamespace(messages=types.SimpleNamespace(stream=self.stream))
+        def stream(self, **kw):
+            sent.append(kw)
+            return Stream(next(replies))
+
+    monkeypatch.setattr(anthropic, "Anthropic", FakeClient)
+    monkeypatch.setattr(generate, "CONTENT", tmp_path)
+    monkeypatch.setattr(generate, "find_script", lambda tid: None)
+    out = generate.generate("031")
+
+    assert out.parent == tmp_path and out.name == "031-net-worth.yaml"
+    saved = yaml.safe_load(out.read_text(encoding="utf-8"))
+    assert saved["id"] == "031" and saved["category"] == "basics"
+    assert len(sent) == 2
+    assert sent[0]["model"] == "claude-opus-5-5"
+    fix_request = sent[1]["messages"][-1]["content"]
+    assert "Reliance" in fix_request  # lint errors were fed back
