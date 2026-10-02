@@ -45,11 +45,23 @@ jobs:
           cache: pip
           cache-dependency-path: finance-channel/requirements.txt
 
-      - name: Install ffmpeg, Python packages and Chromium
+      - name: Install ffmpeg, Python packages and a browser
+        timeout-minutes: 12
         run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
           pip install -q -r requirements.txt
-          python -m playwright install --with-deps chromium
+          apt_get() {  # retry: package mirrors occasionally hang
+            for i in 1 2 3; do
+              timeout 240 sudo apt-get -o Acquire::Retries=3 -o DPkg::Lock::Timeout=120 "$@" && return 0
+              echo "apt-get $* failed (attempt $i), retrying"; sleep 15
+            done
+            return 1
+          }
+          if ! command -v ffmpeg >/dev/null; then apt_get update -qq && apt_get install -y -qq ffmpeg; fi
+          if command -v google-chrome >/dev/null; then
+            echo "CHROMIUM_PATH=$(command -v google-chrome)" >> "$GITHUB_ENV"
+          else
+            python -m playwright install --with-deps chromium
+          fi
 
       - name: Pick topic and render
         id: daily
