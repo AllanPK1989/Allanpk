@@ -63,10 +63,12 @@ def _name_pattern(name: str) -> re.Pattern:
     return re.compile(re.escape(name))
 
 
-def check_text(texts: list[tuple[str, str]], allow: set[str], rep: Report) -> None:
+def check_text(texts: list[tuple[str, str]], allow: set[str], rep: Report, phrases: tuple[str, ...] = ()) -> None:
     r = rules()
     names = [(n, _name_pattern(n)) for n in r.get("securities", []) if n not in allow]
     for where, t in texts:
+        for ph in phrases:  # e.g. a scam-awareness video quoting a scammer's pitch
+            t = t.replace(ph, "")
         for rx, why in r["_err"]:
             m = rx.search(t)
             if m:
@@ -132,7 +134,10 @@ def lint(s: Script) -> Report:
     rep = Report()
     check_structure(s, rep)
     allow = set(s.get("allow_names") or [])
-    check_text(_texts(s.data), allow, rep)
+    phrases = tuple(s.get("allow_phrases") or [])
+    check_text(_texts(s.data), allow, rep, phrases)
+    if phrases:
+        rep.warnings.append(f"allow_phrases skips checks for: {', '.join(phrases)}; make sure each is quoted as a warning")
     rep.errors = list(dict.fromkeys(rep.errors))
     rep.warnings = list(dict.fromkeys(rep.warnings))
     return rep
