@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="ta">
+<head>
+<meta charset="utf-8">
+<title>stage</title>
+<style>
+@font-face { font-family: "Catamaran"; src: url("../../assets/fonts/Catamaran.ttf"); font-weight: 100 900; }
+@font-face { font-family: "Noto Sans Tamil"; src: url("../../assets/fonts/NotoSansTamil.ttf"); font-weight: 100 900; }
+@font-face { font-family: "Inter"; src: url("../../assets/fonts/Inter.ttf"); font-weight: 100 900; }
+
+:root {
+  --accent: #4FC3F7;
+  --accent-soft: rgba(79,195,247,.16);
+  --bg0: #070d1d;
+  --bg1: #0d1730;
+  --ink: #f4f7ff;
+  --muted: #9fb0d4;
+  --card: rgba(255,255,255,.055);
+  --line: rgba(255,255,255,.13);
+  --good: #4ade80;
+  --bad: #f87171;
+  --warn: #fbbf24;
+  --head: "Catamaran", "Noto Sans Tamil", "Inter", sans-serif;
+  --body: "Noto Sans Tamil", "Inter", sans-serif;
+  --num: "Inter", "Noto Sans Tamil", sans-serif;
+  /* sizes, overridden per format */
+  --pad-x: 72px;
+  --top: 300px;
+  --bottom: 560px;
+  --h1: 92px; --h2: 70px; --t: 50px; --small: 34px; --cap: 46px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg0); }
+body {
+  color: var(--ink); font-family: var(--body);
+  -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision;
+}
+body.long { --pad-x: 120px; --top: 170px; --bottom: 220px; --h1: 88px; --h2: 68px; --t: 48px; --small: 30px; --cap: 40px; }
+
+#frame { position: absolute; inset: 0; overflow: hidden;
+  background:
+    radial-gradient(1100px 900px at 85% -10%, var(--accent-soft), transparent 60%),
+    radial-gradient(900px 900px at -10% 110%, rgba(255,255,255,.05), transparent 60%),
+    linear-gradient(160deg, var(--bg1), var(--bg0) 70%);
+}
+#grid { position: absolute; inset: 0; opacity: .5;
+  background-image:
+    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse at 50% 40%, black 30%, transparent 80%);
+}
+
+/* top bar */
+#top { position: absolute; left: var(--pad-x); right: var(--pad-x); top: 92px; display: flex; gap: 18px; align-items: center; }
+body.long #top { top: 52px; }
+.chip { font-family: var(--head); font-weight: 700; font-size: 32px; line-height: 1; padding: 16px 26px 12px; border-radius: 999px; border: 2px solid var(--line); background: rgba(255,255,255,.04); color: var(--ink); white-space: nowrap; }
+.chip.brand { background: var(--accent); color: #06101f; border-color: var(--accent); }
+.chip.cat { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 55%, transparent); }
+body.long .chip { font-size: 28px; }
+#ep { margin-left: auto; font-family: var(--num); font-weight: 700; font-size: 28px; color: var(--muted); }
+#note { position: absolute; left: var(--pad-x); right: var(--pad-x); top: 168px; font-size: 26px; color: var(--muted); letter-spacing: .2px; }
+body.long #note { top: auto; bottom: 34px; left: auto; right: var(--pad-x); font-size: 22px; }
+
+/* main content box */
+#content { position: absolute; left: var(--pad-x); right: var(--pad-x); top: var(--top); bottom: var(--bottom); display: flex; flex-direction: column; justify-content: center; }
+body.short #content { right: calc(var(--pad-x) + 30px); }
+
+/* caption */
+#cap { position: absolute; left: var(--pad-x); right: calc(var(--pad-x) + 90px); bottom: 360px; min-height: 0; display: flex; justify-content: center; }
+body.long #cap { left: 260px; right: 260px; bottom: 74px; }
+#cap .box { font-family: var(--body); font-weight: 600; font-size: var(--cap); line-height: 1.42; text-align: center; padding: 18px 30px 14px; border-radius: 22px; background: rgba(3,8,20,.72); border: 1px solid var(--line); color: #fff; box-shadow: 0 10px 40px rgba(0,0,0,.35); }
+#cap .box:empty { display: none; }
+
+/* text helpers */
+b.hl { color: var(--accent); font-weight: inherit; }
+.hl2 { color: var(--warn); }
+.good { color: var(--good); } .bad { color: var(--bad); }
+.muted { color: var(--muted); }
+.num { font-family: var(--num); }
+
+h1.h { font-family: var(--head); font-weight: 800; font-size: var(--h1); line-height: 1.18; letter-spacing: -.5px; }
+h2.h { font-family: var(--head); font-weight: 800; font-size: var(--h2); line-height: 1.2; margin-bottom: 40px; }
+h2.h .k { display: block; font-size: .5em; font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 10px; text-transform: uppercase; }
+.sub { font-size: calc(var(--t) * 1.05); color: var(--muted); line-height: 1.45; margin-top: 30px; }
+.card { background: var(--card); border: 1.5px solid var(--line); border-radius: 30px; padding: 40px 44px; }
+.icon { width: 200px; height: 200px; color: var(--accent); }
+.icon svg { width: 100%; height: 100%; }
+
+/* ---------- scene: hook / title ---------- */
+.s-hook { text-align: left; }
+.s-hook .icon { margin-bottom: 44px; width: 180px; height: 180px; padding: 30px; border-radius: 44px; background: var(--accent-soft); }
+.s-hook h1.h { font-size: var(--h1); }
+body.short .s-hook h1.h { font-size: 86px; }
+body.long .s-hook { display: grid; grid-template-columns: 1fr auto; gap: 80px; align-items: center; }
+body.long .s-hook .icon { order: 2; width: 300px; height: 300px; padding: 60px; margin: 0; }
+
+/* ---------- define ---------- */
+.s-define .label { font-family: var(--head); font-weight: 700; font-size: 34px; color: var(--accent); letter-spacing: 1px; margin-bottom: 18px; }
+.s-define .term { font-family: var(--head); font-weight: 800; font-size: calc(var(--h1) * 1.05); line-height: 1.15; }
+.s-define .term-en { font-family: var(--num); font-weight: 700; font-size: calc(var(--t) * 1.0); color: var(--muted); margin: 12px 0 40px; }
+.s-define .card { font-size: calc(var(--t) * 1.04); line-height: 1.55; border-left: 10px solid var(--accent); }
+
+/* ---------- points ---------- */
+.list { display: flex; flex-direction: column; gap: 26px; }
+.item { display: flex; gap: 26px; align-items: flex-start; font-size: var(--t); line-height: 1.42; padding: 24px 30px; border-radius: 24px; background: var(--card); border: 1.5px solid var(--line); }
+.item .m { flex: 0 0 auto; width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; font-family: var(--num); font-weight: 800; font-size: 34px; background: var(--accent); color: #06101f; margin-top: -2px; }
+.item .m svg { width: 38px; height: 38px; }
+.item.check .m { background: var(--good); } .item.cross .m { background: var(--bad); }
+.item.dot .m { width: 22px; height: 22px; margin-top: 20px; }
+.item .sm { display: block; font-size: .72em; color: var(--muted); margin-top: 6px; }
+.item.hidden, .row.hidden, .line.hidden, .bar.hidden, .node.hidden, .leg.hidden, .res.hidden, .ov.hidden, .slice.hidden { visibility: hidden; }
+.item.dim { opacity: .55; }
+body.long .list.two { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 30px; }
+
+/* ---------- compare ---------- */
+.cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 22px; }
+.cmp .head { font-family: var(--head); font-weight: 800; font-size: calc(var(--t) * 1.1); text-align: center; padding: 22px 16px 16px; border-radius: 22px; color: #06101f; }
+.cmp .cell { font-size: calc(var(--t) * .92); line-height: 1.4; padding: 22px 26px; border-radius: 20px; background: var(--card); border: 1.5px solid var(--line); text-align: center; display: flex; align-items: center; justify-content: center; }
+.cmp .row { display: contents; }
+
+/* ---------- steps (worked example) ---------- */
+.steps { display: flex; flex-direction: column; gap: 18px; }
+.steps .line { font-size: var(--t); line-height: 1.4; padding: 18px 28px; border-left: 6px solid var(--line); background: rgba(255,255,255,.03); border-radius: 0 18px 18px 0; }
+.steps .line .num { font-weight: 700; }
+.steps .res { margin-top: 18px; font-family: var(--head); font-weight: 800; font-size: calc(var(--t) * 1.2); padding: 28px 34px; border-radius: 24px; background: var(--accent); color: #06101f; }
+.tag { display: inline-block; font-family: var(--head); font-weight: 700; font-size: 28px; padding: 8px 18px 4px; border-radius: 12px; background: rgba(251,191,36,.15); color: var(--warn); margin-bottom: 22px; }
+
+/* ---------- stat ---------- */
+.s-stat { text-align: center; }
+.s-stat .lab { font-size: calc(var(--t) * 1.05); color: var(--muted); line-height: 1.4; margin-bottom: 26px; }
+.s-stat .vals { display: flex; align-items: center; justify-content: center; gap: 36px; flex-wrap: wrap; }
+.s-stat .v { font-family: var(--num); font-weight: 800; font-size: calc(var(--h1) * 1.55); line-height: 1.1; color: var(--accent); }
+.s-stat .v.to { color: var(--warn); }
+.s-stat .arrow { font-family: var(--num); font-size: calc(var(--h1) * 1.1); color: var(--muted); }
+.s-stat .cap2 { font-size: var(--t); line-height: 1.45; margin-top: 30px; }
+
+/* ---------- charts ---------- */
+.chart { width: 100%; }
+.chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+.chart text { font-family: "Noto Sans Tamil", "Inter", sans-serif; fill: var(--muted); }
+.chart .axis { stroke: rgba(255,255,255,.25); stroke-width: 3; }
+.chart .gridl { stroke: rgba(255,255,255,.07); stroke-width: 2; }
+.series { fill: none; stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; }
+
+.bars { display: flex; align-items: flex-end; justify-content: space-around; gap: 30px; height: 760px; padding: 0 10px; border-bottom: 3px solid rgba(255,255,255,.25); }
+body.long .bars { height: 400px; }
+.bar { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
+.bar .val { font-family: var(--num); font-weight: 800; font-size: calc(var(--t) * .9); margin-bottom: 14px; white-space: nowrap; }
+.bar .col { width: 100%; max-width: 190px; border-radius: 18px 18px 6px 6px; background: var(--accent); transform-origin: bottom; }
+.bar-labels { display: flex; justify-content: space-around; gap: 30px; padding: 18px 10px 0; }
+.bar-labels div { flex: 1; text-align: center; font-size: calc(var(--t) * .78); line-height: 1.3; color: var(--muted); }
+.bar-labels div.hidden { visibility: hidden; }
+
+.donut-wrap { display: flex; align-items: center; gap: 50px; }
+body.short .donut-wrap { flex-direction: column; gap: 40px; }
+.donut { width: 520px; height: 520px; flex: 0 0 auto; }
+.legend { display: flex; flex-direction: column; gap: 20px; flex: 1; width: 100%; }
+.leg { display: flex; align-items: center; gap: 22px; font-size: var(--t); line-height: 1.35; padding: 16px 24px; border-radius: 18px; background: var(--card); border: 1.5px solid var(--line); }
+.leg .sw { width: 34px; height: 34px; border-radius: 10px; flex: 0 0 auto; }
+.leg .pc { margin-left: auto; font-family: var(--num); font-weight: 800; }
+
+/* ---------- flow ---------- */
+.flow { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
+body.long .flow { flex-direction: row; align-items: center; }
+.node { text-align: center; font-family: var(--head); font-weight: 700; font-size: calc(var(--t) * 1.0); line-height: 1.3; padding: 26px 26px 20px; border-radius: 24px; background: var(--card); border: 2px solid color-mix(in srgb, var(--accent) 60%, transparent); }
+body.long .node { flex: 1; }
+.node .sm { display: block; font-family: var(--body); font-weight: 500; font-size: .7em; color: var(--muted); margin-top: 6px; }
+.arr { text-align: center; color: var(--accent); font-family: var(--num); font-size: 56px; line-height: 1; padding: 10px 0; }
+body.long .arr { padding: 0 14px; }
+.arr.hidden { visibility: hidden; }
+
+/* ---------- formula ---------- */
+.formula { font-family: var(--num); font-weight: 700; font-size: calc(var(--h2) * .8); text-align: center; line-height: 1.35; padding: 44px 30px; border-radius: 30px; background: var(--accent-soft); border: 2px solid color-mix(in srgb, var(--accent) 60%, transparent); margin-bottom: 36px; }
+.formula .fta { font-family: var(--head); }
+.legs { display: flex; flex-direction: column; gap: 16px; }
+.legs .leg .sym { font-family: var(--num); font-weight: 800; color: var(--accent); min-width: 90px; }
+
+/* ---------- takeaway ---------- */
+.s-take .label { display: flex; align-items: center; gap: 18px; font-family: var(--head); font-weight: 800; font-size: 40px; color: var(--accent); margin-bottom: 30px; }
+.s-take .label svg { width: 60px; height: 60px; }
+.s-take .card { font-family: var(--head); font-weight: 700; font-size: calc(var(--h2) * .95); line-height: 1.38; border: 3px solid var(--accent); background: var(--accent-soft); padding: 54px 50px; }
+
+/* ---------- auto scenes ---------- */
+.s-intro .lab { font-family: var(--head); font-weight: 700; font-size: 40px; color: var(--accent); margin-bottom: 20px; }
+.s-intro h1.h { font-size: calc(var(--h1) * 1.15); }
+.s-intro .en { font-family: var(--num); font-weight: 600; font-size: calc(var(--t) * 1.1); color: var(--muted); margin-top: 24px; }
+.s-disc .icon { width: 130px; height: 130px; margin-bottom: 26px; color: var(--warn); }
+.s-disc .ttl { font-family: var(--head); font-weight: 800; font-size: var(--h2); margin-bottom: 24px; }
+.s-disc .card { font-size: calc(var(--t) * .84); line-height: 1.55; border-left: 10px solid var(--warn); }
+.s-disc .cta { margin-top: 40px; font-family: var(--head); font-weight: 800; font-size: calc(var(--t) * 1.05); color: var(--accent); }
+.s-risk .card { font-family: var(--head); font-weight: 800; font-size: var(--h2); line-height: 1.35; border: 3px solid var(--bad); background: rgba(248,113,113,.10); }
+.s-risk .icon { color: var(--bad); width: 150px; height: 150px; margin-bottom: 30px; }
+
+/* ---------- thumbnail ---------- */
+body.thumb #top, body.thumb #note, body.thumb #cap { display: none; }
+.th { position: absolute; inset: 0; padding: 60px 70px; display: flex; flex-direction: column; justify-content: center; }
+.th .cat { align-self: flex-start; font-family: var(--head); font-weight: 800; font-size: 40px; padding: 14px 28px 8px; border-radius: 16px; background: var(--accent); color: #06101f; margin-bottom: 28px; }
+.th h1 { font-family: var(--head); font-weight: 800; font-size: 112px; line-height: 1.1; width: 790px; text-shadow: 0 6px 30px rgba(0,0,0,.5); }
+.th h1 b { color: var(--accent); }
+.th .en { font-family: var(--num); font-weight: 800; font-size: 46px; color: var(--warn); margin-top: 22px; }
+.th .icon { position: absolute; right: 70px; top: 50%; transform: translateY(-50%); width: 300px; height: 300px; padding: 50px; border-radius: 70px; background: var(--accent-soft); }
+.th .brand { position: absolute; left: 70px; bottom: 40px; font-family: var(--head); font-weight: 700; font-size: 32px; color: var(--muted); }
+
+/* ---------- animations ---------- */
+@keyframes up { from { opacity: 0; transform: translateY(46px); } to { opacity: 1; transform: none; } }
+@keyframes pop { 0% { opacity: 0; transform: scale(.82); } 70% { opacity: 1; transform: scale(1.03); } 100% { opacity: 1; transform: none; } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes grow { from { transform: scaleY(0); } to { transform: none; } }
+@keyframes draw { from { stroke-dashoffset: var(--len); } to { stroke-dashoffset: 0; } }
+@keyframes left { from { opacity: 0; transform: translateX(-60px); } to { opacity: 1; transform: none; } }
+.a-up { animation: up .5s cubic-bezier(.2,.8,.2,1) both; }
+.a-pop { animation: pop .5s cubic-bezier(.2,.8,.2,1) both; }
+.a-fade { animation: fade .4s ease-out both; }
+.a-left { animation: left .45s cubic-bezier(.2,.8,.2,1) both; }
+.a-grow { animation: grow .6s cubic-bezier(.2,.8,.2,1) both; }
+.a-draw { animation: draw 1.0s ease-in-out both; }
+.d1 { animation-delay: .08s; } .d2 { animation-delay: .16s; } .d3 { animation-delay: .24s; }
+</style>
+</head>
+<body class="short">
+<div id="frame"><div id="grid"></div>
+  <div id="top"><span class="chip brand" id="brand"></span><span class="chip cat" id="cat"></span><span id="ep"></span></div>
+  <div id="note"></div>
+  <div id="content"></div>
+  <div id="cap"><div class="box"></div></div>
+</div>
+<script>
+"use strict";
+const ICONS = {
+  rupee: '<path d="M6 3h12M6 8h12M6 3h3a5 5 0 0 1 0 10H6l9 8"/>',
+  piggy: '<path d="M19 9.5c1 .6 2 1.8 2 3.5h-1.6c-.5 1.6-1.6 2.8-3.4 3.6V20h-3v-2.6c-.7.1-1.3.1-2 0V20H8v-3.3C5.6 15.6 4 13.6 4 11.2 4 7.8 7.4 5 11.5 5c1.8 0 3.4.4 4.8 1.2L19 5v4.5z"/><circle cx="15.5" cy="10" r=".9" fill="currentColor"/>',
+  shield: '<path d="M12 3l8 3v6c0 4.5-3.3 8-8 9-4.7-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
+  up: '<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+  down: '<path d="M3 7l6 6 4-4 8 8"/><path d="M15 17h6v-6"/>',
+  candles: '<path d="M6 3v4M6 15v6M12 2v3M12 13v4M18 6v3M18 17v4"/><rect x="4" y="7" width="4" height="8" rx="1"/><rect x="10" y="5" width="4" height="8" rx="1"/><rect x="16" y="9" width="4" height="8" rx="1"/>',
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.8 3 2.8 15 0 18M12 3c-2.8 3-2.8 15 0 18"/>',
+  bank: '<path d="M3 9l9-6 9 6M5 9v9M9.5 9v9M14.5 9v9M19 9v9M3 21h18"/>',
+  calc: '<rect x="5" y="2.5" width="14" height="19" rx="2"/><path d="M8 6.5h8M8 11h.01M12 11h.01M16 11h.01M8 14.5h.01M12 14.5h.01M16 14.5h.01M8 18h.01M12 18h4"/>',
+  alert: '<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>',
+  bulb: '<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  umbrella: '<path d="M12 3a9 9 0 0 1 9 9H3a9 9 0 0 1 9-9zM12 12v7a2 2 0 0 0 4 0"/>',
+  target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/>',
+  scale: '<path d="M12 3v18M5 21h14M4 7h16M7 7l-3 7a3 3 0 0 0 6 0zM17 7l-3 7a3 3 0 0 0 6 0z"/>',
+  home: '<path d="M3 11l9-7 9 7M5 10v10h14V10M10 20v-6h4v6"/>',
+  card: '<rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 10h19M6 15h4"/>',
+  percent: '<path d="M19 5L5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/>',
+  coins: '<ellipse cx="9" cy="7" rx="6" ry="3"/><path d="M3 7v4c0 1.7 2.7 3 6 3s6-1.3 6-3V7"/><path d="M9 14v3c0 1.7 2.7 3 6 3s6-1.3 6-3v-4c0-1.6-2.4-2.9-5.4-3"/>',
+  wallet: '<path d="M20 7V5a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15v12H5a2 2 0 0 1-2-2V6"/><path d="M16 13h.01"/>',
+  pie: '<path d="M12 3v9h9a9 9 0 1 1-9-9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/>',
+  layers: '<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
+  question: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17.5h.01"/>',
+  check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  x: '<path d="M6 6l12 12M18 6L6 18"/>',
+  book: '<path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H20v15H5.5A1.5 1.5 0 0 0 4 19.5zM4 19.5A1.5 1.5 0 0 0 5.5 21H20"/>',
+  heart: '<path d="M12 20s-8-4.6-8-10.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 8 2.5C20 15.4 12 20 12 20z"/>',
+  users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14a6.5 6.5 0 0 1 3.5 6"/>',
+  calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  flame: '<path d="M12 21a7 7 0 0 0 7-7c0-4-3-6.5-4-10-2 2-2.5 4-2.5 5.5C11 8 10 6.5 10 5 6.5 7.5 5 11 5 14a7 7 0 0 0 7 7z"/>',
+  lock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  briefcase: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>',
+  building: '<path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M16 9h2a2 2 0 0 1 2 2v10M2 21h20M8 7h4M8 11h4M8 15h4"/>',
+  chart: '<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-6"/>',
+  swap: '<path d="M4 8h14l-4-4M20 16H6l4 4"/>',
+  hourglass: '<path d="M6 3h12M6 21h12M7 3c0 5 10 7 10 13v5M17 3c0 5-10 7-10 13v5"/>',
+  doc: '<path d="M6 2.5h8l5 5V21a.5.5 0 0 1-.5.5h-12A.5.5 0 0 1 6 21z"/><path d="M14 2.5V8h5M9 13h7M9 17h7"/>',
+  rocket: '<path d="M5 15c-1.5 1.5-2 5-2 5s3.5-.5 5-2M9 15l-3-3c1-4 4.5-8.5 13-9-.5 8.5-5 12-9 13z"/><circle cx="14.5" cy="9.5" r="1.5"/>',
+  eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+};
+function icon(name, cls) {
+  const p = ICONS[name] || ICONS.bulb;
+  return `<div class="icon ${cls||''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${p}</svg></div>`;
+}
+function svgIcon(name) {
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]}</svg>`;
+}
+function esc(s) { return String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function fmt(s) {
+  return esc(s)
+    .replace(/\*\*(.+?)\*\*/g, '<b class="hl">$1</b>')
+    .replace(/__(.+?)__/g, '<span class="hl2">$1</span>')
+    .replace(/\+\+(.+?)\+\+/g, '<span class="good">$1</span>')
+    .replace(/--(.+?)--/g, '<span class="bad">$1</span>')
+    .replace(/\n/g, '<br>');
+}
+const $ = s => document.querySelector(s);
+
+// A reveal-able element: hidden until revealed, animated on the step it appears.
+function isNewItem(i, st) { return i >= st.newFrom && i < st.newTo; }
+function rv(i, st, anim) {
+  if (i > st.revealed - 1) return 'hidden';
+  if (isNewItem(i, st)) return anim || 'a-up';
+  return '';
+}
+
+const SCENES = {
+  hook(sc, st) {
+    return `<div class="s-hook ${st.first ? 'a-up' : ''}">
+      ${sc.icon ? icon(sc.icon, st.first ? 'a-pop' : '') : ''}
+      <div><h1 class="h">${fmt(sc.heading)}</h1>
+      ${sc.sub ? `<div class="sub ${st.first ? 'a-up d2' : ''}">${fmt(sc.sub)}</div>` : ''}</div>
+    </div>`;
+  },
+  define(sc, st) {
+    const a = st.first;
+    return `<div class="s-define">
+      <div class="label ${a ? 'a-fade' : ''}">${fmt(sc.label || 'வரையறை')}</div>
+      <div class="term ${a ? 'a-up' : ''}">${fmt(sc.term)}</div>
+      ${sc.term_en ? `<div class="term-en ${a ? 'a-up d1' : ''}">${fmt(sc.term_en)}</div>` : '<div style="height:36px"></div>'}
+      <div class="card ${a ? 'a-up d2' : ''}">${fmt(sc.text)}</div>
+    </div>`;
+  },
+  points(sc, st) {
+    const marker = sc.marker || 'num';
+    const items = (sc.items || []).map((it, i) => {
+      const m = marker === 'num' ? (i + 1) : marker === 'check' ? svgIcon('check') : marker === 'cross' ? svgIcon('x') : '';
+      const kind = it.marker || marker;
+      const mm = kind === 'check' ? svgIcon('check') : kind === 'cross' ? svgIcon('x') : m;
+      return `<div class="item ${kind} ${rv(i, st, 'a-left')}"><span class="m">${mm}</span><span>${fmt(it.text)}${it.sub ? `<span class="sm">${fmt(it.sub)}</span>` : ''}</span></div>`;
+    }).join('');
+    return `<div class="s-points">${heading(sc, st)}<div class="list ${sc.columns === 2 ? 'two' : ''}">${items}</div></div>`;
+  },
+  compare(sc, st) {
+    const L = sc.left || {}, R = sc.right || {};
+    const lc = L.color || 'var(--accent)', rc = R.color || 'var(--warn)';
+    const rows = (sc.rows || []).map((r, i) => {
+      const c = rv(i, st, 'a-up');
+      return `<div class="cell ${c}">${fmt(r.left)}</div><div class="cell ${c}">${fmt(r.right)}</div>`;
+    }).join('');
+    return `<div class="s-compare">${heading(sc, st)}
+      <div class="cmp"><div class="head ${st.first ? 'a-pop' : ''}" style="background:${lc}">${fmt(L.title)}</div><div class="head ${st.first ? 'a-pop d1' : ''}" style="background:${rc}">${fmt(R.title)}</div>${rows}</div></div>`;
+  },
+  steps(sc, st) {
+    const n = (sc.lines || []).length;
+    const lines = (sc.lines || []).map((l, i) => `<div class="line ${rv(i, st, 'a-left')}">${fmt(l.text)}</div>`).join('');
+    const res = sc.result ? `<div class="res ${rv(n, st, 'a-pop')}">${fmt(sc.result.text)}</div>` : '';
+    return `<div class="s-steps">${heading(sc, st)}${sc.tag !== false ? `<div class="tag ${st.first ? 'a-fade' : ''}">${fmt(sc.tag || 'உதாரணம் (கற்பனை எண்கள்)')}</div>` : ''}<div class="steps">${lines}${res}</div></div>`;
+  },
+  stat(sc, st) {
+    const a = st.first;
+    const showTo = sc.to && st.revealed >= 1;
+    return `<div class="s-stat">
+      ${sc.label ? `<div class="lab ${a ? 'a-fade' : ''}">${fmt(sc.label)}</div>` : ''}
+      <div class="vals"><span class="v ${a ? 'a-pop' : ''}">${fmt(sc.value)}</span>
+      ${sc.to ? `<span class="arrow ${showTo ? (isNewItem(0, st) ? 'a-fade' : '') : 'hidden'}" style="${showTo ? '' : 'visibility:hidden'}">→</span><span class="v to ${showTo ? (isNewItem(0, st) ? 'a-pop' : '') : ''}" style="${showTo ? '' : 'visibility:hidden'}">${fmt(sc.to)}</span>` : ''}</div>
+      ${sc.caption ? `<div class="cap2 ${a ? 'a-up d2' : ''}">${fmt(sc.caption)}</div>` : ''}
+    </div>`;
+  },
+  bars(sc, st) {
+    const bars = sc.bars || [];
+    const max = Math.max(...bars.map(b => +b.value || 0), 1);
+    const cols = bars.map((b, i) => {
+      const c = rv(i, st, 'a-fade');
+      const h = Math.max(2, (b.value / max) * 82);
+      const grow = isNewItem(i, st) ? 'a-grow' : '';
+      return `<div class="bar ${c}"><div class="val">${fmt(b.display ?? b.value)}</div><div class="col ${grow}" style="height:${h}%;background:${b.color || 'var(--accent)'}"></div></div>`;
+    }).join('');
+    const labs = bars.map((b, i) => `<div class="${rv(i, st, 'a-fade')}">${fmt(b.label)}</div>`).join('');
+    return `<div class="s-bars">${heading(sc, st)}<div class="bars">${cols}</div><div class="bar-labels">${labs}</div>${sc.note ? `<div class="sub" style="text-align:center">${fmt(sc.note)}</div>` : ''}</div>`;
+  },
+  donut(sc, st) {
+    const sl = sc.slices || [];
+    const tot = sl.reduce((a, s) => a + (+s.value || 0), 0) || 1;
+    const R = 200, C = 2 * Math.PI * R;
+    const pal = ['var(--accent)', '#fbbf24', '#4ade80', '#f472b6', '#a78bfa', '#38bdf8'];
+    let off = 0;
+    const arcs = sl.map((s, i) => {
+      const len = (s.value / tot) * C;
+      const vis = i <= st.revealed - 1;
+      const anim = isNewItem(i, st) ? `style="--len:${len};animation:draw .7s ease-out both"` : '';
+      const el = `<circle class="slice ${vis ? '' : 'hidden'}" cx="260" cy="260" r="${R}" fill="none" stroke="${s.color || pal[i % pal.length]}" stroke-width="90" stroke-dasharray="${len} ${C}" stroke-dashoffset="0" transform="rotate(${-90 + off / C * 360} 260 260)" ${anim}/>`;
+      off += len; return el;
+    }).join('');
+    const legs = sl.map((s, i) => `<div class="leg ${rv(i, st, 'a-left')}"><span class="sw" style="background:${s.color || pal[i % pal.length]}"></span><span>${fmt(s.label)}</span><span class="pc">${fmt(s.display ?? (Math.round(s.value / tot * 100) + '%'))}</span></div>`).join('');
+    return `<div class="s-donut">${heading(sc, st)}<div class="donut-wrap"><svg class="donut" viewBox="0 0 520 520"><circle cx="260" cy="260" r="${R}" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="90"/>${arcs}${sc.center ? `<text x="260" y="275" text-anchor="middle" style="font: 800 52px Catamaran, 'Noto Sans Tamil'; fill: var(--ink)">${esc(sc.center)}</text>` : ''}</svg><div class="legend">${legs}</div></div></div>`;
+  },
+  flow(sc, st) {
+    const nodes = sc.nodes || [];
+    const parts = [];
+    nodes.forEach((n, i) => {
+      if (i > 0) parts.push(`<div class="arr ${i > st.revealed - 1 ? 'hidden' : (isNewItem(i, st) ? 'a-fade' : '')}">${document.body.classList.contains('long') ? '→' : '↓'}</div>`);
+      parts.push(`<div class="node ${rv(i, st, 'a-pop')}">${fmt(n.text)}${n.sub ? `<span class="sm">${fmt(n.sub)}</span>` : ''}</div>`);
+    });
+    return `<div class="s-flow">${heading(sc, st)}<div class="flow">${parts.join('')}</div></div>`;
+  },
+  formula(sc, st) {
+    const legs = (sc.legend || []).map((l, i) => `<div class="leg ${rv(i, st, 'a-left')}"><span class="sym">${fmt(l.sym)}</span><span>${fmt(l.text)}</span></div>`).join('');
+    return `<div class="s-formula">${heading(sc, st)}<div class="formula ${st.first ? 'a-pop' : ''}">${fmt(sc.formula)}</div><div class="legs">${legs}</div></div>`;
+  },
+  takeaway(sc, st) {
+    return `<div class="s-take"><div class="label ${st.first ? 'a-fade' : ''}">${svgIcon('bulb')}<span>${fmt(sc.label || 'நினைவில் கொள்ளுங்கள்')}</span></div>
+      <div class="card ${st.first ? 'a-pop' : ''}">${fmt(sc.text)}</div></div>`;
+  },
+  line(sc, st) { return `<div class="s-line">${heading(sc, st)}<div class="chart">${lineChart(sc, st)}</div>${sc.note ? `<div class="sub">${fmt(sc.note)}</div>` : ''}</div>`; },
+  payoff(sc, st) { return `<div class="s-line">${heading(sc, st)}<div class="chart">${payoffChart(sc, st)}</div></div>`; },
+  candles(sc, st) { return `<div class="s-candles">${heading(sc, st)}<div class="chart">${candleChart(sc, st)}</div>${sc.note ? `<div class="sub">${fmt(sc.note)}</div>` : ''}</div>`; },
+
+  // ---- scenes the pipeline adds automatically ----
+  intro(sc, st) {
+    return `<div class="s-intro s-hook">${icon(sc.icon || 'book', 'a-pop')}<div>
+      <div class="lab a-fade">${fmt(sc.label || 'இன்றைய பாடம்')}</div>
+      <h1 class="h a-up">${fmt(sc.heading)}</h1>
+      ${sc.sub ? `<div class="en a-up d2">${fmt(sc.sub)}</div>` : ''}</div></div>`;
+  },
+  disclaimer(sc, st) {
+    return `<div class="s-disc">${icon('shield', 'a-pop')}<div class="ttl a-up">பொறுப்புத் துறப்பு</div>
+      <div class="card a-up d1">${fmt(sc.text)}</div>
+      <div class="cta a-up d3">${fmt(sc.cta || '')}</div></div>`;
+  },
+  risk(sc, st) {
+    return `<div class="s-risk">${icon('alert', 'a-pop')}<div class="card a-up">${fmt(sc.text)}</div></div>`;
+  },
+};
+
+function heading(sc, st) {
+  if (!sc.heading) return '';
+  return `<h2 class="h ${st.first ? 'a-up' : ''}">${sc.kicker ? `<span class="k">${fmt(sc.kicker)}</span>` : ''}${fmt(sc.heading)}</h2>`;
+}
+
+// ---------- charts ----------
+function chartBox() {
+  const long = document.body.classList.contains('long');
+  return long ? { W: 1680, H: 560, l: 120, r: 40, t: 30, b: 70 } : { W: 936, H: 820, l: 110, r: 30, t: 30, b: 80 };
+}
+function scaler(xs, ys, B, pad) {
+  const x0 = Math.min(...xs), x1 = Math.max(...xs);
+  let y0 = Math.min(...ys), y1 = Math.max(...ys);
+  const py = (y1 - y0) * (pad ?? .08) || 1; y0 -= py; y1 += py;
+  const X = x => B.l + (x - x0) / ((x1 - x0) || 1) * (B.W - B.l - B.r);
+  const Y = y => B.t + (1 - (y - y0) / ((y1 - y0) || 1)) * (B.H - B.t - B.b);
+  return { X, Y, x0, x1, y0, y1 };
+}
+function pathOf(pts, S) { return pts.map((p, i) => `${i ? 'L' : 'M'}${S.X(p[0]).toFixed(1)},${S.Y(p[1]).toFixed(1)}`).join(' '); }
+function plen(pts, S) { let L = 0; for (let i = 1; i < pts.length; i++) L += Math.hypot(S.X(pts[i][0]) - S.X(pts[i-1][0]), S.Y(pts[i][1]) - S.Y(pts[i-1][1])); return Math.ceil(L) + 2; }
+function shown(at, st) { return (at ?? 0) <= st.sentence; }
+function isNew(at, st) { return (at ?? 0) === st.sentence && st.sentenceNew; }
+
+function overlays(sc, st, S, B) {
+  let out = '';
+  (sc.hlines || []).forEach(h => {
+    if (!shown(h.at, st)) return;
+    const y = S.Y(h.y), col = h.color || (h.kind === 'support' ? 'var(--good)' : h.kind === 'resistance' ? 'var(--bad)' : 'var(--warn)');
+    out += `<g class="${isNew(h.at, st) ? 'a-fade' : ''}"><line x1="${B.l}" x2="${B.W - B.r}" y1="${y}" y2="${y}" stroke="${col}" stroke-width="5" stroke-dasharray="18 12"/>
+      ${h.label ? `<text x="${B.W - B.r - 10}" y="${y - 16}" text-anchor="end" style="font: 700 34px 'Noto Sans Tamil', Inter; fill:${col}">${esc(h.label)}</text>` : ''}</g>`;
+  });
+  (sc.notes || []).forEach(n => {
+    if (!shown(n.at, st)) return;
+    const x = S.X(n.x), y = S.Y(n.y), col = n.color || 'var(--warn)';
+    const dy = n.below ? 70 : -40;
+    out += `<g class="${isNew(n.at, st) ? 'a-pop' : ''}" style="transform-box: fill-box; transform-origin: center"><circle cx="${x}" cy="${y}" r="14" fill="${col}"/>
+      <text x="${x}" y="${y + dy}" text-anchor="${n.anchor || 'middle'}" style="font: 800 36px 'Noto Sans Tamil', Inter; fill:${col}">${esc(n.text)}</text></g>`;
+  });
+  return out;
+}
+function axes(S, B, sc) {
+  const ticks = sc.yticks || [];
+  let g = ticks.map(t => { const v = Array.isArray(t) ? t[0] : t, lab = Array.isArray(t) ? t[1] : t;
+    return `<line class="gridl" x1="${B.l}" x2="${B.W - B.r}" y1="${S.Y(v)}" y2="${S.Y(v)}"/><text x="${B.l - 16}" y="${S.Y(v) + 11}" text-anchor="end" style="font: 600 30px Inter, 'Noto Sans Tamil'">${esc(String(lab))}</text>`; }).join('');
+  (sc.xticks || []).forEach(t => { const v = Array.isArray(t) ? t[0] : t, lab = Array.isArray(t) ? t[1] : t;
+    g += `<text x="${S.X(v)}" y="${B.H - B.b + 46}" text-anchor="middle" style="font: 600 30px Inter, 'Noto Sans Tamil'">${esc(String(lab))}</text>`; });
+  g += `<line class="axis" x1="${B.l}" x2="${B.l}" y1="${B.t}" y2="${B.H - B.b}"/><line class="axis" x1="${B.l}" x2="${B.W - B.r}" y1="${B.H - B.b}" y2="${B.H - B.b}"/>`;
+  if (sc.xlabel) g += `<text x="${B.W - B.r}" y="${B.H - 4}" text-anchor="end" style="font: 600 30px 'Noto Sans Tamil', Inter">${esc(sc.xlabel)}</text>`;
+  if (sc.ylabel) g += `<text x="${B.l + 12}" y="${B.t + 6}" style="font: 600 30px 'Noto Sans Tamil', Inter">${esc(sc.ylabel)}</text>`;
+  return g;
+}
+function lineChart(sc, st) {
+  const B = chartBox();
+  const series = sc.series || [];
+  const xs = [], ys = [];
+  series.forEach(s => s.points.forEach(p => { xs.push(p[0]); ys.push(p[1]); }));
+  (sc.hlines || []).forEach(h => ys.push(h.y));
+  (sc.yticks || []).forEach(t => ys.push(Array.isArray(t) ? t[0] : t));
+  if (sc.zero) ys.push(0);
+  const S = scaler(xs, ys, B, sc.pad);
+  const pal = ['var(--accent)', 'var(--warn)', 'var(--good)', 'var(--bad)'];
+  let body = axes(S, B, sc);
+  series.forEach((s, i) => {
+    if (!shown(s.at, st)) return;
+    const L = plen(s.points, S), col = s.color || pal[i % pal.length];
+    const anim = isNew(s.at, st) ? `class="series a-draw"` : `class="series"`;
+    body += `<path ${anim} d="${pathOf(s.points, S)}" stroke="${col}" style="--len:${L}; stroke-dasharray:${L}"/>`;
+    if (s.name) { const p = s.points[s.points.length - 1];
+      body += `<text x="${S.X(p[0]) - 6}" y="${S.Y(p[1]) - 24}" text-anchor="end" class="${isNew(s.at, st) ? 'a-fade' : ''}" style="font: 800 36px 'Noto Sans Tamil', Inter; fill:${col}; animation-delay:.6s">${esc(s.name)}</text>`; }
+  });
+  body += overlays(sc, st, S, B);
+  return `<svg viewBox="0 0 ${B.W} ${B.H}">${body}</svg>`;
+}
+function payoffChart(sc, st) {
+  const B = chartBox();
+  const o = sc.option || {};
+  const K = +o.strike, P = +o.premium, call = (o.kind || 'call') === 'call', buy = (o.side || 'buy') === 'buy';
+  const lo = sc.from ?? Math.round(K * 0.9), hi = sc.to ?? Math.round(K * 1.1);
+  const f = x => { const intrinsic = call ? Math.max(0, x - K) : Math.max(0, K - x); return (buy ? 1 : -1) * (intrinsic - P); };
+  const pts = [[lo, f(lo)], [K, f(K)], [hi, f(hi)]];
+  const be = call ? K + P : K - P;
+  const S = scaler([lo, hi], [f(lo), f(hi), f(K), 0], B, .18);
+  let body = '';
+  const yz = S.Y(0);
+  body += `<rect x="${B.l}" y="${B.t}" width="${B.W - B.l - B.r}" height="${yz - B.t}" fill="rgba(74,222,128,.07)"/><rect x="${B.l}" y="${yz}" width="${B.W - B.l - B.r}" height="${B.H - B.b - yz}" fill="rgba(248,113,113,.08)"/>`;
+  // zone labels go where the payoff line is NOT (top of the losing side, bottom of the winning side)
+  const lossSideLeft = call === buy;      // buy call / sell put lose on the left
+  const xl = B.l + 20, xr = B.W - B.r - 20;
+  const pX = lossSideLeft ? xl : xr, lX = lossSideLeft ? xr : xl;
+  body += `<text x="${pX}" y="${B.t + 46}" text-anchor="${lossSideLeft ? 'start' : 'end'}" style="font: 800 36px 'Noto Sans Tamil'; fill: var(--good)">லாபம்</text><text x="${lX}" y="${B.H - B.b - 22}" text-anchor="${lossSideLeft ? 'end' : 'start'}" style="font: 800 36px 'Noto Sans Tamil'; fill: var(--bad)">நஷ்டம்</text>`;
+  body += `<line class="axis" x1="${B.l}" x2="${B.W - B.r}" y1="${yz}" y2="${yz}"/><line class="axis" x1="${B.l}" x2="${B.l}" y1="${B.t}" y2="${B.H - B.b}"/>`;
+  body += `<text x="${B.W - B.r}" y="${B.H - 8}" text-anchor="end" style="font: 600 30px 'Noto Sans Tamil'">${esc(sc.xlabel || 'Expiry அன்று விலை')}</text>`;
+  [lo, K, hi].forEach(v => body += `<text x="${S.X(v)}" y="${B.H - B.b + 46}" text-anchor="middle" style="font: 600 30px Inter">${v}</text>`);
+  const L = plen(pts, S);
+  body += `<path class="series ${st.first ? 'a-draw' : ''}" d="${pathOf(pts, S)}" stroke="var(--accent)" style="--len:${L}; stroke-dasharray:${L}"/>`;
+  const marks = sc.marks || [{ k: 'strike', at: 1 }, { k: 'breakeven', at: 2 }];
+  marks.forEach(m => {
+    if (!shown(m.at, st)) return;
+    const n = isNew(m.at, st) ? 'a-pop' : '';
+    if (m.k === 'strike') {
+      body += `<g class="${n}"><line x1="${S.X(K)}" x2="${S.X(K)}" y1="${B.t}" y2="${B.H - B.b}" stroke="var(--warn)" stroke-width="4" stroke-dasharray="12 10"/><text x="${S.X(K) + 14}" y="${B.t + 40}" style="font: 800 34px 'Noto Sans Tamil', Inter; fill: var(--warn)">${esc(m.label || 'Strike ' + K)}</text></g>`;
+    } else if (m.k === 'breakeven') {
+      body += `<g class="${n}" style="transform-box: fill-box; transform-origin: center"><circle cx="${S.X(be)}" cy="${yz}" r="15" fill="var(--ink)"/><text x="${S.X(be)}" y="${yz + (buy ? -32 : 60)}" text-anchor="middle" style="font: 800 34px 'Noto Sans Tamil', Inter; fill: var(--ink)">${esc(m.label || 'Breakeven ' + be)}</text></g>`;
+    } else if (m.k === 'maxloss' || m.k === 'maxprofit') {
+      const y = S.Y(f(call ? lo : hi)), x = S.X(call ? (lo + K) / 2 : (K + hi) / 2);
+      body += `<text class="${n}" x="${x}" y="${y + (buy ? 60 : -30)}" text-anchor="middle" style="font: 800 34px 'Noto Sans Tamil', Inter; fill: ${buy ? 'var(--bad)' : 'var(--good)'}">${esc(m.label || '')}</text>`;
+    }
+  });
+  return `<svg viewBox="0 0 ${B.W} ${B.H}">${body}</svg>`;
+}
+const PRESETS = {
+  // [open, high, low, close]
+  hammer: [[110,111,104,105],[105,106,99,100],[100,101,93,95],[95,97,84,96],[96,103,95,102],[102,108,101,107]],
+  doji: [[100,104,99,103],[103,108,102,107],[107,111,106,110],[110,114,106,110.3],[110,111,104,105],[105,106,100,101]],
+  bullish_engulfing: [[112,113,107,108],[108,109,103,104],[104,105,99,100],[100,101,96,97],[96,104,95,103.5],[103.5,108,103,107]],
+  bearish_engulfing: [[95,99,94,98],[98,103,97,102],[102,107,101,106],[106,110,105,109],[109.5,110.5,101,102],[102,103,97,98]],
+  shooting_star: [[95,99,94,98],[98,103,97,102],[102,107,101,106],[106,116,105,106.8],[106,107,100,101],[101,102,96,97]],
+  uptrend: [[100,103,99,102],[102,104,98,99],[99,106,98,105],[105,107,101,102],[102,110,101,109],[109,111,105,106],[106,114,105,113],[113,115,109,110],[110,118,109,117]],
+  range: [[100,108,99,107],[107,110,103,104],[104,105,95,96],[96,100,94,99],[99,109,98,108],[108,110,104,105],[105,106,95,97],[97,101,95,100],[100,109,99,108],[108,110,103,104]],
+};
+function candleChart(sc, st) {
+  const B = chartBox();
+  const cs = sc.candles || PRESETS[sc.preset] || PRESETS.uptrend;
+  const xs = cs.map((_, i) => i), ys = [];
+  cs.forEach(c => { ys.push(c[1], c[2]); });
+  (sc.hlines || []).forEach(h => ys.push(h.y));
+  const S = scaler([-0.7, cs.length - 0.3], ys, B, .1);
+  const w = Math.min(90, (B.W - B.l - B.r) / cs.length * 0.55);
+  let body = axes(S, B, { yticks: sc.yticks, xlabel: sc.xlabel, ylabel: sc.ylabel });
+  const hi = new Set(sc.highlight || []);
+  cs.forEach((c, i) => {
+    const [o, h, l, cl] = c, up = cl >= o, col = up ? '#26d07c' : '#ff5a6a';
+    const x = S.X(i), yT = S.Y(Math.max(o, cl)), yB = S.Y(Math.min(o, cl));
+    const anim = st.first ? `class="a-up" style="animation-delay:${(i * 0.06).toFixed(2)}s"` : '';
+    const ring = hi.size && shown(sc.highlight_at ?? 1, st) && hi.has(i);
+    body += `<g ${anim}>${ring ? `<rect x="${x - w}" y="${S.Y(h) - 24}" width="${w * 2}" height="${S.Y(l) - S.Y(h) + 48}" rx="22" fill="none" stroke="var(--warn)" stroke-width="5" class="${isNew(sc.highlight_at ?? 1, st) ? 'a-pop' : ''}"/>` : ''}
+      <line x1="${x}" x2="${x}" y1="${S.Y(h)}" y2="${S.Y(l)}" stroke="${col}" stroke-width="5"/>
+      <rect x="${x - w / 2}" y="${yT}" width="${w}" height="${Math.max(4, yB - yT)}" rx="5" fill="${col}"/></g>`;
+  });
+  if (sc.ma && shown(sc.ma_at ?? 1, st)) {
+    const n = +sc.ma, pts = [];
+    cs.forEach((c, i) => { if (i >= n - 1) { let s = 0; for (let k = i - n + 1; k <= i; k++) s += cs[k][3]; pts.push([i, s / n]); } });
+    const L = plen(pts, S);
+    body += `<path class="series ${isNew(sc.ma_at ?? 1, st) ? 'a-draw' : ''}" d="${pathOf(pts, S)}" stroke="var(--warn)" style="--len:${L}; stroke-dasharray:${L}; stroke-width:7"/>`;
+  }
+  body += overlays(sc, st, S, B);
+  return `<svg viewBox="0 0 ${B.W} ${B.H}">${body}</svg>`;
+}
+
+// Shrink a scene that would overflow its box (long Tamil words, extra items).
+function fit(content) {
+  const inner = content.firstElementChild;
+  if (!inner) return;
+  inner.style.zoom = 1;
+  const availH = content.clientHeight, availW = content.clientWidth;
+  const needH = inner.scrollHeight, needW = inner.scrollWidth;
+  const k = Math.min(1, availH / needH, availW / needW);
+  if (k < 1) inner.style.zoom = Math.max(0.55, k * 0.98);
+}
+
+// ---------- public API used by render.py ----------
+window.stage = {
+  setup(o) {
+    document.body.className = o.format === 'long' ? 'long' : 'short';
+    if (o.thumb) document.body.classList.add('thumb');
+    const r = document.documentElement.style;
+    r.setProperty('--accent', o.accent);
+    r.setProperty('--accent-soft', o.accentSoft);
+    $('#brand').textContent = o.brand || '';
+    $('#cat').textContent = o.category || '';
+    $('#ep').textContent = o.episode || '';
+    $('#note').textContent = o.note || '';
+    if (!o.captions) $('#cap').style.display = 'none';
+  },
+  show(scene, st, caption, capNew) {
+    const fn = SCENES[scene.type];
+    if (!fn) throw new Error('unknown scene type ' + scene.type);
+    const content = $('#content');
+    content.innerHTML = fn(scene, st);
+    fit(content);
+    const box = $('#cap .box');
+    box.textContent = caption || '';
+    box.className = 'box' + (capNew ? ' a-fade' : '');
+    document.getAnimations().forEach(a => a.pause());
+    return true;
+  },
+  seek(ms) {
+    document.getAnimations().forEach(a => { a.pause(); a.currentTime = ms; });
+  },
+  thumb(t) {
+    $('#content').innerHTML = '';
+    $('#frame').insertAdjacentHTML('beforeend', `<div class="th"><div class="cat">${fmt(t.category)}</div><h1>${fmt(t.title)}</h1>${t.sub ? `<div class="en">${fmt(t.sub)}</div>` : ''}<div class="brand">${fmt(t.brand)}</div></div>`);
+    $('.th').insertAdjacentHTML('beforeend', icon(t.icon || 'rupee'));
+    const h = $('.th h1'), th = $('.th');
+    let size = 112;
+    while (size > 56 && (h.scrollWidth > h.clientWidth + 1 || th.scrollHeight > th.clientHeight + 1)) {
+      size -= 4; h.style.fontSize = size + 'px';
+    }
+  },
+};
+</script>
+</body>
+</html>
