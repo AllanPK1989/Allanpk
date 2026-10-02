@@ -5,7 +5,8 @@
   render ID            render MP4s (+ thumbnail) into out/ID/
   daily                pick the next topic, generate a script if needed, lint, render, write issue.md
   publish ID           upload an approved topic (or write the manual posting kit)
-  mark ID --status ..  update state/state.json
+  reserve ID           claim the next free publish slot (before uploading)
+  mark ID --status ..  update state/items/ID.json
   generate [ID]        write a script with Claude for the next topic without one
   status               show the queue
 """
@@ -151,7 +152,13 @@ def cmd_publish(a):
     if not infos:
         print(f"error: no rendered videos in {d}")
         return 1
-    slot = None if a.now else state.next_slot()
+    item = state.get(s.id)
+    if a.now:
+        slot = None
+    elif item.get("status") == "publishing" and item.get("publish_at"):
+        slot = datetime.fromisoformat(item["publish_at"]).astimezone(state.tz())  # reserved by `reserve`
+    else:
+        slot = state.next_slot(ignore=s.id)
     publish_at = slot.astimezone().isoformat() if slot else datetime.now().astimezone().isoformat()
     repo_url = f"{os.environ.get('GITHUB_SERVER_URL', 'https://github.com')}/{os.environ.get('GITHUB_REPOSITORY', 'OWNER/REPO')}"
     assets = f"{repo_url}/releases/download/video-{s.id}/"
@@ -174,6 +181,15 @@ def cmd_publish(a):
         text = published_comment(s, uploaded, slot)
     Path(a.comment_file).write_text(text, encoding="utf-8")
     print(text)
+
+
+def cmd_reserve(a):
+    """Claim the next free publish slot for a topic (committed before uploading)."""
+    from . import state
+    slot = None if a.now else state.next_slot(ignore=a.topic)
+    when = (slot or datetime.now(state.tz())).isoformat()
+    state.update(a.topic, status="publishing", publish_at=when)
+    print(f"reserved {a.topic} for {when}")
 
 
 def cmd_mark(a):
@@ -243,6 +259,9 @@ def main(argv=None):
     p.add_argument("--dir"); p.add_argument("--now", action="store_true")
     p.add_argument("--only", choices=["short", "long"])
     p.add_argument("--comment-file", default="comment.md"); p.set_defaults(fn=cmd_publish)
+
+    p = sub.add_parser("reserve"); p.add_argument("topic"); p.add_argument("--now", action="store_true")
+    p.set_defaults(fn=cmd_reserve)
 
     p = sub.add_parser("mark"); p.add_argument("topic")
     p.add_argument("--status", required=True,

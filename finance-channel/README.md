@@ -56,7 +56,7 @@ pauses until you catch up.
 | `categories.yaml` | category labels and colours |
 | `docs/WRITING_GUIDE.md` | how to write or edit a script; also the spec Claude writes to |
 | `pipeline/` | Python: TTS, Chromium frame rendering, ffmpeg, metadata, YouTube upload |
-| `state/state.json` | which topics were rendered, approved, scheduled or rejected |
+| `state/items/NNN.json` | per topic: rendered, approved, scheduled or rejected |
 
 Topics by category: investing 28 · stocks 22 · fundamental analysis 19 ·
 technical analysis 18 · futures & options 18 · basics 14 · insurance 11 ·

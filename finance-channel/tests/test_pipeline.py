@@ -92,7 +92,7 @@ def test_metadata_limits():
 
 
 def test_next_slot_skips_taken_days(tmp_path, monkeypatch):
-    monkeypatch.setattr(state, "STATE_FILE", tmp_path / "state.json")
+    monkeypatch.setattr(state, "STATE_DIR", tmp_path / "items")
     ist = ZoneInfo("Asia/Kolkata")
     morning = datetime(2026, 10, 5, 9, 0, tzinfo=ist)
     assert state.next_slot(morning) == datetime(2026, 10, 5, 18, 0, tzinfo=ist)
@@ -112,7 +112,7 @@ def test_publish_youtube_mode_uploads_long_then_short(tmp_path, monkeypatch):
     from pipeline import config as cfgmod
     from pipeline import youtube
 
-    monkeypatch.setattr(state, "STATE_FILE", tmp_path / "state.json")
+    monkeypatch.setattr(state, "STATE_DIR", tmp_path / "items")
     real = cfgmod.config()
     patched = {**real, "publish": {**real["publish"], "mode": "youtube", "audited": True}}
     monkeypatch.setattr(cfgmod, "config", lambda: patched)
@@ -174,3 +174,17 @@ def test_generator_retries_until_lint_passes(tmp_path, monkeypatch):
     assert sent[0]["model"] == "claude-opus-5-5"
     fix_request = sent[1]["messages"][-1]["content"]
     assert "Reliance" in fix_request  # lint errors were fed back
+
+
+def test_reservations_take_consecutive_days(tmp_path, monkeypatch):
+    from pipeline import __main__ as cli
+    monkeypatch.setattr(state, "STATE_DIR", tmp_path / "items")
+    for tid in ("001", "002", "003"):
+        state.update(tid, status="awaiting_approval")
+        cli.main(["reserve", tid])
+    days = sorted(datetime.fromisoformat(state.get(t)["publish_at"]).date() for t in ("001", "002", "003"))
+    assert len(set(days)) == 3 and (days[2] - days[0]).days == 2
+    # re-reserving the same topic doesn't block itself
+    before = state.get("002")["publish_at"]
+    cli.main(["reserve", "002"])
+    assert datetime.fromisoformat(state.get("002")["publish_at"]) <= datetime.fromisoformat(before)

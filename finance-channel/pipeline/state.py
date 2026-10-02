@@ -1,49 +1,55 @@
 """Channel state: which topics were rendered, approved, scheduled or rejected.
 
-Stored in state/state.json and committed back to the repo by the workflows, so
-the history of the channel lives in git.
+One small JSON file per topic in state/items/, committed back to the repo by
+the workflows. Separate files mean two workflows updating different topics
+never conflict when they rebase onto each other.
 
-Status flow:  awaiting_approval -> scheduled | published | approved_manual
+Status flow:  awaiting_approval -> publishing -> scheduled | published | approved_manual
                                 -> rejected
 """
 from __future__ import annotations
 
 import json
 from datetime import datetime, time, timedelta
+from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from .config import STATE_FILE, config, curriculum
+from .config import STATE_DIR, config, curriculum
 from .script import find_script
 
-DONE = {"scheduled", "published", "approved_manual"}
+# statuses that hold a publish slot
+HOLDS_SLOT = {"publishing", "scheduled", "published", "approved_manual"}
+
+
+def _path(topic_id: str) -> Path:
+    return STATE_DIR / f"{str(topic_id).zfill(3)}.json"
 
 
 def load() -> dict:
-    if STATE_FILE.exists():
-        return json.loads(STATE_FILE.read_text(encoding="utf-8"))
-    return {"items": {}}
+    items = {}
+    if STATE_DIR.exists():
+        for p in sorted(STATE_DIR.glob("[0-9][0-9][0-9].json")):
+            items[p.stem] = json.loads(p.read_text(encoding="utf-8"))
+    return {"items": items}
 
 
-def save(st: dict) -> None:
-    STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
-    STATE_FILE.write_text(json.dumps(st, ensure_ascii=False, indent=1, sort_keys=True) + "\n", encoding="utf-8")
+def get(topic_id: str) -> dict:
+    p = _path(topic_id)
+    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
 
 
 def update(topic_id: str, **fields) -> dict:
-    st = load()
-    item = st["items"].setdefault(str(topic_id).zfill(3), {})
+    item = get(topic_id)
     for k, v in fields.items():
         if v is None:
             item.pop(k, None)
         else:
             item[k] = v
     item["updated"] = datetime.now(ZoneInfo("UTC")).isoformat(timespec="seconds")
-    save(st)
+    p = _path(topic_id)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(json.dumps(item, ensure_ascii=False, indent=1, sort_keys=True) + "\n", encoding="utf-8")
     return item
-
-
-def get(topic_id: str) -> dict:
-    return load()["items"].get(str(topic_id).zfill(3), {})
 
 
 def pending() -> list[str]:
@@ -65,14 +71,14 @@ def tz() -> ZoneInfo:
     return ZoneInfo(config()["publish"].get("timezone", "Asia/Kolkata"))
 
 
-def next_slot(now: datetime | None = None, lead_minutes: int = 20) -> datetime:
+def next_slot(now: datetime | None = None, lead_minutes: int = 20, ignore: str | None = None) -> datetime:
     """Next daily publish time that no other approved video already holds."""
     zone = tz()
     now = (now or datetime.now(zone)).astimezone(zone)
     hh, mm = (int(x) for x in config()["publish"]["time"].split(":"))
     taken = set()
-    for v in load()["items"].values():
-        if v.get("status") in DONE and v.get("publish_at"):
+    for k, v in load()["items"].items():
+        if k != ignore and v.get("status") in HOLDS_SLOT and v.get("publish_at"):
             taken.add(datetime.fromisoformat(v["publish_at"]).astimezone(zone).date())
     day = now.date()
     while True:

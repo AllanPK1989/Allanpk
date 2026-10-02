@@ -8,7 +8,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
 CONTENT = ROOT / "content"
-STATE_FILE = ROOT / "state" / "state.json"
+STATE_DIR = ROOT / "state" / "items"
 CACHE = ROOT / ".cache"
 TEMPLATES = Path(__file__).resolve().parent / "templates"
 MUSIC = ROOT / "assets" / "music"
