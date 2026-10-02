@@ -26,7 +26,7 @@
   /* sizes, overridden per format */
   --pad-x: 72px;
   --top: 300px;
-  --bottom: 560px;
+  --bottom: 610px;
   --h1: 92px; --h2: 70px; --t: 50px; --small: 34px; --cap: 46px;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -208,10 +208,12 @@ body.thumb #top, body.thumb #note, body.thumb #cap { display: none; }
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes grow { from { transform: scaleY(0); } to { transform: none; } }
 @keyframes draw { from { stroke-dashoffset: var(--len); } to { stroke-dashoffset: 0; } }
+@keyframes capin { from { opacity: .45; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 @keyframes left { from { opacity: 0; transform: translateX(-60px); } to { opacity: 1; transform: none; } }
 .a-up { animation: up .5s cubic-bezier(.2,.8,.2,1) both; }
 .a-pop { animation: pop .5s cubic-bezier(.2,.8,.2,1) both; }
 .a-fade { animation: fade .4s ease-out both; }
+.a-cap { animation: capin .22s ease-out both; }
 .a-left { animation: left .45s cubic-bezier(.2,.8,.2,1) both; }
 .a-grow { animation: grow .6s cubic-bezier(.2,.8,.2,1) both; }
 .a-draw { animation: draw 1.0s ease-in-out both; }
@@ -326,7 +328,7 @@ const SCENES = {
     const lc = L.color || 'var(--accent)', rc = R.color || 'var(--warn)';
     const rows = (sc.rows || []).map((r, i) => {
       const c = rv(i, st, 'a-up');
-      return `<div class="cell ${c}">${fmt(r.left)}</div><div class="cell ${c}">${fmt(r.right)}</div>`;
+      return `<div class="cell ${c}"><span>${fmt(r.left)}</span></div><div class="cell ${c}"><span>${fmt(r.right)}</span></div>`;
     }).join('');
     return `<div class="s-compare">${heading(sc, st)}
       <div class="cmp"><div class="head ${st.first ? 'a-pop' : ''}" style="background:${lc}">${fmt(L.title)}</div><div class="head ${st.first ? 'a-pop d1' : ''}" style="background:${rc}">${fmt(R.title)}</div>${rows}</div></div>`;
@@ -595,7 +597,9 @@ window.stage = {
     fit(content);
     const box = $('#cap .box');
     box.textContent = caption || '';
-    box.className = 'box' + (capNew ? ' a-fade' : '');
+    box.className = 'box';
+    void box.offsetWidth;  // restart the animation even if the class is unchanged
+    if (capNew) box.classList.add('a-cap');
     document.getAnimations().forEach(a => a.pause());
     return true;
   },
