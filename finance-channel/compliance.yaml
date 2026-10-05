@@ -1,0 +1,190 @@
+# Guardrails for an educator who is NOT a SEBI-registered adviser.
+#
+# Background: SEBI's 2024-25 rules separate *education* from *advice*. An
+# unregistered educator should not recommend securities, promise returns, or
+# talk about a named security using market prices from the last 3 months.
+# These checks keep every script on the education side of that line:
+#   * no buy/sell/hold calls, targets or tips
+#   * no named stocks, funds, AMCs, brokers or insurers (use "Company A", "Fund X")
+#   * no promised / guaranteed / risk-free returns
+#   * no Telegram/WhatsApp/paid-group solicitation, no links
+#   * all numbers are hypothetical examples (the video labels them so)
+#
+# `errors` block rendering. `warnings` show up in the approval issue for you to
+# eyeball. A script can whitelist a specific name with
+#   allow_names: ["Nifty 50"]   # plus a comment saying why
+# Patterns are Python regular expressions, matched case-insensitively.
+
+errors:
+  - {pattern: '\b(buy|sell|short|exit|accumulate)\s+(now|today|tomorrow|immediately|this stock|these stocks|at\s*₹?\d)', why: "buy/sell call"}
+  - {pattern: '\b(must|should)\s+(buy|sell)\b', why: "buy/sell recommendation"}
+  - {pattern: '\b(target|tgt)\s*(price)?\s*(of|at|:)?\s*₹?\s*\d', why: "price target"}
+  - {pattern: '\bstop[\s-]?loss\s*(of|at|:)\s*₹?\s*\d', why: "specific stop-loss level"}
+  - {pattern: '\b(guaranteed|assured|sure|fixed)\s+(profits?|gains?)\b', why: "promised profit"}
+  - {pattern: '\brisk[\s-]?free\s+(profits?|returns?|trading|income)\b', why: "risk-free claim"}
+  - {pattern: '\bdouble\s+your\s+money\b', why: "return promise"}
+  - {pattern: '\bmulti[\s-]?baggers?\b', why: "hype term"}
+  - {pattern: '\bsure[\s-]?shot\b', why: "hype term"}
+  - {pattern: '\bjackpot\b', why: "hype term"}
+  - {pattern: '\b(intraday|btst|stbt|option|f&o)\s+(calls?|tips?)\b', why: "trading tips"}
+  - {pattern: '\b(free|daily|paid)\s+tips?\b', why: "trading tips"}
+  - {pattern: '\btips?\s+for\s+(today|tomorrow|monday|this week)\b', why: "trading tips"}
+  - {pattern: '\b(telegram|whatsapp|discord)\b', why: "solicitation channel"}
+  - {pattern: '\bpaid\s+(group|course|membership|subscription)\b', why: "solicitation"}
+  - {pattern: '\b100\s*%\s*(profit|returns?|accuracy|success)\b', why: "performance claim"}
+  - {pattern: '\b(best|top)\s+\d*\s*(stocks?|shares?|funds?|mutual funds?)\s+(to|for)\s+(buy|invest)', why: "recommendation list"}
+  - {pattern: '\bwill\s+(definitely|surely|certainly)\s+(go up|rise|fall|crash|double)', why: "price prediction"}
+  - {pattern: 'https?://|www\.', why: "links are added by the pipeline, not scripts"}
+  - {pattern: '(?<!\d)(\+91[\s-]?)?[6-9]\d{9}(?!\d)', why: "phone number"}
+  # Tamil
+  - {pattern: 'உறுதியான\s*லாபம்|நிச்சயமான\s*லாபம்|நிச்சய\s*லாபம்|உத்தரவாத\s*லாபம்', why: "promised profit (Tamil)"}
+  - {pattern: 'பணம்\s*இரட்டிப்பாகும்\s*உறுதி|இரட்டிப்பு\s*லாபம்', why: "return promise (Tamil)"}
+  - {pattern: '(இப்போதே|உடனே|கண்டிப்பாக|நாளைக்கே)\s*(வாங்குங்கள்|வாங்கவும்|விற்றுவிடுங்கள்|விற்கவும்)', why: "buy/sell call (Tamil)"}
+  - {pattern: '(இந்த|அந்த)\s*(பங்கை|பங்குகளை|ஷேரை|ஃபண்டை)\s*(வாங்குங்கள்|வாங்கலாம்|விற்கலாம்|விற்றுவிடுங்கள்)', why: "recommendation (Tamil)"}
+  - {pattern: 'டிப்ஸ்|டெலிகிராம்|வாட்ஸ்அப்', why: "tips / solicitation (Tamil)"}
+  - {pattern: 'மல்டிபேகர்|ஜாக்பாட்', why: "hype term (Tamil)"}
+
+warnings:
+  - {pattern: '\bguaranteed\s+returns?\b|உத்தரவாத\s*(வருமானம்|வட்டி)', why: "OK only for government-backed/fixed-rate products (PPF, FD); never for market products"}
+  - {pattern: '\b(target|stop[\s-]?loss)\b|டார்கெட்|ஸ்டாப்\s*லாஸ்', why: "make sure this is a generic, hypothetical illustration"}
+  - {pattern: '(Nifty|Sensex|நிஃப்டி|சென்செக்ஸ்)[^.]{0,40}\d{4,}', why: "index level: never quote recent market prices"}
+  - {pattern: 'வாங்குங்கள்|விற்றுவிடுங்கள்|விற்றுவிடலாம்', why: "imperative buy/sell verb; keep it general, not a recommendation"}
+  - {pattern: '\b(bitcoin|ethereum|crypto(currency)?)\b|பிட்காயின்|கிரிப்டோ', why: "crypto is unregulated in India; add strong risk context"}
+  - {pattern: '\b(returns?|வருமானம்)\b[^.]{0,30}\d+\s*%', why: "return figure: make sure it is clearly a hypothetical example"}
+
+# Specific companies, funds, AMCs, brokers and insurers. Never name them; use
+# "Company A", "ஒரு நிறுவனம்", "Fund X". Matched as whole words.
+securities:
+  # large Indian listed companies
+  - Reliance
+  - Tata Consultancy
+  - Tata Motors
+  - Tata Steel
+  - Tata Power
+  - Infosys
+  - Wipro
+  - HCL Tech
+  - Tech Mahindra
+  - HDFC
+  - ICICI
+  - Kotak
+  - Axis Bank
+  - SBI
+  - State Bank
+  - Bajaj
+  - Adani
+  - Maruti
+  - Mahindra
+  - Asian Paints
+  - Hindustan Unilever
+  - HUL
+  - ITC
+  - Airtel
+  - Jio
+  - Larsen
+  - L&T
+  - Sun Pharma
+  - Cipla
+  - Dr Reddy
+  - Nestle
+  - Britannia
+  - Zomato
+  - Eternal Ltd
+  - Swiggy
+  - Paytm
+  - Nykaa
+  - IRCTC
+  - IRFC
+  - Coal India
+  - ONGC
+  - NTPC
+  - Power Grid
+  - BPCL
+  - Indian Oil
+  - Vedanta
+  - Hindalco
+  - JSW
+  - Yes Bank
+  - Suzlon
+  - Vodafone
+  - UltraTech
+  - Titan
+  - Trent
+  - DMart
+  - Avenue Supermarts
+  - Hero MotoCorp
+  - Eicher
+  - TVS Motor
+  - Ashok Leyland
+  - Pidilite
+  - Dabur
+  - Marico
+  - Godrej
+  - Polycab
+  - Dixon
+  - Muthoot
+  - Manappuram
+  - Shriram
+  - LIC
+  - Star Health
+  # brokers / platforms
+  - Zerodha
+  - Groww
+  - Upstox
+  - Angel One
+  - Angel Broking
+  - 5paisa
+  - Sharekhan
+  - Motilal
+  - INDmoney
+  - Vested
+  - Kuvera
+  - Smallcase
+  # AMCs / fund houses
+  - Nippon
+  - Parag Parikh
+  - PPFAS
+  - Mirae
+  - Quant Mutual
+  - UTI
+  - Aditya Birla
+  - DSP
+  - Franklin
+  - Edelweiss
+  - Navi
+  - Canara Robeco
+  - Invesco
+  - HSBC
+  - Sundaram
+  - Bandhan
+  # global companies
+  - Apple Inc
+  - Microsoft
+  - Nvidia
+  - Tesla
+  - Amazon
+  - Alphabet
+  - Google
+  - Meta Platforms
+  - Netflix
+  - Berkshire
+  # Tamil spellings
+  - ரிலையன்ஸ்
+  - இன்ஃபோசிஸ்
+  - இன்போசிஸ்
+  - விப்ரோ
+  - அதானி
+  - டாடா
+  - மாருதி
+  - சொமாட்டோ
+  - ஜொமாட்டோ
+  - டெஸ்லா
+  - மைக்ரோசாஃப்ட்
+  - அமேசான்
+  - என்விடியா
+  - ஜெரோதா
+  - அப்ஸ்டாக்ஸ்
+  - எல்.ஐ.சி
+  - எஸ்.பி.ஐ
+  - எச்.டி.எஃப்.சி
+  - ஐ.சி.ஐ.சி.ஐ

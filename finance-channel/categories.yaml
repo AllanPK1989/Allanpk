@@ -1,0 +1,10 @@
+# Category look and labels. `accent` colours the whole video.
+basics:      {ta: "நிதி அடிப்படைகள்", en: "Finance Basics", accent: "#4FC3F7", icon: rupee, tags: [personal finance, money basics]}
+savings:     {ta: "சேமிப்பு", en: "Savings", accent: "#66BB6A", icon: piggy, tags: [savings, budgeting]}
+insurance:   {ta: "காப்பீடு", en: "Insurance", accent: "#26C6DA", icon: shield, tags: [insurance, term insurance, health insurance]}
+investing:   {ta: "முதலீடு", en: "Investing", accent: "#FFCA28", icon: coins, tags: [investing, mutual funds, SIP]}
+stocks:      {ta: "பங்குச் சந்தை", en: "Stock Market", accent: "#42A5F5", icon: chart, tags: [stock market, share market, NSE, BSE]}
+technical:   {ta: "டெக்னிக்கல் அனாலிசிஸ்", en: "Technical Analysis", accent: "#FF8A65", icon: candles, tags: [technical analysis, candlestick, chart patterns]}
+fundamental: {ta: "ஃபண்டமென்டல் அனாலிசிஸ்", en: "Fundamental Analysis", accent: "#B388FF", icon: doc, tags: [fundamental analysis, financial statements, valuation]}
+fno:         {ta: "ஃப்யூச்சர்ஸ் & ஆப்ஷன்ஸ்", en: "Futures & Options", accent: "#F06292", icon: swap, tags: [futures and options, derivatives, F&O]}
+global:      {ta: "உலகச் சந்தை முதலீடு", en: "Global Investing", accent: "#4DD0E1", icon: globe, tags: [global investing, US stocks from India, LRS]}
