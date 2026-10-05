@@ -84,7 +84,7 @@ def description(s: Script, fmt: str, info: dict, other_url: str | None = None) -
             f"📌 “{brand}” — தினமும் ஒரு எளிய நிதி பாடம், தமிழில். பாகம் #{int(s.id)}.",
             _clean(d["description_ta"]).strip(),
             _clean(d["description_en"]).strip(),
-            _clean(d["ai_voice_note"]).strip(),
+            "" if info.get("voice") == "recorded" else _clean(d["ai_voice_note"]).strip(),
             " ".join(hashtags(s) + (["#Shorts"] if fmt == "short" else [])),
         ]
         return "\n\n".join(p for p in parts if p)

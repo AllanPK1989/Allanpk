@@ -1,7 +1,7 @@
 name: "Finance channel: approval commands"
 
 # Runs when the repository owner comments on a `video-approval` issue:
-#   /approve [now|short|long]   /reject <reason>   /rerender
+#   /approve [now|short|long]   /reject <reason>   /rerender   /voice (+ attached zip)
 # Comments from anyone else are ignored.
 
 on:
@@ -120,10 +120,23 @@ jobs:
           gh workflow run finance-daily.yml --ref "${{ github.event.repository.default_branch }}" -f topic="$ID" -f rerender_issue="$ISSUE"
           gh issue comment "$ISSUE" --body "⏳ Re-rendering #$ID from the current script. I'll update this issue in about 10 minutes."
 
-      - name: Unknown command
-        if: ${{ !contains(fromJSON('["/approve","/reject","/rerender"]'), steps.cmd.outputs.verb) }}
+      - name: /voice
+        if: steps.cmd.outputs.verb == '/voice'
+        env:
+          ID: ${{ steps.cmd.outputs.id }}
         run: |
-          gh issue comment "$ISSUE" --body "I didn't understand that. Use \`/approve\`, \`/approve now\`, \`/approve short\`, \`/approve long\`, \`/reject <reason>\` or \`/rerender\`."
+          url=$(printf '%s' "$COMMENT" | grep -oE 'https://github\.com/(user-attachments/files|[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/files)/[0-9]+/[^) ]+\.zip' | head -1)
+          if [ -z "$url" ]; then
+            gh issue comment "$ISSUE" --body "🎙️ I don't see a zip attached. Save the zip from the recorder page, then comment \`/voice\` and attach it (drag it in, or use the paperclip)."
+            exit 0
+          fi
+          gh workflow run finance-daily.yml --ref "$BRANCH" -f topic="$ID" -f rerender_issue="$ISSUE" -f voice_url="$url"
+          gh issue comment "$ISSUE" --body "🎙️ Got your recording. Rendering #$ID in your voice; this issue updates in about 5 minutes."
+
+      - name: Unknown command
+        if: ${{ !contains(fromJSON('["/approve","/reject","/rerender","/voice"]'), steps.cmd.outputs.verb) }}
+        run: |
+          gh issue comment "$ISSUE" --body "I didn't understand that. Use \`/approve\`, \`/approve now\`, \`/approve short\`, \`/approve long\`, \`/reject <reason>\`, \`/rerender\` or \`/voice\` with your recording attached."
 
       - name: Save state
         if: steps.cmd.outputs.verb == '/approve' || steps.cmd.outputs.verb == '/reject'

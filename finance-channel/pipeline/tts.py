@@ -80,8 +80,29 @@ async def _edge(text: str, voice: str, rate: str, pitch: str, mp3: Path) -> None
     raise RuntimeError(f"edge-tts failed for {text[:40]!r}: {last}")
 
 
-def synthesize(texts: list[str], fmt: str, engine: str | None = None) -> list[Path]:
-    """Return one WAV per text (same order)."""
+def clip_key(text: str) -> str:
+    """Stable id for one narrated sentence; names the clip you record for it."""
+    return hashlib.sha1(clean_markup(text).strip().encode("utf-8")).hexdigest()[:12]
+
+
+class MissingRecording(RuntimeError):
+    def __init__(self, missing: list[str]):
+        self.missing = missing
+        super().__init__(f"{len(missing)} sentence(s) have no recorded clip, e.g. {missing[0][:60]!r}")
+
+
+def synthesize(texts: list[str], fmt: str, engine: str | None = None, voice_dir: Path | None = None) -> list[Path]:
+    """Return one WAV per text (same order).
+
+    With voice_dir, use your own recorded clips (voice_dir/<clip_key>.wav,
+    prepared by `pipeline voice-import`) instead of a synthetic voice.
+    """
+    if voice_dir is not None:
+        paths = [Path(voice_dir) / f"{clip_key(t)}.wav" for t in texts]
+        missing = [t for t, p in zip(texts, paths) if not p.exists()]
+        if missing:
+            raise MissingRecording(missing)
+        return paths
     v = config()["voice"]
     engine = engine or v["engine"]
     voice, pitch = v["name"], v.get("pitch", "+0Hz")

@@ -9,6 +9,8 @@
   mark ID --status ..  update state/items/ID.json
   generate [ID]        write a script with Claude for the next topic without one
   status               show the queue
+  voice-script ID      sentence list for the recorder page (voice-scripts/ID.json)
+  voice-import ID ZIP  clean the recorder's zip into WAVs for --voice-dir
 """
 from __future__ import annotations
 
@@ -69,12 +71,12 @@ def cmd_sheet(a):
         print(contact_sheet(s, f, out / f"{s.id}-{f}-sheet.png"))
 
 
-def _render(s, fmts, out: Path, tts=None) -> dict:
+def _render(s, fmts, out: Path, tts=None, voice_dir: Path | None = None) -> dict:
     from .render import render_thumbnail, render_video
     infos = {}
     for f in fmts:
         t0 = time.time()
-        infos[f] = render_video(s, f, out, engine=tts)
+        infos[f] = render_video(s, f, out, engine=tts, voice_dir=voice_dir)
         print(f"[{s.id}] {f}: {infos[f]['duration']:.1f}s video, {infos[f]['shots']} shots, {time.time() - t0:.0f}s to render")
     if "long" in fmts:
         render_thumbnail(s, out / f"{s.id}-thumb.png")
@@ -89,7 +91,7 @@ def cmd_render(a):
     if rep.errors and not a.force:
         print("\n".join(f"error: {e}" for e in rep.errors))
         return 1
-    _render(s, _formats(a.format), Path(a.out) / s.id, a.tts)
+    _render(s, _formats(a.format), Path(a.out) / s.id, a.tts, Path(a.voice_dir) if a.voice_dir else None)
 
 
 def cmd_daily(a):
@@ -127,7 +129,13 @@ def cmd_daily(a):
         print("\n".join(f"error: {e}" for e in rep.errors))
         return 1
     out = Path(a.out) / s.id
-    infos = _render(s, _formats(None), out, a.tts)
+    voice_dir = Path(a.voice_dir) if a.voice_dir else None
+    if voice_dir and not a.topic:
+        print("error: --voice-dir needs --topic")
+        return 1
+    infos = _render(s, _formats(None), out, a.tts, voice_dir)
+    from .voice import write_voice_script
+    write_voice_script(s)
     repo_url = f"{os.environ.get('GITHUB_SERVER_URL', 'https://github.com')}/{os.environ.get('GITHUB_REPOSITORY', 'OWNER/REPO')}"
     tag = f"video-{s.id}"
     assets = f"{repo_url}/releases/download/{tag}/"
@@ -221,6 +229,27 @@ def cmd_generate(a):
     print(generate.generate(tid))
 
 
+def cmd_voice_script(a):
+    from .script import load_script
+    from .voice import write_voice_script
+    for t in a.topics:
+        print(write_voice_script(load_script(t)))
+
+
+def cmd_voice_import(a):
+    from .config import CACHE
+    from .script import load_script
+    from .voice import import_zip, report_markdown
+    s = load_script(a.topic)
+    out = Path(a.dir) if a.dir else CACHE / "voice" / s.id
+    rep = import_zip(s, Path(a.zip), out)
+    text = report_markdown(rep)
+    Path(a.report).write_text(text, encoding="utf-8")
+    print(text)
+    _out(voice_dir=str(out), complete="false" if rep["missing"] or rep["too_short"] else "true")
+    return 1 if rep["missing"] or rep["too_short"] else 0
+
+
 def cmd_status(a):
     from . import state
     from .config import curriculum
@@ -249,9 +278,11 @@ def main(argv=None):
     p.add_argument("--tts", choices=["edge", "silent"], default=None, help="override config voice.engine")
     p.add_argument("--out", default="out")
     p.add_argument("--force", action="store_true", help="render even if lint finds errors")
+    p.add_argument("--voice-dir", help="use your recorded clips (from voice-import) instead of TTS")
     p.set_defaults(fn=cmd_render)
 
     p = sub.add_parser("daily"); p.add_argument("--topic")
+    p.add_argument("--voice-dir", help="use your recorded clips (from voice-import) instead of TTS")
     p.add_argument("--tts", choices=["edge", "silent"], default=None)
     p.add_argument("--out", default="out"); p.set_defaults(fn=cmd_daily)
 
@@ -271,6 +302,14 @@ def main(argv=None):
 
     p = sub.add_parser("generate"); p.add_argument("topic", nargs="?"); p.set_defaults(fn=cmd_generate)
     p = sub.add_parser("status"); p.set_defaults(fn=cmd_status)
+
+    p = sub.add_parser("voice-script"); p.add_argument("topics", nargs="+")
+    p.set_defaults(fn=cmd_voice_script)
+
+    p = sub.add_parser("voice-import"); p.add_argument("topic"); p.add_argument("zip")
+    p.add_argument("--dir", help="where to put the cleaned WAVs (default .cache/voice/ID)")
+    p.add_argument("--report", default="voice-report.md", help="markdown summary for the approval issue")
+    p.set_defaults(fn=cmd_voice_import)
 
     a = ap.parse_args(argv)
     return a.fn(a) or 0
