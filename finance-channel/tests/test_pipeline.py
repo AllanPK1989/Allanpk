@@ -188,3 +188,71 @@ def test_reservations_take_consecutive_days(tmp_path, monkeypatch):
     before = state.get("002")["publish_at"]
     cli.main(["reserve", "002"])
     assert datetime.fromisoformat(state.get("002")["publish_at"]) <= datetime.fromisoformat(before)
+
+
+# --- recorded voice ---------------------------------------------------------
+
+def test_voice_script_lists_each_sentence_once_with_its_formats():
+    from pipeline.tts import clip_key
+    from pipeline.voice import voice_script
+    s = load_script("001")
+    vs = voice_script(s)
+    keys = [it["key"] for it in vs["sentences"]]
+    assert len(keys) == len(set(keys))
+    for fmt in ("short", "long"):
+        for seg in build_timeline(s, fmt).segments:
+            assert clip_key(seg.text) in keys
+    shared = [it for it in vs["sentences"] if it["formats"] == ["short", "long"]]
+    assert shared, "the spoken disclaimer is the same in both formats, so it should be recorded once"
+    assert all("**" not in it["text"] and "__" not in it["text"] for it in vs["sentences"])
+
+
+def test_committed_voice_scripts_exist_for_every_script():
+    from pipeline.voice import VOICE_SCRIPTS
+    for s in all_scripts():
+        assert (VOICE_SCRIPTS / f"{s.id}.json").exists(), f"run: python -m pipeline voice-script {s.id}"
+
+
+def test_synthesize_uses_recordings_and_names_missing_ones(tmp_path):
+    from pipeline.tts import MissingRecording, clip_key, synthesize
+    texts = ["முதல் வாக்கியம்.", "இரண்டாவது **வாக்கியம்**."]
+    (tmp_path / f"{clip_key(texts[0])}.wav").write_bytes(b"")
+    with pytest.raises(MissingRecording) as e:
+        synthesize(texts, "short", voice_dir=tmp_path)
+    assert e.value.missing == [texts[1]]
+    (tmp_path / f"{clip_key('இரண்டாவது வாக்கியம்.')}.wav").write_bytes(b"")
+    assert len(synthesize(texts, "short", voice_dir=tmp_path)) == 2
+
+
+@pytest.mark.skipif(not __import__("shutil").which("ffmpeg"), reason="needs ffmpeg")
+def test_import_zip_cleans_clips_and_reports_gaps(tmp_path):
+    import subprocess
+    import zipfile
+    from pipeline.tts import wav_duration
+    from pipeline.voice import import_zip, report_markdown, voice_script
+    s = load_script("001")
+    sents = voice_script(s)["sentences"]
+    tone, hush = tmp_path / "tone.wav", tmp_path / "hush.wav"
+    for out, src in ((tone, "sine=frequency=220:duration=1.5"), (hush, "anullsrc=r=48000:cl=mono")):
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", src, "-t", "1.5", str(out)], check=True)
+    zp = tmp_path / "001-voice.zip"
+    with zipfile.ZipFile(zp, "w") as z:
+        z.write(tone, f"voice/{sents[0]['key']}.wav")
+        z.write(tone, f"voice/{sents[1]['key']}.wav")
+        z.write(hush, f"voice/{sents[2]['key']}.wav")       # silent take
+        z.write(tone, "voice/0123456789ab.wav")             # from an older script version
+        z.writestr("manifest.json", "{}")
+    out = tmp_path / "clips"
+    rep = import_zip(s, zp, out)
+    assert (rep["expected"], rep["imported"], rep["unknown"]) == (len(sents), 2, 1)
+    assert rep["too_short"] == [sents[2]["text"]]
+    assert len(rep["missing"]) == len(sents) - 3
+    assert 1.2 < wav_duration(out / f"{sents[0]['key']}.wav") < 1.6
+    assert not (out / f"{sents[2]['key']}.wav").exists()
+    md = report_markdown(rep)
+    assert "2 of" in md and sents[2]["text"] in md and sents[3]["text"] in md
+
+
+def test_recorder_url_points_at_github_pages():
+    from pipeline.review import recorder_url
+    assert recorder_url("https://github.com/AllanPK1989/allanpk", "007") == "https://allanpk1989.github.io/allanpk/?t=007"

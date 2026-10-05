@@ -1,8 +1,8 @@
 # Setup
 
 Steps 1-3 get daily videos and approval issues working. Step 4 makes
-approval upload to YouTube automatically, and Step 5 lets Claude write
-scripts beyond the first 30.
+approval upload to YouTube automatically, Step 5 lets Claude write
+scripts beyond the first 30, and Step 6 turns on recording in your own voice.
 
 ## 1. Put the workflows on the default branch
 
@@ -111,6 +111,36 @@ Without the key, the daily job stops with a clear error once it reaches a
 topic with no script. You can also write scripts yourself, or ask Claude Code
 to write the next batch.
 
+## 6. Record videos in your own voice (optional)
+
+The recorder page is published with GitHub Pages. One-time setup:
+
+1. **Settings → Pages → Build and deployment → Source:** choose
+   **GitHub Actions**.
+2. **Actions → "Finance channel: recorder page" → Run workflow** (it also
+   runs by itself whenever `recorder/` changes).
+3. Open `https://<your-username>.github.io/<repo>/?t=001` on your phone and
+   allow microphone access when asked.
+
+From then on every approval issue links to the recorder for that topic. The
+daily routine is in the README under *Narrating in your own voice*.
+
+Notes:
+
+- The recorder is built for Chrome on Android and Safari on iPhone (iOS 14.5
+  or newer). It was tested in Chrome only, so if Safari misbehaves, use
+  Chrome. Record with the phone's own mic or a wired one; Bluetooth earbud
+  mics sound thin.
+- Your takes are stored only in the phone's browser until you attach the zip
+  to the issue. The zip is then visible to anyone who can see the repository's
+  issues; on a public repository that means everyone.
+- If you edit a script after recording, only the changed sentences need
+  re-recording: clips are matched by the exact sentence text.
+- The issue comment says "Narrated in your recorded voice" once it has been
+  applied, and the YouTube description drops the AI-voice note.
+- To hide the recorder link, set `recording.enabled: false` in `config.yaml`.
+  If you host the page elsewhere, put its address in `recording.page_url`.
+
 ## Troubleshooting
 
 | Symptom | Fix |
@@ -119,4 +149,7 @@ to write the next batch.
 | `edge-tts failed` | Microsoft's speech service hiccuped; re-run the job. It retries 5 times first |
 | Video on YouTube shows *Private (locked)* | The API audit (4b) isn't approved yet |
 | `invalid_grant` on upload | The refresh token expired: the consent screen was still *Testing*. Publish the app and redo 4a.5 |
+| `/voice` says "attach the zip" | The comment needs the zip attached in the same comment; GitHub shows it as a link ending in `.zip` |
+| Recorder says "Couldn't load topic NNN" | That topic hasn't been rendered yet, or Pages is pointing at another branch. Wait for the daily run, then reload |
+| Recorder page is 404 | Pages source isn't *GitHub Actions* yet (step 6.1), or the deploy workflow hasn't run |
 | Nothing happens on `/approve` | Only the repo owner's comments count, and the issue must still have the `video-approval` label |

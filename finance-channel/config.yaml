@@ -45,6 +45,13 @@ publish:
   contains_synthetic_media: false
   max_pending_approvals: 3   # the daily job pauses when this many are waiting
 
+# Record videos in your own voice (see docs/SETUP.md, step 6). Each approval
+# issue links to the recorder page; `/voice` + the saved zip re-renders the
+# videos with your recording. The AI voice above stays as the default preview.
+recording:
+  enabled: true
+  page_url: ""          # empty = https://<owner>.github.io/<repo>/ (GitHub Pages)
+
 # Spoken at the end of every video, and shown on the last frame.
 disclaimer:
   say: "இது கல்விக்கான தகவல் மட்டுமே, முதலீட்டு ஆலோசனை அல்ல. நான் செபி பதிவு பெற்ற ஆலோசகர் அல்ல. முதலீடு செய்வதற்கு முன், உங்கள் சொந்த ஆய்வையும், பதிவு பெற்ற ஆலோசகரின் கருத்தையும் பெறுங்கள்."

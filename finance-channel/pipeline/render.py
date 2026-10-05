@@ -47,11 +47,12 @@ def caption_chunks(text: str, maxlen: int) -> list[str]:
     return caption_chunks(text[:cut], maxlen) + caption_chunks(text[cut:], maxlen)
 
 
-def plan(script: Script, fmt: str, engine: str | None, workdir: Path) -> tuple[Timeline, list[Shot], Path, float]:
+def plan(script: Script, fmt: str, engine: str | None, workdir: Path,
+         voice_dir: Path | None = None) -> tuple[Timeline, list[Shot], Path, float]:
     """Synthesise narration and lay out every shot on the clock."""
     tl = build_timeline(script, fmt)
     v = config()["voice"]
-    wavs = synthesize([s.text for s in tl.segments], fmt, engine)
+    wavs = synthesize([s.text for s in tl.segments], fmt, engine, voice_dir)
     parts: list[tuple[Path | None, float]] = [(None, LEAD_IN)]
     for seg, wav in zip(tl.segments, wavs):
         pad = v["gap_seconds"] + (v["scene_gap_seconds"] if seg.last_in_scene else 0)
@@ -232,11 +233,12 @@ def chapters(tl: Timeline, shots: list[Shot]) -> list[tuple[float, str]]:
     return merged if len(merged) >= 3 else []
 
 
-def render_video(script: Script, fmt: str, out_dir: Path, engine: str | None = None) -> dict:
+def render_video(script: Script, fmt: str, out_dir: Path, engine: str | None = None,
+                 voice_dir: Path | None = None) -> dict:
     out_dir.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix=f"render-{script.id}-{fmt}-") as tmp:
         work = Path(tmp)
-        tl, shots, narration, total = plan(script, fmt, engine, work)
+        tl, shots, narration, total = plan(script, fmt, engine, work, voice_dir)
         frames = work / "frames"
         frames.mkdir()
         lst = capture(script, fmt, tl, shots, frames)
@@ -247,6 +249,7 @@ def render_video(script: Script, fmt: str, out_dir: Path, engine: str | None = N
         "format": fmt, "file": mp4.name, "duration": round(total, 2),
         "chapters": [[round(t, 1), n] for t, n in chapters(tl, shots)] if fmt == "long" else [],
         "shots": len(shots),
+        "voice": "recorded" if voice_dir is not None else "ai",
     }
     (out_dir / f"{script.id}-{fmt}.json").write_text(json.dumps(info, ensure_ascii=False, indent=1), encoding="utf-8")
     return info
