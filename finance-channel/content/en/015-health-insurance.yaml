@@ -1,0 +1,78 @@
+# Translated by Claude from content/015-health-insurance.yaml; review before approving.
+id: "015"
+category: insurance
+title_en: "Health Insurance Basics"
+thumb_en: "One hospital bill, **years of savings**"
+icon: heart
+keywords: [health insurance, medical insurance, mediclaim, hospital bills, health insurance basics]
+summary:
+  - "Why health insurance is essential"
+  - "Is your employer's cover enough?"
+  - "What is usually covered"
+  - "A simple starter checklist"
+
+short:
+  scenes:
+    - type: hook
+      icon: heart
+      heading: "One hospital bill can wipe out\n**years of savings**"
+      say: "A single hospital bill can wipe out savings you built over many years."
+    - type: define
+      term: "Health Insurance"
+      text: "If you're admitted to hospital, the insurer pays the costs **up to the Sum Insured**, as per the policy terms."
+      say: "If you're admitted to hospital, the insurance company pays the costs, up to the Sum Insured, as per the policy terms."
+    - type: points
+      heading: "Is your employer's cover **enough?**"
+      marker: cross
+      items:
+        - {text: "Change or lose your job and **the cover may go**", say: "Cover from your employer is good. But if you change or lose your job, that cover may go."}
+        - {text: "Often **the cover amount is low**", say: "Often, the cover amount is low too."}
+    - type: takeaway
+      text: "It's safer to have **your own** health policy for you and your family."
+      say: "So even if you have cover at work, it's safer to have your own health policy for you and your family."
+
+long:
+  intro_say: "Hello! Do you think that because you have an emergency fund, you don't need health insurance? Today, let's see why that isn't right."
+  scenes:
+    - type: hook
+      chapter: "Why is it essential?"
+      icon: heart
+      heading: "Medical bills\n**don't send a warning**"
+      say:
+        - "One surgery, a few days in the ICU, one accident. The cost can run into lakhs within days."
+        - "Medical costs are also said to rise faster than general inflation."
+    - type: define
+      chapter: "What is health insurance?"
+      term: "Health Insurance"
+      text: "The insurer pays hospital costs **up to the Sum Insured**, as per the policy terms. What you pay is a yearly **premium**."
+      say:
+        - "You pay a premium every year."
+        - "If you need to be admitted to hospital, the insurance company pays those costs, up to the Sum Insured, as per the policy terms."
+    - type: points
+      chapter: "What's covered?"
+      heading: "What is **usually covered**"
+      say: "Every policy is different. But usually, these can be covered."
+      marker: check
+      items:
+        - {text: "Costs while **admitted** to hospital", sub: "Room, doctor, medicines, tests", say: "Costs while you're admitted to hospital, like room charges, doctor's fees, medicines and tests."}
+        - {text: "Some costs **before and after** admission", sub: "Pre & post hospitalisation", say: "Related costs for a set number of days before and after you're admitted."}
+        - {text: "**Day-care** treatments", sub: "Treatments finished within a day", say: "Some treatments that are done within a single day, called day-care procedures."}
+    - type: points
+      chapter: "Is employer cover enough?"
+      heading: "Employer cover: **the limits**"
+      marker: cross
+      items:
+        - {text: "Change or lose your job and **the cover may end**", say: "Group insurance from your employer is a good benefit. But if you change or lose your job, it may end."}
+        - {text: "It won't be there **after retirement**", say: "After retirement, when your medical needs are higher, that cover won't be there."}
+        - {text: "**Buying new when older** is hard and costly", say: "Buying a new policy when you're older, or after an illness, is hard. And the premium is higher."}
+    - type: points
+      chapter: "A starter checklist"
+      heading: "A **checklist** to get started"
+      items:
+        - {text: "**Enough Sum Insured** for costs in your city", say: "First, a Sum Insured that's enough for hospital costs in your city."}
+        - {text: "Are **network hospitals** near you?", say: "Second, check whether the hospitals near your home are in that insurer's network."}
+        - {text: "**Waiting period, room-rent limit, co-pay**", say: "Third, conditions like the waiting period, the room rent limit and co-pay. We'll explain these in upcoming videos."}
+        - {text: "Don't hide **health details**", say: "Fourth, disclose your health details fully, including existing illnesses. Otherwise, a claim can run into trouble."}
+    - type: takeaway
+      text: "Health insurance is **a shield for your savings**. Think about it while you're young and healthy."
+      say: "In short, health insurance is a shield that protects your savings and investments. It's best to think about it while you're healthy. Before you buy any policy, read its terms fully."

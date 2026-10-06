@@ -1,0 +1,75 @@
+# Translated by Claude from content/024-mutual-fund.yaml; review before approving.
+id: "024"
+category: investing
+title_en: "What is a Mutual Fund?"
+thumb_en: "Many people's money, **one expert manager**"
+icon: users
+keywords: [mutual fund, what is a mutual fund, NAV, fund manager, SEBI, mutual funds explained]
+summary:
+  - "How does a mutual fund work?"
+  - "Units, NAV, fund manager: the basic terms"
+  - "Who protects your money? SEBI, trustees, custodian"
+  - "The benefits, and the risks"
+
+short:
+  scenes:
+    - type: hook
+      icon: users
+      heading: "Can you invest **in many companies**\nwith ₹500?"
+      say: "Can you invest in many companies at once with just five hundred rupees? Through a mutual fund, you can."
+    - type: flow
+      heading: "How does it work?"
+      nodes:
+        - {text: "Thousands of people put in money", say: "Thousands of investors put in money."}
+        - {text: "One big common pool", sub: "Run by a fund manager", say: "It becomes one big common pool. A fund manager runs it."}
+        - {text: "Invested in shares, bonds", say: "The manager invests it in shares, bonds and so on, according to the fund's objective."}
+        - {text: "Gains and losses **shared by all**", say: "Gains and losses are shared by everyone, in proportion to what they put in."}
+    - type: takeaway
+      text: "Mutual fund investments are **subject to market risks**. Read all scheme related documents carefully."
+      say: "Remember. Mutual fund investments are subject to market risks. Read all scheme related documents carefully before investing."
+
+long:
+  intro_say: "Hello! We hear the words mutual fund all the time. But what is it really, and how does it work? Today, let's start from the basics."
+  scenes:
+    - type: hook
+      chapter: "A simple example"
+      icon: users
+      heading: "Friends chip in for\n**one big pot of biryani**"
+      say:
+        - "Ten friends each chip in some money, hire a good cook, and make one big pot of biryani."
+        - "Each one gets a share in line with what they put in. A mutual fund works much the same way."
+    - type: define
+      chapter: "What is a mutual fund?"
+      term: "Mutual Fund"
+      text: "A set-up that **pools money** from many investors, which **an expert (the fund manager)** invests in shares, bonds and so on."
+      say:
+        - "A mutual fund pools money from many investors, and an expert manages it."
+        - "That expert is called the fund manager. They invest in shares, bonds and so on, according to the fund's stated objective."
+    - type: points
+      chapter: "Basic terms"
+      heading: "**Terms** you should know"
+      items:
+        - {text: "**AMC**: the company that runs the fund", sub: "Asset Management Company", say: "AMC. The company that runs mutual fund schemes."}
+        - {text: "**Units**: the shares of the fund you buy", say: "Units. When you put money in, you're allotted units of the fund."}
+        - {text: "**NAV**: the value of one unit", sub: "Worked out every business day", say: "NAV. The value of one unit. It changes every business day, depending on the value of the fund's investments. There's a separate video on this coming up."}
+        - {text: "**Expense ratio**: the management fee", sub: "Taken from the fund every year", say: "Expense ratio. The fee taken every year to manage the fund."}
+    - type: flow
+      chapter: "Who protects your money?"
+      heading: "**Who keeps watch** over your money?"
+      nodes:
+        - {text: "SEBI", sub: "The regulator", say: "Mutual funds are regulated by SEBI, the securities market regulator."}
+        - {text: "Trustees", sub: "Watch over investors' interests", say: "Every fund has trustees. They watch over investors' interests."}
+        - {text: "Custodian", sub: "Keeps the investments safe", say: "The shares and bonds the fund buys are held safely by a separate company called the custodian. The AMC can't use them as its own assets."}
+      after: "This set-up reduces the risk of fraud. But note: it isn't protection from market losses."
+    - type: compare
+      chapter: "Benefits and risks"
+      heading: "Benefits vs **risks**"
+      left: {title: "Benefits", color: "#4ade80"}
+      right: {title: "Risks and limits", color: "#f87171"}
+      rows:
+        - {left: "**Diversification** with a small amount", right: "**Market risk**: the value can fall", say: "Benefit: even with a small amount, you're spread across many investments. Risk: if the market falls, the fund's value can fall too."}
+        - {left: "**Expert** management", right: "**Fees** reduce your returns", say: "Benefit: expert management. Limit: fees reduce your returns."}
+        - {left: "**Easy** to buy and sell", right: "**No guarantee of returns**", say: "Benefit: most funds are easy to buy and sell. But there's no guarantee of any return."}
+    - type: takeaway
+      text: "Mutual fund = **pooled investing, expert management**. Investments are **subject to market risks**."
+      say: "In short, a mutual fund pools many people's money into an investment managed by an expert. Mutual fund investments are subject to market risks. Read all scheme related documents carefully. In the next video, we'll see what a SIP is."

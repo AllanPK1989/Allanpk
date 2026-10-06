@@ -1,0 +1,92 @@
+# Translated by Claude from content/007-rule-of-72.yaml; review before approving.
+id: "007"
+category: basics
+title_en: "The Rule of 72"
+thumb_en: "How many years for your money to **double?**"
+icon: calc
+keywords: [rule of 72, doubling time, how long to double money, compound interest shortcut, rule of 72 explained]
+summary:
+  - "What is the Rule of 72?"
+  - "How many years for money to double, in your head"
+  - "The same rule for inflation: how long until money's value halves?"
+  - "The limits of this rule"
+
+short:
+  scenes:
+    - type: hook
+      icon: calc
+      heading: "How many years for your money\nto **double**?"
+      say: "How many years will it take for your money to double? You can work it out in ten seconds, without a calculator."
+    - type: formula
+      heading: "The Rule of 72"
+      formula: "Years ≈ 72 ÷ growth rate (%)"
+      say: "Divide seventy-two by the yearly growth rate. The answer is roughly how many years it takes for your money to double."
+    - type: bars
+      heading: "Years to double"
+      bars:
+        - {label: "6%", value: 12, display: "12 yrs", say: "At six percent, seventy-two divided by six is twelve years."}
+        - {label: "8%", value: 9, display: "9 yrs", say: "At eight percent, nine years."}
+        - {label: "12%", value: 6, display: "6 yrs", say: "At twelve percent, six years."}
+      note: "Example rates only"
+    - type: takeaway
+      text: "At 6% inflation, your money's value **halves in about 12 years**!"
+      say: "The same rule works for inflation. If inflation is six percent, your money loses half its purchasing power in about twelve years."
+
+long:
+  intro_say: "Hello! Today, let's look at a little math secret. Once you know it, you can make sense of any interest rate instantly. It's the Rule of 72."
+  scenes:
+    - type: hook
+      chapter: "A question"
+      icon: question
+      heading: "'**Doubles in 8 years!**'\nWhat rate is that?"
+      say:
+        - "If someone tells you that your money will double in eight years with their scheme, do you know right away what yearly growth that means?"
+        - "By the end of this video, you'll be able to tell in ten seconds."
+    - type: formula
+      chapter: "What is the Rule of 72?"
+      heading: "The Rule of 72"
+      formula: "Years ≈ 72 ÷ growth rate (%)"
+      say: "The rule is very simple. Divide seventy-two by the yearly growth rate, and you get roughly how many years it takes for money to double."
+      legend:
+        - {sym: "72", text: "Always the same number", say: "Seventy-two is a fixed number."}
+        - {sym: "%", text: "Yearly growth or interest rate", say: "Use the growth rate as a plain number. For eight percent, use eight."}
+      after: "It's a shortcut based on compound interest. Not an exact answer, but very close."
+    - type: bars
+      chapter: "Examples"
+      heading: "**How many years** to double?"
+      say: "Let's look at some example rates."
+      bars:
+        - {label: "4%", value: 18, display: "18 yrs", say: "At four percent, seventy-two divided by four is eighteen years."}
+        - {label: "6%", value: 12, display: "12 yrs", say: "At six percent, twelve years."}
+        - {label: "8%", value: 9, display: "9 yrs", say: "At eight percent, nine years."}
+        - {label: "12%", value: 6, display: "6 yrs", say: "At twelve percent, six years."}
+      note: "Example rates only; no investment is guaranteed to earn them"
+      after: "Even a small rise in the rate cuts the doubling time a lot. But don't forget, a higher rate usually comes with higher risk."
+    - type: steps
+      chapter: "It works in reverse too"
+      heading: "In reverse: **what rate** is needed?"
+      say: "You can also use this rule in reverse. Let's go back to our first question."
+      lines:
+        - {text: "If it 'doubles in 8 years'", say: "If someone says it doubles in eight years,"}
+        - {text: "72 ÷ 8 = **9%**", say: "divide seventy-two by eight. Nine. That's about nine percent growth a year."}
+        - {text: "'Doubles in 3 years' means 72 ÷ 3 = **24%**!", say: "If it doubles in three years, that's twenty-four percent a year. That's very high."}
+      result: {text: "An unbelievable rate = **a warning bell**", say: "If anyone guarantees that your money will double in a very short time, do this math. If the rate is unbelievably high, that's a warning bell."}
+    - type: stat
+      chapter: "The same rule for inflation"
+      label: "If inflation is 6% a year"
+      value: "₹1,00,000"
+      to: "₹50,000"
+      caption: "Purchasing power **halves** in about **12 years**"
+      say: "Another important use of this rule is inflation. If inflation is six percent a year, seventy-two divided by six is twelve."
+      to_say: "That means, in twelve years, the same money will buy only half of what one lakh rupees buys today."
+    - type: points
+      chapter: "Limits"
+      heading: "The **limits** of this rule"
+      marker: dot
+      items:
+        - {text: "It's only an **approximate** calculation", say: "First, it's an approximation. It's most accurate for rates of about six to ten percent."}
+        - {text: "It assumes a **fixed** rate", say: "Second, it assumes the same rate every year. With things like the stock market, returns change from year to year."}
+        - {text: "It **ignores** taxes and fees", say: "Third, it doesn't account for taxes, fees and so on."}
+    - type: takeaway
+      text: "**72 ÷ rate** = years to double. It helps with returns, with inflation, and with spotting scams."
+      say: "In short, divide seventy-two by the rate to get the years to double. It's a great tool to understand growth, to see the effect of inflation, and to test promises that sound too good to be true."

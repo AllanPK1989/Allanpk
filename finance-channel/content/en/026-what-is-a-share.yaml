@@ -1,0 +1,81 @@
+# Translated by Claude from content/026-what-is-a-share.yaml; review before approving.
+id: "026"
+category: stocks
+title_en: "What is a Share?"
+thumb_en: "Become **a part-owner** of a company!"
+icon: pie
+keywords: [what is a share, share market basics, stock basics, shareholder, equity, stocks explained]
+summary:
+  - "What is a share?"
+  - "Why do companies issue shares?"
+  - "What does a shareholder get, and what's the risk?"
+  - "A simple example: how much do you own?"
+
+short:
+  scenes:
+    - type: hook
+      icon: building
+      heading: "Can you become an **owner**\nof a big company?"
+      say: "Do you need crores to become an owner of a big company? No. Buying one share is enough."
+    - type: define
+      term: "Share / Stock"
+      text: "**A small unit** of ownership in a company. Whoever holds shares is a **shareholder** of that company."
+      say: "A share is a small unit of ownership in a company. Whoever holds it is a shareholder of that company."
+    - type: compare
+      heading: "What does a shareholder **get?**"
+      left: {title: "Possible benefits", color: "#4ade80"}
+      right: {title: "Risks", color: "#f87171"}
+      rows:
+        - {left: "If the company grows, the share **may rise in value**", right: "If the company struggles, **the value may fall**", say: "If the company grows, the share's value may rise. If it struggles, it may fall."}
+        - {left: "A part of the profit: **dividends**", right: "Dividends are **not guaranteed**", say: "Some companies share part of their profit as dividends. But that's not guaranteed."}
+    - type: takeaway
+      text: "Buying a share = becoming **a partner in a business**. Its **success and failure** affect you too."
+      say: "Buying a share means becoming a partner in a business. Its success and failure affect you too."
+
+long:
+  intro_say: "Hello! From today, we step into the big world of the stock market. The first question: what is a share?"
+  scenes:
+    - type: hook
+      chapter: "A tea shop story"
+      icon: users
+      heading: "Four friends,\n**one tea shop**"
+      say:
+        - "Four friends put in one lakh each and start a tea shop. The shop is a business worth four lakh."
+        - "Each of them owns a quarter of the shop. If there's a profit, they get a quarter. If there's a loss, they bear a quarter too."
+        - "Big companies work the same way. But instead of four shares, there are crores of shares."
+    - type: define
+      chapter: "What is a share?"
+      term: "Share / Stock / Equity"
+      text: "**A small unit** of ownership in a company. Whoever holds it is a **shareholder** of that company."
+      say:
+        - "A share is a small unit of ownership in a company. It goes by several names: share, stock, equity."
+        - "Someone who holds shares is called a shareholder. Even if you buy just one share, you become a small owner of that company."
+    - type: steps
+      chapter: "How much do you own?"
+      heading: "Company A: **how much do you own?**"
+      say: "An imaginary company, Company A. Let's do the sum."
+      lines:
+        - {text: "Company A's total shares: **1 crore**", say: "Company A is divided into one crore shares in total."}
+        - {text: "You buy: **100 shares**", say: "You buy a hundred shares."}
+        - {text: "Your ownership: 100 ÷ 1,00,00,000 = **0.001%**", say: "That means your ownership of the company is zero point zero zero one percent."}
+      result: {text: "A small stake, but **real ownership**", say: "It's a small stake. But it's real ownership. You share in the company's profits and losses in that proportion."}
+    - type: points
+      chapter: "Why companies sell shares"
+      heading: "**Why do companies** sell shares?"
+      items:
+        - {text: "**Capital for growth**: new factories, branches", say: "Companies sell shares mainly to raise money for growth. New factories, new branches, new products."}
+        - {text: "Raising money **without a loan**", say: "If they borrow, they must pay interest. If they sell shares, there's no interest. But they have to share ownership."}
+        - {text: "Letting **early investors** exit", say: "Sometimes it also helps a company's early investors sell their shares and exit."}
+    - type: compare
+      chapter: "Benefits and risks"
+      heading: "Shareholders: **benefits vs risks**"
+      left: {title: "Possible benefits", color: "#4ade80"}
+      right: {title: "Risks", color: "#f87171"}
+      rows:
+        - {left: "The share **may rise in value**", right: "The value **may fall**, sometimes a lot", say: "If the company grows well, the share's value may rise. If it does badly, the value may fall. Sometimes by a lot."}
+        - {left: "**Dividends**: a share of the profit", right: "Dividends are **not compulsory**", say: "Some companies share part of their profit as dividends. But it's not compulsory."}
+        - {left: "**Voting rights** on key decisions", right: "If the company closes, shareholders **come last**", say: "Shareholders have the right to vote on key decisions. But if the company is wound up, shareholders get whatever is left only after the lenders are paid."}
+      after: "One piece of good news. With ordinary shares, you can't lose more than you put in. You're not responsible for the company's debts."
+    - type: takeaway
+      text: "Share = **ownership in a business**. Don't look at the price alone; understand **the business behind it**."
+      say: "In short, a share is ownership in a business. So instead of looking only at the share price, what matters is understanding the business behind it. In the next video, we'll look at the place where these shares are bought and sold. The stock market."

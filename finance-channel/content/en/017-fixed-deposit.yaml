@@ -1,0 +1,81 @@
+# Translated by Claude from content/017-fixed-deposit.yaml; review before approving.
+id: "017"
+category: savings
+title_en: "How a Fixed Deposit Works"
+thumb_en: "FD: **safe, but...**"
+icon: bank
+keywords: [fixed deposit, FD, FD interest, TDS on FD, premature withdrawal, FD explained]
+summary:
+  - "What is an FD and how does it work?"
+  - "Cumulative vs non-cumulative FD"
+  - "Tax on FD interest: what many people forget"
+  - "Penalty for early withdrawal, and deposit insurance"
+
+short:
+  scenes:
+    - type: hook
+      icon: bank
+      heading: "The FD: India's\n**favourite way to save**"
+      say: "For many Indian families, saving simply means a fixed deposit. So how does it work?"
+    - type: define
+      term: "Fixed Deposit (FD)"
+      text: "Keeping a sum with a bank **for a set period**, at **an interest rate known up front**."
+      say: "An FD means keeping a sum with a bank for a set period, at an interest rate fixed in advance."
+    - type: points
+      heading: "What you should know"
+      marker: dot
+      items:
+        - {text: "The rate is **fixed at the start**", say: "The interest rate is fixed when the FD starts. Market ups and downs don't affect it."}
+        - {text: "FD interest is subject to **income tax**", say: "But FD interest is added to your income and taxed. Many people forget this."}
+        - {text: "Withdraw early and there may be **a penalty**", say: "If you withdraw before the term ends, there's usually a small penalty on the interest."}
+    - type: takeaway
+      text: "FD = **stability**. But check whether, after tax, it beats **inflation**."
+      say: "An FD gives you stability. But also check whether, after tax, it beats inflation."
+
+long:
+  intro_say: "Hello! India's favourite way to save is the fixed deposit. Today, let's look at its benefits, its limits, and the things many people miss."
+  scenes:
+    - type: define
+      chapter: "What is an FD?"
+      term: "Fixed Deposit (FD)"
+      text: "Keeping a sum with a bank or finance company **for a set period** (from a few days to many years) at **a fixed interest rate**."
+      say:
+        - "A fixed deposit means keeping a sum of money for a set period, at a fixed interest rate."
+        - "The period can be anything from a few days to many years. Because the rate is fixed at the start, you know in advance how much you'll get at maturity."
+    - type: compare
+      chapter: "Two kinds of FD"
+      heading: "Cumulative vs Non-cumulative"
+      left: {title: "Cumulative"}
+      right: {title: "Non-cumulative"}
+      rows:
+        - {left: "Interest is **reinvested** (compounding)", right: "Interest paid out **monthly/quarterly**", say: "In a cumulative FD, the interest is added back into the FD and grows with compounding. In a non-cumulative FD, the interest is paid into your account every month or quarter."}
+        - {left: "**A lump sum** at maturity", right: "**Regular income**", say: "The first kind suits people who need a lump sum at maturity. The second suits people who need regular income, like retirees."}
+    - type: steps
+      chapter: "Tax: don't forget it"
+      heading: "The **real return** after tax"
+      say: "Now, something many people forget. Tax."
+      lines:
+        - {text: "FD interest: **7%** a year", say: "For example, FD interest of seven percent a year."}
+        - {text: "In the 30% tax slab: 7% × 0.7 = **4.9%**", say: "If you're in the thirty percent tax slab, what you keep after tax is about four point nine percent."}
+        - {text: "If inflation is **6%**: 4.9% − 6% ≈ **−1.1%**", say: "If inflation is six percent, the real return is roughly minus one percent."}
+      result: {text: "FD = safety. But it may not be enough **for long-term growth** on its own", say: "So an FD is safe. But for long-term goals, it may not be enough on its own. Tax rules can change, so check them for your situation."}
+    - type: points
+      chapter: "TDS, 15G/15H"
+      heading: "**Know** about TDS"
+      marker: dot
+      items:
+        - {text: "Above a limit, the bank **deducts TDS**", say: "If your FD interest in a financial year crosses a set limit, the bank deducts part of the tax in advance. That's TDS."}
+        - {text: "Even with TDS, tax is worked out **by your slab**", say: "Even after TDS, your final tax depends on your tax slab. You settle it when you file your income tax return."}
+        - {text: "Those with no tax due can give **Form 15G / 15H**", say: "If your total income is below the taxable limit, as per the rules you can submit Form fifteen G, or fifteen H for senior citizens, to avoid TDS."}
+    - type: points
+      chapter: "Early withdrawal and safety"
+      heading: "A few more **important points**"
+      marker: check
+      items:
+        - {text: "Withdraw early: **a penalty on interest**", say: "If you break an FD before the term ends, there's usually a small penalty on the interest."}
+        - {text: "Deposit insurance: protection **up to a limit**", say: "Bank deposits are insured through DICGC, up to a set limit per person per bank. Check the current limit on its website."}
+        - {text: "**Senior citizens** often get extra interest", say: "Many banks give senior citizens slightly higher interest."}
+        - {text: "**Splitting into several FDs** (laddering)", say: "Instead of one big FD, split it into several smaller FDs that mature at different times. Then you only need to break one when you need money."}
+    - type: takeaway
+      text: "FD = **stability and simplicity**. Good for an emergency fund and short-term goals. Work out the return **after tax**."
+      say: "In short, an FD gives stability and simplicity. It can suit an emergency fund and short-term goals. But always work out the real return after tax."

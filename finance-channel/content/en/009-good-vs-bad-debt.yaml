@@ -1,0 +1,82 @@
+# Translated by Claude from content/009-good-vs-bad-debt.yaml; review before approving.
+id: "009"
+category: basics
+title_en: "Good Debt vs Bad Debt"
+thumb_en: "Is all debt **bad?**"
+icon: card
+keywords: [good debt vs bad debt, loans, credit card debt, home loan, education loan, EMI]
+summary:
+  - "Good debt vs bad debt: what's the difference?"
+  - "Comparing interest rates (example rates)"
+  - "Too much good debt is risky too: the EMI limit"
+  - "3 questions before you borrow"
+
+short:
+  scenes:
+    - type: hook
+      icon: card
+      heading: "Is all debt\n**bad?**"
+      say: "Many people think all debt is bad. In fact, not all debt is the same."
+    - type: compare
+      heading: "Two kinds of debt"
+      left: {title: "Good debt", color: "#4ade80"}
+      right: {title: "Bad debt", color: "#f87171"}
+      rows:
+        - {left: "Creates **value or income**", right: "For **consumption**, things that lose value", say: "Good debt helps create value or income over time. Bad debt is borrowing to spend, on things that lose value."}
+        - {left: "Education loan, home loan", right: "Card dues, a loan for a gadget", say: "Education loans and home loans are usually the good kind. Credit card dues and loans for a new gadget are the bad kind."}
+        - {left: "Usually **lower** interest", right: "Often **very high** interest", say: "Good debt usually has lower interest. Bad debt often has very high interest."}
+    - type: takeaway
+      text: "Even good debt is a burden **in excess**. Keep your EMIs within your income."
+      say: "But remember, even good debt becomes a burden when there's too much of it. Keep your total EMIs under control, within your income."
+
+long:
+  intro_say: "Hello! Is borrowing wrong? Today, let's see when debt helps, and when it turns into a trap."
+  scenes:
+    - type: hook
+      chapter: "Debt is a tool"
+      icon: card
+      heading: "Debt is a **tool**.\nHow you use it is what matters"
+      say:
+        - "A knife is a tool. It helps you cook, and it can also hurt you. Debt is the same."
+        - "Borrowed for the right purpose, in the right amount, debt can move your life forward. Used wrongly, it becomes a burden for years."
+    - type: define
+      chapter: "Good debt"
+      term: "Good Debt"
+      text: "Debt at a **reasonable interest rate** that helps create **value or income** over time."
+      say:
+        - "Good debt is debt at a reasonable interest rate that helps create value or income over time."
+        - "For example, an education loan that improves your job prospects and income. A loan for a home you'll live in for a long time. A loan for a business that earns income."
+    - type: define
+      chapter: "Bad debt"
+      term: "Bad Debt"
+      text: "Debt taken **to consume**, for things that lose value, often at **high interest**."
+      say:
+        - "Bad debt is debt taken to consume, for things that keep losing value, often at high interest."
+        - "A personal loan for a holiday, a loan for a new mobile phone, unpaid credit card dues. These are examples."
+    - type: bars
+      chapter: "Comparing interest rates"
+      heading: "A **big difference** in interest"
+      say: "The interest rates on the two kinds can be very different. Let's look at some example rates."
+      bars:
+        - {label: "Home loan", value: 9, display: "~9%", say: "A home loan, for example, at about nine percent a year."}
+        - {label: "Personal loan", value: 15, display: "~15%", say: "A personal loan, at about fifteen percent or more."}
+        - {label: "Card dues", value: 40, display: "~40%", color: "#f87171", say: "Credit card dues can cost thirty to forty percent a year, or even more."}
+      note: "Example rates only; they vary by bank, tenure and your credit score"
+    - type: steps
+      chapter: "Keep even good debt in limits"
+      heading: "Even good debt must stay **within limits**"
+      say: "Just because it's good debt doesn't mean you can borrow as much as you like."
+      lines:
+        - {text: "Take-home salary: **₹60,000**", say: "For example, say your take-home salary is sixty thousand."}
+        - {text: "Total EMI limit (about 30-40%): **₹18,000 – ₹24,000**", say: "A common guideline is to keep all your EMIs together within thirty to forty percent of your take-home salary. That's eighteen thousand to twenty-four thousand."}
+      result: {text: "Higher EMIs mean less **savings and peace of mind**", say: "If your EMIs go above that, your savings, your ability to handle an emergency, and your peace of mind all shrink."}
+    - type: points
+      chapter: "3 questions before you borrow"
+      heading: "**3 questions** before you borrow"
+      items:
+        - {text: "Will it create **value or income**?", say: "The first question: will this loan create value or income, or is it just for consumption?"}
+        - {text: "How much is the **total interest**?", say: "Second, don't look at the EMI alone. Look at the total interest you'll pay over the whole loan."}
+        - {text: "Could you **pay the EMI** if your income stopped?", say: "Third, if your income stopped for a few months, could you still pay the EMI? That's exactly why you need an emergency fund."}
+    - type: takeaway
+      text: "Debt is a tool. **Pay off high-interest bad debt first**, and keep even good debt in check."
+      say: "In short, debt is a tool. If you have high-interest bad debt, make paying it off your first priority. And keep even good debt only at a level that suits your income."

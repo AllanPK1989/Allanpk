@@ -1,0 +1,96 @@
+# Translated by Claude from content/003-needs-vs-wants.yaml; review before approving.
+id: "003"
+category: savings
+title_en: "Needs vs Wants"
+thumb_en: "Is it a **need?** Or a **want?**"
+icon: scale
+keywords: [needs vs wants, budgeting, saving money, lifestyle inflation, 30 day rule, money habits]
+summary:
+  - "What is a need, and what is a want?"
+  - "The 'grey area' between the two"
+  - "3 questions to ask before you buy"
+  - "Lifestyle inflation: spending more as you earn more"
+
+short:
+  scenes:
+    - type: hook
+      icon: question
+      heading: "A new phone:\n**need or want?**"
+      say: "You're thinking of buying a new mobile phone. Is it a need, or a want?"
+    - type: compare
+      heading: "They're not the same"
+      left: {title: "Needs"}
+      right: {title: "Wants"}
+      rows:
+        - {left: "Rent, food, electricity", right: "Eating out, OTT", say: "A need is something you can't live without. Like rent, food and electricity."}
+        - {left: "Medical care, loan EMI", right: "New gadgets, shopping", say: "A want makes life more enjoyable, but you can manage without it."}
+    - type: points
+      heading: "**3 questions** before you buy"
+      items:
+        - {text: "Can I **live without it?**", say: "Ask three questions before you buy. Can I live without it?"}
+        - {text: "Will my **job or income suffer** without it?", say: "Without it, will my job or income suffer?"}
+        - {text: "Can I wait **30 days**?", say: "Can I wait thirty days? If you can wait, it's most likely a want."}
+    - type: takeaway
+      text: "Wants aren't wrong. But **needs and savings come first**."
+      say: "Wants aren't wrong. But needs and savings come first, and wants come after that."
+
+long:
+  intro_say: "Hello! This is the first lesson to learn before you make a budget. The difference between needs and wants."
+  scenes:
+    - type: hook
+      chapter: "Why does this matter?"
+      icon: wallet
+      heading: "At the end of the month, **where did the money go?**"
+      say:
+        - "Many people say that by the end of the month, they don't even know where their salary went."
+        - "Most of the time, the reason is small spends on wants, disguised as needs."
+    - type: define
+      chapter: "What is a need?"
+      term: "Needs"
+      text: "Things that are **essential** to live, and to work and earn. You can't avoid them."
+      say:
+        - "Needs are the things that are essential to live, and to go to work and earn."
+        - "Rent or your home loan EMI, food, electricity, water, medical care, your children's education, and transport to work. These are all needs."
+    - type: define
+      chapter: "What is a want?"
+      term: "Wants"
+      text: "Things that **make life more enjoyable**, but you can manage without them."
+      say:
+        - "Wants are the things that make life more enjoyable. But we can manage without them."
+        - "Eating at restaurants, new clothes, the latest phone, several OTT subscriptions, holidays. These are wants."
+    - type: compare
+      chapter: "The grey area"
+      heading: "The same thing, **two levels**"
+      left: {title: "Need level"}
+      right: {title: "Want level"}
+      say: "Sometimes the same item mixes a need and a want. You could call this the grey area."
+      rows:
+        - {left: "A phone for work", right: "An expensive new model", say: "A mobile phone for work is a need. But an expensive new model every year is a want."}
+        - {left: "Transport", right: "A new car", say: "You need transport to get to work. But buying a new car when a bus or a bike would do is a want."}
+        - {left: "Food", right: "Ordering in every day", say: "Food is a need. But ordering food online every day is a want."}
+    - type: points
+      chapter: "3 questions before you buy"
+      heading: "**3 questions** before you buy"
+      items:
+        - {text: "Can I **live without it?**", say: "Before you buy something, ask yourself three questions. The first question: can I live without it?"}
+        - {text: "Will my **income suffer** without it?", say: "Second: without it, will my job or income suffer?"}
+        - {text: "Can I wait **30 days**?", sub: "The 30-day rule", say: "Third: can I wait thirty days? Often, after thirty days, the urge is simply gone. This is called the thirty-day rule."}
+    - type: stat
+      chapter: "Lifestyle inflation"
+      label: "Your salary goes up… but your savings?"
+      value: "₹30,000"
+      to: "₹50,000"
+      caption: "What if your salary rises but your savings **stay the same**?"
+      say: "Another hidden problem is lifestyle inflation. For example, say your salary was thirty thousand."
+      to_say: "In a few years, it rises to fifty thousand. But if new spending on wants grows just as fast, your savings never go up."
+    - type: points
+      chapter: "Practical tips"
+      heading: "Simple **practical tips**"
+      marker: check
+      items:
+        - {text: "For one month, **write down every expense**", say: "First, for one whole month, write down every expense. Then sort them into needs and wants."}
+        - {text: "When your salary rises, **raise your savings too**", say: "Second, every time your salary goes up, set aside part of the raise for savings first."}
+        - {text: "Set **a limit** for wants", say: "Third, set a monthly limit for spending on wants. Then enjoy spending within that limit."}
+    - type: takeaway
+      text: "Wants aren't wrong. **Needs and savings first**, wants after that."
+      say: "In short, wants aren't wrong. You should enjoy life too. But the order matters. Needs and savings first, wants after that. In the next video, we'll use this to look at a simple budgeting rule."

@@ -1,0 +1,90 @@
+# Translated by Claude from content/008-assets-vs-liabilities.yaml; review before approving.
+id: "008"
+category: basics
+title_en: "Assets vs Liabilities"
+thumb_en: "Your car: **asset or liability?**"
+icon: scale
+keywords: [assets vs liabilities, what is an asset, what is a liability, personal finance basics, net worth]
+summary:
+  - "What is an asset, and what is a liability?"
+  - "The cash-flow view: what puts money in your pocket, and what takes it out?"
+  - "Car, house, gold: which kind is each?"
+  - "Growing assets and cutting high-interest liabilities"
+
+short:
+  scenes:
+    - type: hook
+      icon: question
+      heading: "A new car:\n**asset or liability?**"
+      say: "A new car bought on a loan. Is it your asset, or your liability?"
+    - type: compare
+      heading: "The simple difference"
+      left: {title: "Asset", color: "#4ade80"}
+      right: {title: "Liability", color: "#f87171"}
+      rows:
+        - {left: "Something you **own** that has value", right: "Something you **have to pay back**", say: "An asset is something you own that has value. A liability is a debt you have to pay back."}
+        - {left: "Savings, investments", right: "Loans, card dues", say: "Savings and investments are assets. Loans and credit card dues are liabilities."}
+    - type: points
+      heading: "So what about **the car?**"
+      marker: dot
+      items:
+        - {text: "The car is an asset, but **its value drops every year**", say: "The car is an asset. But its value drops every year. And it takes money out too, for fuel and maintenance."}
+        - {text: "The car loan is a **liability**", say: "The loan you took to buy it is a liability."}
+    - type: takeaway
+      text: "Add assets that **grow in value**. Cut **high-interest** liabilities."
+      say: "So add assets that grow in value or earn income. And cut liabilities that charge high interest."
+
+long:
+  intro_say: "Hello! This is the basic language of finance. Assets and liabilities. Once you understand these two words, you can judge your own financial position."
+  scenes:
+    - type: hook
+      chapter: "A question"
+      icon: question
+      heading: "A ₹10 lakh car, an ₹8 lakh loan.\n**How much do you own?**"
+      say:
+        - "You buy a car worth ten lakh rupees. Eight lakh of it is a loan."
+        - "So do you own ten lakh? To answer that, you need to understand two words."
+    - type: define
+      chapter: "What is an asset?"
+      term: "Asset"
+      text: "Anything you **own** that has **money value**. Cash, savings, investments, land, a house, gold, a vehicle."
+      say:
+        - "An asset is anything you own that has money value."
+        - "Money in the bank, investments, land, a house, gold, a vehicle. These are all assets."
+    - type: define
+      chapter: "What is a liability?"
+      term: "Liability"
+      text: "Money you **have to pay back** to others. Loans, credit card dues, money borrowed from friends."
+      say:
+        - "A liability is money you have to pay back to others."
+        - "A home loan, a car loan, a personal loan, credit card dues, money borrowed from friends. These are liabilities."
+    - type: steps
+      chapter: "The car example"
+      heading: "The car example (hypothetical numbers)"
+      say: "Now let's go back to the car question."
+      lines:
+        - {text: "Asset: car value **₹10,00,000**", say: "The car is worth ten lakh. That's your asset."}
+        - {text: "Liability: car loan **₹8,00,000**", say: "But there's a loan of eight lakh. That's your liability."}
+        - {text: "Net worth: ₹10L − ₹8L = **₹2,00,000**", say: "So your real share of this car is only two lakh."}
+      result: {text: "In a year, the car's value drops, but the loan falls **only slowly**", say: "Notice that within a year, the car's resale value drops a lot. But the loan comes down only slowly."}
+    - type: compare
+      chapter: "The cash-flow view"
+      heading: "Another view: **which way does money flow?**"
+      left: {title: "Puts money in your pocket", color: "#4ade80"}
+      right: {title: "Takes money out", color: "#f87171"}
+      say: "There's another useful way to look at assets. Does it put money in your pocket, or take money out?"
+      rows:
+        - {left: "A deposit that pays interest", right: "Credit card interest", say: "A deposit that pays interest puts money in your pocket. Credit card interest takes money out."}
+        - {left: "A house that earns rent", right: "EMI on the home you live in", say: "A house that earns rent brings money in. The home you live in is a valuable asset, but its EMI takes money out every month."}
+        - {left: "Investments that can grow", right: "Car maintenance, fuel", say: "Investments that can grow over time are on one side. Ongoing costs like car maintenance and fuel are on the other."}
+    - type: points
+      chapter: "Gold, house, car"
+      heading: "Common things: **which kind?**"
+      marker: dot
+      items:
+        - {text: "**Gold**: an asset, but jewellery has making charges and wastage", say: "Gold is an asset. But when you buy it as jewellery, you don't get the making charges and wastage back."}
+        - {text: "**Your own home**: a valuable asset + a big loan liability", say: "Your own home is a valuable asset. But the home loan for it is a liability that lasts many years."}
+        - {text: "**A vehicle**: a depreciating asset", say: "A vehicle is an asset whose value keeps falling. This is called a depreciating asset."}
+    - type: takeaway
+      text: "**Assets − liabilities = net worth.** Add assets that grow, and cut high-interest liabilities."
+      say: "In short, subtract your liabilities from your assets, and you get your net worth. Add assets that grow in value or earn income. Cut liabilities with high interest. We'll look at how to calculate your net worth in a separate video."
