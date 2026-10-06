@@ -68,6 +68,8 @@ jobs:
   preview:
     needs: check
     if: needs.check.outputs.topics != '' || needs.check.outputs.topics_en != ''
+    # one upload to the shared ci-preview release at a time
+    concurrency: ci-preview-release
     runs-on: ubuntu-latest
     timeout-minutes: 60
     defaults:
@@ -112,7 +114,11 @@ jobs:
           retention-days: 14
       - name: Also attach to the rolling "ci-preview" pre-release (easy phone download)
         run: |
-          files=$(ls preview/*/*.mp4 preview/*/*.png preview/en/*/*.mp4 preview/en/*/*.png 2>/dev/null)
+          # English files share names with the Tamil ones (001-short.mp4), so give them an en- prefix
+          mkdir -p release
+          for f in preview/[0-9]*/*.mp4 preview/[0-9]*/*.png; do if [ -e "$f" ]; then cp "$f" release/; fi; done
+          for f in preview/en/*/*.mp4 preview/en/*/*.png; do if [ -e "$f" ]; then cp "$f" "release/en-$(basename "$f")"; fi; done
+          files=$(ls release/* 2>/dev/null)
           gh release view ci-preview >/dev/null 2>&1 || \
             gh release create ci-preview --prerelease --target "$GITHUB_SHA" --title "Script previews (CI)" \
               --notes "Latest previews rendered by CI when scripts change. Not published anywhere."
