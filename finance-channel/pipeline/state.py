@@ -1,7 +1,7 @@
 """Channel state: which topics were rendered, approved, scheduled or rejected.
 
-One small JSON file per topic in state/items/, committed back to the repo by
-the workflows. Separate files mean two workflows updating different topics
+One small JSON file per topic in state/items/ (state/<channel>/items/ for the
+other channels), committed back to the repo by the workflows. Separate files mean two workflows updating different topics
 never conflict when they rebase onto each other.
 
 Status flow:  awaiting_approval -> publishing -> scheduled | published | approved_manual
@@ -14,21 +14,27 @@ from datetime import datetime, time, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from .config import STATE_DIR, config, curriculum
+from .config import config, curriculum, state_dir
 from .script import find_script
+
+STATE_DIR: Path | None = None  # tests point this at a temp dir; otherwise the channel's state dir
 
 # statuses that hold a publish slot
 HOLDS_SLOT = {"publishing", "scheduled", "published", "approved_manual"}
 
 
+def _dir() -> Path:
+    return STATE_DIR or state_dir()
+
+
 def _path(topic_id: str) -> Path:
-    return STATE_DIR / f"{str(topic_id).zfill(3)}.json"
+    return _dir() / f"{str(topic_id).zfill(3)}.json"
 
 
 def load() -> dict:
     items = {}
-    if STATE_DIR.exists():
-        for p in sorted(STATE_DIR.glob("[0-9][0-9][0-9].json")):
+    if _dir().exists():
+        for p in sorted(_dir().glob("[0-9][0-9][0-9].json")):
             items[p.stem] = json.loads(p.read_text(encoding="utf-8"))
     return {"items": items}
 

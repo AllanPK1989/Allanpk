@@ -1,10 +1,17 @@
 # Channel-wide settings. Everything here can be changed without touching code.
+#
+# This file is the Tamil channel. Other channels (channels/en.yaml for the
+# English one) start from this file and override what differs.
 
 channel:
   # Shown as a small brand chip on every frame and in descriptions.
   brand_ta: "நிதி அறிவு"
   brand_en: "Nidhi Arivu - Finance in Tamil"
   language: ta
+  content_dir: content      # this channel's scripts
+  state_dir: state/items    # this channel's queue
+  release_prefix: "video-"  # preview pre-release tag: video-001
+  issue_tag: ""             # prefix for approval issue titles
 
 voice:
   # Microsoft neural voices via edge-tts. Tamil options:
@@ -68,6 +75,43 @@ disclaimer:
 fno_risk:
   say: "செபி ஆய்வின்படி, ஈக்விட்டி எஃப் அண்ட் ஓ பிரிவில், பத்தில் ஒன்பது தனிநபர் வர்த்தகர்கள் நிகர நஷ்டம் அடைந்துள்ளனர்."
   screen_ta: "SEBI ஆய்வு: Equity F&O-வில் 10-ல் 9 தனிநபர் வர்த்தகர்கள் நிகர நஷ்டம் அடைந்துள்ளனர்."
+
+# Fixed wording the pipeline adds around every script. {title}, {brand}, {n}
+# and {category} are filled in.
+strings:
+  intro_say: "வணக்கம்! இன்றைய பாடம்: {title}"
+  intro_chapter: "அறிமுகம்"
+  disclaimer_chapter: "பொறுப்புத் துறப்பு"
+  cta_short: "தினமும் ஒரு நிதி பாடம் • Subscribe செய்யுங்கள்"
+  cta_long: "தினமும் ஒரு எளிய நிதி பாடம் — Subscribe செய்து தொடருங்கள்!"
+  title_suffix: "Tamil"     # long-video title: "<title> | <English title> | Tamil"
+  hook_short: "எளிய தமிழில், ஒரு நிமிடத்தில்."
+  hook_long: "எளிய தமிழில் முழு விளக்கம்."
+  link_to_long: "📺 முழு விளக்கம் (Full video)"
+  link_to_short: "📱 ஒரு நிமிட Short"
+  summary_long: "இந்த வீடியோவில்:"
+  summary_short: "முழு விளக்க வீடியோவில்:"
+  series_line: "📌 “{brand}” — தினமும் ஒரு எளிய நிதி பாடம், தமிழில். பாகம் #{n}."
+  description_disclaimers: [description_ta, description_en]
+  hashtags: ["#TamilFinance", "#{category}", "#நிதிஅறிவு"]
+  base_tags: ["finance in tamil", "tamil finance", "personal finance tamil", "பணம்", "நிதி",
+              "முதலீடு", "money tamil", "share market tamil", "financial education", "நிதி அறிவு"]
+  # default labels drawn on the video frames
+  ui:
+    define: "வரையறை"
+    example: "உதாரணம் (கற்பனை எண்கள்)"
+    remember: "நினைவில் கொள்ளுங்கள்"
+    lesson: "இன்றைய பாடம்"
+    disclaimer: "பொறுப்புத் துறப்பு"
+    profit: "லாபம்"
+    loss: "நஷ்டம்"
+    expiry_price: "Expiry அன்று விலை"
+
+# How the voice reads symbols. ₹ amounts become "<amount> <unit> <rupee>".
+speak:
+  rupee: "ரூபாய்"
+  units: "லட்சம்|கோடி|ஆயிரம்"
+  symbols: {"×": " பெருக்கல் ", "÷": " வகுத்தல் ", "→": ", ", "=": " சமம் ", "&": " மற்றும் "}
 
 # Words rewritten ONLY for the voice (captions keep the original spelling),
 # so the Tamil voice says English finance terms the way Tamil viewers do.

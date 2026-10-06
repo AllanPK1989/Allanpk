@@ -1,8 +1,8 @@
 name: "Finance channel: check scripts"
 
 # On every change under finance-channel/: run the tests and the compliance
-# lint. When scripts change, render them with the real Tamil voice so you can
-# watch a preview before the daily job picks them up.
+# lint for every channel. When scripts change, render them with the real voice
+# so you can watch a preview before the daily job picks them up.
 
 on:
   push:
@@ -27,6 +27,7 @@ jobs:
         working-directory: finance-channel
     outputs:
       topics: ${{ steps.changed.outputs.topics }}
+      topics_en: ${{ steps.changed.outputs.topics_en }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -39,8 +40,10 @@ jobs:
       - run: pip install -q pyyaml pytest "anthropic>=1.11"
       - name: Unit tests
         run: python -m pytest tests -q
-      - name: Compliance lint (all scripts)
-        run: python -m pipeline lint
+      - name: Compliance lint (all scripts, every channel)
+        run: |
+          python -m pipeline lint
+          python -m pipeline --channel en lint
       - name: Which scripts changed?
         id: changed
         env:
@@ -52,16 +55,19 @@ jobs:
           if ! git cat-file -e "${BEFORE:-0000}" 2>/dev/null; then BEFORE=$(git merge-base HEAD "origin/$DEFAULT" 2>/dev/null || true); fi
           if [ -n "$INPUT" ]; then topics="$INPUT"
           elif [ -n "$BEFORE" ]; then
-            topics=$(git diff --name-only "$BEFORE" HEAD -- content | grep -oE 'content/[0-9]{3}' | cut -d/ -f2 | sort -u | head -3 | tr '\n' ' ')
+            topics=$(git diff --name-only "$BEFORE" HEAD -- content | grep -oE '^finance-channel/content/[0-9]{3}' | cut -d/ -f3 | sort -u | head -3 | tr '\n' ' ')
+            topics_en=$(git diff --name-only "$BEFORE" HEAD -- content/en | grep -oE 'content/en/[0-9]{3}' | cut -d/ -f3 | sort -u | head -3 | tr '\n' ' ')
             # renderer or workflow changed but no script did: smoke-test with topic 001
             if [ -z "$topics" ] && git diff --name-only "$BEFORE" HEAD -- pipeline config.yaml ../.github/workflows | grep -q .; then topics="001"; fi
+            if [ -z "$topics_en" ] && git diff --name-only "$BEFORE" HEAD -- pipeline channels ../.github/workflows | grep -q .; then topics_en="001"; fi
           else topics=""; fi
           echo "topics=$topics" >> "$GITHUB_OUTPUT"
-          echo "Preview: ${topics:-none}"
+          echo "topics_en=$topics_en" >> "$GITHUB_OUTPUT"
+          echo "Preview: ${topics:-none} · English: ${topics_en:-none}"
 
   preview:
     needs: check
-    if: needs.check.outputs.topics != ''
+    if: needs.check.outputs.topics != '' || needs.check.outputs.topics_en != ''
     runs-on: ubuntu-latest
     timeout-minutes: 60
     defaults:
@@ -70,6 +76,7 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       TOPICS: ${{ needs.check.outputs.topics }}
+      TOPICS_EN: ${{ needs.check.outputs.topics_en }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
@@ -94,8 +101,10 @@ jobs:
           else
             python -m playwright install --with-deps chromium
           fi
-      - name: Render previews with the Tamil voice
-        run: for t in $TOPICS; do python -m pipeline render "$t" --out preview; done
+      - name: Render previews with the AI voice
+        run: |
+          for t in $TOPICS; do python -m pipeline render "$t" --out preview; done
+          for t in $TOPICS_EN; do python -m pipeline --channel en render "$t" --out preview; done
       - uses: actions/upload-artifact@v4
         with:
           name: preview-${{ github.run_number }}
@@ -103,7 +112,7 @@ jobs:
           retention-days: 14
       - name: Also attach to the rolling "ci-preview" pre-release (easy phone download)
         run: |
-          files=$(ls preview/*/*.mp4 preview/*/*.png 2>/dev/null)
+          files=$(ls preview/*/*.mp4 preview/*/*.png preview/en/*/*.mp4 preview/en/*/*.png 2>/dev/null)
           gh release view ci-preview >/dev/null 2>&1 || \
             gh release create ci-preview --prerelease --target "$GITHUB_SHA" --title "Script previews (CI)" \
               --notes "Latest previews rendered by CI when scripts change. Not published anywhere."

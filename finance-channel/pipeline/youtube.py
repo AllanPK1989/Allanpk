@@ -2,6 +2,8 @@
 
 Credentials come from three environment variables (GitHub secrets):
   YT_CLIENT_ID, YT_CLIENT_SECRET, YT_REFRESH_TOKEN
+The refresh token decides which channel the video lands on, so each channel
+names its own (publish.refresh_token_env: YT_EN_REFRESH_TOKEN for English).
 See docs/SETUP.md for how to create them.
 
 Note: until your Google Cloud project passes YouTube's API audit, YouTube
@@ -17,8 +19,13 @@ from pathlib import Path
 SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
 
 
+def _token_env() -> str:
+    from .config import config
+    return config()["publish"].get("refresh_token_env", "YT_REFRESH_TOKEN")
+
+
 def configured() -> bool:
-    return all(os.environ.get(k) for k in ("YT_CLIENT_ID", "YT_CLIENT_SECRET", "YT_REFRESH_TOKEN"))
+    return all(os.environ.get(k) for k in ("YT_CLIENT_ID", "YT_CLIENT_SECRET", _token_env()))
 
 
 def _service():
@@ -27,7 +34,7 @@ def _service():
 
     creds = Credentials(
         None,
-        refresh_token=os.environ["YT_REFRESH_TOKEN"],
+        refresh_token=os.environ[_token_env()],
         token_uri="https://oauth2.googleapis.com/token",
         client_id=os.environ["YT_CLIENT_ID"],
         client_secret=os.environ["YT_CLIENT_SECRET"],

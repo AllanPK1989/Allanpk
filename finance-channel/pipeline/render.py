@@ -16,7 +16,7 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
-from .config import MUSIC, TEMPLATES, accent_soft, config
+from .config import MUSIC, TEMPLATES, accent_soft, config, lang, loc, strings
 from .script import Script, Timeline, build_timeline
 from .tts import clean_markup, concat_wavs, synthesize, wav_duration
 
@@ -97,9 +97,10 @@ def _stage_setup(script: Script, fmt: str, thumb: bool = False) -> dict:
     return {
         "format": fmt, "thumb": thumb,
         "accent": cat["accent"], "accentSoft": accent_soft(cat["accent"]),
-        "brand": cfg["channel"]["brand_ta"], "category": cat["ta"],
+        "brand": loc(cfg["channel"], "brand"), "category": script.cat_label,
         "episode": f"#{int(script.id)}",
-        "note": cfg["disclaimer"]["screen_ta"],
+        "note": loc(cfg["disclaimer"], "screen"),
+        "lang": lang(), "ui": strings().get("ui") or {},
         "captions": cfg["video"][fmt].get("captions", True),
     }
 
@@ -217,7 +218,7 @@ def chapters(tl: Timeline, shots: list[Shot]) -> list[tuple[float, str]]:
         if sc.get("chapter"):
             marks.append((s.start, sc["chapter"]))
     if not marks or marks[0][0] > 0.01:
-        marks.insert(0, (0.0, "அறிமுகம்"))
+        marks.insert(0, (0.0, strings()["intro_chapter"]))
     else:
         marks[0] = (0.0, marks[0][1])
     # YouTube needs each chapter to be at least 10 s long; merge short ones forward
@@ -265,10 +266,10 @@ def render_thumbnail(script: Script, out_png: Path) -> Path:
         page.evaluate("o => stage.setup(o)", _stage_setup(script, "long", thumb=True))
         page.evaluate(FONT_WARMUP)
         page.evaluate("t => stage.thumb(t)", {
-            "title": script.get("thumb_ta") or script["title_ta"],
-            "sub": script.get("thumb_en") or script.get("title_en"),
-            "category": script.cat["ta"], "icon": script.get("icon") or script.cat.get("icon"),
-            "brand": cfg["channel"]["brand_ta"],
+            "title": script.thumb_title,
+            "sub": script.thumb_sub,
+            "category": script.cat_label, "icon": script.get("icon") or script.cat.get("icon"),
+            "brand": loc(cfg["channel"], "brand"),
         })
         page.screenshot(path=str(out_png), type="png")
         browser.close()

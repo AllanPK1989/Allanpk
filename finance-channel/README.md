@@ -47,6 +47,24 @@ pauses until you catch up.
 
 **First-time setup is in [docs/SETUP.md](docs/SETUP.md).**
 
+## The English channel
+
+A second channel posts the same lesson every day in English, from the same
+curriculum and the same daily run. Each topic's Tamil script stays the source:
+the English script (`content/en/NNN-*.yaml`) is an English adaptation of it
+with the same scenes, numbers and charts, written by Claude
+(`python -m pipeline --channel en translate NNN`) and linted with the same
+rules. The English videos use an Indian English AI voice (`en-IN-NeerjaNeural`)
+and English titles, descriptions, tags and disclaimers.
+
+Everything is a per-channel setting in `channels/en.yaml`, which starts from
+`config.yaml` and overrides what differs. The English channel has its own
+queue (`state/en/items/`), its own preview releases (`video-en-NNN`) and its
+own approval issues, titled `[EN] Approve #N`, so you can approve, reject or
+re-render each language on its own. Uploads use their own refresh token
+(`YT_EN_REFRESH_TOKEN`; see docs/SETUP.md, step 7). Recording your own voice
+is Tamil-only for now.
+
 ## Narrating in your own voice
 
 Each approval issue has an **Open the recorder** link. It opens a small page
@@ -76,12 +94,14 @@ sentence so the clips sound like one take.
 |---|---|
 | `curriculum.yaml` | 150 topics in posting order, across 9 categories |
 | `content/NNN-*.yaml` | the scripts: what's on screen and what the voice says. 001-030 are written |
+| `content/en/NNN-*.yaml` | the English channel's scripts, adapted from the Tamil ones |
 | `config.yaml` | channel name, voice, publish time, disclaimers, pronunciation fixes |
+| `channels/en.yaml` | the English channel: what differs from `config.yaml` |
 | `compliance.yaml` | the education-only guardrails (blocked phrases, named securities) |
 | `categories.yaml` | category labels and colours |
 | `docs/WRITING_GUIDE.md` | how to write or edit a script; also the spec Claude writes to |
 | `pipeline/` | Python: TTS, Chromium frame rendering, ffmpeg, metadata, YouTube upload |
-| `state/items/NNN.json` | per topic: rendered, approved, scheduled or rejected |
+| `state/items/NNN.json` | per topic: rendered, approved, scheduled or rejected (`state/en/items/` for English) |
 | `voice-scripts/NNN.json` | the sentences to record for each topic (read by the recorder page) |
 | `recorder/` | the recorder page, deployed to GitHub Pages |
 
@@ -135,6 +155,8 @@ python -m pipeline status               # the queue
 python -m pipeline voice-script 012     # sentence list for the recorder
 python -m pipeline voice-import 012 012-voice.zip   # clean a recording into .cache/voice/012/
 python -m pipeline render 012 --voice-dir .cache/voice/012   # render with your voice
+python -m pipeline --channel en translate 012   # English script from the Tamil one (needs ANTHROPIC_API_KEY)
+python -m pipeline --channel en render 012      # any command, for the English channel (into out/en/012/)
 python -m pytest tests -q
 ```
 

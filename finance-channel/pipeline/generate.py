@@ -1,5 +1,8 @@
 """Write new Tamil scripts with Claude for curriculum topics that have none.
 
+Tamil is the source language for every channel, so this always writes to
+content/ (other channels translate from it; see translate.py).
+
 Needs ANTHROPIC_API_KEY. Every generated script must pass the same lint
 (structure + compliance) as hand-written ones; if it doesn't, the errors are
 sent back to Claude for a fix, up to MAX_FIXES times. You still approve the
@@ -14,7 +17,7 @@ from pathlib import Path
 import yaml
 
 from .compliance import lint
-from .config import CONTENT, ROOT, categories, curriculum
+from .config import CONTENT, DEFAULT_CHANNEL, ROOT, categories, curriculum, using_channel
 from .script import Script, all_scripts, find_script
 
 MODEL = "claude-opus-5-5"
@@ -30,7 +33,7 @@ def _system_prompt() -> str:
     guide = (ROOT / "docs" / "WRITING_GUIDE.md").read_text(encoding="utf-8")
     examples = []
     for tid in EXAMPLES:
-        p = find_script(tid)
+        p = find_script(tid, CONTENT)
         if p:
             examples.append(f"<example file=\"{p.name}\">\n{p.read_text(encoding='utf-8')}\n</example>")
     cats = yaml.safe_dump(categories(), allow_unicode=True, sort_keys=False)
@@ -91,13 +94,18 @@ def _call(client, system: str, messages: list[dict]):
 
 
 def generate(topic_id: str) -> Path:
+    with using_channel(DEFAULT_CHANNEL):
+        return _generate(topic_id)
+
+
+def _generate(topic_id: str) -> Path:
     import anthropic
 
     tid = str(topic_id).zfill(3)
     topic = next((t for t in curriculum() if str(t["id"]).zfill(3) == tid), None)
     if topic is None:
         raise KeyError(f"topic {tid} is not in curriculum.yaml")
-    if find_script(tid):
+    if find_script(tid, CONTENT):
         raise FileExistsError(f"topic {tid} already has a script")
     done = [f"{s.id}: {s['title_ta']} ({s['title_en']})" for s in all_scripts() if s.id < tid]
     client = anthropic.Anthropic()
