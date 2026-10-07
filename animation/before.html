@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sand Mixing — BEFORE (Manual Process)</title>
+<style id="ui-css"></style>
+</head>
+<body>
+<div class="loader" id="loader">Loading scene…</div>
+<div id="ui"></div>
+
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/addons/" } }
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import * as P from './lib/plant.js';
+import * as S from './lib/story.js';
+import { makePost } from './lib/post.js';
+
+document.getElementById('ui-css').textContent = S.UI_CSS;
+
+// ── Timeline ─────────────────────────────────────────────────────────────
+const STEPS = [
+  { t0:  0, t1:  6, title: 'Manufacturing Order released',         note: 'Operator picks up the MO at the terminal' },
+  { t0:  6, t1: 16, title: 'Takes the passenger lift up',          note: 'Ground floor → 2nd floor warehouse' },
+  { t0: 16, t1: 24, title: 'Loads sand bag onto a trolley',        note: 'Manual lift from the racking onto the bag trolley' },
+  { t0: 24, t1: 38, title: 'Wheels the bag trolley back down',     note: 'Pushed by hand into the lift, down, and across the floor' },
+  { t0: 38, t1: 46, title: 'Manually loads the bag into the mixer', note: 'Lifted off the trolley and tipped into the charge port' },
+  { t0: 46, t1: 53, title: 'Mixing process runs',                  note: 'Operator waits at the machine' },
+  { t0: 53, t1: 63, title: 'Bottom hopper → bin → drum, by hand',   note: 'Double handling: filled bin tipped into the storage drum' },
+  { t0: 63, t1: 72, title: 'Wheels the drum trolley to the filler', note: 'Drum trolley pushed by hand across the floor' },
+  { t0: 72, t1: 80, title: 'Fills the bin from the drum, by hand',  note: 'Scooped out of the drum a bin at a time' },
+  { t0: 80, t1: 88, title: 'Manually loads the filling machine',    note: 'Repeated lifting of the bin to the top hopper' },
+];
+const TL = new S.Timeline(STEPS);
+
+// ── Renderer / scene ─────────────────────────────────────────────────────
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0f1319);
+scene.fog = new THREE.Fog(0x0f1319, 34, 66);
+
+const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.5, 120);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+
+P.addLighting(scene, renderer);
+const post = makePost(renderer, scene, camera,
+  { width: innerWidth, height: innerHeight });
+scene.add(camera);   // so the caption sprite (a camera child) renders
+const overlay = S.makeOverlay(camera, THREE);
+overlay.setAccent('#e08a4a');
+
+// ── Static plant ─────────────────────────────────────────────────────────
+scene.add(P.buildShell());
+scene.add(P.buildStairs());                        // present, but not the route
+const lift   = P.buildLift();     scene.add(lift); // used here as the passenger lift
+scene.add(P.buildRacking());
+const mixer  = P.buildMixer();    scene.add(mixer);
+const filler = P.buildFiller();   scene.add(filler);
+const term   = P.buildTerminal(); term.position.set(1.5, 0, 6.2); scene.add(term);
+
+const labels = [
+  ['WAREHOUSE · 2nd FLOOR', -10, P.MEZZ_Y + 2.2, -4],
+  ['PASSENGER LIFT',        P.LIFT_POS.x, 6.2, -7],
+  ['SAND MIXING MACHINE',   P.MIXER_POS.x, 3.5, 0],
+  ['SAND FILLING MACHINE',  P.FILLER_POS.x, 2.8, 0],
+  ['MO TERMINAL',           1.5, 2.3, 6.2],
+];
+const labelSprites = [];
+for (const [txt, x, y, z] of labels) {
+  const l = P.makeLabel(txt, { size: 0.26 });
+  l.position.set(x, y, z);
+  scene.add(l); labelSprites.push(l);
+}
+
+// ── Movable props ────────────────────────────────────────────────────────
+const op = P.makeOperator(); scene.add(op);
+
+const bagTrolley  = P.makeTrolley();     scene.add(bagTrolley);
+const drumTrolley = P.makeDrumTrolley(); scene.add(drumTrolley);
+
+const bag  = P.makeSandBag(); bag.visible = false; scene.add(bag);
+const bin  = P.makeBin();     bin.visible = false; scene.add(bin);
+const drum = P.makeBarrel();  scene.add(drum);
+
+const streamBag  = P.makeSandStream(0.085); scene.add(streamBag);
+const streamMix  = P.makeSandStream(0.10);  scene.add(streamMix);
+const streamBin  = P.makeSandStream(0.09);  scene.add(streamBin);
+const streamDrum = P.makeSandStream(0.085); scene.add(streamDrum);
+const streamFill = P.makeSandStream(0.09);  scene.add(streamFill);
+
+// ── Routes ───────────────────────────────────────────────────────────────
+const L = P.LIFT_POS, MIX = P.MIXER_POS, FILL = P.FILLER_POS;
+const LIFT_IN    = [L.x, 0, L.z];
+const RACK_STAND = [-8.6, P.MEZZ_Y, -3.1];
+const MIX_STAND  = [MIX.x + 1.9, 0, 1.35];
+const MIX_PLAT   = [MIX.x + 1.2, 0, 0.95];
+const DRUM_PARK  = [MIX.x + 2.0, 0, -1.5];
+const FILL_STAND = [FILL.x - 1.28, 0, 1.05];
+
+const TO_LIFT        = [[1.5, 0, 5.2], [-1.6, 0, 4.0], [-4.6, 0, -1.2],
+                        [L.x, 0, L.z + 2.4], LIFT_IN];
+const TO_RACK        = [[L.x, P.MEZZ_Y, L.z], [L.x, P.MEZZ_Y, L.z + 1.8], RACK_STAND];
+const TO_LIFT_LOADED = [RACK_STAND, [L.x, P.MEZZ_Y, L.z + 1.8], [L.x, P.MEZZ_Y, L.z]];
+const TO_MIXER       = [LIFT_IN, [L.x, 0, L.z + 2.2], [-3.4, 0, 0.6], MIX_STAND];
+const TO_FILLER      = [DRUM_PARK, [1.6, 0, 1.6], [4.4, 0, 2.4], [6.4, 0, 2.2], FILL_STAND];
+
+// ── Camera ───────────────────────────────────────────────────────────────
+const rig = new S.CameraRig(camera, [
+  { t:  0, pos: [ 7.2,  4.0, 14.5], target: [ 1.5, 1.4,  4.2] },
+  { t:  6, pos: [ 4.0,  3.4, 12.0], target: [-0.6, 1.4,  3.4] },
+  { t: 10, pos: [-1.2,  2.4, -0.8], target: [-5.4, 1.2, -5.6] },
+  { t: 14, pos: [-2.7,  5.05, -0.2], target: [-5.9, 4.75, -6.4] },
+  { t: 18, pos: [-4.2,  6.0,  1.6], target: [-8.8, 5.0, -3.2] },
+  { t: 24, pos: [-4.6,  5.9,  2.2], target: [-8.4, 4.9, -3.0] },
+  { t: 29, pos: [-1.7,  4.1, -1.3], target: [-5.7, 2.7, -6.2] },
+  { t: 34, pos: [ 3.2,  2.6,  5.8], target: [-2.0, 1.1,  0.6] },
+  { t: 38, pos: [ 3.0,  2.2,  5.0], target: [-0.4, 1.25, 0.7] },
+  { t: 43, pos: [ 2.3,  2.05, 4.0], target: [-0.5, 1.35, 0.3] },
+  { t: 49, pos: [ 2.7,  2.1,  4.6], target: [-0.5, 1.2,  0.2] },
+  { t: 56, pos: [ 2.3,  1.6,  3.9], target: [-0.3, 0.72, 0.8] },
+  { t: 63, pos: [ 4.8,  2.7,  7.6], target: [ 1.4, 1.0,  2.0] },
+  { t: 68, pos: [ 7.6,  3.0,  8.4], target: [ 4.8, 1.0,  2.2] },
+  { t: 72, pos: [ 9.6,  2.2,  4.6], target: [ 7.7, 1.15, 0.9] },
+  { t: 80, pos: [ 9.9,  2.3,  4.2], target: [ 8.2, 1.45, 0.5] },
+  { t: 88, pos: [10.2,  2.2,  3.9], target: [ 8.4, 1.35, 0.4] },
+]);
+
+// ── Frame state ──────────────────────────────────────────────────────────
+const portW = new THREE.Vector3(MIX.x, 1.52, MIX.z);   // open pan rim
+const _v = new THREE.Vector3();
+const fwd = (o, d) => new THREE.Vector3(
+  o.position.x + Math.sin(o.rotation.y) * d, o.position.y,
+  o.position.z + Math.cos(o.rotation.y) * d);
+
+let _lastStep = -1;
+function update(t) {
+  rig.setTime(t);
+  post.focusOn(rig.target);
+  P.updateLabels(labelSprites, camera);
+  const si = TL.indexAt(t);
+  if (si !== _lastStep) {
+    _lastStep = si;
+    overlay.set('SAND MIXING — BEFORE (manual process)',
+                `${si + 1}. ${STEPS[si].title}`, STEPS[si].note);
+  }
+  streamBag.visible = streamMix.visible = streamBin.visible =
+    streamDrum.visible = streamFill.visible = false;
+
+  term.userData.screen.material.emissiveIntensity = 0.35 + 0.5 * S.pulse(t, 0, 6, 0.7);
+  mixer.userData.lamp.material  = (t >= 46 && t < 53) ? P.MAT.green : P.MAT.red;
+  filler.userData.lamp.material = (t >= 80) ? P.MAT.green : P.MAT.red;
+  mixer.userData.rotor.rotation.y = (t >= 46 && t < 53) ? (t - 46) * 3.4 : 0;
+
+  // sand sits in the open pan from charging until it is discharged
+  mixer.userData.charge.scale.y = Math.max(0.001,
+    S.segS(t, 43.4, 45.6) * (1 - S.segS(t, 53.4, 57.6)));
+
+  // discharge door swings open on its lever while the bin is filled
+  const open = S.pulse(t, 53.2, 58.0, 0.6);
+  mixer.userData.door.rotation.x = -open * 1.1;
+  mixer.userData.lever.rotation.z = -open * 0.85;
+
+  // ---- passenger lift car ----
+  const carY = S.track(t, [[9.6, 0], [10.6, 0], [14, P.MEZZ_Y], [26.6, P.MEZZ_Y],
+                           [30, 0], [31, 0]], S.smoother);
+  lift.userData.car.position.y = carY;
+  lift.userData.lamp.material = ((t >= 10.6 && t < 14) || (t >= 26.6 && t < 30))
+    ? P.MAT.amber : P.MAT.green;
+
+  // ---- operator ----
+  let dist = 0, speed = 0, mode = 'idle';
+  if (t < 6) {
+    op.position.set(1.5, 0, 5.2); op.rotation.y = Math.PI;
+  } else if (t < 10.4) {
+    dist = S.followPath(op, TO_LIFT, S.seg(t, 6, 9.9), { turnRate: 0.25 }); speed = 1;
+  } else if (t < 14.4) {                        // riding up
+    op.position.set(L.x, carY, L.z); op.rotation.y = 0;
+  } else if (t < 24) {                          // out of the lift, over to the racking
+    dist = S.followPath(op, TO_RACK, S.seg(t, 14.4, 18.6), { turnRate: 0.3 });
+    speed = t < 18.6 ? 1 : 0;
+  } else if (t < 26.7) {                        // pushing the loaded trolley to the lift
+    dist = S.followPath(op, TO_LIFT_LOADED, S.seg(t, 24, 26.5), { turnRate: 0.3 });
+    speed = 1; mode = 'push';
+  } else if (t < 30.5) {                        // riding down with the trolley
+    op.position.set(L.x, carY, L.z); op.rotation.y = 0; mode = 'push';
+  } else if (t < 38) {                          // pushing across the floor
+    dist = S.followPath(op, TO_MIXER, S.seg(t, 30.5, 36.6), { turnRate: 0.3 });
+    speed = t < 36.6 ? 1 : 0; mode = 'push';
+  } else if (t < 46) {                          // steps up to the pan and tips the bag over the rim
+    const u = S.segS(t, 38, 39.6);
+    op.position.set(MIX_STAND[0] + (MIX_PLAT[0] - MIX_STAND[0]) * u, 0,
+                    MIX_STAND[2] + (MIX_PLAT[2] - MIX_STAND[2]) * u);
+    op.rotation.y = -Math.PI / 2 + 0.5;
+  } else if (t < 63) {                          // down to the discharge, bin work
+    const u = S.segS(t, 52.4, 54);
+    op.position.set(MIX_PLAT[0] + (MIX.x + 1.35 - MIX_PLAT[0]) * u, 0,
+                    MIX_PLAT[2] + (1.5 - MIX_PLAT[2]) * u);
+    op.rotation.y = -Math.PI / 2;
+  } else if (t < 72) {                          // pushing the drum trolley
+    dist = S.followPath(op, TO_FILLER, S.seg(t, 63.4, 70.4), { turnRate: 0.3 });
+    speed = t < 70.4 ? 1 : 0; mode = 'push';
+  } else {
+    const su = S.segS(t, 79.6, 80.8);
+    op.position.set(FILL_STAND[0] + 0.18 * su, 0.22 * su, FILL_STAND[2] - 0.32 * su);
+    op.rotation.y = Math.PI / 2;
+  }
+
+  P.poseWalk(op, dist * 2.4, speed);
+  if (mode === 'push')          P.posePush(op, 1);
+  else if (t >= 16 && t < 24)   P.poseCarry(op, S.pulse(t, 16.4, 23.4, 1.0));
+  else if (t >= 38 && t < 45.6) P.poseCarry(op, S.pulse(t, 39.6, 45.2, 0.9));
+  else if (t >= 53 && t < 63)   P.poseCarry(op, 0.8);
+  else if (t >= 72 && t < 80)   P.poseCarry(op, 0.85);
+  else if (t >= 80)             P.poseLift(op, S.segS(t, 80.4, 82.8));
+
+  // ---- bag trolley ----
+  if (t < 24) {
+    bagTrolley.position.set(-7.2, P.MEZZ_Y, -3.6); bagTrolley.rotation.y = 1.9;
+  } else if (t < 26.7) {
+    bagTrolley.position.copy(fwd(op, 1.02)); bagTrolley.rotation.y = op.rotation.y;
+  } else if (t < 30.5) {
+    bagTrolley.position.set(L.x, carY, L.z + 0.45); bagTrolley.rotation.y = 0;
+  } else if (t < 38) {
+    bagTrolley.position.copy(fwd(op, 1.02)); bagTrolley.rotation.y = op.rotation.y;
+  } else {
+    bagTrolley.position.set(MIX_STAND[0] + 0.5, 0, MIX_STAND[2] + 0.55);
+    bagTrolley.rotation.y = 2.2;
+  }
+
+  // ---- sand bag: racking -> trolley -> charge port ----
+  bag.visible = t >= 16 && t < 45.8;
+  if (bag.visible) {
+    if (t < 24) {
+      const u = S.segS(t, 16.6, 22.6);
+      _v.set(-9.6, P.MEZZ_Y + 1.15, -3.3);
+      bag.position.lerpVectors(_v, new THREE.Vector3(
+        bagTrolley.position.x, bagTrolley.position.y + 0.55, bagTrolley.position.z + 0.12), u);
+      bag.rotation.set(0, 0.5 * u, 0);
+    } else if (t < 39.4) {
+      bag.position.set(bagTrolley.position.x, bagTrolley.position.y + 0.55, bagTrolley.position.z + 0.12);
+      bag.rotation.set(0, bagTrolley.rotation.y, 0);
+    } else {
+      const lf  = S.segS(t, 39.4, 42.4);
+      const tip = S.segS(t, 42.4, 44.9);
+      _v.set(op.position.x + 0.5, op.position.y + 1.04, op.position.z);
+      bag.position.lerpVectors(_v, portW.clone().add(new THREE.Vector3(0.42, 0.34, 0)), lf);
+      bag.rotation.set(0, 0, -tip * 1.5);
+    }
+  }
+  if (t >= 43.3 && t < 45.5) {
+    streamBag.visible = true;
+    P.setStream(streamBag, portW.x, portW.z, portW.y + 0.3, portW.y - 0.15);
+  }
+
+  // ---- drum rides its own trolley, pushed by hand ----
+  if (t < 63.4) {
+    drumTrolley.position.fromArray(DRUM_PARK); drumTrolley.rotation.y = 1.6;
+  } else if (t < 72) {
+    drumTrolley.position.copy(fwd(op, 0.98)); drumTrolley.rotation.y = op.rotation.y;
+  } else {
+    drumTrolley.position.set(FILL_STAND[0] - 0.75, 0, FILL_STAND[2] + 0.35);
+    drumTrolley.rotation.y = 1.6;
+  }
+  drum.position.set(drumTrolley.position.x, drumTrolley.position.y + 0.34, drumTrolley.position.z + 0.08);
+  drum.rotation.y = drumTrolley.rotation.y;
+  drum.userData.fill.scale.y = Math.max(0.001,
+    S.segS(t, 59.0, 61.8) * (1 - S.segS(t, 73.6, 78.6)));
+
+  // ---- bin: hopper -> bin -> drum, then drum -> bin -> filler ----
+  const spoutW = new THREE.Vector3(MIX.x, mixer.userData.spoutY, MIX.z);
+  bin.visible = (t >= 53 && t < 63) || (t >= 72);
+  if (t >= 53 && t < 63) {
+    if (t < 58) {
+      bin.position.set(MIX.x, 0.02, MIX.z + 0.02); bin.rotation.z = 0;
+      bin.userData.fill.scale.y = Math.max(0.001, S.segS(t, 53.6, 57.6));
+      if (t >= 53.6 && t < 57.6) {
+        streamMix.visible = true;
+        P.setStream(streamMix, spoutW.x, spoutW.z, spoutW.y, 0.42);
+      }
+    } else {
+      const u   = S.segS(t, 58, 59.8);
+      const tip = S.segS(t, 60.0, 61.9);
+      _v.set(MIX.x, 0.02, MIX.z + 0.02);
+      bin.position.lerpVectors(_v, new THREE.Vector3(
+        drum.position.x - 0.06, 1.58, drum.position.z + 0.40), u);
+      bin.rotation.z = -tip * 2.0;
+      bin.userData.fill.scale.y = Math.max(0.001, 1 - tip);
+      if (t >= 60.4 && t < 62.0) {
+        streamBin.visible = true;
+        P.setStream(streamBin, drum.position.x, drum.position.z, 1.45, 1.14);
+      }
+    }
+  } else if (t >= 72) {
+    const rimY = FILL.y + filler.userData.hopperRimY;
+    if (t < 80) {
+      // scooping sand out of the drum into the bin, by hand
+      const u = S.segS(t, 73.6, 78.4);
+      bin.position.set(drum.position.x - 0.12, 1.46 - Math.sin(u * Math.PI * 2) * 0.2,
+                       drum.position.z + 0.42);
+      bin.rotation.z = 0;
+      bin.userData.fill.scale.y = Math.max(0.001, S.segS(t, 74.2, 78.6));
+      if (t >= 74.2 && t < 78.4) {
+        streamDrum.visible = true;
+        P.setStream(streamDrum, drum.position.x - 0.12, drum.position.z + 0.42, 1.52, 1.32);
+      }
+    } else {
+      // A deliberate pour, not a throw. The bin stays in the operator's hands
+      // throughout: it rises as the arms lift, is carried in to the hopper lip,
+      // held steady there, and only then tilts slowly while the sand runs out.
+      // It previously lerped to the hopper along its own path and snapped over
+      // in 2.6s, which read as the drum being flung at the machine.
+      const raise = S.segS(t, 80.4, 82.6);    // lift to chest height
+      const carry = S.segS(t, 82.8, 84.6);    // step in to the lip
+      const tip   = S.segS(t, 85.2, 87.8);    // tilt and pour
+
+      const handY = 1.06 + raise * 0.66;
+      const start = new THREE.Vector3(drum.position.x - 0.12, 1.46, drum.position.z + 0.42);
+      const held  = new THREE.Vector3(op.position.x + 0.3, op.position.y + handY, op.position.z - 0.08);
+      const atLip = new THREE.Vector3(FILL.x - 0.66, rimY + 0.14, FILL.z + 0.30);
+
+      _v.lerpVectors(start, held, raise);
+      bin.position.lerpVectors(_v, atLip, carry);
+      // tip about the lip rather than spinning on the spot
+      bin.rotation.z = tip * 1.9;
+      bin.position.x += tip * 0.16;
+      bin.position.y -= tip * 0.04;
+
+      bin.userData.fill.scale.y = Math.max(0.001, 1 - S.segS(t, 85.6, 87.6));
+      if (t >= 85.8 && t < 88.0) {
+        streamFill.visible = true;
+        P.setStream(streamFill, FILL.x - 0.5, FILL.z + 0.22, rimY + 0.06, rimY - 0.26);
+      }
+      filler.userData.hopFill.scale.y = Math.max(0.001, S.segS(t, 85.9, 88.0));
+      filler.userData.fuses.forEach((f, i) => {
+        f.scale.y = Math.max(0.001, S.segS(t, 86.3 + i * 0.3, 87.9 + i * 0.3));
+      });
+    }
+  }
+}
+
+// ── Playback ─────────────────────────────────────────────────────────────
+let t = 0, playing = true, last = performance.now();
+
+const ui = S.buildUI(document.getElementById('ui'), {
+  title: 'Sand Mixing — BEFORE',
+  subtitle: 'Current manual process · trolleys pushed by hand, lift, repeated bin handling',
+  timeline: TL,
+  accent: '#e08a4a',
+  onSeek: (v) => { t = Math.max(0, Math.min(TL.duration - 0.001, v)); playing = false; draw(); },
+  onToggle: () => { playing = !playing; last = performance.now(); },
+  onStep: (d) => {
+    const i = Math.max(0, Math.min(STEPS.length - 1, TL.indexAt(t) + d));
+    t = STEPS[i].t0 + 0.01; playing = false; draw();
+  },
+});
+
+function draw() { update(t); post.composer.render(); overlay.render(renderer); ui.sync(t, playing); }
+
+function loop(now) {
+  requestAnimationFrame(loop);
+  const dt = Math.min((now - last) / 1000, 0.05);
+  last = now;
+  if (playing) { t += dt; if (t >= TL.duration) { t = 0; } }
+  draw();
+}
+
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+  post.setSize(innerWidth, innerHeight);
+});
+addEventListener('keydown', (e) => {
+  if (e.code === 'Space') { e.preventDefault(); playing = !playing; last = performance.now(); }
+});
+
+window.__post = post;
+window.__scene = {
+  duration: TL.duration,
+  steps: STEPS,
+  setTime: (v) => { t = v; playing = false; update(v); },
+  render: () => { post.composer.render(); overlay.render(renderer); },
+  hideUI: () => { document.getElementById('ui').style.display = 'none'; },
+  filmMode: (on) => {
+    document.getElementById('ui').style.display = on ? 'none' : '';
+    overlay.setVisible(!!on);
+    _lastStep = -1;
+  },
+  showUI: () => { document.getElementById('ui').style.display = ''; },
+};
+
+draw();
+requestAnimationFrame(() => requestAnimationFrame(() => {
+  document.getElementById('loader').classList.add('hidden');
+  window.__ready = true;
+}));
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

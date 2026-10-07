@@ -1,0 +1,904 @@
+# Posting order. One concept per video; the daily job takes the first topic
+# that has never been rendered. Reorder freely before a topic is rendered.
+# `notes` steer the script (and the Claude generator when no script exists yet).
+topics:
+- id: '001'
+  slug: inflation
+  category: basics
+  title_en: What is Inflation?
+  title_ta: பணவீக்கம் என்றால் என்ன?
+  notes: Purchasing power, CPI, real return.
+- id: '002'
+  slug: compounding
+  category: basics
+  title_en: The Power of Compounding
+  title_ta: கூட்டு வட்டியின் சக்தி
+  notes: Simple vs compound interest, time as the key ingredient.
+- id: '003'
+  slug: needs-vs-wants
+  category: savings
+  title_en: Needs vs Wants
+  title_ta: தேவைகள் vs விருப்பங்கள்
+  notes: How to classify spending; the foundation of a budget.
+- id: '004'
+  slug: 50-30-20-rule
+  category: savings
+  title_en: The 50-30-20 Budget Rule
+  title_ta: 50-30-20 பட்ஜெட் விதி
+  notes: Needs/wants/savings split, adapting it to Indian incomes.
+- id: '005'
+  slug: emergency-fund
+  category: savings
+  title_en: Emergency Fund
+  title_ta: அவசர கால நிதி
+  notes: Why 6 months of expenses, where to keep it (liquid, safe).
+- id: '006'
+  slug: pay-yourself-first
+  category: savings
+  title_en: Pay Yourself First
+  title_ta: முதலில் உங்களுக்கே சம்பளம்
+  notes: Save first, spend the rest; automating savings.
+- id: '007'
+  slug: rule-of-72
+  category: basics
+  title_en: The Rule of 72
+  title_ta: 72 விதி
+  notes: Quick doubling-time estimate; works for inflation too.
+- id: 008
+  slug: assets-vs-liabilities
+  category: basics
+  title_en: Assets vs Liabilities
+  title_ta: சொத்து vs பொறுப்பு
+  notes: What puts money in vs takes money out; net worth link.
+- id: 009
+  slug: good-vs-bad-debt
+  category: basics
+  title_en: Good Debt vs Bad Debt
+  title_ta: நல்ல கடன் vs கெட்ட கடன்
+  notes: Debt that builds value vs debt for consumption; interest cost.
+- id: '010'
+  slug: credit-score
+  category: basics
+  title_en: What is a Credit Score?
+  title_ta: கிரெடிட் ஸ்கோர் என்றால் என்ன?
+  notes: Credit bureaus, what affects the score, why it matters.
+- id: '011'
+  slug: credit-card-trap
+  category: basics
+  title_en: How Credit Cards Really Work
+  title_ta: கிரெடிட் கார்டு எப்படி வேலை செய்கிறது?
+  notes: Interest-free period, minimum due trap, high interest.
+- id: '012'
+  slug: emi-explained
+  category: basics
+  title_en: EMI Explained
+  title_ta: EMI என்றால் என்ன?
+  notes: Principal + interest, early EMIs are mostly interest, formula.
+- id: '013'
+  slug: what-is-insurance
+  category: insurance
+  title_en: What is Insurance?
+  title_ta: காப்பீடு என்றால் என்ன?
+  notes: Risk pooling; insurance protects, it is not an investment.
+- id: '014'
+  slug: term-insurance
+  category: insurance
+  title_en: Term Insurance
+  title_ta: டேர்ம் இன்சூரன்ஸ்
+  notes: Pure protection, low premium, no maturity benefit, who needs it.
+- id: '015'
+  slug: health-insurance
+  category: insurance
+  title_en: Health Insurance Basics
+  title_ta: ஹெல்த் இன்சூரன்ஸ் அடிப்படைகள்
+  notes: Why it's needed even with employer cover; hospital bills.
+- id: '016'
+  slug: financial-scams
+  category: basics
+  title_en: How to Spot Financial Scams
+  title_ta: நிதி மோசடிகளை அடையாளம் காண்பது எப்படி?
+  notes: Ponzi schemes, 'guaranteed high returns', pressure tactics, fake apps; red flags.
+- id: '017'
+  slug: fixed-deposit
+  category: savings
+  title_en: How a Fixed Deposit Works
+  title_ta: ஃபிக்ஸட் டெபாசிட் (FD) எப்படி வேலை செய்கிறது?
+  notes: Interest, tenure, premature withdrawal, deposit insurance (DICGC) up to the limit, taxation of interest.
+- id: 018
+  slug: recurring-deposit
+  category: savings
+  title_en: Recurring Deposit
+  title_ta: ரெக்கரிங் டெபாசிட் (RD)
+  notes: Monthly deposits, use for short-term goals.
+- id: 019
+  slug: ppf
+  category: savings
+  title_en: Public Provident Fund (PPF)
+  title_ta: பொது வருங்கால வைப்பு நிதி (PPF)
+  notes: 15-year lock-in, government-backed, tax-free (EEE); rate revised quarterly.
+- id: '020'
+  slug: risk-vs-return
+  category: investing
+  title_en: Risk vs Return
+  title_ta: அபாயம் vs வருமானம்
+  notes: Higher return comes with higher risk; risk ladder of products.
+- id: '021'
+  slug: diversification
+  category: investing
+  title_en: Diversification
+  title_ta: பல்வகைப்படுத்தல் (Diversification)
+  notes: Don't put all eggs in one basket; reduces single-point risk.
+- id: '022'
+  slug: asset-classes
+  category: investing
+  title_en: Asset Classes
+  title_ta: சொத்து வகைகள் (Asset Classes)
+  notes: 'Equity, debt, gold, real estate, cash: what each does.'
+- id: '023'
+  slug: start-early
+  category: investing
+  title_en: Why Start Investing Early?
+  title_ta: ஏன் சீக்கிரம் முதலீடு தொடங்க வேண்டும்?
+  notes: Cost of delay with a hypothetical comparison.
+- id: '024'
+  slug: mutual-fund
+  category: investing
+  title_en: What is a Mutual Fund?
+  title_ta: மியூச்சுவல் ஃபண்ட் என்றால் என்ன?
+  notes: Pooling, fund manager, units, SEBI regulation, market risk.
+- id: '025'
+  slug: sip
+  category: investing
+  title_en: What is SIP?
+  title_ta: SIP என்றால் என்ன?
+  notes: Fixed monthly investing, discipline, not a product itself.
+- id: '026'
+  slug: what-is-a-share
+  category: stocks
+  title_en: What is a Share?
+  title_ta: பங்கு (Share) என்றால் என்ன?
+  notes: Part-ownership of a company; how shareholders benefit and bear risk.
+- id: '027'
+  slug: stock-market
+  category: stocks
+  title_en: What is the Stock Market?
+  title_ta: பங்குச் சந்தை என்றால் என்ன?
+  notes: NSE and BSE, buyers meet sellers, regulated by SEBI.
+- id: 028
+  slug: market-index
+  category: stocks
+  title_en: What is a Market Index?
+  title_ta: சந்தைக் குறியீடு (Index) என்றால் என்ன?
+  notes: Nifty 50 and Sensex as baskets; what 'market went up' means. No levels.
+- id: 029
+  slug: life-cover-amount
+  category: insurance
+  title_en: How Much Life Cover Do You Need?
+  title_ta: எவ்வளவு லைஃப் கவர் தேவை?
+  notes: Income replacement idea, liabilities, goals; rules of thumb as rough guides.
+- id: '030'
+  slug: insurance-vs-investment
+  category: insurance
+  title_en: Why Mixing Insurance and Investment Costs You
+  title_ta: இன்சூரன்ஸையும் முதலீட்டையும் ஏன் கலக்கக் கூடாது?
+  notes: Traditional/endowment plans vs separate term + investment; compare with hypothetical numbers.
+- id: '031'
+  slug: net-worth
+  category: basics
+  title_en: How to Calculate Your Net Worth
+  title_ta: உங்கள் நிகர மதிப்பு (Net Worth) கணக்கிடுவது எப்படி?
+  notes: Assets minus liabilities; track yearly.
+- id: '032'
+  slug: nav
+  category: investing
+  title_en: What is NAV?
+  title_ta: NAV என்றால் என்ன?
+  notes: Per-unit value; low NAV is not 'cheap'.
+- id: '033'
+  slug: health-insurance-terms
+  category: insurance
+  title_en: Health Insurance Terms Made Simple
+  title_ta: ஹெல்த் இன்சூரன்ஸ் சொற்கள் எளிதாக
+  notes: Sum insured, premium, waiting period, co-pay, room-rent limit, deductible.
+- id: '034'
+  slug: demat-account
+  category: stocks
+  title_en: Demat and Trading Accounts
+  title_ta: டீமேட் மற்றும் டிரேடிங் அக்கவுண்ட்
+  notes: What each does, depositories (NSDL, CDSL), KYC.
+- id: '035'
+  slug: lumpsum-vs-sip
+  category: investing
+  title_en: Lumpsum vs SIP
+  title_ta: லம்ப்சம் vs SIP
+  notes: When each fits; timing risk; no 'which is better' claim.
+- id: '036'
+  slug: time-value-of-money
+  category: basics
+  title_en: Time Value of Money
+  title_ta: பணத்தின் கால மதிப்பு
+  notes: A rupee today vs a rupee later; present and future value.
+- id: '037'
+  slug: floater-vs-individual
+  category: insurance
+  title_en: Family Floater vs Individual Health Cover
+  title_ta: ஃபேமிலி ஃப்ளோட்டர் vs தனிநபர் பாலிசி
+  notes: Shared sum insured; ages; when each suits.
+- id: 038
+  slug: primary-vs-secondary
+  category: stocks
+  title_en: Primary vs Secondary Market
+  title_ta: பிரைமரி vs செகண்டரி சந்தை
+  notes: Company raises money vs investors trade among themselves.
+- id: 039
+  slug: direct-vs-regular
+  category: investing
+  title_en: Direct vs Regular Plans and Expense Ratio
+  title_ta: டைரக்ட் vs ரெகுலர் பிளான் & எக்ஸ்பென்ஸ் ரேஷியோ
+  notes: Commission, expense ratio impact over decades (hypothetical).
+- id: '040'
+  slug: ipo
+  category: stocks
+  title_en: What is an IPO?
+  title_ta: IPO என்றால் என்ன?
+  notes: Process, price band, lot, allotment, listing; risks; no listing-gain hype.
+- id: '041'
+  slug: fund-types
+  category: investing
+  title_en: Equity, Debt and Hybrid Funds
+  title_ta: ஈக்விட்டி, டெட், ஹைப்ரிட் ஃபண்டுகள்
+  notes: What each holds and its risk profile; SEBI categorisation.
+- id: '042'
+  slug: role-of-sebi
+  category: stocks
+  title_en: What Does SEBI Do?
+  title_ta: SEBI என்ன செய்கிறது?
+  notes: Regulator's role, investor protection, SCORES complaints.
+- id: '043'
+  slug: verify-adviser
+  category: stocks
+  title_en: How to Check if an Adviser is SEBI-Registered
+  title_ta: SEBI பதிவு பெற்ற ஆலோசகரா என்று சரிபார்ப்பது எப்படி?
+  notes: RIA vs RA vs distributor; SEBI website registry; red flags of fake advisers.
+- id: '044'
+  slug: index-funds
+  category: investing
+  title_en: What is an Index Fund?
+  title_ta: இண்டெக்ஸ் ஃபண்ட் என்றால் என்ன?
+  notes: Tracks an index, low cost, tracking error.
+- id: '045'
+  slug: super-top-up
+  category: insurance
+  title_en: Super Top-Up Health Insurance
+  title_ta: சூப்பர் டாப்-அப் ஹெல்த் இன்சூரன்ஸ்
+  notes: Deductible concept; boosting cover cheaply; top-up vs super top-up.
+- id: '046'
+  slug: market-cap
+  category: stocks
+  title_en: 'Market Cap: Large, Mid and Small Cap'
+  title_ta: 'மார்க்கெட் கேப்: லார்ஜ், மிட், ஸ்மால் கேப்'
+  notes: Price x shares; SEBI's ranking-based definitions; risk differences.
+- id: '047'
+  slug: etf
+  category: investing
+  title_en: What is an ETF?
+  title_ta: ETF என்றால் என்ன?
+  notes: Exchange-traded, needs demat, liquidity, vs index fund.
+- id: 048
+  slug: nomination
+  category: basics
+  title_en: Why Nomination Matters
+  title_ta: நாமினி (Nominee) ஏன் முக்கியம்?
+  notes: Bank, demat, MF, insurance nominations; nominee vs legal heir; keep updated.
+- id: 049
+  slug: sukanya-samriddhi
+  category: savings
+  title_en: Sukanya Samriddhi Yojana
+  title_ta: சுகன்யா சம்ரித்தி யோஜனா
+  notes: 'Scheme for a girl child: eligibility, lock-in, tax status; rate revised quarterly.'
+- id: '050'
+  slug: market-vs-limit-order
+  category: stocks
+  title_en: Market Order vs Limit Order
+  title_ta: மார்க்கெட் ஆர்டர் vs லிமிட் ஆர்டர்
+  notes: Price certainty vs execution certainty.
+- id: '051'
+  slug: active-vs-passive
+  category: investing
+  title_en: Active vs Passive Investing
+  title_ta: ஆக்டிவ் vs பாசிவ் முதலீடு
+  notes: Fund manager picks vs index; cost; no claim which wins.
+- id: '052'
+  slug: epf
+  category: savings
+  title_en: Employees' Provident Fund (EPF)
+  title_ta: ஊழியர் வருங்கால வைப்பு நிதி (EPF)
+  notes: Employee and employer contributions, UAN, withdrawal rules at a high level.
+- id: '053'
+  slug: order-flow
+  category: stocks
+  title_en: What Happens When You Place an Order?
+  title_ta: ஆர்டர் போட்டதும் என்ன நடக்கிறது?
+  notes: Broker, exchange, clearing corporation, depository; T+1 settlement.
+- id: '054'
+  slug: cashless-vs-reimbursement
+  category: insurance
+  title_en: Cashless vs Reimbursement Claims
+  title_ta: கேஷ்லெஸ் vs ரீஇம்பர்ஸ்மென்ட் க்ளெய்ம்
+  notes: Network hospitals, TPA, documents.
+- id: '055'
+  slug: rupee-cost-averaging
+  category: investing
+  title_en: Rupee Cost Averaging
+  title_ta: ரூபாய் சராசரி விலை (Rupee Cost Averaging)
+  notes: More units when prices fall; hypothetical table.
+- id: '056'
+  slug: bid-ask-spread
+  category: stocks
+  title_en: Bid, Ask and Spread
+  title_ta: பிட், ஆஸ்க் மற்றும் ஸ்ப்ரெட்
+  notes: Order book basics; liquidity and spread.
+- id: '057'
+  slug: elss
+  category: investing
+  title_en: 'ELSS: Tax-Saving Mutual Funds'
+  title_ta: 'ELSS: வரி சேமிப்பு மியூச்சுவல் ஃபண்ட்'
+  notes: 3-year lock-in, 80C under the old regime, equity risk.
+- id: 058
+  slug: dividends
+  category: stocks
+  title_en: What is a Dividend?
+  title_ta: டிவிடெண்ட் என்றால் என்ன?
+  notes: Profit sharing, record date, ex-date, taxed as income, price adjusts.
+- id: 059
+  slug: exit-load
+  category: investing
+  title_en: What is Exit Load?
+  title_ta: எக்ஸிட் லோட் என்றால் என்ன?
+  notes: Charge on early redemption; read the scheme document.
+- id: '060'
+  slug: bull-vs-bear
+  category: stocks
+  title_en: Bull Market vs Bear Market
+  title_ta: புல் மார்க்கெட் vs பியர் மார்க்கெட்
+  notes: Rising vs falling phases; cycles are normal.
+- id: '061'
+  slug: liquidity
+  category: basics
+  title_en: What is Liquidity?
+  title_ta: லிக்விடிட்டி (பணப்புழக்கம்) என்றால் என்ன?
+  notes: How fast an asset becomes cash without loss; examples.
+- id: '062'
+  slug: split-vs-bonus
+  category: stocks
+  title_en: Stock Split vs Bonus Issue
+  title_ta: ஸ்டாக் ஸ்ப்ளிட் vs போனஸ் இஷ்யூ
+  notes: Both raise share count; value unchanged; hypothetical example.
+- id: '063'
+  slug: debt-funds
+  category: investing
+  title_en: Debt Funds and Interest Rate Risk
+  title_ta: டெட் ஃபண்டுகளும் வட்டி விகித அபாயமும்
+  notes: Bond prices vs interest rates, credit risk, duration.
+- id: '064'
+  slug: pa-and-critical-illness
+  category: insurance
+  title_en: Personal Accident and Critical Illness Cover
+  title_ta: பர்சனல் ஆக்ஸிடென்ட் & கிரிட்டிக்கல் இல்னஸ் கவர்
+  notes: Lump-sum payouts; how they differ from health insurance.
+- id: '065'
+  slug: volatility
+  category: stocks
+  title_en: What is Volatility?
+  title_ta: வோலட்டிலிட்டி (ஏற்ற இறக்கம்) என்றால் என்ன?
+  notes: Price swings; volatility is not the same as loss; time horizon.
+- id: '066'
+  slug: gold-investing
+  category: investing
+  title_en: Ways to Invest in Gold
+  title_ta: தங்கத்தில் முதலீடு செய்யும் வழிகள்
+  notes: Jewellery vs coins vs gold ETFs/funds; making charges, storage, purity.
+- id: '067'
+  slug: invest-trade-speculate
+  category: stocks
+  title_en: Investing vs Trading vs Speculation
+  title_ta: முதலீடு vs டிரேடிங் vs ஊகவணிகம்
+  notes: Time horizon, basis of decisions, risk.
+- id: 068
+  slug: nps
+  category: investing
+  title_en: National Pension System (NPS)
+  title_ta: தேசிய ஓய்வூதியத் திட்டம் (NPS)
+  notes: Retirement account, tiers, annuity at exit, PFRDA.
+- id: 069
+  slug: behavioural-biases
+  category: investing
+  title_en: Money Mistakes Our Brain Makes
+  title_ta: நம் மூளை செய்யும் பண தவறுகள்
+  notes: Herd mentality, loss aversion, overconfidence, recency.
+- id: '070'
+  slug: vehicle-insurance
+  category: insurance
+  title_en: 'Vehicle Insurance: Third-Party vs Comprehensive'
+  title_ta: 'வாகனக் காப்பீடு: தேர்ட் பார்ட்டி vs காம்ப்ரிஹென்சிவ்'
+  notes: Mandatory third-party cover; own damage; NCB; add-ons.
+- id: '071'
+  slug: asset-allocation
+  category: investing
+  title_en: What is Asset Allocation?
+  title_ta: அசெட் அலோகேஷன் என்றால் என்ன?
+  notes: Mix across asset classes by goal/horizon/risk; no prescribed mix.
+- id: '072'
+  slug: buyback
+  category: stocks
+  title_en: What is a Share Buyback?
+  title_ta: ஷேர் பைபேக் என்றால் என்ன?
+  notes: Company buys its own shares; reasons; tender vs open market.
+- id: '073'
+  slug: cagr
+  category: investing
+  title_en: CAGR vs Absolute Return
+  title_ta: CAGR vs அப்சல்யூட் ரிட்டர்ன்
+  notes: Annualising growth; hypothetical example.
+- id: '074'
+  slug: fundamental-analysis
+  category: fundamental
+  title_en: What is Fundamental Analysis?
+  title_ta: ஃபண்டமென்டல் அனாலிசிஸ் என்றால் என்ன?
+  notes: Studying the business behind the share; price vs value.
+- id: '075'
+  slug: rebalancing
+  category: investing
+  title_en: What is Portfolio Rebalancing?
+  title_ta: போர்ட்ஃபோலியோ ரீபேலன்சிங் என்றால் என்ன?
+  notes: Drift from target mix, bringing it back; hypothetical.
+- id: '076'
+  slug: annual-report
+  category: fundamental
+  title_en: What's Inside an Annual Report?
+  title_ta: ஆண்டறிக்கையில் என்ன இருக்கும்?
+  notes: Chairman's letter, MD&A, financial statements, notes, auditor's report.
+- id: '077'
+  slug: circuit-limits
+  category: stocks
+  title_en: What are Circuit Limits?
+  title_ta: சர்க்யூட் லிமிட் என்றால் என்ன?
+  notes: Price bands, market-wide circuit breakers; why they exist.
+- id: 078
+  slug: profit-and-loss
+  category: fundamental
+  title_en: Reading a Profit & Loss Statement
+  title_ta: லாப நஷ்டக் கணக்கை (P&L) படிப்பது எப்படி?
+  notes: Revenue, expenses, EBITDA, PAT with a hypothetical shop.
+- id: 079
+  slug: goal-based-investing
+  category: investing
+  title_en: Goal-Based Investing
+  title_ta: இலக்கு சார்ந்த முதலீடு
+  notes: Goal, amount, time; inflation-adjusted target.
+- id: 080
+  slug: balance-sheet
+  category: fundamental
+  title_en: Reading a Balance Sheet
+  title_ta: பேலன்ஸ் ஷீட்டைப் படிப்பது எப்படி?
+  notes: Assets = liabilities + equity; hypothetical company.
+- id: 081
+  slug: retirement-corpus
+  category: investing
+  title_en: How Much Do You Need to Retire?
+  title_ta: ஓய்வுக்கு எவ்வளவு பணம் தேவை?
+  notes: Expenses, inflation, years in retirement; rules of thumb and their limits.
+- id: 082
+  slug: xirr
+  category: investing
+  title_en: What is XIRR?
+  title_ta: XIRR என்றால் என்ன?
+  notes: Returns with multiple cash flows like SIP; why CAGR doesn't fit.
+- id: 083
+  slug: cash-flow-statement
+  category: fundamental
+  title_en: Reading a Cash Flow Statement
+  title_ta: கேஷ் ஃப்ளோ ஸ்டேட்மென்ட்டைப் படிப்பது எப்படி?
+  notes: Operating, investing, financing cash flows; profit vs cash.
+- id: 084
+  slug: fii-dii
+  category: stocks
+  title_en: Who are FIIs and DIIs?
+  title_ta: FII மற்றும் DII யார்?
+  notes: Foreign and domestic institutions; flows; not trading signals.
+- id: 085
+  slug: margins
+  category: fundamental
+  title_en: Operating Margin and Net Margin
+  title_ta: ஆபரேட்டிங் மார்ஜின் & நெட் மார்ஜின்
+  notes: Profitability ratios; hypothetical comparison.
+- id: 086
+  slug: capital-gains-tax
+  category: investing
+  title_en: Capital Gains Tax Basics
+  title_ta: கேபிடல் கெயின்ஸ் வரி அடிப்படைகள்
+  notes: Short vs long term, holding periods; rates change, check current rules.
+- id: 087
+  slug: eps
+  category: fundamental
+  title_en: What is EPS?
+  title_ta: EPS என்றால் என்ன?
+  notes: Profit per share; dilution.
+- id: 088
+  slug: intraday-risks
+  category: stocks
+  title_en: 'Intraday Trading: Know the Risks'
+  title_ta: 'இன்ட்ராடே டிரேடிங்: அபாயங்களை அறிந்துகொள்ளுங்கள்'
+  notes: Square-off, leverage, costs, SEBI data on losses.
+- id: 089
+  slug: pe-ratio
+  category: fundamental
+  title_en: What is the P/E Ratio?
+  title_ta: P/E ரேஷியோ என்றால் என்ன?
+  notes: Price per rupee of earnings; why 'low P/E' isn't automatically cheap.
+- id: 090
+  slug: fomo-and-panic
+  category: stocks
+  title_en: FOMO and Panic Selling
+  title_ta: FOMO மற்றும் பயத்தில் விற்பது
+  notes: Emotional cycle of markets; having a plan.
+- id: 091
+  slug: pb-ratio
+  category: fundamental
+  title_en: What is the P/B Ratio?
+  title_ta: P/B ரேஷியோ என்றால் என்ன?
+  notes: Price vs book value; where it's useful (banks) and limits.
+- id: 092
+  slug: real-estate-vs-financial
+  category: investing
+  title_en: Real Estate vs Financial Assets
+  title_ta: ரியல் எஸ்டேட் vs நிதிச் சொத்துகள்
+  notes: Liquidity, ticket size, costs, diversification.
+- id: 093
+  slug: roe
+  category: fundamental
+  title_en: What is ROE?
+  title_ta: ROE என்றால் என்ன?
+  notes: Return on shareholders' money; debt can inflate it.
+- id: 094
+  slug: technical-analysis
+  category: technical
+  title_en: What is Technical Analysis?
+  title_ta: டெக்னிக்கல் அனாலிசிஸ் என்றால் என்ன?
+  notes: Price and volume patterns; probabilities not certainties; limits.
+- id: 095
+  slug: roce
+  category: fundamental
+  title_en: What is ROCE?
+  title_ta: ROCE என்றால் என்ன?
+  notes: Return on all capital employed; vs ROE.
+- id: 096
+  slug: candlestick-basics
+  category: technical
+  title_en: How to Read a Candlestick
+  title_ta: கேண்டில்ஸ்டிக்கைப் படிப்பது எப்படி?
+  notes: Open, high, low, close; green vs red; wicks.
+- id: 097
+  slug: debt-to-equity
+  category: fundamental
+  title_en: Debt-to-Equity Ratio
+  title_ta: கடன்-பங்கு மூலதன விகிதம் (Debt-to-Equity)
+  notes: Leverage of a company; industry context.
+- id: 098
+  slug: support-resistance
+  category: technical
+  title_en: Support and Resistance
+  title_ta: சப்போர்ட் மற்றும் ரெசிஸ்டன்ஸ்
+  notes: Zones where buying/selling showed up before; they can break.
+- id: 099
+  slug: dividend-yield
+  category: fundamental
+  title_en: What is Dividend Yield?
+  title_ta: டிவிடெண்ட் யீல்ட் என்றால் என்ன?
+  notes: Dividend / price; high yield traps.
+- id: '100'
+  slug: trends
+  category: technical
+  title_en: Trends and Trendlines
+  title_ta: டிரெண்ட் மற்றும் டிரெண்ட்லைன்
+  notes: Higher highs/lows, downtrend, sideways.
+- id: '101'
+  slug: free-cash-flow
+  category: fundamental
+  title_en: What is Free Cash Flow?
+  title_ta: ஃப்ரீ கேஷ் ஃப்ளோ என்றால் என்ன?
+  notes: Operating cash flow minus capex; why it matters.
+- id: '102'
+  slug: volume
+  category: technical
+  title_en: What Does Volume Tell You?
+  title_ta: வால்யூம் என்ன சொல்கிறது?
+  notes: Participation behind a move; volume confirmation.
+- id: '103'
+  slug: moat
+  category: fundamental
+  title_en: What is an Economic Moat?
+  title_ta: எகனாமிக் மோட் (Moat) என்றால் என்ன?
+  notes: Brand, network effects, cost advantage, switching costs; generic examples.
+- id: '104'
+  slug: moving-averages
+  category: technical
+  title_en: 'Moving Averages: SMA and EMA'
+  title_ta: 'மூவிங் ஆவரேஜ்: SMA மற்றும் EMA'
+  notes: Smoothing price; lag; EMA weights recent prices.
+- id: '105'
+  slug: promoter-holding
+  category: fundamental
+  title_en: Promoter Holding and Pledging
+  title_ta: ப்ரமோட்டர் ஹோல்டிங் மற்றும் பிளெட்ஜிங்
+  notes: Shareholding pattern; why pledged shares are a risk signal.
+- id: '106'
+  slug: doji
+  category: technical
+  title_en: The Doji Candle
+  title_ta: டோஜி கேண்டில்
+  notes: Open ≈ close; indecision; needs context.
+- id: '107'
+  slug: intrinsic-value
+  category: fundamental
+  title_en: Intrinsic Value and Margin of Safety
+  title_ta: இன்ட்ரின்சிக் வேல்யூ & மார்ஜின் ஆஃப் சேஃப்டி
+  notes: Value estimate vs price; buffer for errors; hypothetical.
+- id: '108'
+  slug: hammer-shooting-star
+  category: technical
+  title_en: Hammer and Shooting Star
+  title_ta: ஹேமர் மற்றும் ஷூட்டிங் ஸ்டார்
+  notes: Long-wick reversal candles; confirmation.
+- id: '109'
+  slug: growth-vs-value
+  category: fundamental
+  title_en: Growth vs Value Investing
+  title_ta: குரோத் vs வேல்யூ முதலீடு
+  notes: Two styles; trade-offs.
+- id: '110'
+  slug: engulfing
+  category: technical
+  title_en: Bullish and Bearish Engulfing
+  title_ta: புல்லிஷ் & பியரிஷ் என்கல்ஃபிங்
+  notes: Two-candle pattern; context and confirmation.
+- id: '111'
+  slug: red-flags
+  category: fundamental
+  title_en: Red Flags in Company Financials
+  title_ta: நிறுவனக் கணக்குகளில் எச்சரிக்கை அறிகுறிகள்
+  notes: Profit without cash, rising receivables, frequent auditor changes, heavy pledging.
+- id: '112'
+  slug: rsi
+  category: technical
+  title_en: What is RSI?
+  title_ta: RSI என்றால் என்ன?
+  notes: Momentum 0-100, overbought/oversold, can stay extreme.
+- id: '113'
+  slug: why-global
+  category: global
+  title_en: Why Invest Globally?
+  title_ta: உலகளவில் ஏன் முதலீடு செய்ய வேண்டும்?
+  notes: Diversification across economies and currencies; risks.
+- id: '114'
+  slug: macd
+  category: technical
+  title_en: What is MACD?
+  title_ta: MACD என்றால் என்ன?
+  notes: EMA difference, signal line, histogram; lagging.
+- id: '115'
+  slug: derivatives
+  category: fno
+  title_en: What are Derivatives?
+  title_ta: டெரிவேட்டிவ்ஸ் என்றால் என்ன?
+  notes: Value derived from an underlying; hedging vs speculation.
+- id: '116'
+  slug: currency-risk
+  category: global
+  title_en: 'Currency Risk: How the Rupee Affects Global Returns'
+  title_ta: 'கரன்சி அபாயம்: ரூபாய் மதிப்பு எப்படி பாதிக்கிறது?'
+  notes: Hypothetical USD/INR example both ways.
+- id: '117'
+  slug: golden-death-cross
+  category: technical
+  title_en: Golden Cross and Death Cross
+  title_ta: கோல்டன் கிராஸ் & டெத் கிராஸ்
+  notes: Moving average crossovers; lagging, false signals.
+- id: '118'
+  slug: futures
+  category: fno
+  title_en: What is a Futures Contract?
+  title_ta: ஃப்யூச்சர்ஸ் ஒப்பந்தம் என்றால் என்ன?
+  notes: Agreement to buy/sell later at today's agreed price; obligation.
+- id: '119'
+  slug: lrs
+  category: global
+  title_en: Liberalised Remittance Scheme (LRS)
+  title_ta: லிபரலைஸ்டு ரெமிட்டன்ஸ் ஸ்கீம் (LRS)
+  notes: RBI scheme, annual limit per person, permitted purposes.
+- id: '120'
+  slug: bollinger-bands
+  category: technical
+  title_en: Bollinger Bands
+  title_ta: போலிங்கர் பேண்ட்ஸ்
+  notes: Moving average ± standard deviations; squeeze; not signals alone.
+- id: '121'
+  slug: lot-size-margin
+  category: fno
+  title_en: Lot Size and Margin
+  title_ta: லாட் சைஸ் மற்றும் மார்ஜின்
+  notes: Contract value, initial margin, why exposure is large.
+- id: '122'
+  slug: tcs-remittance
+  category: global
+  title_en: TCS on Foreign Remittances
+  title_ta: வெளிநாட்டுப் பணப் பரிமாற்றத்தில் TCS
+  notes: Tax collected at source, threshold, claimable credit; rates change.
+- id: '123'
+  slug: breakouts
+  category: technical
+  title_en: Breakouts and False Breakouts
+  title_ta: பிரேக்அவுட் மற்றும் ஃபால்ஸ் பிரேக்அவுட்
+  notes: Price leaving a range; traps.
+- id: '124'
+  slug: leverage
+  category: fno
+  title_en: 'Leverage: A Double-Edged Sword'
+  title_ta: 'லெவரேஜ்: இருமுனை கத்தி'
+  notes: Small move, big % gain or loss; hypothetical.
+- id: '125'
+  slug: international-funds
+  category: global
+  title_en: International Mutual Funds and FoFs
+  title_ta: சர்வதேச மியூச்சுவல் ஃபண்டுகள் & FoF
+  notes: Investing abroad via Indian funds; overseas investment limits can pause inflows.
+- id: '126'
+  slug: timeframes
+  category: technical
+  title_en: Chart Timeframes
+  title_ta: சார்ட் டைம்ஃப்ரேம்கள்
+  notes: Same stock, different stories on daily/weekly/intraday charts.
+- id: '127'
+  slug: mark-to-market
+  category: fno
+  title_en: Mark-to-Market (MTM)
+  title_ta: மார்க்-டு-மார்க்கெட் (MTM)
+  notes: Daily settlement of futures P&L; margin calls.
+- id: '128'
+  slug: us-stocks-direct
+  category: global
+  title_en: Investing in US Stocks Directly from India
+  title_ta: இந்தியாவிலிருந்து அமெரிக்கப் பங்குகளில் நேரடி முதலீடு
+  notes: Via LRS and overseas brokers; costs, taxes, estate risk; no names.
+- id: '129'
+  slug: stop-loss
+  category: technical
+  title_en: Stop-Loss as Risk Management
+  title_ta: 'ஸ்டாப்-லாஸ்: அபாய மேலாண்மை'
+  notes: Pre-deciding the maximum loss; gaps and slippage.
+- id: '130'
+  slug: expiry-rollover
+  category: fno
+  title_en: Expiry and Rollover
+  title_ta: எக்ஸ்பைரி மற்றும் ரோல்ஓவர்
+  notes: Contract expiry cycles; rolling positions.
+- id: '131'
+  slug: gift-city
+  category: global
+  title_en: What is GIFT City IFSC?
+  title_ta: GIFT City IFSC என்றால் என்ன?
+  notes: International financial services centre in India; what it offers investors.
+- id: '132'
+  slug: position-sizing
+  category: technical
+  title_en: Position Sizing and Risk-Reward
+  title_ta: பொசிஷன் சைசிங் & ரிஸ்க்-ரிவார்டு
+  notes: Risk a small % per trade; R:R ratio; hypothetical.
+- id: '133'
+  slug: options-basics
+  category: fno
+  title_en: What is an Option? Call and Put
+  title_ta: ஆப்ஷன் என்றால் என்ன? கால் & புட்
+  notes: Right not obligation; buyer pays premium; seller takes obligation.
+- id: '134'
+  slug: foreign-tax-schedule-fa
+  category: global
+  title_en: Tax on Foreign Investments and Schedule FA
+  title_ta: வெளிநாட்டு முதலீட்டு வரி & Schedule FA
+  notes: Taxable in India, foreign tax credit (DTAA), mandatory foreign asset disclosure.
+- id: '135'
+  slug: why-traders-lose
+  category: technical
+  title_en: Why Most Traders Lose Money
+  title_ta: பெரும்பாலான டிரேடர்கள் ஏன் பணத்தை இழக்கிறார்கள்?
+  notes: Costs, leverage, overtrading, emotions; SEBI studies.
+- id: '136'
+  slug: option-premium
+  category: fno
+  title_en: 'Option Premium: Intrinsic and Time Value'
+  title_ta: 'ஆப்ஷன் பிரீமியம்: இன்ட்ரின்சிக் & டைம் வேல்யூ'
+  notes: What the premium is made of; hypothetical.
+- id: '137'
+  slug: global-indices
+  category: global
+  title_en: Major Global Indices
+  title_ta: முக்கிய உலகச் சந்தைக் குறியீடுகள்
+  notes: 'S&P 500, Nasdaq-100, Dow, FTSE, Nikkei: what they track. No levels.'
+- id: '138'
+  slug: moneyness
+  category: fno
+  title_en: ITM, ATM and OTM Options
+  title_ta: ITM, ATM, OTM ஆப்ஷன்கள்
+  notes: Moneyness for calls and puts with a hypothetical strike ladder.
+- id: '139'
+  slug: em-vs-dm
+  category: global
+  title_en: Emerging vs Developed Markets
+  title_ta: வளரும் சந்தைகள் vs வளர்ந்த சந்தைகள்
+  notes: Growth, risk, currency, governance differences.
+- id: '140'
+  slug: call-payoff
+  category: fno
+  title_en: Call Option Buyer Payoff
+  title_ta: கால் ஆப்ஷன் வாங்குபவரின் லாப நஷ்டம்
+  notes: Max loss = premium, breakeven = strike + premium; payoff chart.
+- id: '141'
+  slug: correlation
+  category: global
+  title_en: Correlation and Global Diversification
+  title_ta: தொடர்பு (Correlation) & உலகப் பல்வகைப்படுத்தல்
+  notes: Assets that don't move together; correlation can rise in crises.
+- id: '142'
+  slug: put-payoff
+  category: fno
+  title_en: Put Option Buyer Payoff
+  title_ta: புட் ஆப்ஷன் வாங்குபவரின் லாப நஷ்டம்
+  notes: Max loss = premium, breakeven = strike - premium; payoff chart.
+- id: '143'
+  slug: option-seller-risk
+  category: fno
+  title_en: 'Option Selling: Small Gains, Big Risk'
+  title_ta: 'ஆப்ஷன் விற்பது: சிறிய லாபம், பெரிய அபாயம்'
+  notes: Seller's payoff mirrors buyer; large margin; tail risk.
+- id: '144'
+  slug: theta
+  category: fno
+  title_en: Time Decay (Theta)
+  title_ta: டைம் டிகே (தீட்டா)
+  notes: Option value erodes as expiry approaches; faster near expiry.
+- id: '145'
+  slug: implied-volatility
+  category: fno
+  title_en: Implied Volatility
+  title_ta: இம்ப்ளைடு வோலட்டிலிட்டி (IV)
+  notes: Market's expectation of movement priced into options; IV crush.
+- id: '146'
+  slug: open-interest
+  category: fno
+  title_en: What is Open Interest?
+  title_ta: ஓபன் இன்ட்ரஸ்ட் என்றால் என்ன?
+  notes: Outstanding contracts; vs volume; not a direction signal by itself.
+- id: '147'
+  slug: protective-put
+  category: fno
+  title_en: Hedging with a Protective Put
+  title_ta: ப்ரொடெக்டிவ் புட் மூலம் ஹெட்ஜிங்
+  notes: Insurance-like put on holdings; cost of protection.
+- id: '148'
+  slug: covered-call
+  category: fno
+  title_en: What is a Covered Call?
+  title_ta: கவர்டு கால் என்றால் என்ன?
+  notes: Selling a call against holdings; capped upside; risks remain.
+- id: '149'
+  slug: fno-reality
+  category: fno
+  title_en: 'F&O Reality Check: What SEBI''s Data Shows'
+  title_ta: 'F&O உண்மை நிலை: SEBI தரவு சொல்வது என்ன?'
+  notes: SEBI studies on individual trader losses; costs; why caution.
+- id: '150'
+  slug: money-roadmap
+  category: basics
+  title_en: 'Your Money Roadmap: What Comes First?'
+  title_ta: 'உங்கள் பண வழிகாட்டி: எது முதலில்?'
+  notes: Emergency fund, insurance, debt, goals, investing; general sequence, not advice.

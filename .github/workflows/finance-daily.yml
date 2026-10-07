@@ -1,0 +1,159 @@
+name: "Finance channel: daily video"
+
+# Every morning: take the next topic, render the Short + long video with the
+# Tamil AI voice, put the files on a pre-release for preview, and open an
+# approval issue. Nothing reaches YouTube until you reply /approve.
+# /rerender and /voice (your own recording) re-run this for one topic and
+# update the same issue instead of opening a new one.
+
+on:
+  schedule:
+    - cron: "30 1 * * *"   # 07:00 IST
+  workflow_dispatch:
+    inputs:
+      topic:
+        description: "Topic id to render, e.g. 002 (empty = next in the queue)"
+        required: false
+      rerender_issue:
+        description: "Approval issue to update (set automatically by /rerender and /voice)"
+        required: false
+      voice_url:
+        description: "Zip of your recorded voice from the recorder page (set automatically by /voice)"
+        required: false
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: finance-daily
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    defaults:
+      run:
+        working-directory: finance-channel
+    env:
+      GH_TOKEN: ${{ github.token }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      TOPIC: ${{ inputs.topic }}
+      REISSUE: ${{ inputs.rerender_issue }}
+      VOICE_URL: ${{ inputs.voice_url }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: finance-channel/requirements.txt
+
+      - name: Install ffmpeg, Python packages and a browser
+        timeout-minutes: 12
+        run: |
+          pip install -q -r requirements.txt
+          apt_get() {  # retry: package mirrors occasionally hang
+            for i in 1 2 3; do
+              timeout 240 sudo apt-get -o Acquire::Retries=3 -o DPkg::Lock::Timeout=120 "$@" && return 0
+              echo "apt-get $* failed (attempt $i), retrying"; sleep 15
+            done
+            return 1
+          }
+          if ! command -v ffmpeg >/dev/null; then apt_get update -qq && apt_get install -y -qq ffmpeg; fi
+          if command -v google-chrome >/dev/null; then
+            echo "CHROMIUM_PATH=$(command -v google-chrome)" >> "$GITHUB_ENV"
+          else
+            python -m playwright install --with-deps chromium
+          fi
+
+      - name: Import your recorded voice
+        id: voice
+        if: env.VOICE_URL != ''
+        run: |
+          case "$VOICE_URL" in
+            https://github.com/user-attachments/files/*|https://github.com/*/*/files/*) ;;
+            *) echo "::error::voice_url must be a GitHub comment attachment"; exit 1 ;;
+          esac
+          curl -fsSL --retry 3 -o voice.zip "$VOICE_URL" \
+            || curl -fsSL --retry 3 -H "Authorization: Bearer $GH_TOKEN" -o voice.zip "$VOICE_URL"
+          python -m pipeline voice-import "$TOPIC" voice.zip --dir ".cache/voice/$TOPIC" --report voice-report.md
+
+      - name: Tell the issue what was missing from the recording
+        if: failure() && steps.voice.outcome == 'failure' && env.REISSUE != ''
+        run: |
+          if [ -s voice-report.md ]; then
+            gh issue comment "$REISSUE" --body-file voice-report.md
+          else
+            gh issue comment "$REISSUE" --body "🎙️ I couldn't read that recording. Make sure you attached the zip saved by the recorder page, then send \`/voice\` again."
+          fi
+
+      - name: Pick topic and render
+        id: daily
+        env:
+          VOICE_DIR: ${{ steps.voice.outputs.voice_dir }}
+        run: python -m pipeline daily ${TOPIC:+--topic "$TOPIC"} ${VOICE_DIR:+--voice-dir "$VOICE_DIR"}
+
+      - name: Upload preview files to a pre-release
+        if: steps.daily.outputs.skip == 'false'
+        env:
+          TAG: ${{ steps.daily.outputs.tag }}
+          DIR: ${{ steps.daily.outputs.dir }}
+          TITLE: ${{ steps.daily.outputs.title }}
+        run: |
+          files=$(ls "$DIR"/*.mp4 "$DIR"/*.png "$DIR"/*.json "$DIR"/*.srt 2>/dev/null)
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" $files --clobber
+          else
+            gh release create "$TAG" $files --prerelease --target "$GITHUB_SHA" \
+              --title "Preview: $TITLE" --notes "Preview files waiting for approval. Not on YouTube yet."
+          fi
+
+      - name: Open the approval issue
+        id: issue
+        if: steps.daily.outputs.skip == 'false'
+        env:
+          DIR: ${{ steps.daily.outputs.dir }}
+          TITLE: ${{ steps.daily.outputs.title }}
+        run: |
+          gh label create video-approval --color FFCA28 --description "Daily video waiting for approval" --force >/dev/null
+          if [ -n "$REISSUE" ]; then
+            gh issue edit "$REISSUE" --body-file "$DIR/issue.md"
+            if [ -n "$VOICE_URL" ]; then
+              gh issue comment "$REISSUE" --body "🎙️ Re-rendered in **your voice**. The preview links above now point to the new files. Watch them, then \`/approve\`."
+            else
+              gh issue comment "$REISSUE" --body "🔁 Re-rendered from the latest script. The preview links above now point to the new files."
+            fi
+            echo "number=$REISSUE" >> "$GITHUB_OUTPUT"
+          else
+            url=$(gh issue create --title "$TITLE" --body-file "$DIR/issue.md" --label video-approval --assignee "$GITHUB_REPOSITORY_OWNER")
+            echo "number=${url##*/}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Save state
+        if: steps.daily.outputs.skip == 'false'
+        env:
+          ID: ${{ steps.daily.outputs.topic }}
+          TAG: ${{ steps.daily.outputs.tag }}
+          NUM: ${{ steps.issue.outputs.number }}
+        run: |
+          python -m pipeline mark "$ID" --status awaiting_approval --issue "$NUM" --release "$TAG"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state content voice-scripts
+          git commit -q -m "Video #$ID rendered, waiting for approval (issue #$NUM)" || exit 0
+          branch="${{ github.event.repository.default_branch }}"
+          for i in 1 2 3 4 5 6; do
+            git pull -q --rebase origin "$branch" && git push -q origin "HEAD:$branch" && exit 0
+            sleep $((i * 4))
+          done
+          exit 1
+
+      - name: Nothing to do today
+        if: steps.daily.outputs.skip == 'true'
+        env:
+          REASON: ${{ steps.daily.outputs.reason }}
+        run: |
+          echo "::notice::Skipped: $REASON"

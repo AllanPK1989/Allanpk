@@ -1,0 +1,127 @@
+# Channel-wide settings. Everything here can be changed without touching code.
+
+channel:
+  # Shown as a small brand chip on every frame and in descriptions.
+  brand_ta: "நிதி அறிவு"
+  brand_en: "Nidhi Arivu - Finance in Tamil"
+  language: ta
+
+voice:
+  # Microsoft neural voices via edge-tts. Tamil options:
+  #   ta-IN-PallaviNeural (female), ta-IN-ValluvarNeural (male),
+  #   ta-LK-SaranyaNeural, ta-LK-KumarNeural, ta-MY-KaniNeural, ta-SG-VenbaNeural
+  engine: edge          # edge | silent (silent = timing-only test renders)
+  name: ta-IN-PallaviNeural
+  rate_short: "+8%"     # Shorts are a little faster
+  rate_long: "+0%"
+  pitch: "+0Hz"
+  gap_seconds: 0.22     # pause after every sentence
+  scene_gap_seconds: 0.35
+
+video:
+  fps: 30
+  short: {width: 1080, height: 1920, captions: true}
+  long:  {width: 1920, height: 1080, captions: true}
+  # Optional background music: drop royalty-free .mp3 files (e.g. from the
+  # YouTube Audio Library) into assets/music/. Leave empty for voice only.
+  music_volume: 0.07
+
+publish:
+  # manual  = after you /approve, the bot posts a ready-to-upload kit (files,
+  #           title, description, tags) and you upload in the YouTube app.
+  # youtube = after you /approve, the bot uploads and schedules it for you.
+  #           Needs the YT_* secrets AND an audited Google Cloud project,
+  #           otherwise YouTube locks API uploads as private. See docs/SETUP.md.
+  mode: manual
+  audited: false        # set true once YouTube approves your API audit
+  timezone: Asia/Kolkata
+  time: "18:00"          # each approved video goes live at the next free daily slot
+  formats: [short, long] # which formats to render and upload
+  category_id: "27"      # YouTube "Education"
+  made_for_kids: false
+  # When true, sets YouTube's "altered or synthetic content" flag.
+  # A generic AI narrator over slides normally does not require it; the
+  # description always says the narration is an AI voice either way.
+  contains_synthetic_media: false
+  max_pending_approvals: 3   # the daily job pauses when this many are waiting
+
+# Record videos in your own voice (see docs/SETUP.md, step 6). Each approval
+# issue links to the recorder page; `/voice` + the saved zip re-renders the
+# videos with your recording. The AI voice above stays as the default preview.
+recording:
+  enabled: true
+  page_url: ""          # empty = https://<owner>.github.io/<repo>/ (GitHub Pages)
+
+# Spoken at the end of every video, and shown on the last frame.
+disclaimer:
+  say: "இது கல்விக்கான தகவல் மட்டுமே, முதலீட்டு ஆலோசனை அல்ல. நான் செபி பதிவு பெற்ற ஆலோசகர் அல்ல. முதலீடு செய்வதற்கு முன், உங்கள் சொந்த ஆய்வையும், பதிவு பெற்ற ஆலோசகரின் கருத்தையும் பெறுங்கள்."
+  screen_ta: "கல்வி நோக்கம் மட்டும் • முதலீட்டு ஆலோசனை அல்ல"
+  screen_full_ta: "இது கல்விக்கான தகவல் மட்டுமே. இது முதலீட்டு ஆலோசனையோ, எந்த பங்கையும் வாங்க/விற்கப் பரிந்துரையோ அல்ல. நான் SEBI பதிவு பெற்ற முதலீட்டு ஆலோசகர் (RIA) அல்லது ஆய்வாளர் (RA) அல்ல."
+  description_ta: |
+    ⚠️ பொறுப்புத் துறப்பு: இந்த வீடியோ கல்வி நோக்கத்திற்காக மட்டுமே. இது முதலீட்டு ஆலோசனையோ, எந்த பங்கு, மியூச்சுவல் ஃபண்ட், காப்பீடு அல்லது வேறு எந்த நிதிப் பொருளையும் வாங்க/விற்கப் பரிந்துரையோ அல்ல. நான் SEBI பதிவு பெற்ற முதலீட்டு ஆலோசகர் (Investment Adviser) அல்லது ஆய்வாளர் (Research Analyst) அல்ல. வீடியோவில் உள்ள எண்கள் அனைத்தும் விளக்கத்திற்கான உதாரணங்கள் மட்டுமே. முதலீடுகள் சந்தை அபாயங்களுக்கு உட்பட்டவை. முதலீடு செய்வதற்கு முன் உங்கள் சொந்த ஆய்வு செய்து, SEBI பதிவு பெற்ற ஆலோசகரை அணுகவும்.
+  description_en: |
+    Disclaimer: This video is for educational purposes only. It is not investment advice or a recommendation to buy or sell any security, fund, insurance product or other financial product. I am not a SEBI-registered Investment Adviser or Research Analyst. All numbers shown are hypothetical illustrations. Investments are subject to market risks. Do your own research and consult a SEBI-registered adviser before investing.
+  ai_voice_note: "🔊 இந்த வீடியோவின் குரல் AI மூலம் உருவாக்கப்பட்டது (AI voice narration)."
+
+# Added automatically to every Futures & Options video. This is the risk
+# disclosure SEBI requires brokers to show for equity F&O.
+fno_risk:
+  say: "செபி ஆய்வின்படி, ஈக்விட்டி எஃப் அண்ட் ஓ பிரிவில், பத்தில் ஒன்பது தனிநபர் வர்த்தகர்கள் நிகர நஷ்டம் அடைந்துள்ளனர்."
+  screen_ta: "SEBI ஆய்வு: Equity F&O-வில் 10-ல் 9 தனிநபர் வர்த்தகர்கள் நிகர நஷ்டம் அடைந்துள்ளனர்."
+
+# Words rewritten ONLY for the voice (captions keep the original spelling),
+# so the Tamil voice says English finance terms the way Tamil viewers do.
+# Longest keys are applied first. Add to this list whenever the voice
+# mispronounces something.
+pronounce:
+  "SEBI": "செபி"
+  "RBI": "ஆர்.பி.ஐ"
+  "NSE": "என்.எஸ்.இ"
+  "BSE": "பி.எஸ்.இ"
+  "SIP": "எஸ்.ஐ.பி"
+  "SWP": "எஸ்.டபிள்யூ.பி"
+  "STP": "எஸ்.டி.பி"
+  "EMI": "ஈ.எம்.ஐ"
+  "PPF": "பி.பி.எஃப்"
+  "EPF": "ஈ.பி.எஃப்"
+  "NPS": "என்.பி.எஸ்"
+  "ELSS": "ஈ.எல்.எஸ்.எஸ்"
+  "FD": "எஃப்.டி"
+  "RD": "ஆர்.டி"
+  "ETF": "ஈ.டி.எஃப்"
+  "IPO": "ஐ.பி.ஓ"
+  "NAV": "என்.ஏ.வி"
+  "AMC": "ஏ.எம்.சி"
+  "KYC": "கே.ஒய்.சி"
+  "PAN": "பான்"
+  "GDP": "ஜி.டி.பி"
+  "CPI": "சி.பி.ஐ"
+  "P/E": "பி.ஈ"
+  "P/B": "பி.பி"
+  "PE": "பி.ஈ"
+  "EPS": "ஈ.பி.எஸ்"
+  "ROE": "ஆர்.ஓ.ஈ"
+  "ROCE": "ஆர்.ஓ.சி.ஈ"
+  "CAGR": "சி.ஏ.ஜி.ஆர்"
+  "XIRR": "எக்ஸ்.ஐ.ஆர்.ஆர்"
+  "RSI": "ஆர்.எஸ்.ஐ"
+  "MACD": "மேக்டி"
+  "EMA": "ஈ.எம்.ஏ"
+  "SMA": "எஸ்.எம்.ஏ"
+  "F&O": "எஃப் அண்ட் ஓ"
+  "LRS": "எல்.ஆர்.எஸ்"
+  "TCS": "டி.சி.எஸ்"
+  "GIFT City": "கிஃப்ட் சிட்டி"
+  "IFSC": "ஐ.எஃப்.எஸ்.சி"
+  "US": "அமெரிக்க"
+  "OI": "ஓபன் இன்ட்ரஸ்ட்"
+  "DII": "டி.ஐ.ஐ"
+  "FII": "எஃப்.ஐ.ஐ"
+  "FPI": "எஃப்.பி.ஐ"
+  "LTCG": "எல்.டி.சி.ஜி"
+  "STCG": "எஸ்.டி.சி.ஜி"
+  "GST": "ஜி.எஸ்.டி"
+  "UPI": "யு.பி.ஐ"
+  "CIBIL": "சிபில்"
+  "%": " சதவீதம்"
+  "₹": "ரூபாய் "

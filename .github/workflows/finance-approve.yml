@@ -1,0 +1,155 @@
+name: "Finance channel: approval commands"
+
+# Runs when the repository owner comments on a `video-approval` issue:
+#   /approve [now|short|long]   /reject <reason>   /rerender   /voice (+ attached zip)
+# Comments from anyone else are ignored.
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+# One queue per issue. (A shared queue would silently cancel the middle one of
+# three quick approvals; slot clashes are prevented by the reservation below.)
+concurrency:
+  group: finance-approve-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  command:
+    if: >-
+      !github.event.issue.pull_request &&
+      contains(github.event.issue.labels.*.name, 'video-approval') &&
+      github.event.comment.user.login == github.repository_owner &&
+      startsWith(github.event.comment.body, '/')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: finance-channel
+    env:
+      GH_TOKEN: ${{ github.token }}
+      COMMENT: ${{ github.event.comment.body }}
+      ISSUE: ${{ github.event.issue.number }}
+      ISSUE_BODY: ${{ github.event.issue.body }}
+      BRANCH: ${{ github.event.repository.default_branch }}
+      YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+      YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+      YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Read the command
+        id: cmd
+        run: |
+          id=$(printf '%s' "$ISSUE_BODY" | grep -oE 'video-id: [0-9]{3}' | head -1 | cut -d' ' -f2)
+          first=$(printf '%s' "$COMMENT" | head -1 | tr -d '\r')
+          verb=$(printf '%s' "$first" | awk '{print tolower($1)}')
+          arg=$(printf '%s' "$first" | cut -s -d' ' -f2-)
+          if [ -z "$id" ]; then echo "::error::No video-id marker in the issue body"; exit 1; fi
+          {
+            echo "id=$id"
+            echo "verb=$verb"
+            echo "arg<<__EOF__"; printf '%s\n' "$arg"; echo "__EOF__"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: /approve
+        if: steps.cmd.outputs.verb == '/approve'
+        env:
+          ID: ${{ steps.cmd.outputs.id }}
+          ARG: ${{ steps.cmd.outputs.arg }}
+        run: |
+          pip install -q pyyaml google-api-python-client google-auth
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          opts=""
+          case "$ARG" in
+            *now*) opts="$opts --now" ;;
+          esac
+          # Claim a publish day first. The push only succeeds if nobody else changed
+          # the state meanwhile, so two approvals can never take the same slot.
+          reserved=""
+          for i in 1 2 3 4 5 6; do
+            git fetch -q origin "$BRANCH" && git reset -q --hard "origin/$BRANCH"
+            python -m pipeline reserve "$ID" $opts
+            git add state && git commit -q -m "Reserve publish slot for video #$ID"
+            if git push -q origin "HEAD:$BRANCH"; then reserved=1; break; fi
+            echo "state changed while reserving, retrying"; sleep $((i * 4))
+          done
+          [ -n "$reserved" ] || { echo "::error::could not reserve a slot"; exit 1; }
+          gh release download "video-$ID" -D "out/$ID" --clobber
+          case "$ARG" in
+            *short*) opts="$opts --only short" ;;
+            *long*)  opts="$opts --only long" ;;
+          esac
+          python -m pipeline publish "$ID" --dir "out/$ID" $opts --comment-file comment.md
+          gh issue comment "$ISSUE" --body-file comment.md
+          status=$(python -c "from pipeline import state; print(state.get('$ID').get('status'))")
+          if [ "$status" = "approved_manual" ]; then
+            gh label create ready-to-post --color 66BB6A --description "Approved; upload it in the YouTube app" --force >/dev/null
+            gh issue edit "$ISSUE" --add-label ready-to-post --remove-label video-approval
+          else
+            gh issue close "$ISSUE" --reason completed
+          fi
+
+      - name: /reject
+        if: steps.cmd.outputs.verb == '/reject'
+        env:
+          ID: ${{ steps.cmd.outputs.id }}
+          ARG: ${{ steps.cmd.outputs.arg }}
+        run: |
+          pip install -q pyyaml
+          git fetch -q origin "$BRANCH" && git reset -q --hard "origin/$BRANCH"
+          python -m pipeline mark "$ID" --status rejected --reason "${ARG:-no reason given}"
+          gh issue close "$ISSUE" --reason "not planned" \
+            --comment "❌ Rejected. Topic #$ID won't be posted. To try it again later, edit the script and run the daily workflow with topic $ID."
+
+      - name: /rerender
+        if: steps.cmd.outputs.verb == '/rerender'
+        env:
+          ID: ${{ steps.cmd.outputs.id }}
+        run: |
+          gh workflow run finance-daily.yml --ref "${{ github.event.repository.default_branch }}" -f topic="$ID" -f rerender_issue="$ISSUE"
+          gh issue comment "$ISSUE" --body "⏳ Re-rendering #$ID from the current script. I'll update this issue in about 10 minutes."
+
+      - name: /voice
+        if: steps.cmd.outputs.verb == '/voice'
+        env:
+          ID: ${{ steps.cmd.outputs.id }}
+        run: |
+          url=$(printf '%s' "$COMMENT" | grep -oE 'https://github\.com/(user-attachments/files|[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/files)/[0-9]+/[^) ]+\.zip' | head -1)
+          if [ -z "$url" ]; then
+            gh issue comment "$ISSUE" --body "🎙️ I don't see a zip attached. Save the zip from the recorder page, then comment \`/voice\` and attach it (drag it in, or use the paperclip)."
+            exit 0
+          fi
+          gh workflow run finance-daily.yml --ref "$BRANCH" -f topic="$ID" -f rerender_issue="$ISSUE" -f voice_url="$url"
+          gh issue comment "$ISSUE" --body "🎙️ Got your recording. Rendering #$ID in your voice; this issue updates in about 5 minutes."
+
+      - name: Unknown command
+        if: ${{ !contains(fromJSON('["/approve","/reject","/rerender","/voice"]'), steps.cmd.outputs.verb) }}
+        run: |
+          gh issue comment "$ISSUE" --body "I didn't understand that. Use \`/approve\`, \`/approve now\`, \`/approve short\`, \`/approve long\`, \`/reject <reason>\`, \`/rerender\` or \`/voice\` with your recording attached."
+
+      - name: Save state
+        if: steps.cmd.outputs.verb == '/approve' || steps.cmd.outputs.verb == '/reject'
+        env:
+          ID: ${{ steps.cmd.outputs.id }}
+          VERB: ${{ steps.cmd.outputs.verb }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state
+          git commit -q -m "Video #$ID: $VERB" || exit 0
+          for i in 1 2 3 4 5 6; do  # each topic has its own state file, so rebases are clean
+            git pull -q --rebase origin "$BRANCH" && git push -q origin "HEAD:$BRANCH" && exit 0
+            sleep $((i * 4))
+          done
+          exit 1
