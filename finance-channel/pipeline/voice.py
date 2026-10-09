@@ -18,11 +18,16 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-from .config import ROOT
+from .config import ROOT, config
 from .script import Script, build_timeline
 from .tts import RATE, clean_markup, clip_key, wav_duration
 
 VOICE_SCRIPTS = ROOT / "voice-scripts"
+
+
+def voice_scripts_dir() -> Path:
+    """voice-scripts/ for the Tamil channel, voice-scripts/<channel>/ for the others."""
+    return ROOT / config()["channel"].get("voice_scripts_dir", "voice-scripts")
 MAX_ZIP_BYTES = 60 * 1024 * 1024
 MIN_CLIP_SECONDS = 0.35
 AUDIO_EXT = {".webm", ".weba", ".ogg", ".opus", ".m4a", ".mp4", ".aac", ".mp3", ".wav", ".caf", ".3gp", ".amr"}
@@ -46,11 +51,12 @@ def voice_script(s: Script, formats=("short", "long")) -> dict:
                 items[k] = {"key": k, "text": clean_markup(seg.text).strip(), "formats": []}
             if fmt not in items[k]["formats"]:
                 items[k]["formats"].append(fmt)
-    return {"id": s.id, "title_ta": s["title_ta"], "title_en": s.get("title_en", ""),
+    return {"id": s.id, "title_ta": s.get("title_ta", ""), "title_en": s.get("title_en", ""),
             "sentences": list(items.values())}
 
 
-def write_voice_script(s: Script, out_dir: Path = VOICE_SCRIPTS) -> Path:
+def write_voice_script(s: Script, out_dir: Path | None = None) -> Path:
+    out_dir = out_dir or voice_scripts_dir()
     out_dir.mkdir(parents=True, exist_ok=True)
     p = out_dir / f"{s.id}.json"
     p.write_text(json.dumps(voice_script(s), ensure_ascii=False, indent=1) + "\n", encoding="utf-8")

@@ -1,0 +1,80 @@
+# Translated by Claude from content/012-emi-explained.yaml; review before approving.
+id: "012"
+category: basics
+title_en: "EMI Explained"
+thumb_en: "Your first EMI is **mostly interest!**"
+icon: calendar
+keywords: [EMI explained, EMI calculation, home loan EMI, loan interest, prepayment, EMI formula]
+summary:
+  - "What is an EMI? Principal + interest"
+  - "Why the early EMIs are mostly interest"
+  - "The EMI formula"
+  - "10 years vs 20 years: a big difference in total interest (example)"
+
+short:
+  scenes:
+    - type: hook
+      icon: calendar
+      heading: "You pay a ₹9,000 EMI.\n**How much did your loan go down?**"
+      say: "You pay an EMI of about nine thousand rupees a month. But do you know how much your loan goes down in the first month?"
+    - type: steps
+      heading: "₹10 lakh, 9%, 20 years"
+      lines:
+        - {text: "Monthly EMI: **₹8,997**", say: "A ten lakh loan, nine percent interest a year, for twenty years. The EMI is about eight thousand nine hundred and ninety-seven rupees."}
+        - {text: "Interest in the first EMI: **₹7,500**", say: "In the first EMI, seven thousand five hundred rupees goes just to interest."}
+        - {text: "Principal reduced: only **₹1,497**", say: "The loan goes down by only one thousand four hundred and ninety-seven rupees."}
+      result: {text: "Total interest over 20 years ≈ ₹11.6 lakh!", say: "Over twenty years, the total interest is about eleven and a half lakh. More than the loan itself!"}
+    - type: takeaway
+      text: "Don't look at the EMI alone. Look at **the total interest** too."
+      say: "So when you borrow, don't look at the monthly EMI alone. Look at the total interest you'll pay over the whole loan."
+
+long:
+  intro_say: "Hello! A house, a vehicle, a mobile phone. Today we buy many things on EMI. But how many of us know what happens inside an EMI? Let's find out today."
+  scenes:
+    - type: define
+      chapter: "What is an EMI?"
+      term: "EMI"
+      term_en: "Equated Monthly Instalment"
+      text: "The **equal amount** you pay every month to repay a loan. It contains **both principal and interest**."
+      say:
+        - "EMI stands for Equated Monthly Instalment. That's the equal amount you pay every month to repay a loan."
+        - "Every EMI has two parts. One is principal, the other is interest."
+    - type: formula
+      chapter: "The EMI formula"
+      heading: "The EMI formula"
+      formula: "EMI = P × r × (1+r)ⁿ ÷ ((1+r)ⁿ − 1)"
+      say: "There's a formula to calculate an EMI. Don't worry, you don't need to memorise it. Every EMI calculator uses exactly this."
+      legend:
+        - {sym: "P", text: "The loan amount (principal)", say: "P is the loan amount."}
+        - {sym: "r", text: "Monthly interest rate (yearly rate ÷ 12)", say: "r is the monthly interest rate. You divide the yearly rate by twelve."}
+        - {sym: "n", text: "Total number of months", say: "n is the total number of months. For twenty years, that's two hundred and forty."}
+    - type: steps
+      chapter: "Inside the first EMI"
+      heading: "₹10 lakh, 9%, 20 years"
+      say: "An example. A loan of ten lakh rupees, at nine percent a year, for twenty years."
+      lines:
+        - {text: "Monthly EMI: **₹8,997**", say: "The EMI is about eight thousand nine hundred and ninety-seven rupees a month."}
+        - {text: "First month's interest: ₹10,00,000 × 0.75% = **₹7,500**", say: "In the first month, the interest is three quarters of a percent on ten lakh. That's seven thousand five hundred."}
+        - {text: "Principal reduced: ₹8,997 − ₹7,500 = **₹1,497**", say: "Only the remaining one thousand four hundred and ninety-seven rupees reduces the principal."}
+      result: {text: "In the early years, the EMI is **mostly interest**", say: "That's why, in the early years, most of the EMI goes to interest. As the principal falls, the interest part shrinks and the principal part grows."}
+    - type: compare
+      chapter: "10 years vs 20 years"
+      heading: "The same ₹10 lakh: **what if the tenure changes?**"
+      left: {title: "10 years"}
+      right: {title: "20 years"}
+      say: "Now let's change the loan tenure. The same ten lakh, the same nine percent."
+      rows:
+        - {left: "EMI ≈ **₹12,668**", right: "EMI ≈ **₹8,997**", say: "Over ten years, the EMI is about twelve thousand six hundred and sixty-eight. Over twenty years, about eight thousand nine hundred and ninety-seven."}
+        - {left: "Total interest ≈ **₹5.2 lakh**", right: "Total interest ≈ **₹11.6 lakh**", say: "But the total interest is about five point two lakh over ten years. Over twenty years, about eleven point six lakh. More than double!"}
+      after: "A lower EMI looks attractive. But a longer tenure means far more total interest."
+    - type: points
+      chapter: "Prepayment"
+      heading: "**Ways** to cut the interest"
+      marker: check
+      items:
+        - {text: "Choose **the shortest tenure** you can", say: "First, choose the shortest loan tenure you can, with an EMI you can comfortably afford."}
+        - {text: "**Prepayment**: cut the principal with bonus money", say: "Second, when extra money like a bonus comes in, pay part of the principal early. Doing this in the early years cuts the interest a lot. First check whether your loan has a prepayment charge."}
+        - {text: "Compare **the total interest**", say: "Third, when you compare loans, don't compare just the EMI. Compare the interest rate, the processing fee and the total interest."}
+    - type: takeaway
+      text: "Don't look at the EMI alone. Look at **tenure, total interest and prepayment**."
+      say: "In short, an EMI is a monthly amount made of principal and interest. In the early years, the interest part is large. When you borrow, don't look at the EMI alone. Look at the tenure, the total interest and the prepayment option."

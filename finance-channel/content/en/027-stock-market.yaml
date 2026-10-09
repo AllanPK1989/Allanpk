@@ -1,0 +1,75 @@
+# Translated by Claude from content/027-stock-market.yaml; review before approving.
+id: "027"
+category: stocks
+title_en: "What is the Stock Market?"
+thumb_en: "Stock market = **a market for shares**"
+icon: chart
+keywords: [stock market, NSE BSE, share market basics, how the stock market works, stock exchange]
+summary:
+  - "What is the stock market?"
+  - "NSE and BSE: India's main stock exchanges"
+  - "How is a share price decided? Demand and supply"
+  - "Who takes part, and SEBI's role"
+
+short:
+  scenes:
+    - type: hook
+      icon: chart
+      heading: "You know a vegetable market.\n**What about the stock market?**"
+      say: "At a vegetable market, buyers and sellers meet. The stock market is the same. But here, what's being sold is shares."
+    - type: flow
+      heading: "Who **connects** whom?"
+      nodes:
+        - {text: "Buyer / seller", sub: "You", say: "You want to buy or sell a share."}
+        - {text: "Broker", sub: "Registered with SEBI", say: "Your order goes through a broker registered with SEBI."}
+        - {text: "Stock exchange", sub: "NSE / BSE", say: "It reaches a stock exchange, NSE or BSE. There, buyers and sellers are matched."}
+    - type: takeaway
+      text: "Share price = the price **buyers and sellers** agree on. It changes **minute by minute**."
+      say: "A share's price is the price buyers and sellers agree on. As demand and supply change, it changes minute by minute."
+
+long:
+  intro_say: "Hello! In the last video, we saw what a share is. Today, let's look at the place where those shares are bought and sold. The stock market."
+  scenes:
+    - type: define
+      chapter: "What is the stock market?"
+      term: "Stock Market"
+      text: "A regulated market where **buyers and sellers of shares meet**. Today it runs entirely **electronically**."
+      say:
+        - "The stock market is a regulated market where buyers and sellers of shares meet."
+        - "In the past, people traded by shouting in a big hall. Today, it all happens electronically, through computers."
+    - type: compare
+      chapter: "NSE and BSE"
+      heading: "India's **two main** exchanges"
+      left: {title: "BSE"}
+      right: {title: "NSE"}
+      rows:
+        - {left: "Bombay Stock Exchange", right: "National Stock Exchange", say: "India has two main stock exchanges. The BSE, or Bombay Stock Exchange. And the NSE, or National Stock Exchange."}
+        - {left: "One of Asia's oldest exchanges", right: "Led the move to fully electronic trading", say: "The BSE is one of the oldest stock exchanges in Asia. The NSE started in the nineties and led the move to fully electronic trading."}
+        - {left: "Main index: **Sensex**", right: "Main index: **Nifty 50**", say: "The BSE's main index is the Sensex. The NSE's main index is the Nifty fifty. We'll look at these in the next video."}
+    - type: flow
+      chapter: "How a trade happens"
+      heading: "How does **a trade happen?**"
+      nodes:
+        - {text: "You place an order", sub: "Broker app / website", say: "You place an order through your broker's app or website."}
+        - {text: "The exchange matches it", sub: "Buyer ↔ seller", say: "The exchange's computer matches your order with an order on the other side."}
+        - {text: "Clearing & settlement", sub: "Money and shares change hands", say: "Then clearing systems make sure the money and shares change hands properly."}
+        - {text: "Shares land in your demat account", say: "The shares you bought arrive in your demat account. We'll look at this whole process in detail in a separate video."}
+    - type: points
+      chapter: "How the price is decided"
+      heading: "How is a share price **decided?**"
+      items:
+        - {text: "**More people want to buy** → the price rises", say: "If more people want to buy a share than want to sell it, the price rises."}
+        - {text: "**More people want to sell** → the price falls", say: "If more people want to sell, the price falls."}
+        - {text: "What drives demand: **news, profits, the economy, mood**", say: "Many things drive this demand. The company's profits, news, the state of the economy, and investors' mood. That's why prices move unpredictably in the short term."}
+    - type: points
+      chapter: "Participants and SEBI"
+      heading: "Who **takes part?**"
+      marker: dot
+      items:
+        - {text: "**Retail investors**: people like you", say: "Retail investors, like you."}
+        - {text: "**Institutional investors**: mutual funds, insurers, foreign institutions", say: "Big institutional investors, like mutual funds, insurance companies and foreign investment institutions."}
+        - {text: "**SEBI**: makes the rules and keeps watch", say: "All of this is overseen by the regulator, SEBI. Its job is to ensure a fair, transparent market."}
+      after: "Normal trading hours are on weekdays, from nine fifteen in the morning to three thirty in the afternoon."
+    - type: takeaway
+      text: "Stock market = **where ownership of businesses changes hands**. Short-term price moves are **unpredictable**."
+      say: "In short, the stock market is a regulated place where ownership of businesses changes hands. In the short term, prices move unpredictably. Over the long term, how the businesses perform is what matters."

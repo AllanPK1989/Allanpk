@@ -1,0 +1,82 @@
+# Translated by Claude from content/019-ppf.yaml; review before approving.
+id: "019"
+category: savings
+title_en: "Public Provident Fund (PPF)"
+thumb_en: "**15 years**, government-backed, tax benefits"
+icon: lock
+keywords: [PPF, public provident fund, PPF rules, EEE tax, long term savings, PPF explained]
+summary:
+  - "What is PPF?"
+  - "The 15-year lock-in and yearly limits"
+  - "Tax status: what does EEE mean?"
+  - "Partial withdrawal, loans and extension"
+
+short:
+  scenes:
+    - type: hook
+      icon: lock
+      heading: "Government-backed, tax benefits,\n**15 years of patience**"
+      say: "Government-backed, with tax benefits, but it needs fifteen years of patience. That's PPF."
+    - type: define
+      term: "Public Provident Fund (PPF)"
+      text: "A **long-term savings scheme** backed by the central government. The term is **15 years**; the government announces the interest rate **every quarter**."
+      say: "PPF is a long-term savings scheme backed by the central government. The term is fifteen years. The government announces the interest rate every quarter."
+    - type: points
+      heading: "Key **features**"
+      marker: check
+      items:
+        - {text: "At least **₹500** a year, at most **₹1.5 lakh**", say: "You can put in at least five hundred rupees a year, and at most one and a half lakh rupees."}
+        - {text: "Interest and the maturity amount are **tax-free**", say: "Under current rules, the interest and the maturity amount are tax-free."}
+        - {text: "**A 15-year lock-in**: for long-term goals", say: "Because of the fifteen-year lock-in, it's meant for long-term goals."}
+    - type: takeaway
+      text: "PPF = **safety + tax benefits + patience**. Rules can change, so check **the official site**."
+      say: "PPF gives you safety and tax benefits, and asks for patience. The rules and the interest rate can change, so check the official site."
+
+long:
+  intro_say: "Hello! For long-term saving, there's a scheme Indians have trusted for generations. The Public Provident Fund, or PPF. Today, let's look at the basics."
+  scenes:
+    - type: define
+      chapter: "What is PPF?"
+      term: "Public Provident Fund (PPF)"
+      text: "A **long-term savings scheme** backed by the central government. You can open an account at banks and post offices."
+      say:
+        - "PPF is a long-term savings scheme backed by the central government."
+        - "You can open an account at authorised banks and at post offices. Each person can have only one account."
+    - type: points
+      chapter: "Basic rules"
+      heading: "The basic **rules**"
+      items:
+        - {text: "Term: **15 financial years**", say: "The account runs for fifteen financial years."}
+        - {text: "**₹500 to ₹1.5 lakh** a year", say: "Every financial year, you must put in at least five hundred rupees. The maximum is one and a half lakh rupees."}
+        - {text: "Interest: announced by the government **every quarter**", say: "The central government announces the interest rate every quarter. It's compounded yearly."}
+        - {text: "Deposit **by the 5th** to earn that month's interest", sub: "How the interest is worked out", say: "A small tip. Interest is calculated on the lowest balance after the fifth of each month. So depositing by the fifth is better for your interest."}
+    - type: define
+      chapter: "EEE tax status"
+      label: "Tax status"
+      term: "EEE: exempt at all three stages"
+      term_en: "Exempt – Exempt – Exempt"
+      text: "**When you invest** (80C deduction under the old tax regime), **when interest is earned**, **when you withdraw at maturity**. Under current rules, a tax benefit at all three."
+      say:
+        - "PPF's big strength is its tax status. It's called EEE."
+        - "First, what you put in gets a deduction under 80C in the old tax regime. Second, the interest isn't taxed. Third, the maturity amount isn't taxed either."
+        - "If you've chosen the new tax regime, you don't get the 80C deduction. Tax rules can change, so check before you file."
+    - type: points
+      chapter: "Need the money?"
+      heading: "What if you **need the money** midway?"
+      marker: dot
+      items:
+        - {text: "Years **3 to 6**: **a loan** against the balance", say: "From the third to the sixth financial year, you can take a small loan against your PPF balance."}
+        - {text: "From year **7**: **partial withdrawal**", say: "From the seventh financial year, subject to the rules, you can withdraw part of it."}
+        - {text: "After 15 years: **extend in 5-year blocks**", say: "After fifteen years, you can extend the account in five-year blocks, with or without new deposits."}
+    - type: compare
+      chapter: "Benefits and limits"
+      heading: "Benefits vs **limits**"
+      left: {title: "Benefits", color: "#4ade80"}
+      right: {title: "Limits", color: "#f87171"}
+      rows:
+        - {left: "**Government-backed**: very low risk", right: "**A long lock-in**: 15 years", say: "Benefit: it's government-backed, so the risk is very low. Limit: a long fifteen-year lock-in."}
+        - {left: "**Tax benefits** (EEE)", right: "A **₹1.5 lakh** yearly cap", say: "Benefit: tax benefits. Limit: you can put in only one and a half lakh a year."}
+        - {left: "**Compounding** + discipline", right: "The rate **can change**", say: "Benefit: compounding and built-in discipline. Limit: the interest rate can change every quarter."}
+    - type: takeaway
+      text: "PPF = **safe, tax-efficient long-term saving**. Not for an emergency fund."
+      say: "In short, PPF is a safe, tax-efficient tool for long-term saving. But the lock-in is long, so it doesn't suit an emergency fund. Check the current interest rate and rules on the official government website."

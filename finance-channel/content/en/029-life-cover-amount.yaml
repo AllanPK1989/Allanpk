@@ -1,0 +1,82 @@
+# Translated by Claude from content/029-life-cover-amount.yaml; review before approving.
+id: "029"
+category: insurance
+title_en: "How Much Life Cover Do You Need?"
+thumb_en: "Is ₹10 lakh cover **enough?**"
+icon: calc
+keywords: [how much life insurance, term insurance cover amount, life cover calculation, human life value, life insurance needs]
+summary:
+  - "How to think about how much life cover you need"
+  - "Three questions: income, loans, goals"
+  - "An example calculation"
+  - "The limits of rules of thumb"
+
+short:
+  scenes:
+    - type: hook
+      icon: calc
+      heading: "₹10 lakh of life cover.\n**Is it enough for your family?**"
+      say: "You have ten lakh rupees of life cover. How many years would that last your family?"
+    - type: steps
+      heading: "A simple sum (example)"
+      lines:
+        - {text: "Family expenses: **₹4 lakh a year**", say: "Let's say the family spends four lakh a year."}
+        - {text: "₹10 lakh ÷ ₹4 lakh ≈ **2.5 years**", say: "Ten lakh covers only about two and a half years of expenses."}
+      result: {text: "Children's education, loans? **Not enough!**", say: "And after that, the children's education, the home loan? It's not enough."}
+    - type: points
+      heading: "**3 questions** to think about"
+      items:
+        - {text: "**How many years of income** does your family need?", say: "First, how many years of income does your family need?"}
+        - {text: "How much are **your loans**?", say: "Second, how much do you owe in loans that must be paid off?"}
+        - {text: "**Big goals**: education, weddings", say: "Third, how much for big goals like your children's education?"}
+    - type: takeaway
+      text: "Cover should be based on **your family's needs**. Not on a round number."
+      say: "Decide your life cover based on your family's real needs, not on a round number."
+
+long:
+  intro_say: "Hello! We've seen why term insurance matters. The next question is: how much cover do you need? Today, let's see how to think about it."
+  scenes:
+    - type: hook
+      chapter: "A common mistake"
+      icon: alert
+      heading: "'**A round number will do**'\nis a common mistake"
+      say:
+        - "Many people pick a round number, like ten lakh or twenty lakh. Or the number the agent suggested."
+        - "But the right cover depends on your family's needs. Let's see how to work it out."
+    - type: points
+      chapter: "Three questions"
+      heading: "**Three questions** to think about"
+      items:
+        - {text: "**Income replacement**: how many years of expenses?", say: "The first question. If you weren't there, for how many years would your family need money for its regular expenses?"}
+        - {text: "**Loans**: home loan, vehicle loan, others", say: "The second question. How much do you owe in loans that must be paid off? Home loan, vehicle loan and others."}
+        - {text: "**Goals**: children's education, weddings", say: "The third question. How much is needed for big goals like your children's higher education or wedding?"}
+      after: "Add these three together, subtract your existing savings, investments and other insurance, and you get a rough estimate of what you need."
+    - type: steps
+      chapter: "An example calculation"
+      heading: "An example **calculation**"
+      say: "An imaginary example. Raja is thirty, with a yearly income of eight lakh. He has a wife and one child."
+      lines:
+        - {text: "Family expenses ₹5L/year × 15 years ≈ **₹75 lakh**", say: "The family spends five lakh a year. For about fifteen years, until the child stands on their own feet, that's seventy-five lakh. This is a simplified sum. Add inflation and you'd need even more."}
+        - {text: "+ Home loan outstanding: **₹25 lakh**", say: "On top of that, twenty-five lakh outstanding on the home loan."}
+        - {text: "+ Child's higher education: **₹20 lakh**", say: "Twenty lakh for the child's higher education."}
+        - {text: "− Existing savings and investments: **₹10 lakh**", say: "Existing savings and investments come to ten lakh. We subtract that."}
+      result: {text: "Cover needed ≈ ₹1.1 crore", say: "In total, about one crore and ten lakh. Look at the gap between ten lakh of cover and this need."}
+    - type: points
+      chapter: "Rule of thumb"
+      heading: "The popular **rule of thumb**"
+      marker: dot
+      items:
+        - {text: "**10 to 15 times** your yearly income", say: "A popular rule is cover of ten to fifteen times your yearly income."}
+        - {text: "Only **a starting point**", say: "This is only a starting point. For people with big loans or more responsibilities, it may not be enough."}
+        - {text: "**Review it** when life changes", say: "When life changes, like marriage, a child or a new home loan, check again whether your cover is enough."}
+    - type: points
+      chapter: "Things to watch"
+      heading: "Things **to watch**"
+      marker: check
+      items:
+        - {text: "**Inflation**: ₹1 crore today is less in 20 years", say: "Inflation. An amount that looks enough today may look small twenty years from now."}
+        - {text: "Employer cover **may go with the job**", say: "Life cover from your employer may go when you change jobs. Don't rely on it alone."}
+        - {text: "A **qualified adviser** for the final call", say: "For the right amount for your situation, you can get help from a qualified, registered adviser."}
+    - type: takeaway
+      text: "Life cover = **income replacement + loans + goals − existing assets**."
+      say: "In short, the life cover you need is income replacement for your family, plus your loans, plus your big goals, minus the assets you already have. Not a round number."

@@ -1,0 +1,78 @@
+# Translated by Claude from content/013-what-is-insurance.yaml; review before approving.
+id: "013"
+category: insurance
+title_en: "What is Insurance?"
+thumb_en: "Insurance = **sharing the risk**"
+icon: shield
+keywords: [what is insurance, insurance explained, risk pooling, premium, sum assured, IRDAI]
+summary:
+  - "How insurance works: sharing the risk"
+  - "Premium, Sum Assured / Sum Insured, Claim: the basic terms"
+  - "Insurance is not an investment, it's protection"
+  - "Which risks need insurance?"
+
+short:
+  scenes:
+    - type: hook
+      icon: shield
+      heading: "1,000 people put in **₹1,000** each.\nWhat if one has an accident?"
+      say: "A thousand people each put in a thousand rupees. What happens if one of them suffers a big loss?"
+    - type: steps
+      heading: "The basic idea of insurance"
+      tag: "A simple example"
+      lines:
+        - {text: "1,000 people × ₹1,000 = a **₹10 lakh** common fund", say: "Together, it becomes a common fund of ten lakh rupees."}
+        - {text: "One person has a loss → they get **a large amount**", say: "The person who suffers the loss gets a large amount from that fund."}
+      result: {text: "Pay a small amount, **share a big risk**", say: "Each of us pays a small amount and shares a big risk. That's insurance."}
+    - type: takeaway
+      text: "Insurance is **not an investment**. It's your family's **protection**."
+      say: "Remember, insurance is not an investment. It's the protection that keeps your family safe from a big loss."
+
+long:
+  intro_say: "Hello! From today, we start on one of the most important parts of financial planning. Insurance. First, what is insurance, and how does it work?"
+  scenes:
+    - type: hook
+      chapter: "A simple story"
+      icon: users
+      heading: "A village, 1,000 houses,\n**one fire**"
+      say:
+        - "A village has a thousand houses. Every year, a fire could break out in one of them. Nobody knows which one."
+        - "The family whose house burns can't handle that loss alone. But what if everyone joins together?"
+    - type: steps
+      chapter: "Sharing the risk"
+      heading: "Everyone **shares the risk** together"
+      tag: "A simple example"
+      lines:
+        - {text: "1,000 houses × ₹1,000 a year = **₹10 lakh**", say: "If every house pays a thousand rupees a year, there's a common fund of ten lakh rupees."}
+        - {text: "**Compensation** for the house that burned", say: "The house that burned gets compensation from that fund."}
+        - {text: "Loss for the other 999: just ₹1,000", say: "For the other nine hundred and ninety-nine, the loss is just a thousand rupees. But they get a whole year of peace of mind."}
+      result: {text: "An insurance company does exactly this **at scale**", say: "An insurance company does exactly this, with lakhs of people, at a large scale. This is called risk pooling."}
+    - type: points
+      chapter: "Basic terms"
+      heading: "**Terms** you should know"
+      items:
+        - {text: "**Premium**: the amount you pay", say: "Premium. The amount you pay for insurance. You can pay it monthly or yearly."}
+        - {text: "**Sum Assured / Sum Insured**: the maximum you can get", say: "Sum Assured, or Sum Insured. The maximum amount you get if a loss happens. In other words, the cover."}
+        - {text: "**Claim**: asking for compensation", say: "Claim. Asking the insurance company for compensation after a loss."}
+        - {text: "**Policy document**: all the terms", sub: "What's covered and what isn't", say: "Policy document. It has all the terms, what's covered and what isn't. Reading it before you buy is very important."}
+    - type: points
+      chapter: "Which risks?"
+      heading: "The main **types of insurance**"
+      marker: check
+      items:
+        - {text: "**Life insurance**: if the earner is gone", say: "First, life insurance. To protect the family's income if the person who earns for the family dies."}
+        - {text: "**Health insurance**: hospital bills", say: "Second, health insurance. To protect your savings from big hospital bills."}
+        - {text: "**Vehicle, home and accident** insurance", say: "Third, insurance for things like vehicles, homes and accidents."}
+      after: "In India, the insurance sector is overseen by a regulator called IRDAI."
+    - type: compare
+      chapter: "Insurance is not an investment"
+      heading: "Insurance vs investment"
+      left: {title: "Insurance"}
+      right: {title: "Investment"}
+      rows:
+        - {left: "Purpose: **protection**", right: "Purpose: **growth**", say: "The purpose of insurance is protection. The purpose of investing is to grow your money."}
+        - {left: "**A large amount** if a loss happens", right: "**Money grows** over time", say: "Insurance pays a large amount if a loss happens. Investing grows your money over time."}
+        - {left: "Nothing happened = **good news**", right: "Returns depend on the market", say: "If you bought insurance and no loss happened, the money wasn't wasted. That's good news. You were protected all year."}
+    - type: takeaway
+      text: "Insurance = **paying a small amount to hand off a big risk**. Protection before investing."
+      say: "In short, insurance means paying a small amount to hand off a big risk you couldn't bear to someone else. Before you invest, it's important to have the right protection. In the next video, we'll look at the most important kind of life insurance. Term insurance."

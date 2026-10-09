@@ -1,0 +1,81 @@
+# Translated by Claude from content/014-term-insurance.yaml; review before approving.
+id: "014"
+category: insurance
+title_en: "Term Insurance"
+thumb_en: "**Low premium, big protection**"
+icon: shield
+keywords: [term insurance, life insurance, term plan, sum assured, term insurance explained]
+summary:
+  - "What is term insurance?"
+  - "Why is the premium low and the cover big?"
+  - "Who needs it, and who doesn't?"
+  - "What to check when you buy"
+
+short:
+  scenes:
+    - type: hook
+      icon: users
+      heading: "If you weren't there,\n**how would your family manage?**"
+      say: "A family depends on your income. If you weren't there tomorrow, how would they manage?"
+    - type: define
+      term: "Term Insurance"
+      text: "If the policyholder dies within a set period (the term), **the nominee gets a large sum**. **Pure protection**, no investment."
+      say: "Term insurance is pure protection. If the policyholder dies within a set period, it pays a large sum to the nominee."
+    - type: points
+      heading: "Key **features**"
+      marker: check
+      items:
+        - {text: "**Big** cover for a **low** premium", say: "You get big cover for a lower premium than other life insurance."}
+        - {text: "Survive the term and **no money comes back**", say: "If the term ends and you're alive and well, no money comes back. That's why the premium is low."}
+        - {text: "Buy **young** for a lower premium", say: "Buy it young and in good health, and the premium is even lower."}
+    - type: takeaway
+      text: "If **your family** depends on you, think about term insurance **first**."
+      say: "If your family depends on your income, this is one of the first things to think about in your financial planning."
+
+long:
+  intro_say: "Hello! In the last video, we saw what insurance is. Today, let's look at the simplest, purest form of life insurance. Term insurance."
+  scenes:
+    - type: hook
+      chapter: "Why do you need it?"
+      icon: users
+      heading: "If your income stopped,\n**who would be hurt?**"
+      say:
+        - "Rent, your children's education, your home loan EMI, your parents' medical bills. All of these may depend on your income."
+        - "If you were suddenly gone, that income would stop. The expenses wouldn't. Filling that gap is the job of term insurance."
+    - type: define
+      chapter: "What is term insurance?"
+      term: "Term Insurance"
+      text: "If the policyholder dies within the set period (e.g. up to age 60), **the nominee gets the full Sum Assured**. If the term ends, **nothing comes back**."
+      say:
+        - "With term insurance, you choose a period. For example, up to age sixty."
+        - "If you die within that period, the nominee you named gets the full Sum Assured."
+        - "If the term ends and you're alive and well, no amount comes back. This is pure protection."
+    - type: compare
+      chapter: "Why is the premium low?"
+      heading: "Why is **the premium low?**"
+      left: {title: "Term insurance"}
+      right: {title: "Savings + insurance plans"}
+      say: "Why is the premium for term insurance so low?"
+      rows:
+        - {left: "The whole premium goes to **protection**", right: "Most of the premium goes to **the savings part**", say: "In term insurance, the whole premium goes to protection. In plans that mix savings and insurance, most of the premium goes to the savings part."}
+        - {left: "**Nothing comes back** if you survive", right: "There's a maturity amount", say: "With term insurance, nothing comes back when the term ends. Other plans pay a maturity amount, so the premium is higher."}
+        - {left: "**Big** cover, **small** premium", right: "**Small** cover, **big** premium", say: "The result: term insurance gives big cover for a small premium. The others often give small cover for a big premium. We'll look at this in detail in a separate video."}
+    - type: points
+      chapter: "Who needs it?"
+      heading: "Who is it **important** for?"
+      marker: check
+      items:
+        - {text: "If **your family depends on your income**", say: "If someone depends on your income, like your spouse, children or parents."}
+        - {text: "If you have **a big loan** (e.g. a home loan)", say: "If you have a big loan, like a home loan. If you're not there, that burden shouldn't fall on your family."}
+      after: "If nobody depends on your income and you have no loans, for example a student living alone, the immediate need may be lower."
+    - type: points
+      chapter: "What to check when you buy"
+      heading: "**Check these** when you buy"
+      items:
+        - {text: "**Enough cover**: income, loans, goals", say: "First, enough cover. We'll look at how to work out how much you need in a separate video."}
+        - {text: "**Term**: until your earning years end", say: "Second, the term. Usually until your earning years end, or until your responsibilities end."}
+        - {text: "**Honest details**: health, habits", say: "Third, and very important. Give honest details about your health and habits like smoking. If you hide them, a claim may be rejected later."}
+        - {text: "Tell your family **the nominee** details", say: "Fourth, give the nominee details correctly, and let your family know the policy exists."}
+    - type: takeaway
+      text: "Term insurance = **income protection for your family**. Simple, cheap and powerful."
+      say: "In short, term insurance is simple, low-cost protection that keeps your family's income safe if you're not there. Before you choose any particular policy, read the terms fully and compare."

@@ -141,6 +141,33 @@ Notes:
 - To hide the recorder link, set `recording.enabled: false` in `config.yaml`.
   If you host the page elsewhere, put its address in `recording.page_url`.
 
+## 7. The English channel
+
+The daily run renders the English video right after the Tamil one and opens
+its own `[EN] Approve` issue. With `publish.mode: manual` (the default),
+`/approve` gives you a posting kit as before; you only need the channel itself.
+
+1. **Create the channel.** In YouTube, click your profile picture →
+   **Settings → Add or manage your channel(s) → Create a channel**. This makes
+   a second channel (a Brand Account) under the same Google sign-in, so you
+   switch between the two from your profile picture.
+2. **Verify it** at <https://www.youtube.com/verify> (phone), so custom
+   thumbnails and videos over 15 minutes work.
+3. **Name it in the pipeline:** set `channel.brand_en` in `channels/en.yaml`
+   to the channel name. It appears on every frame and in descriptions.
+4. **For automatic upload** (only after step 4 works for Tamil): repeat step
+   4a.5 in the OAuth Playground with the same client ID and secret, but when
+   Google asks which channel to use, pick the **English** channel. Save that
+   refresh token as the repository secret `YT_EN_REFRESH_TOKEN`. The client ID
+   and secret are shared. The API-audit rule in 4b covers both channels.
+5. **New topics** are translated automatically when `ANTHROPIC_API_KEY` is set
+   (step 5). Without it, add `content/en/NNN-*.yaml` yourself before the topic
+   comes up.
+
+To change the voice, set `voice.name` in `channels/en.yaml` to
+`en-IN-PrabhatNeural` (male). To pause the English channel, set
+`channel.daily: false` in `channels/en.yaml`.
+
 ## Troubleshooting
 
 | Symptom | Fix |

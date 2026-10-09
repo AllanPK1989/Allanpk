@@ -25,23 +25,24 @@ def clean_markup(text: str) -> str:
     return re.sub(r"--(.+?)--", r"\1", text)
 
 
-_RUPEE = re.compile(r"₹\s?([\d][\d,]*(?:\.\d+)?)\s*(லட்சம்|கோடி|ஆயிரம்)?")
-
-
 def for_voice(text: str) -> str:
-    """Rewrite a caption sentence into what the Tamil voice should actually say."""
+    """Rewrite a caption sentence into what the voice should actually say (see `speak` and `pronounce` in config)."""
+    cfg = config()
+    sp = cfg["speak"]
     t = clean_markup(text)
-    t = _RUPEE.sub(lambda m: f"{m.group(1)} {m.group(2) or ''} ரூபாய்".replace("  ", " "), t)
-    t = re.sub(r"(?<=\d),(?=\d)", "", t)          # 1,00,000 -> 100000
-    lex = config().get("pronounce", {}) or {}
+    rupee = re.compile(rf"₹\s?([\d][\d,]*(?:\.\d+)?)\s*({sp.get('units') or '(?!)'})?")
+    t = rupee.sub(lambda m: f"{m.group(1)} {m.group(2) or ''} {sp['rupee']}".replace("  ", " "), t)
+    if sp.get("strip_digit_commas", True):
+        t = re.sub(r"(?<=\d),(?=\d)", "", t)      # 1,00,000 -> 100000
+    lex = cfg.get("pronounce", {}) or {}
     for key in sorted(lex, key=len, reverse=True):
         val = lex[key]
         if re.search(r"[A-Za-z]", key):
             t = re.sub(rf"(?<![A-Za-z]){re.escape(key)}(?![A-Za-z])", val, t)
         else:
             t = t.replace(key, val)
-    t = t.replace("×", " பெருக்கல் ").replace("÷", " வகுத்தல் ").replace("→", ", ")
-    t = t.replace("=", " சமம் ").replace("&", " மற்றும் ")
+    for sym, word in (sp.get("symbols") or {}).items():
+        t = t.replace(sym, word)
     return re.sub(r"\s{2,}", " ", t).strip()
 
 
@@ -121,7 +122,7 @@ def synthesize(texts: list[str], fmt: str, engine: str | None = None, voice_dir:
             jobs.append((spoken, wav))
 
     if engine == "silent":
-        # ~13 Tamil characters per second: close enough to test timing/layout
+        # ~13 characters per second: close enough to test timing/layout
         for spoken, wav in jobs:
             _silent_wav(wav, max(1.2, len(spoken) / 13.0))
         return paths

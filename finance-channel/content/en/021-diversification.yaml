@@ -1,0 +1,74 @@
+# Translated by Claude from content/021-diversification.yaml; review before approving.
+id: "021"
+category: investing
+title_en: "Diversification"
+thumb_en: "All your eggs **in one basket?**"
+icon: layers
+keywords: [diversification, portfolio diversification, asset allocation, investment risk, spreading risk]
+summary:
+  - "What is diversification?"
+  - "A simple sum: what if one investment falls 50%?"
+  - "Three levels: asset class, within a class, and time"
+  - "What diversification can't do"
+
+short:
+  scenes:
+    - type: hook
+      icon: layers
+      heading: "Should you put all your eggs\n**in one basket?**"
+      say: "If you put all your eggs in one basket, what happens if that basket falls?"
+    - type: compare
+      heading: "₹1 lakh, and one investment **falls 50%**"
+      left: {title: "In one investment", color: "#f87171"}
+      right: {title: "In 10 investments", color: "#4ade80"}
+      rows:
+        - {left: "All ₹1,00,000 in one", right: "₹10,000 each × 10", say: "One lakh rupees. One person puts it all into a single investment. Another puts ten thousand each into ten different investments."}
+        - {left: "Loss: **₹50,000** (50%)", right: "Loss: **₹5,000** (5%)", say: "If one of those investments halves, the first person loses fifty thousand. The second loses only five thousand."}
+    - type: takeaway
+      text: "Diversification = making sure **one mistake doesn't sink you**."
+      say: "Diversification means making sure one wrong decision doesn't sink you completely."
+
+long:
+  intro_say: "Hello! A saying our grandmothers used turns out to be one of the most important rules of investing. Don't put all your eggs in one basket. Today, let's look at it."
+  scenes:
+    - type: define
+      chapter: "What is diversification?"
+      term: "Diversification"
+      text: "Reducing **the impact of any single loss** by **spreading your money across different investments**."
+      say:
+        - "Diversification means not keeping your money in one place, but spreading it across different kinds of investments."
+        - "The aim is that if one investment goes badly, the damage is limited."
+    - type: compare
+      chapter: "A simple sum"
+      heading: "₹1 lakh, and one investment **falls 50%**"
+      left: {title: "In one investment", color: "#f87171"}
+      right: {title: "In 10 investments", color: "#4ade80"}
+      say: "A simple sum. This is only an imaginary example."
+      rows:
+        - {left: "All ₹1,00,000 in one", right: "₹10,000 each × 10", say: "Two people have one lakh each. The first puts it all into one investment. The second puts ten thousand each into ten different investments."}
+        - {left: "Loss: **₹50,000**", right: "Loss: **₹5,000**", say: "If one investment halves, the first person loses fifty thousand. The second loses only five thousand."}
+        - {left: "Needs **100% growth** to recover", right: "About **5% growth** is enough", say: "Another truth. If you lose fifty percent, you need a hundred percent growth just to get back to where you were. The second person needs only about five percent."}
+    - type: points
+      chapter: "Three levels"
+      heading: "The **three levels** of diversification"
+      items:
+        - {text: "**Across asset classes**", sub: "Shares, bonds, gold, cash", say: "The first level is across asset classes. Shares, bonds, gold and cash. These don't all move the same way at the same time."}
+        - {text: "**Within one class**", sub: "Many companies, many sectors", say: "The second level is within one class. For shares, that means many companies and many sectors, not just one company or one sector."}
+        - {text: "**Over time**", sub: "Gradually, not all on one day", say: "The third level is time. Investing gradually instead of putting all your money in on one day. We'll see this when we talk about SIPs."}
+    - type: points
+      chapter: "What it can't do"
+      heading: "What it **can't protect against**"
+      marker: cross
+      items:
+        - {text: "The risk of **the whole market** falling", say: "A warning. Diversification reduces the risk of a single company. But it can't fully avoid the risk of the whole market falling at once."}
+        - {text: "A guarantee of **no losses**", say: "So diversification is not a guarantee that you'll never lose. It's only a tool to reduce risk."}
+    - type: points
+      chapter: "Overdoing it"
+      heading: "Spreading too thin is **a problem too**"
+      marker: dot
+      items:
+        - {text: "More investments than **you can track**", say: "On the other hand, spreading too much is also a problem. With twenty or thirty investments, you can't keep track of them."}
+        - {text: "Many **similar** ones isn't real spreading", say: "If you hold many similar investments, that isn't real diversification. It's the kind that matters, not the count."}
+    - type: takeaway
+      text: "**Don't put everything in one basket**. But the baskets should be **different kinds**."
+      say: "In short, don't put all your eggs in one basket. But more than the number of baskets, what matters is that they're different kinds."

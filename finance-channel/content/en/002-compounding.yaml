@@ -1,0 +1,119 @@
+# Translated by Claude from content/002-compounding.yaml; review before approving.
+id: "002"
+category: basics
+title_en: "The Power of Compounding"
+thumb_en: "**Interest on interest**: how money multiplies"
+icon: up
+keywords: [compounding, compound interest, power of compounding, simple interest, compound interest explained]
+summary:
+  - "Simple interest vs compound interest: what's the difference?"
+  - "Interest on interest: a year-by-year example"
+  - "The compound interest formula: A = P × (1 + r)ⁿ"
+  - "Why time is the most important ingredient"
+  - "Compounding on debt works against you"
+
+short:
+  scenes:
+    - type: hook
+      icon: up
+      heading: "₹1 lakh, 20 years.\n**₹3 lakh or ₹6.7 lakh?**"
+      say: "One lakh rupees, twenty years, ten percent interest a year. Do you end up with three lakh, or more than six and a half lakh?"
+    - type: compare
+      heading: "Two kinds of interest"
+      left: {title: "Simple interest"}
+      right: {title: "Compound interest"}
+      rows:
+        - left: "Interest on the principal only"
+          right: "Principal + **interest on interest**"
+          say: "With simple interest, you earn interest only on the principal. With compound interest, you also earn interest on the interest you've already earned."
+        - left: "**₹3 lakh** in 20 years"
+          right: "**₹6.7 lakh** in 20 years"
+          say: "So in twenty years, simple interest gives you three lakh. Compound interest gives you about six lakh seventy thousand."
+    - type: line
+      heading: "The gap **grows** over time"
+      xticks: [[0, "0"], [10, "10 yrs"], [20, "20 yrs"], [30, "30 yrs"]]
+      yticks: [[1, "₹1L"], [5, "₹5L"], [10, "₹10L"], [15, "₹15L"]]
+      series:
+        - {name: "Simple", points: [[0, 1], [10, 2], [20, 3], [30, 4]], at: 0}
+        - {name: "Compound", points: [[0, 1], [5, 1.61], [10, 2.59], [15, 4.18], [20, 6.73], [25, 10.83], [30, 17.45]], at: 1, color: "#fbbf24"}
+      say:
+        - "In thirty years, simple interest reaches only four lakh."
+        - "Compound interest reaches about seventeen and a half lakh. Slow at first, then fast."
+    - type: takeaway
+      text: "The secret of compounding is **time**. The sooner you start, the better."
+      say: "The real secret of compounding is time. The sooner you start, the harder it works for you."
+
+long:
+  intro_say: "Hello! There's a famous line, often credited to Einstein: compound interest is the eighth wonder of the world. Today, let's understand that wonder in simple terms."
+  scenes:
+    - type: hook
+      chapter: "The chessboard story"
+      icon: layers
+      heading: "**Rice** on a chessboard"
+      sub: "Double on every square"
+      say:
+        - "Here's an old story. A king asked the inventor of chess what reward he wanted."
+        - "He said: one grain of rice on the first square, two on the second, four on the third. Double on every square."
+        - "The king thought it was a tiny reward. But by the sixty-fourth square, it was more rice than the whole world grows in many years!"
+        - "That is the power of growth that keeps multiplying. Compound interest works the same way."
+    - type: define
+      chapter: "Two kinds of interest"
+      term: "Simple Interest"
+      text: "Interest every year on **the principal only**. The interest amount never changes."
+      say:
+        - "First, simple interest. Here, you earn interest every year only on the principal you put in."
+        - "At ten percent on one lakh rupees, you get the same ten thousand rupees of interest every year."
+    - type: define
+      term: "Compound Interest"
+      text: "Interest on the principal and on **the interest already earned**. In other words, **interest on interest**."
+      say:
+        - "With compound interest, the interest you earn is added back to the principal."
+        - "Next year, you earn interest on that bigger amount. That's what we call interest on interest."
+    - type: steps
+      chapter: "A year-by-year example"
+      heading: "₹1,00,000 @ 10% compound interest"
+      say: "Let's say you have one lakh rupees earning ten percent compound interest a year."
+      lines:
+        - {text: "Year 1: ₹1,00,000 + ₹10,000 = **₹1,10,000**", say: "At the end of year one, ten thousand in interest is added, making one lakh ten thousand."}
+        - {text: "Year 2: ₹1,10,000 + ₹11,000 = **₹1,21,000**", say: "In year two, the interest is not ten thousand but eleven thousand, because now it's interest on one lakh ten thousand."}
+        - {text: "Year 3: ₹1,21,000 + ₹12,100 = **₹1,33,100**", say: "In year three, the interest is twelve thousand one hundred. Every year, the interest itself gets bigger."}
+      result: {text: "An extra ₹1,000, ₹2,100… that's **interest on interest**", say: "This extra amount, over and above simple interest, is the interest on interest. Year after year, it rolls like a snowball."}
+    - type: line
+      chapter: "What happens in 30 years?"
+      heading: "₹1 lakh @ 10%: simple vs **compound**"
+      xticks: [[0, "0"], [10, "10 yrs"], [20, "20 yrs"], [30, "30 yrs"]]
+      yticks: [[1, "₹1L"], [5, "₹5L"], [10, "₹10L"], [15, "₹15L"]]
+      series:
+        - {name: "Simple ₹4L", points: [[0, 1], [10, 2], [20, 3], [30, 4]], at: 0}
+        - {name: "Compound ₹17.4L", points: [[0, 1], [5, 1.61], [10, 2.59], [15, 4.18], [20, 6.73], [25, 10.83], [30, 17.45]], at: 1, color: "#fbbf24"}
+      say:
+        - "Now let's stretch it to thirty years. With simple interest, one lakh becomes four lakh. In a straight line, slowly."
+        - "With compound interest, the same one lakh becomes about seventeen and a half lakh."
+        - "Notice that for the first ten years, the two lines stay close together. The big growth happens in the last ten years."
+    - type: formula
+      chapter: "The compound interest formula"
+      heading: "The compound interest formula"
+      formula: "A = P × (1 + r)ⁿ"
+      say: "There's a simple formula to calculate this."
+      legend:
+        - {sym: "A", text: "The amount you end up with", say: "A is the amount you end up with."}
+        - {sym: "P", text: "The starting principal", say: "P is the principal you put in at the start."}
+        - {sym: "r", text: "Yearly interest rate (10% = 0.10)", say: "r is the yearly interest rate. Ten percent is zero point one."}
+        - {sym: "n", text: "Number of years", say: "n is the number of years. Because n sits in the exponent, time is so powerful."}
+    - type: points
+      chapter: "Three ingredients"
+      heading: "3 ingredients of compounding"
+      items:
+        - {text: "**Amount**: how much you put in", say: "Compounding has three ingredients. First, the amount you put in."}
+        - {text: "**Rate**: how fast it grows", say: "Second, the rate of growth. But a higher rate usually comes with higher risk."}
+        - {text: "**Time**: how long you leave it", say: "Third, and most important, time. Nobody can go back and buy time."}
+    - type: points
+      chapter: "Compounding on debt"
+      heading: "Warning: debt **compounds** too"
+      marker: cross
+      items:
+        - {text: "Credit card dues charge **interest on interest**", say: "A warning. Compounding can work against you too. If you leave a credit card balance unpaid, interest builds on interest."}
+        - {text: "Unpaid debt **grows fast**", say: "High-interest loans left unpaid can grow faster than your savings."}
+    - type: takeaway
+      text: "**Start early, stay patient**. The power of compounding lies in time."
+      say: "In short, compound interest is interest on interest. Its power lies in time. Starting early and staying patient is the whole secret."
