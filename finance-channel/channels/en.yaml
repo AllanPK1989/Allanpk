@@ -8,8 +8,8 @@
 # with the same id (python -m pipeline --channel en translate 001).
 
 channel:
-  # TODO(you): set this to the name of your English YouTube channel.
-  brand_en: "Nidhi Arivu English"
+  # The name of the English YouTube channel.
+  brand_en: "Finance for beginners"
   language: en
   content_dir: content/en
   state_dir: state/en/items
