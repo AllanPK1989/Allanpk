@@ -1,0 +1,88 @@
+# Translated by Claude from content/010-credit-score.yaml; review before approving.
+id: "010"
+category: basics
+title_en: "What is a Credit Score?"
+thumb_en: "What's your **credit score**?"
+icon: target
+keywords: [credit score, CIBIL score, credit report, loan eligibility, improve credit score]
+summary:
+  - "What is a credit score, and why does it matter?"
+  - "From 300 to 900: what's a good score?"
+  - "5 factors that affect your score"
+  - "Does checking your own score lower it?"
+
+short:
+  scenes:
+    - type: hook
+      icon: target
+      heading: "Before lending to you,\nthe bank checks **one number**"
+      say: "When you ask for a loan, there's one number the bank looks at first. Your credit score."
+    - type: define
+      term: "Credit Score"
+      term_en: "Ranges from 300 to 900"
+      text: "A score that shows **how reliably you repay** what you borrow."
+      say: "It's a three-digit score that shows how reliably you pay your loans and credit card bills. It ranges from three hundred to nine hundred."
+    - type: points
+      heading: "Habits that **raise** your score"
+      marker: check
+      items:
+        - {text: "Pay EMIs and card bills **on time**", say: "Always pay your EMIs and credit card bills by the due date. This matters most."}
+        - {text: "Use **only a little** of your card limit", say: "Use only a small part of your credit card limit."}
+        - {text: "Don't keep applying for **new loans**", say: "Don't apply for new loans again and again in a short time."}
+    - type: takeaway
+      text: "A good score = loans come **easily**, often at **lower interest**."
+      say: "With a good credit score, you can get a loan easily when you need one, and often at a lower interest rate too."
+
+long:
+  intro_say: "Hello! Home loan, car loan, credit card. Whatever you apply for, there's one number the bank checks about you. Today, let's talk about that credit score."
+  scenes:
+    - type: hook
+      chapter: "One number, many doors"
+      icon: target
+      heading: "Same salary, same loan.\n**Why different interest rates?**"
+      say:
+        - "Two people with the same salary apply for the same loan. One gets it easily. The other is turned down, or charged more interest."
+        - "One big reason for that difference is the credit score."
+    - type: define
+      chapter: "What is a credit score?"
+      term: "Credit Score"
+      text: "A score from **300 to 900**, based on your credit history, that shows **how reliably you repay** loans."
+      say:
+        - "A credit score is a number from three hundred to nine hundred, calculated from your credit history."
+        - "It shows how reliable you are at paying back what you borrow."
+    - type: flow
+      chapter: "Who calculates it?"
+      heading: "**How is the score built?**"
+      nodes:
+        - {text: "You use a loan or a card", say: "You take a loan, or use a credit card."}
+        - {text: "The bank sends data", sub: "Every month", say: "Banks send information on how you pay to credit information companies."}
+        - {text: "Credit information companies", sub: "Licensed by the RBI", say: "These companies are licensed by the Reserve Bank. The name most people know is CIBIL, and there are a few others like it."}
+        - {text: "Credit report + score", say: "They build your credit report and your score."}
+    - type: bars
+      chapter: "What's a good score?"
+      heading: "300 to 900: **where are you?**"
+      say: "As a general guide, you can read the score like this. Each bank's cut-offs may differ a little."
+      bars:
+        - {label: "Below 650", value: 40, display: "Low", color: "#f87171", say: "Below six hundred and fifty, getting a loan can be hard."}
+        - {label: "650 – 749", value: 70, display: "Fair", color: "#fbbf24", say: "From six hundred and fifty to seven hundred and forty-nine is fair. But there's room to improve."}
+        - {label: "750+", value: 100, display: "Good", color: "#4ade80", say: "Above seven hundred and fifty is generally seen as a good score."}
+    - type: points
+      chapter: "What affects your score"
+      heading: "**5 factors** that affect your score"
+      items:
+        - {text: "**Paying on time**", sub: "Payment history: the most important", say: "First, and most important, paying on time. Even one late EMI can hurt your score."}
+        - {text: "**How much of your card limit you use**", sub: "Credit utilization: usually best under 30%", say: "Second, how much of your credit card limit you use. Keeping it under thirty percent is generally said to be good."}
+        - {text: "**Length of credit history**", sub: "How old your accounts are", say: "Third, how long your credit history is. So there's no need to rush to close an old card."}
+        - {text: "**Mix of credit types**", sub: "Credit mix", say: "Fourth, experience handling different kinds of credit well, like secured and unsecured loans."}
+        - {text: "**Frequent new loan applications**", sub: "Hard enquiries", say: "Fifth, if you apply for many loans in a short time, each application is recorded and can lower your score."}
+    - type: points
+      chapter: "Common doubts"
+      heading: "Common **doubts**"
+      marker: check
+      items:
+        - {text: "Checking my own score does **not lower it**", say: "Checking your own score does not lower it. Only a bank checking it for a loan application is recorded."}
+        - {text: "You can get a **free report** once a year", say: "You can get your credit report free once a year from each credit information company."}
+        - {text: "If the report has an error, **ask for a correction**", say: "If your report shows a loan you don't know about, or wrong details, you can ask that company to correct it. This also helps you catch fraud."}
+    - type: takeaway
+      text: "A credit score isn't built in a day. **The habit of paying on time** is the best way."
+      say: "In short, a credit score isn't built in a day, and it doesn't change in a day either. The habit of paying every bill on time is the best way to a good score."

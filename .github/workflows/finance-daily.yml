@@ -1,8 +1,10 @@
 name: "Finance channel: daily video"
 
-# Every morning: take the next topic, render the Short + long video with the
-# Tamil AI voice, put the files on a pre-release for preview, and open an
-# approval issue. Nothing reaches YouTube until you reply /approve.
+# Every morning, for each channel (Tamil first, then English): take the next
+# topic, render the Short + long video with the AI voice, put the files on a
+# pre-release for preview, and open an approval issue. Nothing reaches YouTube
+# until you reply /approve. The English channel translates the Tamil script
+# for the same topic (written with Claude if it doesn't exist yet).
 # /rerender and /voice (your own recording) re-run this for one topic and
 # update the same issue instead of opening a new one.
 
@@ -11,6 +13,11 @@ on:
     - cron: "30 1 * * *"   # 07:00 IST
   workflow_dispatch:
     inputs:
+      channel:
+        description: "Which channel to render"
+        type: choice
+        options: [both, ta, en]
+        default: both
       topic:
         description: "Topic id to render, e.g. 002 (empty = next in the queue)"
         required: false
@@ -31,6 +38,13 @@ concurrency:
 
 jobs:
   render:
+    name: render (${{ matrix.channel }})
+    strategy:
+      # one channel at a time, Tamil first: English translates the Tamil script
+      max-parallel: 1
+      fail-fast: false
+      matrix:
+        channel: ${{ fromJSON((inputs.channel == 'ta' && '["ta"]') || (inputs.channel == 'en' && '["en"]') || '["ta","en"]') }}
     runs-on: ubuntu-latest
     timeout-minutes: 75
     defaults:
@@ -39,11 +53,15 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      FINANCE_CHANNEL: ${{ matrix.channel }}
       TOPIC: ${{ inputs.topic }}
       REISSUE: ${{ inputs.rerender_issue }}
       VOICE_URL: ${{ inputs.voice_url }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          # the latest commit, so English sees the Tamil script the Tamil run just pushed
+          ref: ${{ github.event.repository.default_branch }}
 
       - uses: actions/setup-python@v6
         with:
@@ -143,7 +161,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add state content voice-scripts
-          git commit -q -m "Video #$ID rendered, waiting for approval (issue #$NUM)" || exit 0
+          git commit -q -m "Video #$ID ($FINANCE_CHANNEL) rendered, waiting for approval (issue #$NUM)" || exit 0
           branch="${{ github.event.repository.default_branch }}"
           for i in 1 2 3 4 5 6; do
             git pull -q --rebase origin "$branch" && git push -q origin "HEAD:$branch" && exit 0

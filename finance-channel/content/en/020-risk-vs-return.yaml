@@ -1,0 +1,84 @@
+# Translated by Claude from content/020-risk-vs-return.yaml; review before approving.
+id: "020"
+category: investing
+title_en: "Risk vs Return"
+thumb_en: "Higher returns = **higher risk**"
+icon: scale
+keywords: [risk vs return, investment risk, risk return tradeoff, volatility, risk appetite]
+summary:
+  - "The risk-return tradeoff"
+  - "The risk ladder of investment types"
+  - "The many faces of risk: market, inflation, credit, liquidity"
+  - "How time changes risk"
+
+short:
+  scenes:
+    - type: hook
+      icon: scale
+      heading: "High returns,\n**with no risk at all?**"
+      say: "High returns, with no risk at all. Does that exist? No. Let's see why."
+    - type: bars
+      heading: "The risk **ladder** (general order)"
+      bars:
+        - {label: "Savings account, FD", value: 1, display: "Low", color: "#4ade80", say: "Savings accounts and FDs have low risk, and usually low returns."}
+        - {label: "Debt / bonds", value: 2, display: "Moderate", color: "#a3e635", say: "Bonds and debt funds carry a bit more risk."}
+        - {label: "Shares (equity)", value: 3, display: "High", color: "#fbbf24", say: "Shares go up and down a lot, with a chance of higher returns over the long term."}
+        - {label: "F&O, speculation", value: 4, display: "Very high", color: "#f87171", say: "Speculation like F&O carries very high risk."}
+    - type: takeaway
+      text: "If someone says **high returns, no risk**, **be suspicious**."
+      say: "So if someone tells you high returns, no risk at all, be suspicious straight away."
+
+long:
+  intro_say: "Hello! Here's the first rule of investing. If you want higher returns, you have to accept higher risk too. Today, let's understand this simply."
+  scenes:
+    - type: hook
+      chapter: "Why there's no free lunch"
+      icon: scale
+      heading: "High returns, no risk?\n**No such thing**"
+      say:
+        - "If an investment gave high returns with no risk, everyone would invest in it. Its price would rise, and the return would fall."
+        - "So in the market, a chance of higher returns is generally the reward for taking more risk."
+    - type: define
+      chapter: "What is risk?"
+      term: "Risk"
+      text: "The chance that the expected return **doesn't arrive**, or that **you lose money** you put in."
+      say:
+        - "Risk is the chance that the return you expected doesn't arrive. Sometimes, it's the chance of losing the money you put in."
+        - "How much the value goes up and down in the short term is also one measure of risk."
+    - type: bars
+      chapter: "The risk ladder"
+      heading: "The risk **ladder** (general order)"
+      say: "We can line up common investment types as a ladder, based on risk."
+      bars:
+        - {label: "Savings account, FD", value: 1, display: "Low", color: "#4ade80", say: "On the bottom rung, savings accounts, FDs and government-backed small savings schemes. Low risk, and usually low returns."}
+        - {label: "Debt / bonds", value: 2, display: "Moderate", color: "#a3e635", say: "Next, bonds and debt funds. There are risks like interest rate changes and repayment."}
+        - {label: "Shares (equity)", value: 3, display: "High", color: "#fbbf24", say: "Above that, shares. Big ups and downs in the short term. But over the long term, a chance to share in business growth."}
+        - {label: "F&O, speculation", value: 4, display: "Very high", color: "#f87171", say: "On the top rung, speculation like F&O. A very high chance of big losses in a short time."}
+      note: "A general order only; risk varies within each type"
+    - type: points
+      chapter: "The many faces of risk"
+      heading: "The **many faces** of risk"
+      items:
+        - {text: "**Market risk**: prices falling", say: "First, market risk. Market prices fall and the value of your investment drops."}
+        - {text: "**Inflation risk**: returns not beating prices", say: "Second, inflation risk. Even money kept somewhere safe loses value if it doesn't beat inflation. So there's no place with no risk at all."}
+        - {text: "**Credit risk**: the borrower not paying back", say: "Third, credit risk. The company you lent money to can't pay it back."}
+        - {text: "**Liquidity risk**: not being able to sell when needed", say: "Fourth, liquidity risk. When you need the money, you can't sell quickly at a fair price."}
+    - type: compare
+      chapter: "Time and risk"
+      heading: "Time **changes risk**"
+      left: {title: "Needed in 1 year"}
+      right: {title: "Needed in 15 years"}
+      say: "The same investment can carry a different level of risk depending on your time frame."
+      rows:
+        - {left: "A market fall = **a big problem**", right: "**Time to recover** from a fall", say: "If you need the money in a year, a stock market fall is a big problem. With fifteen years, there's time to recover. But even that isn't guaranteed."}
+        - {left: "Steady-return options", right: "Growth-oriented options may fit", say: "That's why it's commonly said that steady options suit short-term goals, and growth-oriented ones suit long-term goals."}
+    - type: points
+      chapter: "Your risk capacity"
+      heading: "**How much risk** can you take?"
+      marker: dot
+      items:
+        - {text: "**Risk capacity**: can your finances absorb a loss?", sub: "Income, savings, responsibilities, age", say: "Two questions. First, risk capacity. If a loss happens, can your finances absorb it? Your income, savings and responsibilities affect this."}
+        - {text: "**Risk tolerance**: can your nerves take a fall?", say: "Second, risk tolerance. If the value falls twenty percent, will you sell in panic, or stay calm?"}
+    - type: takeaway
+      text: "Risk and return **go together**. Choose your risk to fit **your goal, time frame and temperament**."
+      say: "In short, risk and return go together. There's no such thing as high returns with no risk. The first step is understanding how much risk fits your goal, your time frame and your temperament."

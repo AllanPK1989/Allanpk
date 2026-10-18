@@ -1,0 +1,79 @@
+# Translated by Claude from content/016-financial-scams.yaml; review before approving.
+id: "016"
+category: basics
+title_en: "How to Spot Financial Scams"
+thumb_en: "'**10% a month!**' Can you trust it?"
+icon: alert
+keywords: [financial scams, ponzi scheme, investment fraud, fake trading app, cyber fraud, scam warning signs]
+# This video quotes scammers' pitches so viewers can recognise them.
+allow_phrases: ["guaranteed returns", "assured returns"]
+summary:
+  - "5 warning signs of financial scams"
+  - "How a Ponzi scheme works"
+  - "Fake 'trading' groups and fake apps"
+  - "What to do if you're cheated: helpline 1930"
+
+short:
+  scenes:
+    - type: hook
+      icon: alert
+      heading: "'**10% a month**,\nguaranteed!'"
+      say: "Ten percent a month, guaranteed! If you get a message like this, it's a big warning bell."
+    - type: points
+      heading: "**Warning signs** of a scam"
+      marker: cross
+      items:
+        - {text: "**Guaranteed returns**, and very high ones", say: "First, very high returns, and guaranteed too. Nothing in the market works like that."}
+        - {text: "'Join **today**, places are limited'", say: "Second, rushing you. Join today, places are limited."}
+        - {text: "Commission for **bringing in new people**", say: "Third, commission for bringing in new people. That's the sign of a Ponzi scheme."}
+        - {text: "**Unregistered** company or person", say: "Fourth, a company or person with no SEBI or RBI registration."}
+    - type: takeaway
+      text: "If it looks too good to be true, **it's usually a scam**."
+      say: "Remember. If it looks too good to be true, it's usually a scam."
+
+long:
+  intro_say: "Hello! Every year, many people lose money they worked hard to save to scams. Today, let's see how to spot them."
+  scenes:
+    - type: hook
+      chapter: "One message"
+      icon: alert
+      heading: "'**10% a month**,\n**assured returns!**'"
+      say:
+        - "Suddenly, a message arrives. Join our scheme and get ten percent a month, assured returns."
+        - "Remember the Rule of 72? Ten percent a month means your money doubles in seven months. That's a promise that's practically impossible."
+    - type: flow
+      chapter: "The Ponzi scheme"
+      heading: "How does a Ponzi scheme **work?**"
+      nodes:
+        - {text: "Early joiners get 'returns'", sub: "Really, the new joiners' money", say: "In a Ponzi scheme, the people who joined first are paid returns. But those aren't real returns. It's the money of the people who joined later."}
+        - {text: "Trust → more people join", say: "Seeing the returns come in, more and more people join with confidence."}
+        - {text: "New money stops → **collapse**", say: "When fewer new people join, there's no money to pay out, and the scheme collapses. Most of the people who joined last lose their money."}
+    - type: points
+      chapter: "5 warning signs"
+      heading: "**5 warning** signs"
+      marker: cross
+      items:
+        - {text: "Very high returns + **a guarantee**", say: "First, very high returns, with a guarantee. No market-linked investment can guarantee returns."}
+        - {text: "**Rushing you**: 'today is the last day'", say: "Second, rushing you. Decide today, without giving you time to think."}
+        - {text: "Commission or bonus for **bringing people in**", say: "Third, a set-up where you only earn more if you bring in new people."}
+        - {text: "**No registration or documents**", say: "Fourth, no registration with regulators like SEBI or RBI, and no clear documents."}
+        - {text: "You **can't withdraw** your money", say: "Fifth, putting money in is easy, but when you try to take it out, there's always a reason for delay."}
+    - type: points
+      chapter: "New kinds of scams"
+      heading: "Today's **new kinds** of scams"
+      marker: dot
+      items:
+        - {text: "Fake **'trading' groups**", sub: "Social media and messaging app groups", say: "First, fake trading groups run on social media and messaging apps. The screenshots showing others making money are often fake."}
+        - {text: "Fake **investment apps and websites**", say: "Second, fake apps and websites that look like real companies. You see profits on screen, but you can't withdraw the money."}
+        - {text: "Calls asking for your **OTP or PIN**", say: "Third, calls in the name of a bank or KYC that ask for your OTP or PIN. No genuine company will ever ask for these."}
+    - type: points
+      chapter: "Protect yourself"
+      heading: "**Protect** yourself"
+      marker: check
+      items:
+        - {text: "**Check registration** on the SEBI / RBI websites", say: "First, whatever the company or adviser, check their registration on the SEBI or RBI websites."}
+        - {text: "**Don't decide in a hurry**: ask someone", say: "Second, don't rush into a decision. Ask someone you trust."}
+        - {text: "If cheated: cyber crime helpline **1930**", say: "Third, if you've been cheated, immediately call the national cyber crime helpline, one nine three zero, that's 1930, and report it. The sooner you report, the better the chance of freezing the money."}
+    - type: takeaway
+      text: "**High returns + a guarantee + urgency** = a warning. If it's too good to believe, it's usually not true."
+      say: "In short, high returns, a guarantee, and urgency. When these three come together, it's a big warning. If it looks too good to be true, it usually isn't true. Share this video with your family too."

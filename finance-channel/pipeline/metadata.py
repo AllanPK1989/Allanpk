@@ -6,12 +6,10 @@ and neither title nor description may contain '<' or '>'.
 """
 from __future__ import annotations
 
-from .config import config
+from .config import config, lang, loc, strings
 from .script import Script
 
 DESC_MAX_BYTES = 4900
-BASE_TAGS = ["finance in tamil", "tamil finance", "personal finance tamil", "பணம்", "நிதி",
-             "முதலீடு", "money tamil", "share market tamil", "financial education", "நிதி அறிவு"]
 
 
 def _clean(s: str) -> str:
@@ -24,24 +22,25 @@ def _trim_title(t: str) -> str:
 
 
 def titles(s: Script) -> dict:
-    ta, en = s["title_ta"], s.get("title_en", "")
-    short = f"{ta} | {en} #Shorts" if en else f"{ta} #Shorts"
+    title, sub = s.title, s.subtitle
+    suffix = strings().get("title_suffix")
+    short = f"{title} | {sub} #Shorts" if sub else f"{title} #Shorts"
     if len(short) > 100:
-        short = f"{ta} #Shorts"
-    long = f"{ta} | {en} | Tamil" if en else f"{ta} | Tamil"
+        short = f"{title} #Shorts"
+    long = " | ".join(x for x in (title, sub, suffix) if x)
     if len(long) > 100:
-        long = ta
+        long = title
     return {"short": _trim_title(short), "long": _trim_title(long)}
 
 
 def hashtags(s: Script) -> list[str]:
     cat_en = s.cat["en"].replace(" & ", "And").replace(" ", "")
-    return ["#TamilFinance", f"#{cat_en}", "#நிதிஅறிவு"]
+    return [h.format(category=cat_en) for h in strings()["hashtags"]]
 
 
 def tags(s: Script) -> list[str]:
     out: list[str] = []
-    for t in list(s.get("keywords") or []) + list(s.cat.get("tags") or []) + BASE_TAGS + [s.get("title_en", "")]:
+    for t in list(s.get("keywords") or []) + list(s.cat.get("tags") or []) + list(strings()["base_tags"]) + [s.get("title_en", "")]:
         t = _clean(str(t)).replace(",", " ").strip()
         if t and t.lower() not in {x.lower() for x in out}:
             out.append(t)
@@ -63,16 +62,17 @@ def _fmt_ts(t: float) -> str:
 
 def description(s: Script, fmt: str, info: dict, other_url: str | None = None) -> str:
     cfg = config()
+    txt = strings()
     d = cfg["disclaimer"]
-    brand = cfg["channel"]["brand_ta"]
-    default_hook = "எளிய தமிழில், ஒரு நிமிடத்தில்." if fmt == "short" else "எளிய தமிழில் முழு விளக்கம்."
-    hook = s.get("description_hook") or f"{s['title_ta']} — {default_hook}"
+    brand = loc(cfg["channel"], "brand")
+    default_hook = txt["hook_short"] if fmt == "short" else txt["hook_long"]
+    hook = s.get("description_hook") or f"{s.title} — {default_hook}"
     link = ""
     if other_url:
-        label = "📺 முழு விளக்கம் (Full video)" if fmt == "short" else "📱 ஒரு நிமிட Short"
+        label = txt["link_to_long"] if fmt == "short" else txt["link_to_short"]
         link = f"{label}: {other_url}"
     summary = [f"• {_clean(x)}" for x in (s.get("summary") or [])]
-    summary_label = "இந்த வீடியோவில்:" if fmt == "long" else "முழு விளக்க வீடியோவில்:"
+    summary_label = txt["summary_long"] if fmt == "long" else txt["summary_short"]
     chaps = info.get("chapters") or [] if fmt == "long" else []
     chapters = "⏱️ Chapters\n" + "\n".join(f"{_fmt_ts(t)} {_clean(n)}" for t, n in chaps) if chaps else ""
 
@@ -81,10 +81,9 @@ def description(s: Script, fmt: str, info: dict, other_url: str | None = None) -
             _clean(hook), link,
             ((summary_label + "\n") + "\n".join(summary_lines)) if summary_lines else "",
             chapters if with_chapters else "",
-            f"📌 “{brand}” — தினமும் ஒரு எளிய நிதி பாடம், தமிழில். பாகம் #{int(s.id)}.",
-            _clean(d["description_ta"]).strip(),
-            _clean(d["description_en"]).strip(),
-            "" if info.get("voice") == "recorded" else _clean(d["ai_voice_note"]).strip(),
+            txt["series_line"].format(brand=brand, n=int(s.id)),
+            *(_clean(d[k]).strip() for k in txt["description_disclaimers"]),
+            _clean(d["ai_voice_note"]).strip(),
             " ".join(hashtags(s) + (["#Shorts"] if fmt == "short" else [])),
         ]
         return "\n\n".join(p for p in parts if p)
@@ -119,8 +118,8 @@ def video_body(s: Script, fmt: str, info: dict, publish_at: str | None, other_ur
             "description": description(s, fmt, info, other_url),
             "tags": tags(s),
             "categoryId": str(pub.get("category_id", "27")),
-            "defaultLanguage": "ta",
-            "defaultAudioLanguage": "ta",
+            "defaultLanguage": lang(),
+            "defaultAudioLanguage": lang(),
         },
         "status": status,
     }

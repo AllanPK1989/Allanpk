@@ -1,0 +1,88 @@
+# The English channel: the same lesson as the Tamil channel each day, in English.
+#
+# Starts from config.yaml. `channel`, `voice`, `video`, `publish` and
+# `recording` are merged key by key; every other section here replaces the
+# Tamil one completely. Run any command for this channel with
+#   python -m pipeline --channel en <command>
+# English scripts live in content/en/ and are translated from the Tamil script
+# with the same id (python -m pipeline --channel en translate 001).
+
+channel:
+  # The name of the English YouTube channel.
+  brand_en: "Finance for beginners"
+  language: en
+  content_dir: content/en
+  state_dir: state/en/items
+  voice_scripts_dir: voice-scripts/en
+  release_prefix: "video-en-"   # preview pre-release tag: video-en-001
+  issue_tag: "[EN] "
+  daily: true                   # false pauses the daily English video
+
+voice:
+  # Indian English neural voices via edge-tts:
+  #   en-IN-NeerjaNeural (female), en-IN-PrabhatNeural (male)
+  name: en-IN-NeerjaNeural
+  rate_short: "+5%"
+  rate_long: "+0%"
+
+publish:
+  # Uploads to the English channel use their own refresh token (made while
+  # signed in to the English channel); the client id and secret are shared.
+  refresh_token_env: YT_EN_REFRESH_TOKEN
+
+recording:
+  # The recorder page is Tamil-only for now; English videos use the AI voice.
+  enabled: false
+
+disclaimer:
+  say: "This video is for education only. It is not investment advice. I am not a SEBI-registered adviser. Please do your own research and consult a registered adviser before you invest."
+  screen_en: "For education only • Not investment advice"
+  screen_full_en: "This video is for education only. It is not investment advice or a recommendation to buy or sell any security. I am not a SEBI-registered Investment Adviser (RIA) or Research Analyst (RA)."
+  description_en: |
+    Disclaimer: This video is for educational purposes only. It is not investment advice or a recommendation to buy or sell any security, fund, insurance product or other financial product. I am not a SEBI-registered Investment Adviser or Research Analyst. All numbers shown are hypothetical illustrations. Investments are subject to market risks. Do your own research and consult a SEBI-registered adviser before investing.
+  ai_voice_note: "🔊 The narration in this video is an AI-generated voice."
+
+fno_risk:
+  say: "According to a SEBI study, nine out of ten individual traders in equity F and O made a net loss."
+  screen_en: "SEBI study: 9 out of 10 individual traders in equity F&O made a net loss."
+
+strings:
+  intro_say: "Hello! Today's lesson: {title}"
+  intro_chapter: "Introduction"
+  disclaimer_chapter: "Disclaimer"
+  cta_short: "One money lesson a day • Subscribe"
+  cta_long: "One simple money lesson every day. Subscribe and keep learning!"
+  title_suffix: "Personal Finance Basics"
+  hook_short: "Explained simply, in one minute."
+  hook_long: "A simple, complete explanation."
+  link_to_long: "📺 Full video"
+  link_to_short: "📱 One-minute Short"
+  summary_long: "In this video:"
+  summary_short: "In the full video:"
+  series_line: "📌 “{brand}”: one simple money lesson every day, for Indian beginners. Part #{n}."
+  description_disclaimers: [description_en]
+  hashtags: ["#PersonalFinance", "#{category}", "#MoneyBasics"]
+  base_tags: ["personal finance india", "finance for beginners", "money basics", "financial education",
+              "investing for beginners", "personal finance", "money management", "financial literacy"]
+  ui:
+    define: "Definition"
+    example: "Example (hypothetical numbers)"
+    remember: "Remember"
+    lesson: "Today's lesson"
+    disclaimer: "Disclaimer"
+    profit: "Profit"
+    loss: "Loss"
+    expiry_price: "Price at expiry"
+
+speak:
+  rupee: "rupees"
+  units: "lakh|crore|thousand"
+  strip_digit_commas: false   # en-IN reads 1,00,000 as "one lakh"
+  symbols: {"×": " times ", "÷": " divided by ", "→": ", ", "=": " equals "}
+
+# The English voice already says these well; add an entry whenever it mispronounces something.
+pronounce:
+  "F&O": "F and O"
+  "P/E": "P E"
+  "P/B": "P B"
+  "CIBIL": "sibil"

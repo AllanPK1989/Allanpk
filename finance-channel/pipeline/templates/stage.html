@@ -307,7 +307,7 @@ const SCENES = {
   define(sc, st) {
     const a = st.first;
     return `<div class="s-define">
-      <div class="label ${a ? 'a-fade' : ''}">${fmt(sc.label || 'வரையறை')}</div>
+      <div class="label ${a ? 'a-fade' : ''}">${fmt(sc.label || UI.define || 'வரையறை')}</div>
       <div class="term ${a ? 'a-up' : ''}">${fmt(sc.term)}</div>
       ${sc.term_en ? `<div class="term-en ${a ? 'a-up d1' : ''}">${fmt(sc.term_en)}</div>` : '<div style="height:36px"></div>'}
       <div class="card ${a ? 'a-up d2' : ''}">${fmt(sc.text)}</div>
@@ -337,7 +337,7 @@ const SCENES = {
     const n = (sc.lines || []).length;
     const lines = (sc.lines || []).map((l, i) => `<div class="line ${rv(i, st, 'a-left')}">${fmt(l.text)}</div>`).join('');
     const res = sc.result ? `<div class="res ${rv(n, st, 'a-pop')}">${fmt(sc.result.text)}</div>` : '';
-    return `<div class="s-steps">${heading(sc, st)}${sc.tag !== false ? `<div class="tag ${st.first ? 'a-fade' : ''}">${fmt(sc.tag || 'உதாரணம் (கற்பனை எண்கள்)')}</div>` : ''}<div class="steps">${lines}${res}</div></div>`;
+    return `<div class="s-steps">${heading(sc, st)}${sc.tag !== false ? `<div class="tag ${st.first ? 'a-fade' : ''}">${fmt(sc.tag || UI.example || 'உதாரணம் (கற்பனை எண்கள்)')}</div>` : ''}<div class="steps">${lines}${res}</div></div>`;
   },
   stat(sc, st) {
     const a = st.first;
@@ -391,7 +391,7 @@ const SCENES = {
     return `<div class="s-formula">${heading(sc, st)}<div class="formula ${st.first ? 'a-pop' : ''}">${fmt(sc.formula)}</div><div class="legs">${legs}</div></div>`;
   },
   takeaway(sc, st) {
-    return `<div class="s-take"><div class="label ${st.first ? 'a-fade' : ''}">${svgIcon('bulb')}<span>${fmt(sc.label || 'நினைவில் கொள்ளுங்கள்')}</span></div>
+    return `<div class="s-take"><div class="label ${st.first ? 'a-fade' : ''}">${svgIcon('bulb')}<span>${fmt(sc.label || UI.remember || 'நினைவில் கொள்ளுங்கள்')}</span></div>
       <div class="card ${st.first ? 'a-pop' : ''}">${fmt(sc.text)}</div></div>`;
   },
   line(sc, st) { return `<div class="s-line">${heading(sc, st)}<div class="chart">${lineChart(sc, st)}</div>${sc.note ? `<div class="sub">${fmt(sc.note)}</div>` : ''}</div>`; },
@@ -401,12 +401,12 @@ const SCENES = {
   // ---- scenes the pipeline adds automatically ----
   intro(sc, st) {
     return `<div class="s-intro s-hook">${icon(sc.icon || 'book', 'a-pop')}<div>
-      <div class="lab a-fade">${fmt(sc.label || 'இன்றைய பாடம்')}</div>
+      <div class="lab a-fade">${fmt(sc.label || UI.lesson || 'இன்றைய பாடம்')}</div>
       <h1 class="h a-up">${fmt(sc.heading)}</h1>
       ${sc.sub ? `<div class="en a-up d2">${fmt(sc.sub)}</div>` : ''}</div></div>`;
   },
   disclaimer(sc, st) {
-    return `<div class="s-disc">${icon('shield', 'a-pop')}<div class="ttl a-up">பொறுப்புத் துறப்பு</div>
+    return `<div class="s-disc">${icon('shield', 'a-pop')}<div class="ttl a-up">${fmt(UI.disclaimer || 'பொறுப்புத் துறப்பு')}</div>
       <div class="card a-up d1">${fmt(sc.text)}</div>
       <div class="cta a-up d3">${fmt(sc.cta || '')}</div></div>`;
   },
@@ -504,9 +504,9 @@ function payoffChart(sc, st) {
   const lossSideLeft = call === buy;      // buy call / sell put lose on the left
   const xl = B.l + 20, xr = B.W - B.r - 20;
   const pX = lossSideLeft ? xl : xr, lX = lossSideLeft ? xr : xl;
-  body += `<text x="${pX}" y="${B.t + 46}" text-anchor="${lossSideLeft ? 'start' : 'end'}" style="font: 800 36px 'Noto Sans Tamil'; fill: var(--good)">லாபம்</text><text x="${lX}" y="${B.H - B.b - 22}" text-anchor="${lossSideLeft ? 'end' : 'start'}" style="font: 800 36px 'Noto Sans Tamil'; fill: var(--bad)">நஷ்டம்</text>`;
+  body += `<text x="${pX}" y="${B.t + 46}" text-anchor="${lossSideLeft ? 'start' : 'end'}" style="font: 800 36px 'Noto Sans Tamil'; fill: var(--good)">${esc(UI.profit || 'லாபம்')}</text><text x="${lX}" y="${B.H - B.b - 22}" text-anchor="${lossSideLeft ? 'end' : 'start'}" style="font: 800 36px 'Noto Sans Tamil'; fill: var(--bad)">${esc(UI.loss || 'நஷ்டம்')}</text>`;
   body += `<line class="axis" x1="${B.l}" x2="${B.W - B.r}" y1="${yz}" y2="${yz}"/><line class="axis" x1="${B.l}" x2="${B.l}" y1="${B.t}" y2="${B.H - B.b}"/>`;
-  body += `<text x="${B.W - B.r}" y="${B.H - 8}" text-anchor="end" style="font: 600 30px 'Noto Sans Tamil'">${esc(sc.xlabel || 'Expiry அன்று விலை')}</text>`;
+  body += `<text x="${B.W - B.r}" y="${B.H - 8}" text-anchor="end" style="font: 600 30px 'Noto Sans Tamil'">${esc(sc.xlabel || UI.expiry_price || 'Expiry அன்று விலை')}</text>`;
   [lo, K, hi].forEach(v => body += `<text x="${S.X(v)}" y="${B.H - B.b + 46}" text-anchor="middle" style="font: 600 30px Inter">${v}</text>`);
   const L = plen(pts, S);
   body += `<path class="series ${st.first ? 'a-draw' : ''}" d="${pathOf(pts, S)}" stroke="var(--accent)" style="--len:${L}; stroke-dasharray:${L}"/>`;
@@ -576,8 +576,11 @@ function fit(content) {
 }
 
 // ---------- public API used by render.py ----------
+let UI = {};  // default frame labels in the channel's language (config strings.ui)
 window.stage = {
   setup(o) {
+    UI = o.ui || {};
+    if (o.lang) document.documentElement.lang = o.lang;
     document.body.className = o.format === 'long' ? 'long' : 'short';
     if (o.thumb) document.body.classList.add('thumb');
     const r = document.documentElement.style;

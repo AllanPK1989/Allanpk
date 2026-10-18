@@ -164,7 +164,7 @@ def test_generator_retries_until_lint_passes(tmp_path, monkeypatch):
 
     monkeypatch.setattr(anthropic, "Anthropic", FakeClient)
     monkeypatch.setattr(generate, "CONTENT", tmp_path)
-    monkeypatch.setattr(generate, "find_script", lambda tid: None)
+    monkeypatch.setattr(generate, "find_script", lambda *a, **k: None)
     out = generate.generate("031")
 
     assert out.parent == tmp_path and out.name == "031-net-worth.yaml"
@@ -256,3 +256,121 @@ def test_import_zip_cleans_clips_and_reports_gaps(tmp_path):
 def test_recorder_url_points_at_github_pages():
     from pipeline.review import recorder_url
     assert recorder_url("https://github.com/AllanPK1989/allanpk", "007") == "https://allanpk1989.github.io/allanpk/?t=007"
+
+
+# ---------- the English channel (channels/en.yaml) ----------
+
+TAMIL_CHARS = __import__("re").compile(r"[஀-௿]")
+
+
+@pytest.fixture
+def en(monkeypatch):
+    monkeypatch.setenv("FINANCE_CHANNEL", "en")
+
+
+def test_english_profile_overrides_only_what_differs(en):
+    from pipeline.config import config, content_dir, release_tag, state_dir
+    cfg = config()
+    assert cfg["channel"]["language"] == "en" and cfg["voice"]["name"].startswith("en-IN-")
+    assert cfg["voice"]["engine"] == "edge" and cfg["publish"]["time"] == "18:00"  # merged from config.yaml
+    assert "SEBI" not in cfg["pronounce"]  # replaced, not merged
+    assert content_dir().as_posix().endswith("content/en") and state_dir().as_posix().endswith("state/en/items")
+    assert release_tag("7") == "video-en-007"
+
+
+def test_tamil_is_still_the_default(monkeypatch):
+    from pipeline.config import config, release_tag
+    monkeypatch.delenv("FINANCE_CHANNEL", raising=False)
+    assert config()["channel"]["language"] == "ta" and release_tag("1") == "video-001"
+
+
+def test_every_english_script_lints_clean_and_matches_its_tamil_script(en):
+    from pipeline.config import CONTENT, load_yaml
+    from pipeline.translate import _shape_problems
+    scripts = all_scripts()
+    assert scripts, "no English scripts in content/en"
+    for s in scripts:
+        assert s.path.parent.name == "en"
+        rep = lint(s)
+        assert not rep.errors, f"{s.path.name}: {rep.errors}"
+        assert not _shape_problems(load_yaml(CONTENT / s.path.name), s.data), s.path.name
+        for f in ("short", "long"):
+            for seg in build_timeline(s, f).segments:
+                assert not TAMIL_CHARS.search(seg.text), f"{s.path.name} {f}: Tamil text in “{seg.text}”"
+
+
+def test_english_metadata_is_all_english(en):
+    from pipeline.metadata import video_body
+    s = load_script("001")
+    body = video_body(s, "long", {"chapters": [[0, "Introduction"], [20, "a"], [40, "b"]]}, None, None)
+    sn = body["snippet"]
+    assert sn["defaultLanguage"] == "en" and sn["defaultAudioLanguage"] == "en"
+    assert sn["title"] == "What is Inflation? | Personal Finance Basics"
+    assert titles(s)["short"] == "What is Inflation? #Shorts"
+    for text in [sn["title"], sn["description"], *sn["tags"]]:
+        assert not TAMIL_CHARS.search(text), text
+    assert "SEBI" in sn["description"] and "#PersonalFinance" in sn["description"]
+    intro = build_timeline(s, "long").scenes[0]
+    assert intro["heading"] == "What is Inflation?" and intro["sub"] is None and intro["chapter"] == "Introduction"
+
+
+def test_for_voice_english(en):
+    assert for_voice("A **₹1 lakh** FD at 7%") == "A 1 lakh rupees FD at 7%"
+    assert for_voice("₹1,00,000 × 2 = ₹2,00,000") == "1,00,000 rupees times 2 equals 2,00,000 rupees"
+    assert for_voice("Equity F&O") == "Equity F and O"
+
+
+def test_translator_keeps_the_tamil_structure(tmp_path, monkeypatch, en):
+    """Stubbed Claude: first reply drops a scene, second is valid."""
+    import types
+    import anthropic
+    from pipeline import translate
+
+    good = (Path(__file__).parent.parent / "content" / "en" / "001-inflation.yaml").read_text(encoding="utf-8")
+    data = yaml.safe_load(good)
+    short = dict(data["short"], scenes=data["short"]["scenes"][:-1])
+    bad = yaml.safe_dump({**data, "short": short}, allow_unicode=True, sort_keys=False)
+    replies = iter([bad, good])
+    sent = []
+
+    class Stream:
+        def __init__(self, text): self.text = text
+        def __enter__(self): return self
+        def __exit__(self, *a): return False
+        def get_final_message(self):
+            block = types.SimpleNamespace(type="text", text=f"```yaml\n{self.text}```")
+            return types.SimpleNamespace(stop_reason="end_turn", content=[block])
+
+    class FakeClient:
+        def __init__(self, *a, **k):
+            self.beta = types.SimpleNamespace(messages=types.SimpleNamespace(stream=self.stream))
+        def stream(self, **kw):
+            sent.append(kw)
+            return Stream(next(replies))
+
+    monkeypatch.setattr(anthropic, "Anthropic", FakeClient)
+    monkeypatch.setattr(translate, "content_dir", lambda: tmp_path)
+    monkeypatch.setattr(translate, "find_script", lambda tid, directory=None: None)
+    monkeypatch.setattr(translate, "source_script", lambda tid: Path(__file__).parent.parent / "content" / "001-inflation.yaml")
+    out = translate.translate("001")
+
+    assert out == tmp_path / "001-inflation.yaml"
+    saved = yaml.safe_load(out.read_text(encoding="utf-8"))
+    assert saved["title_en"] == "What is Inflation?" and "title_ta" not in saved
+    assert len(sent) == 2
+    assert "must match the Tamil script" in sent[1]["messages"][-1]["content"]
+    assert "பணவீக்கம்" in sent[0]["messages"][0]["content"]  # the Tamil source was sent
+
+
+def test_channel_flag_picks_the_queue(monkeypatch, capsys):
+    import os
+    from pipeline import __main__ as cli
+    from pipeline.config import ROOT
+    monkeypatch.delenv("FINANCE_CHANNEL", raising=False)
+    assert state._dir() == ROOT / "state" / "items"
+    cli.main(["--channel", "en", "status"])
+    assert os.environ["FINANCE_CHANNEL"] == "en"
+    assert state._dir() == ROOT / "state" / "en" / "items"
+    assert "What is Inflation?" in capsys.readouterr().out
+    with pytest.raises(SystemExit):
+        cli.main(["--channel", "xx", "status"])

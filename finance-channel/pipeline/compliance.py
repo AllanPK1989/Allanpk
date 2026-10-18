@@ -5,7 +5,7 @@ import functools
 import re
 from dataclasses import dataclass, field
 
-from .config import ROOT, categories, load_yaml
+from .config import ROOT, categories, content_dir, lang, load_yaml
 from .script import FORMATS, ITEM_KEYS, SCENE_TYPES, Script, build_timeline, sentences
 
 REQUIRED = {
@@ -85,17 +85,18 @@ def check_text(texts: list[tuple[str, str]], allow: set[str], rep: Report, phras
 
 def check_structure(s: Script, rep: Report) -> None:
     d = s.data
-    for k in ("id", "category", "title_ta", "title_en", "summary", "keywords", "short", "long"):
+    title_key = f"title_{lang()}"
+    for k in dict.fromkeys(("id", "category", title_key, "title_en", "summary", "keywords", "short", "long")):
         if k not in d:
             rep.errors.append(f"missing top-level field `{k}`")
     if rep.errors:
         return
-    if not s.path.name.startswith(s.id + "-") and s.path.parent.name == "content":
+    if not s.path.name.startswith(s.id + "-") and s.path.parent == content_dir():
         rep.errors.append(f"file name {s.path.name} doesn't start with id {s.id}")
     if d["category"] not in categories():
         rep.errors.append(f"unknown category {d['category']} (see categories.yaml)")
-    if len(d["title_ta"]) > 60:
-        rep.warnings.append("title_ta is long; YouTube titles read best under ~60 characters")
+    if len(d[title_key]) > 60:
+        rep.warnings.append(f"{title_key} is long; YouTube titles read best under ~60 characters")
     for fmt in FORMATS:
         scenes = (d.get(fmt) or {}).get("scenes") or []
         if not scenes:

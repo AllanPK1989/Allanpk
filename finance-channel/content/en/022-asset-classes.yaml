@@ -1,0 +1,76 @@
+# Translated by Claude from content/022-asset-classes.yaml; review before approving.
+id: "022"
+category: investing
+title_en: "Asset Classes"
+thumb_en: "Shares, debt, gold, property: **what's each for?**"
+icon: pie
+keywords: [asset classes, equity debt gold real estate, investing basics, types of investments, asset allocation]
+summary:
+  - "The five main asset classes"
+  - "What each one does: growth, stability, protection, liquidity"
+  - "The risks of each"
+  - "Why the mix matters"
+
+short:
+  scenes:
+    - type: hook
+      icon: pie
+      heading: "Shares, debt, gold, property, cash:\n**what's each for?**"
+      say: "Shares, bonds, gold, property and cash. Each asset class has a job to do."
+    - type: points
+      heading: "What each one **does**"
+      items:
+        - {text: "**Shares**: long-term growth", sub: "Big ups and downs", say: "Shares are for long-term growth. But they go up and down a lot."}
+        - {text: "**Bonds, FDs**: stability", sub: "Interest income", say: "Bonds and FDs are for stability and interest income."}
+        - {text: "**Gold**: protection in a crisis", sub: "No interest or dividend", say: "Gold is seen as protection in times of crisis. But it pays no interest or dividend."}
+        - {text: "**Land, property**: big sums, slow to sell", say: "Land and property need a big sum, and selling is slow."}
+        - {text: "**Cash**: for immediate needs", say: "Cash is for immediate needs and emergencies."}
+    - type: takeaway
+      text: "No single asset class **does every job**. That's why **the mix** matters."
+      say: "No single asset class does every job. That's why a mix that fits your goals matters."
+
+long:
+  intro_say: "Hello! In the last video, we looked at diversification. We said you need several baskets. Today, let's see what those baskets are. Asset classes."
+  scenes:
+    - type: define
+      chapter: "What is an asset class?"
+      term: "Asset Class"
+      text: "A group of investments that **behave in a similar way**. Each class has **its own risk and its own job**."
+      say:
+        - "An asset class is a group of investments with similar features that behave in a similar way."
+        - "There are five main classes. Each has its own risk and its own job."
+    - type: define
+      chapter: "Shares"
+      label: "Class 1"
+      term: "Shares (Equity)"
+      text: "**A share in the ownership** of companies. Job: **long-term growth**. Risk: **big ups and downs in the short term**."
+      say:
+        - "The first class is shares. Buying a small part of the ownership of a company."
+        - "As companies grow, shareholders can benefit too. That's why shares are used for long-term growth. But in the short term, the value can swing a lot."
+    - type: define
+      chapter: "Debt"
+      label: "Class 2"
+      term: "Debt / Fixed Income"
+      text: "**Lending to** a government or company **for interest**. FDs, bonds, debt funds. Job: **stability**."
+      say:
+        - "The second is debt. Lending to a government or a company and earning interest. FDs, government bonds and debt funds are in this class."
+        - "Their job is stability and regular income. The risks are the borrower not paying back, and changes in interest rates."
+    - type: points
+      chapter: "Gold, property, cash"
+      heading: "**Three more** classes"
+      items:
+        - {text: "**Gold**: a sense of safety in a crisis", sub: "Risk: price swings; no interest", say: "The third is gold. In stock market crises, many people see gold as protection. But its price goes up and down too, and it pays no interest."}
+        - {text: "**Land, property**: use + rental income", sub: "Risk: big sums, slow to sell, costs", say: "The fourth is land and property. Rental income and a rise in value are possible. But it needs a big sum, registration costs are high, and it's hard to sell quickly."}
+        - {text: "**Cash**: immediate liquidity", sub: "Risk: loses value to inflation", say: "The fifth is cash, meaning things like a savings account. You can use it straight away. But kept for a long time, inflation eats into its value."}
+    - type: compare
+      chapter: "A comparison"
+      heading: "A **general comparison**"
+      left: {title: "More growth potential"}
+      right: {title: "More stability"}
+      rows:
+        - {left: "Shares", right: "FDs, government bonds", say: "In general, shares have more growth potential and less stability. FDs and government bonds have more stability and less growth."}
+        - {left: "For the long term", right: "For the short term", say: "That's why it's commonly said that growth-oriented assets suit long-term goals, and stable ones suit short-term goals."}
+      after: "This is only a general view. What suits you depends on your goals and your risk capacity."
+    - type: takeaway
+      text: "Each asset class has **a job**. When one falls, another **can hold things up**."
+      say: "In short, each asset class has a job. When one falls, another can hold things up. Mixing them to fit your goals is called asset allocation. We'll look at that in a separate video."

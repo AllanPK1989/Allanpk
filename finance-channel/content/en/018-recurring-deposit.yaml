@@ -1,0 +1,80 @@
+# Translated by Claude from content/018-recurring-deposit.yaml; review before approving.
+id: "018"
+category: savings
+title_en: "Recurring Deposit"
+thumb_en: "A little each month, **a big goal**"
+icon: calendar
+keywords: [recurring deposit, RD, monthly savings, short term goals, RD vs FD]
+summary:
+  - "What is an RD, and how is it different from an FD?"
+  - "How an RD helps with short-term goals (example)"
+  - "What happens if you miss an instalment?"
+  - "RD interest is taxed too"
+
+short:
+  scenes:
+    - type: hook
+      icon: calendar
+      heading: "No big sum all at once?\n**Can you manage a little each month?**"
+      say: "Don't have a big sum at once for an FD? There's a simple way to save a little each month."
+    - type: define
+      term: "Recurring Deposit (RD)"
+      text: "Putting in **the same amount every month**, for a set period, at a fixed interest rate."
+      say: "A recurring deposit means putting in the same amount every month, for a set period, at a fixed interest rate."
+    - type: steps
+      heading: "A one-year goal"
+      lines:
+        - {text: "Goal: **₹60,000** in one year", say: "For example, you need sixty thousand rupees in a year. For a festival, or a new laptop."}
+        - {text: "**₹5,000** a month RD × 12 months", say: "Put five thousand rupees a month into an RD, and in twelve months you have sixty thousand, plus a little interest."}
+      result: {text: "**Goal reached** without a loan", say: "That way, you reach your goal without borrowing."}
+    - type: takeaway
+      text: "RD = a disciplined saving habit **for short-term goals**."
+      say: "A recurring deposit is a simple tool that helps you save regularly for short-term goals."
+
+long:
+  intro_say: "Hello! In the last video we looked at the FD. Today, let's look at its sibling, which suits people on a monthly salary. The recurring deposit."
+  scenes:
+    - type: define
+      chapter: "What is an RD?"
+      term: "Recurring Deposit (RD)"
+      text: "Putting in **the same amount every month** for a set period (e.g. 6 months to 10 years) at **a fixed interest rate**."
+      say:
+        - "A recurring deposit means putting in the same amount every month, for a set period."
+        - "The interest rate is fixed when you start. When the term ends, you get everything you put in, plus the interest."
+    - type: compare
+      chapter: "FD vs RD"
+      heading: "FD vs **RD**"
+      left: {title: "FD"}
+      right: {title: "RD"}
+      rows:
+        - {left: "A big sum **once**", right: "A small sum **every month**", say: "With an FD, we put in one big sum, once. With an RD, a small sum every month."}
+        - {left: "For people who already have the money", right: "**For people saving from their salary**", say: "An FD is for people who already have the money. An RD is for people who want to save from their monthly salary."}
+        - {left: "Interest: fixed", right: "Interest: fixed", say: "In both, the interest rate is fixed at the start."}
+    - type: steps
+      chapter: "An example"
+      heading: "An RD for a one-year goal"
+      say: "An example. Next year, you need sixty thousand rupees for a family festival."
+      lines:
+        - {text: "Goal: **₹60,000** in 12 months", say: "You need sixty thousand rupees in twelve months."}
+        - {text: "**₹5,000** a month RD", say: "You start a one-year RD of five thousand rupees a month."}
+        - {text: "At maturity: ₹60,000 + **interest**", say: "When the year ends, you get the sixty thousand you put in, plus interest."}
+      result: {text: "**Festival done**, with no credit card or loan", say: "That way, you can hold the festival without a credit card or a loan. Saving before you spend is far better than borrowing to spend."}
+    - type: points
+      chapter: "What is it good for?"
+      heading: "What is an RD **good for?**"
+      marker: check
+      items:
+        - {text: "**1-3 year** goals", sub: "Festivals, travel, gadgets, a vehicle down payment", say: "Goals that are one to three years away. A festival, a trip, a new gadget, or a down payment on a vehicle."}
+        - {text: "Building **a saving habit**", say: "For people just starting to save, it builds discipline."}
+        - {text: "Money that **shouldn't take risks**", say: "When you don't want the money for a goal caught up in market ups and downs."}
+    - type: points
+      chapter: "Things to watch"
+      heading: "Things **to watch**"
+      marker: dot
+      items:
+        - {text: "Miss an instalment and there may be **a penalty**", say: "If you miss a monthly instalment, some banks may charge a penalty. Setting up auto-debit is a good idea."}
+        - {text: "RD interest is subject to **income tax** too", say: "Just like an FD, RD interest is added to your income and taxed."}
+        - {text: "Close it early and **interest may drop**", say: "If you close it before the term ends, you may get less interest."}
+    - type: takeaway
+      text: "RD = **discipline + stability**. For short-term goals, **save in advance** instead of borrowing."
+      say: "In short, an RD gives you discipline and stability. For short-term goals, it's a simple way to save in advance instead of borrowing."

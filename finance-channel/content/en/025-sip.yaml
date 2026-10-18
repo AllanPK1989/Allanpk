@@ -1,0 +1,83 @@
+# Translated by Claude from content/025-sip.yaml; review before approving.
+id: "025"
+category: investing
+title_en: "What is SIP?"
+thumb_en: "SIP isn't **a product**, it's **a method!**"
+icon: calendar
+keywords: [SIP, systematic investment plan, mutual fund SIP, monthly investment, SIP explained]
+summary:
+  - "What is a SIP? It's a way of investing"
+  - "How a SIP works: units depend on the NAV"
+  - "SIP benefits: discipline, small amounts, automation"
+  - "Common myths about SIPs"
+
+short:
+  scenes:
+    - type: hook
+      icon: calendar
+      heading: "A SIP isn't **a product**.\nIt's **a method!**"
+      say: "Many people think a SIP is a separate investment product. Actually, it's a way of investing."
+    - type: define
+      term: "SIP"
+      term_en: "Systematic Investment Plan"
+      text: "A **method** of automatically investing **a fixed amount every month** in a mutual fund."
+      say: "A SIP is a way of automatically investing a fixed amount every month in a mutual fund."
+    - type: points
+      heading: "The **strengths** of a SIP"
+      marker: check
+      items:
+        - {text: "Start **with a small amount**", say: "You can start with a small amount."}
+        - {text: "**Automatic**: discipline comes built in", say: "Because it's automatic, discipline comes built in."}
+        - {text: "No need to **time the market**", say: "You don't need to predict the market to decide when to buy."}
+    - type: takeaway
+      text: "A SIP **brings discipline**. But returns depend on **the fund you choose and the market**."
+      say: "A SIP brings discipline. But your returns depend on the fund you choose and on the market. A SIP comes with no guarantee."
+
+long:
+  intro_say: "Hello! In the last video, we looked at mutual funds. Today, let's look at the most popular way to invest in them. The SIP."
+  scenes:
+    - type: hook
+      chapter: "A SIP is a method"
+      icon: question
+      heading: "'Which SIP is best?'\n**The wrong question!**"
+      say:
+        - "Many people ask which SIP is best. But that's a slightly wrong question."
+        - "Because a SIP isn't a separate investment product. It's a way of investing. Like a recurring deposit, it's a way of putting money in every month."
+    - type: define
+      chapter: "What is a SIP?"
+      term: "SIP"
+      term_en: "Systematic Investment Plan"
+      text: "A method where **a fixed amount every month** is **automatically** invested from your bank account into a mutual fund you choose."
+      say:
+        - "With a SIP, you choose a mutual fund, an amount and a date."
+        - "Every month on that date, that amount is automatically invested from your bank account into the fund."
+    - type: steps
+      chapter: "How does it work?"
+      heading: "₹1,000 a month SIP: **the units change**"
+      tag: "Example (imaginary NAV)"
+      say: "Let's look at an imaginary example of how a SIP works. A thousand rupees a month."
+      lines:
+        - {text: "Month 1: NAV ₹20 → **50 units**", say: "In the first month, the NAV is twenty rupees. A thousand rupees buys fifty units."}
+        - {text: "Month 2: NAV ₹25 → **40 units**", say: "In the second month, the NAV rises to twenty-five. The same thousand buys only forty units."}
+        - {text: "Month 3: NAV ₹16 → **62.5 units**", say: "In the third month, the NAV falls to sixteen. The same thousand buys sixty-two and a half units."}
+      result: {text: "**More units** when the price falls, **fewer units** when it rises", say: "When the price falls you automatically get more units, and when it rises you get fewer. This is called rupee cost averaging. There's a separate video on it coming up."}
+    - type: points
+      chapter: "SIP benefits"
+      heading: "The **benefits** of a SIP"
+      marker: check
+      items:
+        - {text: "Start **with a small amount**", say: "First, you can start with a small amount. You don't have to wait until a big sum builds up."}
+        - {text: "**Pay Yourself First**: automatic discipline", say: "Second, it automatically puts into practice the pay yourself first habit we saw earlier."}
+        - {text: "No pressure **to time the market**", say: "Third, there's no pressure to predict when the market will go up or down."}
+        - {text: "**Flexible**: pause, change, step up", say: "Fourth, in general you can stop it if you need to, change the amount, or increase it every year. But some funds, like ELSS, have a lock-in."}
+    - type: points
+      chapter: "Myths"
+      heading: "**Myths** about SIPs"
+      marker: cross
+      items:
+        - {text: "'You **can't lose money** in a SIP'", say: "The first myth is that you can't lose money in a SIP. Wrong. A SIP is just a method. If the fund's value falls, the value of your investment falls too."}
+        - {text: "'A SIP gives **fixed returns**'", say: "The second is that a SIP gives a fixed return. It doesn't. Returns depend on the market."}
+        - {text: "'If the market falls, **stop the SIP**'", say: "The third is stopping your SIP in fear when the market falls. Many people forget that this is exactly when you get more units at a lower price."}
+    - type: takeaway
+      text: "SIP = **a disciplined, automatic way to invest**. Which fund depends on **your goal and risk capacity**."
+      say: "In short, a SIP is a disciplined, automatic way to invest. Which fund to run a SIP in depends on your goal, your time frame and your risk capacity. Mutual fund investments are subject to market risks. Read all scheme related documents carefully."

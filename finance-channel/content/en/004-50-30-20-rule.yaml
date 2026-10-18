@@ -1,0 +1,88 @@
+# Translated by Claude from content/004-50-30-20-rule.yaml; review before approving.
+id: "004"
+category: savings
+title_en: "The 50-30-20 Budget Rule"
+thumb_en: "Split your salary **50-30-20**"
+icon: pie
+keywords: [50 30 20 rule, budget rule, budgeting, salary planning, how to budget, monthly budget]
+summary:
+  - "What is the 50-30-20 rule?"
+  - "An example with a ₹50,000 salary"
+  - "How to adjust it for Indian cities"
+  - "What goes in the 'savings' part?"
+
+short:
+  scenes:
+    - type: hook
+      icon: wallet
+      heading: "Your salary is in.\n**How do you split it?**"
+      say: "Once your salary comes in, how should you split it up? There's a simple rule for this. Fifty, thirty, twenty."
+    - type: donut
+      heading: "With a ₹50,000 salary"
+      center: "₹50,000"
+      slices:
+        - {label: "Needs", value: 50, display: "₹25,000", say: "Fifty percent, that's twenty-five thousand, goes to needs. Rent, food, bills and EMIs."}
+        - {label: "Wants", value: 30, display: "₹15,000", say: "Thirty percent, fifteen thousand, goes to wants. Eating out, shopping, entertainment."}
+        - {label: "Savings & investing", value: 20, display: "₹10,000", say: "Twenty percent, ten thousand, goes to savings and investments."}
+    - type: takeaway
+      text: "This is a **starting point**. If your rent is high, change the split. But **don't skip savings**."
+      say: "This is only a starting point. You can change the split to suit your situation. Just don't drop the savings part."
+
+long:
+  intro_say: "Hello! In the last video, we separated needs from wants. Today, let's use that to look at a simple rule for splitting your salary."
+  scenes:
+    - type: hook
+      chapter: "Why a rule?"
+      icon: pie
+      heading: "Does budgeting feel **hard?**"
+      sub: "One simple rule is enough"
+      say:
+        - "When people hear the word budget, many worry that they'll have to track every single rupee."
+        - "But to get started, three boxes are enough. That's the fifty, thirty, twenty rule."
+    - type: donut
+      chapter: "What is 50-30-20?"
+      heading: "Split your salary **three ways**"
+      center: "100%"
+      say: "We take your take-home salary, the amount left after tax and other deductions, and split it into three parts."
+      slices:
+        - {label: "Needs", value: 50, say: "Fifty percent for needs."}
+        - {label: "Wants", value: 30, say: "Thirty percent for wants."}
+        - {label: "Savings & investing", value: 20, say: "Twenty percent for savings and investments."}
+      after: "This rule became popular through an American book. But the basic idea works in every country."
+    - type: steps
+      chapter: "A ₹50,000 example"
+      heading: "₹50,000 take-home salary"
+      say: "Let's look at an example. Say your take-home pay is fifty thousand rupees a month."
+      lines:
+        - {text: "Needs 50%: **₹25,000**", say: "Twenty-five thousand for needs. Rent, groceries, electricity, transport, and any loan EMI goes here too."}
+        - {text: "Wants 30%: **₹15,000**", say: "Fifteen thousand for wants. Eating out, movies, shopping, travel."}
+        - {text: "Savings & investing 20%: **₹10,000**", say: "Ten thousand for savings and investments."}
+      result: {text: "₹1,20,000 saved in a year!", say: "Ten thousand a month means one lakh twenty thousand rupees saved in a year."}
+    - type: points
+      chapter: "What goes in savings?"
+      heading: "What goes in **the '20%' part?**"
+      marker: check
+      items:
+        - {text: "An **emergency fund**", say: "The first thing in the twenty percent part is an emergency fund. We'll look at it in detail in the next video."}
+        - {text: "**Investing for long-term goals**", say: "Next, investing for long-term goals like retirement and your children's education."}
+        - {text: "**Paying off** high-interest debt early", say: "If you have a high-interest loan, paying extra on top of the EMI to close it early also goes in this part."}
+    - type: compare
+      chapter: "Adjusting it for India"
+      heading: "You can **adjust** it to suit you"
+      left: {title: "Situation"}
+      right: {title: "An example split"}
+      say: "Rent is high in India's big cities. So for some people, fitting needs into fifty percent is hard."
+      rows:
+        - {left: "High rent in a city", right: "60 - 20 - 20", say: "In that case, you could change it to sixty for needs, twenty for wants and twenty for savings."}
+        - {left: "Living with parents", right: "40 - 30 - 30", say: "If you're young and living with your parents, your spending on needs is lower. Then you can raise savings to thirty percent."}
+      after: "The numbers can change. What matters is cutting back on wants and protecting your savings."
+    - type: points
+      chapter: "How to follow it in practice"
+      heading: "Making it **easy** in practice"
+      items:
+        - {text: "On payday, move **20% to a separate account**", say: "On the day your salary arrives, move twenty percent to a separate account. Keep only the rest for spending."}
+        - {text: "A **separate limit** for wants", say: "Set a monthly limit for spending on wants. When the limit runs out, wait until next month."}
+        - {text: "**Review** it every three months", say: "Once every three months, check how you're actually spending, and adjust if you need to."}
+    - type: takeaway
+      text: "50-30-20 is **not a strict law**, it's a guide. Whatever the split, **savings first**."
+      say: "In short, fifty thirty twenty is not a strict law, it's a guide. Whatever split you choose, setting aside the savings part first is the secret to making it work."

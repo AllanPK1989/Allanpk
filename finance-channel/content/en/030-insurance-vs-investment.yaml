@@ -1,0 +1,78 @@
+# Translated by Claude from content/030-insurance-vs-investment.yaml; review before approving.
+id: "030"
+category: insurance
+title_en: "Why Mixing Insurance and Investment Costs You"
+thumb_en: "Insurance + investment = **less of both?**"
+icon: swap
+keywords: [insurance vs investment, term plus invest, endowment plan, buy term invest the rest, ULIP, money back policy]
+summary:
+  - "How plans that mix savings and insurance work"
+  - "An imaginary comparison: a mixed plan vs term + separate investing"
+  - "What to compare: cover, returns, flexibility"
+  - "Both sides: what may suit whom"
+
+short:
+  scenes:
+    - type: hook
+      icon: swap
+      heading: "Insurance and investment together:\n**less of both?**"
+      say: "Insurance and investment in one plan. It sounds convenient. But do you end up with less of both?"
+    - type: compare
+      heading: "₹50,000 a year (imaginary example)"
+      left: {title: "Mixed plan"}
+      right: {title: "Term + separate investing"}
+      rows:
+        - {left: "Cover: **₹10 lakh**", right: "Cover: **₹1 crore** (term)", say: "Fifty thousand rupees a year. Say a mixed plan gives ten lakh of cover. With the same money, you can often buy one crore of term cover and invest the rest."}
+        - {left: "There's a maturity amount", right: "The rest **grows separately**", say: "The mixed plan pays a maturity amount. With the second approach, the rest of the money grows separately as an investment. That's not guaranteed, and it takes discipline."}
+    - type: takeaway
+      text: "When you compare, look at **the cover and the real return** separately."
+      say: "When you compare any plan, look separately at how much cover it gives and what the real return is."
+
+long:
+  intro_say: "Hello! You get insurance, and you get your money back too. Plans like this are very popular in India. Today, let's understand them and see how to compare."
+  scenes:
+    - type: hook
+      chapter: "Why are they popular?"
+      icon: swap
+      heading: "'Your money **isn't wasted**,\nyou **get it back** at the end'"
+      say:
+        - "With term insurance, if nothing happens, no money comes back. Many people feel that's a waste."
+        - "So plans that give the money back at the end look attractive. But what price do we pay for that?"
+    - type: define
+      chapter: "Mixed plans"
+      term: "Savings + insurance plans"
+      term_en: "Endowment, money-back, ULIP and similar"
+      text: "Part of the premium goes to **insurance**, most of it to **savings / investment**. You get an amount at maturity."
+      say:
+        - "In these plans, part of the premium you pay goes to insurance. Most of it goes to a savings or investment part."
+        - "At maturity, you get an amount. These come in many forms, and the terms of each one differ."
+    - type: compare
+      chapter: "An imaginary comparison"
+      heading: "₹50,000 a year, 20 years (imaginary)"
+      left: {title: "A: mixed plan"}
+      right: {title: "B: term + separate investing"}
+      say: "An imaginary comparison. All the numbers are only for illustration. Real plans' numbers will differ."
+      rows:
+        - {left: "Premium: ₹50,000/year", right: "Term ₹10,000 + investing ₹40,000", say: "Both spend fifty thousand a year. A, in a mixed plan. B, ten thousand on a term premium and forty thousand invested separately."}
+        - {left: "Cover: **₹10 lakh**", right: "Cover: **₹1 crore**", say: "Say A's cover is ten lakh. B's term cover is one crore. A ten-times difference in the family's protection."}
+        - {left: "After 20 years: the maturity amount", right: "₹40,000 × 20 years @ 8% (imaginary) ≈ **₹19.8 lakh**", say: "After twenty years, A gets a maturity amount as per the plan. B's investment, at an imaginary growth of eight percent a year, comes to about nineteen point eight lakh."}
+      after: "Which way gives more depends on the real plan's return. That's why you need to know how to compare."
+    - type: points
+      chapter: "What to compare"
+      heading: "What **to compare**"
+      items:
+        - {text: "**Is the cover enough?** Compare it with your family's needs", say: "First, is the cover enough? Compare it with your family's needs, using the calculation from the last video."}
+        - {text: "What's **the real yearly return** (IRR)?", say: "Second, between the premiums you pay and the amount you get, what's the real yearly rate of return? This is called the IRR. Compare it with inflation."}
+        - {text: "**Flexibility**: what if you stop midway?", say: "Third, what happens if you have to stop midway? In many mixed plans, stopping in the early years means a significant loss."}
+        - {text: "**Charges**: how much, and where?", say: "Fourth, how much are the charges, and where are they deducted?"}
+    - type: compare
+      chapter: "Both sides"
+      heading: "To be fair, **both sides**"
+      left: {title: "Term + separate investing"}
+      right: {title: "Mixed plan"}
+      rows:
+        - {left: "Usually **bigger cover**, transparency", right: "**Forced discipline**: you must pay the premium", say: "Term plus separate investing usually gives bigger cover and more transparency. With a mixed plan, the forced discipline of having to pay the premium may help some people."}
+        - {left: "Needs **self-discipline**: you must keep investing", right: "Usually **lower cover**, moderate returns", say: "But the term route needs the self-discipline to actually invest the rest. If you spend it, there's no benefit. Mixed plans usually give lower cover."}
+    - type: takeaway
+      text: "First, **enough protection**. Then, **investing**. Judge the two **separately**."
+      say: "In short, first make sure your family has enough protection. Then invest. Whatever plan you look at, judge the protection and the return separately. Read the policy documents fully, and if needed, get the view of a qualified adviser."

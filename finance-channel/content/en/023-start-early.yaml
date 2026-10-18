@@ -1,0 +1,82 @@
+# Translated by Claude from content/023-start-early.yaml; review before approving.
+id: "023"
+category: investing
+title_en: "Why Start Investing Early?"
+thumb_en: "What if you **started 10 years earlier?**"
+icon: clock
+keywords: [start investing early, cost of delay, compounding, early investing, power of time]
+summary:
+  - "A tale of two friends (an imaginary example)"
+  - "The cost of delay"
+  - "The power of starting small"
+  - "Starting early doesn't mean rushing"
+
+short:
+  scenes:
+    - type: hook
+      icon: clock
+      heading: "One put in ₹6 lakh, one put in ₹15 lakh.\n**Who ends up with more?**"
+      say: "Did the person who put in six lakh end up with more, or the one who put in fifteen lakh? The answer will surprise you."
+    - type: compare
+      heading: "Two friends (imaginary example, 10%)"
+      left: {title: "Arun: age 25-35"}
+      right: {title: "Bala: age 35-60"}
+      rows:
+        - {left: "₹5,000 a month, **only 10 years**", right: "₹5,000 a month, **25 years**", say: "Arun starts at twenty-five, puts in five thousand a month for just ten years, then stops. Bala starts at thirty-five and puts in the same until sixty, for twenty-five years."}
+        - {left: "Put in: **₹6 lakh**", right: "Put in: **₹15 lakh**", say: "Arun put in six lakh. Bala put in fifteen lakh."}
+        - {left: "At 60: **≈ ₹1.24 crore**", right: "At 60: **≈ ₹67 lakh**", say: "At an imaginary growth of ten percent a year, at sixty Arun has about one point two four crore. Bala has about sixty-seven lakh."}
+    - type: takeaway
+      text: "In investing, **time matters more than the amount**."
+      say: "In investing, time plays a bigger role than the amount you put in. This is only an imaginary example; real returns will vary."
+
+long:
+  intro_say: "Hello! When is the right time to invest? The answer many people give is: as early as you can. Let's see why, with a story."
+  scenes:
+    - type: hook
+      chapter: "A tale of two friends"
+      icon: users
+      heading: "Arun and Bala:\n**same age, different choices**"
+      say:
+        - "Arun and Bala are friends of the same age. Both start work at twenty-five."
+        - "Arun starts investing five thousand a month straight away. Bala thinks there's still time, and he'll see about it later."
+    - type: compare
+      chapter: "The numbers"
+      heading: "Imaginary example: 10% growth a year"
+      left: {title: "Arun"}
+      right: {title: "Bala"}
+      say: "This is an imaginary calculation. Let's assume growth of ten percent a year. Real returns won't be this steady."
+      rows:
+        - {left: "Age 25-35: ₹5,000 a month", right: "Age 35-60: ₹5,000 a month", say: "Arun invests from twenty-five to thirty-five, just ten years, and then stops. Bala starts at thirty-five and invests until sixty, for twenty-five years."}
+        - {left: "Total put in: **₹6 lakh**", right: "Total put in: **₹15 lakh**", say: "Arun put in six lakh in total. Bala put in fifteen lakh. More than double."}
+        - {left: "At 60: **≈ ₹1.24 crore**", right: "At 60: **≈ ₹67 lakh**", say: "But at sixty, Arun has about one point two four crore. Bala has about sixty-seven lakh."}
+      after: "Arun put in less but has almost double. Because Arun's money had twenty-five extra years to grow."
+    - type: line
+      chapter: "Why does this happen?"
+      heading: "Arun's money: **still growing after he stopped**"
+      xticks: [[25, "25"], [35, "35"], [45, "45"], [60, "Age 60"]]
+      yticks: [[0, "0"], [40, "₹40L"], [80, "₹80L"], [120, "₹1.2Cr"]]
+      series:
+        - {name: "Arun", points: [[25, 0], [30, 3.9], [35, 10.3], [40, 17.0], [45, 28.0], [50, 46.0], [55, 75.7], [60, 124.5]], at: 0}
+        - {name: "Bala", points: [[25, 0], [35, 0], [40, 3.9], [45, 10.3], [50, 20.9], [55, 38.3], [60, 66.9]], at: 1, color: "#fbbf24"}
+      say:
+        - "Look at Arun's line. He stopped investing at thirty-five. But after that, his money keeps growing thanks to compounding."
+        - "Even though Bala put in more, his money had less time to grow. This is what we call the cost of delay."
+    - type: stat
+      chapter: "What if you did both?"
+      label: "What if Arun had kept going from 25 to 60?"
+      value: "₹21 lakh"
+      to: "≈ ₹1.9 crore"
+      caption: "An imaginary calculation at 10% a year. Not a guarantee."
+      say: "What if Arun hadn't stopped, and kept investing from twenty-five to sixty? He'd have put in twenty-one lakh in total."
+      to_say: "At the same imaginary growth, that would have become about one point nine crore. Starting early and staying consistent together are even more powerful."
+    - type: points
+      chapter: "How to start"
+      heading: "How to **start early**"
+      marker: check
+      items:
+        - {text: "Start **with a small amount**", say: "First, don't wait until you have a big sum. Starting with a small amount is what matters."}
+        - {text: "**Emergency fund and insurance** first", say: "Second, starting early doesn't mean rushing. Your emergency fund and the insurance you need come first."}
+        - {text: "Invest **only in what you understand**", say: "Third, don't rush into anything you don't understand that promises high returns. Learn, and invest only in what you understand."}
+    - type: takeaway
+      text: "**The best time to invest: years ago**. **The next best time: today**."
+      say: "In short, there's a saying. The best time to plant a tree was twenty years ago. The next best time is today. The same is true of investing. All the numbers in this video are imaginary examples, and no return is guaranteed."

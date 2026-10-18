@@ -1,0 +1,91 @@
+# Translated by Claude from content/011-credit-card-trap.yaml; review before approving.
+id: "011"
+category: basics
+title_en: "How Credit Cards Really Work"
+thumb_en: "Is paying the '**Minimum Due**' enough?"
+icon: card
+keywords: [credit card, minimum due trap, credit card interest, interest free period, credit card debt]
+summary:
+  - "The interest-free period: when the credit is free"
+  - "The Minimum Amount Due trap"
+  - "An example: why doesn't the debt go down?"
+  - "4 rules to use a credit card safely"
+
+short:
+  scenes:
+    - type: hook
+      icon: card
+      heading: "Is paying just the\n'**Minimum Due**' enough?"
+      say: "Your credit card bill shows a small amount called the Minimum Amount Due. Is paying just that enough?"
+    - type: compare
+      heading: "Two ways, **two outcomes**"
+      left: {title: "Full amount", color: "#4ade80"}
+      right: {title: "Minimum Due only", color: "#f87171"}
+      rows:
+        - {left: "Interest **₹0**", right: "**High interest** on the rest", say: "Pay the full bill by the due date, and the interest is zero. Pay only the Minimum Due, and you pay high interest on the rest."}
+        - {left: "Interest-free period **continues**", right: "**Interest** on new spending too", say: "Usually, while there's an unpaid balance, even new spending may lose the interest-free benefit."}
+    - type: stat
+      label: "Card interest (example)"
+      value: "~3.5% a month"
+      to: "~40%+ a year"
+      caption: "Minimum Due = **a debt trap**"
+      say: "Credit card interest can be as much as three and a half percent a month."
+      to_say: "That's more than forty percent a year. So paying only the Minimum Due is a debt trap."
+    - type: takeaway
+      text: "Use a card only if you can pay **the full bill** by the due date every month."
+      say: "A simple rule. Use a credit card only if you can pay the full bill by the due date, every month."
+
+long:
+  intro_say: "Hello! A credit card, used well, is a handy tool. Used badly, it's a very expensive loan. Today, let's see how it works."
+  scenes:
+    - type: hook
+      chapter: "Free money?"
+      icon: card
+      heading: "A credit card:\n**free money?**"
+      say:
+        - "A credit card is not free money. It's a short-term loan the bank gives you."
+        - "Whether it's free or expensive depends on when, and how much, you pay back."
+    - type: flow
+      chapter: "The billing cycle"
+      heading: "One month's **cycle**"
+      nodes:
+        - {text: "You spend", sub: "Billing period (about 30 days)", say: "There's a billing period of about a month. Everything you spend in it adds up."}
+        - {text: "The statement / bill arrives", say: "When the period ends, a bill, or statement, arrives."}
+        - {text: "Pay it by the due date", sub: "About 15-20 days later", say: "You get a few more weeks to pay it. That's the due date."}
+      after: "From the day you spend until the due date, you can get up to a few weeks without interest. This is called the interest-free period. It varies from card to card."
+    - type: define
+      chapter: "Minimum Amount Due"
+      term: "Minimum Amount Due"
+      text: "Only **a small part** of the bill. Paying it **avoids the late fee**, but **interest starts on the rest**."
+      say:
+        - "Your bill shows a small amount called the Minimum Amount Due. Often it's a small percentage of the total balance."
+        - "If you pay it, you avoid the late fee. But the debt isn't cleared. High interest starts on the rest."
+    - type: steps
+      chapter: "An example"
+      heading: "A ₹50,000 bill, Minimum Due only"
+      say: "Let's look at an example. The numbers are approximate."
+      lines:
+        - {text: "Bill: **₹50,000**; Minimum Due (5%): **₹2,500**", say: "The bill is fifty thousand. If the Minimum Due is five percent, that's two thousand five hundred. You pay only that."}
+        - {text: "Interest of ~3.5% a month on the remaining **₹47,500** ≈ **₹1,660**", say: "On the remaining forty-seven thousand five hundred, interest of about three and a half percent a month. That's about one thousand six hundred and sixty rupees."}
+        - {text: "**GST** on top of the interest ≈ ₹300", say: "On top of that interest, GST of about three hundred rupees."}
+      result: {text: "Next bill ≈ ₹49,500: **the debt has barely gone down!**", say: "Next month, even with no new spending, the bill is about forty-nine thousand five hundred. You paid two thousand five hundred, and the debt has barely gone down."}
+    - type: stat
+      chapter: "How much interest?"
+      label: "Credit card interest (example)"
+      value: "~3-3.75% a month"
+      to: "~36-45% a year"
+      caption: "A typical rate on many cards. Check your card's rate **in its terms**."
+      say: "Credit card interest looks small when it's shown per month. Three to three and three quarter percent a month."
+      to_say: "But worked out per year, it's thirty-six to forty-five percent. That's far higher than most loans."
+    - type: points
+      chapter: "4 rules to use it safely"
+      heading: "Using a card **safely**"
+      marker: check
+      items:
+        - {text: "Pay **the full bill** by the due date", say: "Rule one: every month, pay the full bill by the due date. If you can, set up auto-pay for the full amount."}
+        - {text: "Use **only part** of your limit", say: "Second, use only a small part of your card limit. This is good for your credit score too."}
+        - {text: "**Don't withdraw cash** on the card", sub: "Cash advance", say: "Third, don't withdraw cash from an ATM using your credit card. Usually there's interest from the day you take it, plus a separate fee."}
+        - {text: "If you have a balance, **pay it off first**", say: "Fourth, if you already have a balance, stop new spending and pay it off first. Paying off high-interest debt is like earning a good return."}
+    - type: takeaway
+      text: "A credit card is **a convenience** if you pay the full bill. **A debt trap** if you pay only the Minimum Due."
+      say: "In short, if you pay the full bill, a credit card is a convenience. If you pay only the Minimum Due, it's a debt trap. The choice is yours."

@@ -17,7 +17,7 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from .config import CONTENT, categories, config, load_yaml
+from .config import categories, config, content_dir, lang, load_yaml, loc, strings
 
 SCENE_TYPES = {
     "hook", "define", "points", "compare", "steps", "stat", "bars", "donut",
@@ -81,10 +81,32 @@ class Script:
     def get(self, k, default=None):
         return self.data.get(k, default)
 
+    @property
+    def title(self) -> str:
+        """Title in the channel's language (title_ta on the Tamil channel, title_en on the English one)."""
+        return self.data[f"title_{lang()}"]
 
-def find_script(topic_id: str) -> Path | None:
+    @property
+    def subtitle(self) -> str | None:
+        """English gloss shown under a non-English title; None on the English channel."""
+        return None if lang() == "en" else self.data.get("title_en")
+
+    @property
+    def thumb_title(self) -> str:
+        return self.data.get(f"thumb_{lang()}") or self.title
+
+    @property
+    def thumb_sub(self) -> str | None:
+        return None if lang() == "en" else self.data.get("thumb_en") or self.data.get("title_en")
+
+    @property
+    def cat_label(self) -> str:
+        return self.cat.get(lang()) or self.cat["en"]
+
+
+def find_script(topic_id: str, directory: Path | None = None) -> Path | None:
     tid = str(topic_id).zfill(3)
-    hits = sorted(CONTENT.glob(f"{tid}-*.yaml"))
+    hits = sorted((directory or content_dir()).glob(f"{tid}-*.yaml"))
     return hits[0] if hits else None
 
 
@@ -93,13 +115,13 @@ def load_script(path_or_id) -> Script:
     if not p.exists():
         found = find_script(str(path_or_id))
         if not found:
-            raise FileNotFoundError(f"no script for topic {path_or_id} in {CONTENT}")
+            raise FileNotFoundError(f"no script for topic {path_or_id} in {content_dir()}")
         p = found
     return Script(p, load_yaml(p))
 
 
 def all_scripts() -> list[Script]:
-    return [load_script(p) for p in sorted(CONTENT.glob("[0-9][0-9][0-9]-*.yaml"))]
+    return [load_script(p) for p in sorted(content_dir().glob("[0-9][0-9][0-9]-*.yaml"))]
 
 
 _SENT = re.compile(r"(?<=[.!?।])\s+")
@@ -128,24 +150,24 @@ def scene_items(scene: dict) -> list[dict]:
 def auto_scenes(script: Script, fmt: str) -> tuple[list[dict], list[dict]]:
     """Scenes the pipeline adds before and after the script's own scenes."""
     cfg = config()
+    txt = strings()
     cat = script.cat
     head, tail = [], []
     if fmt == "long":
         long = script.data["long"]
         head.append({
             "type": "intro", "auto": True, "icon": script.get("icon") or cat.get("icon"),
-            "heading": script["title_ta"], "sub": script.get("title_en"),
-            "say": long.get("intro_say") or f"வணக்கம்! இன்றைய பாடம்: {script['title_ta']}",
-            "chapter": "அறிமுகம்",
+            "heading": script.title, "sub": script.subtitle,
+            "say": long.get("intro_say") or txt["intro_say"].format(title=script.title),
+            "chapter": txt["intro_chapter"],
         })
     if script.category == "fno":
-        tail.append({"type": "risk", "auto": True, "text": cfg["fno_risk"]["screen_ta"],
+        tail.append({"type": "risk", "auto": True, "text": loc(cfg["fno_risk"], "screen"),
                      "say": cfg["fno_risk"]["say"]})
-    cta = "தினமும் ஒரு நிதி பாடம் • Subscribe செய்யுங்கள்" if fmt == "short" else \
-        "தினமும் ஒரு எளிய நிதி பாடம் — Subscribe செய்து தொடருங்கள்!"
-    tail.append({"type": "disclaimer", "auto": True, "text": cfg["disclaimer"]["screen_full_ta"],
+    cta = txt["cta_short"] if fmt == "short" else txt["cta_long"]
+    tail.append({"type": "disclaimer", "auto": True, "text": loc(cfg["disclaimer"], "screen_full"),
                  "say": cfg["disclaimer"]["say"], "cta": cta,
-                 "chapter": "பொறுப்புத் துறப்பு" if fmt == "long" else None})
+                 "chapter": txt["disclaimer_chapter"] if fmt == "long" else None})
     return head, tail
 
 
