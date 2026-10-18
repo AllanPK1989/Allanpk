@@ -1,0 +1,327 @@
+{
+ "id": "001",
+ "title_ta": "",
+ "title_en": "What is Inflation?",
+ "sentences": [
+  {
+   "key": "eb484b136a2d",
+   "text": "Something you can buy for a hundred rupees today.",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "d6c5cf26ad9d",
+   "text": "Will a hundred rupees still buy it ten years from now?",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "6426db0c1cfc",
+   "text": "The general rise in the prices of goods and services over time is called inflation.",
+   "formats": [
+    "short",
+    "long"
+   ]
+  },
+  {
+   "key": "2e25b0f2700b",
+   "text": "For example, let's say inflation is six percent a year.",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "8d48d0e90ba0",
+   "text": "Then something that costs a hundred rupees today will cost about a hundred and seventy-nine rupees ten years from now.",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "481c8ef4346a",
+   "text": "So if the money you save doesn't grow faster than inflation, its real value keeps shrinking.",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "df2130bf1742",
+   "text": "This video is for education only.",
+   "formats": [
+    "short",
+    "long"
+   ]
+  },
+  {
+   "key": "5e0183614a91",
+   "text": "It is not investment advice.",
+   "formats": [
+    "short",
+    "long"
+   ]
+  },
+  {
+   "key": "5d3f69962d0c",
+   "text": "I am not a SEBI-registered adviser.",
+   "formats": [
+    "short",
+    "long"
+   ]
+  },
+  {
+   "key": "f97fce32e586",
+   "text": "Please do your own research and consult a registered adviser before you invest.",
+   "formats": [
+    "short",
+    "long"
+   ]
+  },
+  {
+   "key": "69342c5c39e5",
+   "text": "Hello!",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "1f48726b9191",
+   "text": "Today, let's look at something that quietly eats away at your money.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "05c9e75316ba",
+   "text": "Inflation.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "794dfe66ef59",
+   "text": "Ask your father what a cup of tea cost when he was young.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "22ebadc108c9",
+   "text": "Today the same tea costs many times more.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "bb76624200bf",
+   "text": "The reason behind that rise is inflation.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "b67e1f5b9bd2",
+   "text": "When prices rise, the same one rupee buys less than it did before.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "435de10c5dd1",
+   "text": "We call this a fall in the purchasing power of money.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "f6569518b238",
+   "text": "There are three main reasons prices go up.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "5c3d6d960ff0",
+   "text": "First, when many people want to buy something but there isn't enough of it in the market, its price goes up.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "32dc13fe4bff",
+   "text": "Second, when costs like fuel, raw materials and wages go up, that burden ends up in the price.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "65c46185c238",
+   "text": "Third, when the money circulating in the economy grows faster than the goods available, prices can rise too.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "1be73fd88566",
+   "text": "In India, inflation is mainly measured with the Consumer Price Index, or CPI.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "02d725f0e789",
+   "text": "They take a basket of what an ordinary family buys, like food, clothes, rent and transport, and see how much its price changed in a year.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "cfade572fbee",
+   "text": "The Reserve Bank of India aims to keep CPI inflation around four percent.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "56cca0a2cd51",
+   "text": "Now let's do the math.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "1e5748439331",
+   "text": "Let's say inflation is six percent a year.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "07046483a2cb",
+   "text": "Today, your hundred rupees buys a full hundred rupees' worth of goods.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "32baab8c3f56",
+   "text": "Five years from now, the same hundred rupees buys only about seventy-five rupees' worth, at today's prices.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "7d87eafc449e",
+   "text": "In ten years, that's about fifty-six rupees.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "5698f04b31eb",
+   "text": "In twenty years, only about thirty-one rupees.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "64d675505284",
+   "text": "In other words, two thirds of its value disappears.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "364795ee968c",
+   "text": "Next, a very important idea.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "060fda6c0f2f",
+   "text": "The real return.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "89b835298aaa",
+   "text": "Let's say your savings account pays three percent interest a year.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "9972a7465977",
+   "text": "At the same time, inflation is six percent.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "5b3afaf071f8",
+   "text": "So even though the balance in your account seems to grow, its purchasing power falls by about three percent a year.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "f92a4e4f2ca3",
+   "text": "The amount grows, but the value shrinks.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "2dbd98244610",
+   "text": "That is the hidden effect of inflation.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "782c4722c21f",
+   "text": "First, when you plan long-term goals like your children's education or retirement, calculate with future prices, not today's prices.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "25db6436462c",
+   "text": "Second, compare the return of any saving or investment with inflation.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "90ace3cda116",
+   "text": "Third, the options that can beat inflation usually carry more risk.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "116716d15ead",
+   "text": "We'll look at that in detail in upcoming videos.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "f941b277cf39",
+   "text": "In short, saving money alone is not enough.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "32cc54b52732",
+   "text": "To protect its real value, it has to grow faster than inflation.",
+   "formats": [
+    "long"
+   ]
+  }
+ ]
+}
