@@ -1,0 +1,93 @@
+# Translated by Claude from content/006-pay-yourself-first.yaml; review before approving.
+id: "006"
+category: savings
+title_en: "Pay Yourself First"
+thumb_en: "The first bill goes **to you!**"
+icon: piggy
+keywords: [pay yourself first, saving habit, automate savings, savings tips, how to save money]
+summary:
+  - "What does Pay Yourself First mean?"
+  - "Why 'save whatever is left' doesn't work"
+  - "How to make your savings automatic"
+  - "Start small and raise it every year"
+
+short:
+  scenes:
+    - type: hook
+      icon: piggy
+      heading: "Your salary is in.\n**Who gets paid first?**"
+      say: "When your salary comes in, who gets paid first? Your landlord? The shop? The first bill should be paid to you."
+    - type: compare
+      heading: "Two ways"
+      left: {title: "The usual way", color: "#f87171"}
+      right: {title: "Pay Yourself First", color: "#4ade80"}
+      rows:
+        - {left: "Income − spending = **savings**", right: "Income − savings = **spending**", say: "Most people spend first and save whatever is left. With Pay Yourself First, we take out savings first and spend what's left."}
+        - {left: "Often **₹0** by month end", right: "Savings **guaranteed**", say: "The first way, there's usually nothing left by the end of the month. The second way, your savings are certain."}
+    - type: flow
+      heading: "Make it automatic"
+      nodes:
+        - {text: "Salary arrives", sub: "On the 1st", say: "Note the date your salary arrives."}
+        - {text: "Savings move automatically", sub: "On the 2nd", say: "Arrange for an amount to go to savings automatically, the very next day."}
+        - {text: "Spend what's left", say: "Use only what's left for spending."}
+    - type: takeaway
+      text: "Don't leave saving to **willpower**. **Make it automatic**."
+      say: "Don't leave saving to willpower. Make it automatic. That's the only way it keeps happening."
+
+long:
+  intro_say: "Hello! Today, let's look at one important habit that separates the wealthy from everyone else. Pay yourself first."
+  scenes:
+    - type: hook
+      chapter: "Why is nothing left?"
+      icon: wallet
+      heading: "'We'll save whatever is left'\n**Is anything left?**"
+      say:
+        - "Most people think: once this month's expenses are done, I'll save whatever is left."
+        - "But in practice, nothing is ever left. Do you know why?"
+    - type: define
+      chapter: "Why does this happen?"
+      label: "A truth"
+      term: "Spending fills your income"
+      term_en: "Parkinson's Law (applied to money)"
+      text: "We tend to turn **all the money we have** into some kind of spending."
+      say:
+        - "There's an idea that work expands to fill all the time you give it."
+        - "Money works the same way. We tend to turn all the money in our hands into some kind of spending."
+    - type: compare
+      chapter: "Pay Yourself First"
+      heading: "**Flip** the formula"
+      left: {title: "The usual way", color: "#f87171"}
+      right: {title: "Pay Yourself First", color: "#4ade80"}
+      rows:
+        - {left: "Income − spending = **savings**", right: "Income − savings = **spending**", say: "The fix is simple. Flip the formula. Take out savings first, then spend what's left."}
+        - {left: "Savings = leftovers", right: "Savings = **first expense**", say: "Don't treat savings as leftovers. Treat it as a fixed expense, like rent. An expense you pay to yourself."}
+        - {left: "Relies on willpower", right: "**Automatic**", say: "Most importantly, it shouldn't rely on willpower. It should happen automatically."}
+    - type: flow
+      chapter: "How to automate it"
+      heading: "**Automate** your savings"
+      nodes:
+        - {text: "Salary arrives", sub: "Example: on the 1st", say: "First, note the date your salary arrives."}
+        - {text: "Automatic transfer", sub: "On the 2nd or 3rd", say: "Then set up a standing instruction or auto-debit at your bank, so a fixed amount moves automatically a day or two later."}
+        - {text: "Savings / investment account", sub: "A separate account", say: "Let that money go to a separate savings or investment account, not your spending account."}
+        - {text: "What's left = spending money", say: "Whatever is left is this month's spending money. It's hard to spend money you can't see."}
+    - type: bars
+      chapter: "Start small"
+      heading: "Start small and **raise it every year**"
+      say: "How much should you save? You don't have to start with a big amount. Let's look at an example."
+      bars:
+        - {label: "Year 1", value: 5, display: "5%", say: "In year one, five percent of your salary."}
+        - {label: "Year 2", value: 10, display: "10%", say: "After your raise, ten percent the next year."}
+        - {label: "Year 3", value: 15, display: "15%", say: "Fifteen percent the year after that."}
+        - {label: "Year 4", value: 20, display: "20%", say: "In year four, twenty percent. Because you move only part of each raise into savings, it never feels like your lifestyle got worse."}
+      note: "An example only. Adjust it to your income."
+    - type: points
+      chapter: "Where should the first payment go?"
+      heading: "Savings go **in what order?**"
+      say: "There's also a common order for where your savings should go."
+      items:
+        - {text: "**Emergency fund** first", say: "First, the emergency fund. We covered it in detail in the previous video."}
+        - {text: "**Insurance**: to protect you and your family", say: "Next, the insurance you need. We'll cover that in upcoming videos."}
+        - {text: "Investing for **long-term goals**", say: "Then, investing for long-term goals."}
+    - type: takeaway
+      text: "The first bill goes **to you**. **Automate** your savings, and live on the rest."
+      say: "In short, every month, the first bill goes to you. Automate your savings, and get used to living on the rest. This one habit makes a big difference over the years."

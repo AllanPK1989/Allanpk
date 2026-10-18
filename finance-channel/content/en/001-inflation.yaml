@@ -1,0 +1,106 @@
+# Translated by Claude from content/001-inflation.yaml; review before approving.
+id: "001"
+category: basics
+title_en: "What is Inflation?"
+thumb_en: "Why is your **₹100** shrinking?"
+icon: flame
+keywords: [inflation, what is inflation, inflation explained, purchasing power, CPI, real return, inflation india]
+summary:
+  - "What inflation is"
+  - "Why prices rise: three main reasons"
+  - "How inflation is measured with the CPI"
+  - "What happens to your ₹100 at 6% inflation (an example)"
+  - "What a real return is"
+
+short:
+  scenes:
+    - type: hook
+      icon: flame
+      heading: "What **₹100** buys today,\nwhat will it cost in 10 years?"
+      say: "Something you can buy for a hundred rupees today. Will a hundred rupees still buy it ten years from now?"
+    - type: define
+      term: "Inflation"
+      text: "The **general rise** in the prices of goods and services over time."
+      say: "The general rise in the prices of goods and services over time is called inflation."
+    - type: stat
+      label: "If inflation is 6% a year"
+      value: "₹100"
+      to: "₹179"
+      caption: "The price of the same thing after 10 years"
+      say: "For example, let's say inflation is six percent a year."
+      to_say: "Then something that costs a hundred rupees today will cost about a hundred and seventy-nine rupees ten years from now."
+    - type: takeaway
+      text: "Your money has to grow **faster than inflation**. Otherwise it loses value."
+      say: "So if the money you save doesn't grow faster than inflation, its real value keeps shrinking."
+
+long:
+  intro_say: "Hello! Today, let's look at something that quietly eats away at your money. Inflation."
+  scenes:
+    - type: hook
+      chapter: "A question"
+      icon: question
+      heading: "What did a **cup of tea** cost when your father was young?"
+      sub: "What does the same tea cost today?"
+      say:
+        - "Ask your father what a cup of tea cost when he was young."
+        - "Today the same tea costs many times more. The reason behind that rise is inflation."
+    - type: define
+      chapter: "What is inflation?"
+      term: "Inflation"
+      text: "The **general rise** in the prices of goods and services over time. So the same rupee buys **less**."
+      say:
+        - "The general rise in the prices of goods and services over time is called inflation."
+        - "When prices rise, the same one rupee buys less than it did before. We call this a fall in the purchasing power of money."
+    - type: points
+      chapter: "Why do prices rise?"
+      heading: "Why do prices rise?"
+      say: "There are three main reasons prices go up."
+      items:
+        - text: "**More demand**, less supply"
+          sub: "Demand-pull inflation"
+          say: "First, when many people want to buy something but there isn't enough of it in the market, its price goes up."
+        - text: "Higher **production costs**"
+          sub: "Cost-push inflation"
+          say: "Second, when costs like fuel, raw materials and wages go up, that burden ends up in the price."
+        - text: "**More money** in circulation"
+          sub: "Money supply"
+          say: "Third, when the money circulating in the economy grows faster than the goods available, prices can rise too."
+    - type: define
+      chapter: "How is it measured?"
+      label: "Measurement"
+      term: "CPI"
+      term_en: "Consumer Price Index"
+      text: "An index that shows how much the price of a **basket of goods** like food, clothes, rent and transport changed in a year."
+      say:
+        - "In India, inflation is mainly measured with the Consumer Price Index, or CPI."
+        - "They take a basket of what an ordinary family buys, like food, clothes, rent and transport, and see how much its price changed in a year."
+        - "The Reserve Bank of India aims to keep CPI inflation around four percent."
+    - type: bars
+      chapter: "What happens to your ₹100?"
+      heading: "Purchasing power of **₹100** at 6% inflation"
+      say: "Now let's do the math. Let's say inflation is six percent a year."
+      bars:
+        - {label: "Today", value: 100, display: "₹100", say: "Today, your hundred rupees buys a full hundred rupees' worth of goods."}
+        - {label: "5 years", value: 75, display: "₹75", say: "Five years from now, the same hundred rupees buys only about seventy-five rupees' worth, at today's prices."}
+        - {label: "10 years", value: 56, display: "₹56", say: "In ten years, that's about fifty-six rupees."}
+        - {label: "20 years", value: 31, display: "₹31", say: "In twenty years, only about thirty-one rupees. In other words, two thirds of its value disappears."}
+    - type: steps
+      chapter: "Real return"
+      heading: "Real return"
+      say: "Next, a very important idea. The real return."
+      lines:
+        - {text: "Savings account interest: **3%**", say: "Let's say your savings account pays three percent interest a year."}
+        - {text: "Inflation: **6%**", say: "At the same time, inflation is six percent."}
+        - {text: "3% − 6% ≈ **−3%**", say: "So even though the balance in your account seems to grow, its purchasing power falls by about three percent a year."}
+      result: {text: "The amount grows, but the value shrinks!", say: "The amount grows, but the value shrinks. That is the hidden effect of inflation."}
+    - type: points
+      chapter: "Things to remember"
+      heading: "Remember"
+      marker: check
+      items:
+        - {text: "Plan goals using **future prices**", say: "First, when you plan long-term goals like your children's education or retirement, calculate with future prices, not today's prices."}
+        - {text: "**Compare returns with inflation**", say: "Second, compare the return of any saving or investment with inflation."}
+        - {text: "Higher returns usually mean **higher risk**", say: "Third, the options that can beat inflation usually carry more risk. We'll look at that in detail in upcoming videos."}
+    - type: takeaway
+      text: "**Saving alone is not enough**. Your money has to grow faster than inflation."
+      say: "In short, saving money alone is not enough. To protect its real value, it has to grow faster than inflation."

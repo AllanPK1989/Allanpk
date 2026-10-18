@@ -1,0 +1,68 @@
+# Test fixture that exercises every scene type (used by tests and `sheet`).
+id: "999"
+category: fno
+title_ta: "எல்லா காட்சி வகைகளும்"
+title_en: "All scene types"
+icon: chart
+keywords: [test]
+summary: ["test"]
+short:
+  scenes:
+    - type: compare
+      heading: "FD vs **Mutual Fund**"
+      left: {title: "FD"}
+      right: {title: "Mutual Fund"}
+      rows:
+        - {left: "நிலையான வட்டி", right: "சந்தையைப் பொறுத்தது", say: "முதல் வரிசை."}
+        - {left: "குறைந்த அபாயம்", right: "அபாயம் உண்டு", say: "இரண்டாம் வரிசை."}
+    - type: line
+      heading: "கூட்டு வட்டி vs சாதாரண வட்டி"
+      yticks: [100000, 200000, 300000]
+      xticks: [[0, "0"], [10, "10 ஆண்டு"], [20, "20 ஆண்டு"]]
+      series:
+        - {name: "சாதாரண", points: [[0,100000],[5,150000],[10,200000],[15,250000],[20,300000]], at: 0}
+        - {name: "கூட்டு", points: [[0,100000],[5,161051],[10,259374],[15,417725],[20,672750]], at: 1, color: "#fbbf24"}
+      notes: [{x: 20, y: 672750, text: "₹6.7 லட்சம்", at: 2, anchor: end, below: true}]
+      say: ["சாதாரண வட்டி.", "கூட்டு வட்டி.", "இருபது வருடத்தில் வித்தியாசம்."]
+    - type: payoff
+      heading: "Call Option வாங்குபவர் Payoff"
+      option: {kind: call, side: buy, strike: 100, premium: 5}
+      from: 85
+      to: 120
+      marks: [{k: strike, at: 1}, {k: breakeven, at: 2}, {k: maxloss, at: 3, label: "அதிகபட்ச நஷ்டம் = Premium"}]
+      say: ["படம்.", "Strike.", "Breakeven.", "Max loss."]
+    - type: candles
+      heading: "Hammer Pattern"
+      preset: hammer
+      highlight: [3]
+      highlight_at: 1
+      hlines: [{y: 84, kind: support, label: "Support", at: 2}]
+      say: ["இறங்கு போக்கு.", "Hammer.", "Support."]
+    - type: donut
+      heading: "50-30-20 விதி"
+      center: "₹50,000"
+      slices:
+        - {label: "தேவைகள்", value: 50, say: "ஐம்பது."}
+        - {label: "விருப்பங்கள்", value: 30, say: "முப்பது."}
+        - {label: "சேமிப்பு", value: 20, say: "இருபது."}
+    - type: flow
+      heading: "ஆர்டர் எப்படிச் செல்கிறது?"
+      nodes:
+        - {text: "நீங்கள்", say: "நீங்கள்."}
+        - {text: "Broker", sub: "தரகர்", say: "தரகர்."}
+        - {text: "Exchange", sub: "NSE / BSE", say: "பரிவர்த்தனை மையம்."}
+    - type: formula
+      heading: "EMI சூத்திரம்"
+      formula: "EMI = P × r × (1+r)ⁿ ÷ ((1+r)ⁿ − 1)"
+      legend:
+        - {sym: "P", text: "கடன் தொகை", say: "பி."}
+        - {sym: "r", text: "மாத வட்டி விகிதம்", say: "ஆர்."}
+        - {sym: "n", text: "மாதங்களின் எண்ணிக்கை", say: "என்."}
+    - type: points
+      heading: "தவிர்க்க வேண்டியவை"
+      marker: cross
+      items:
+        - {text: "அவசர நிதி இல்லாமல் முதலீடு", say: "ஒன்று."}
+        - {text: "கடன் வாங்கி trading", say: "இரண்டு."}
+long:
+  scenes: []

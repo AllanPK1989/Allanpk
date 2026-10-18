@@ -1,0 +1,48 @@
+name: "Finance channel: recorder page"
+
+# Publishes the voice recorder (finance-channel/recorder/) to GitHub Pages at
+# https://<owner>.github.io/<repo>/. The page reads each topic's sentence list
+# straight from the repo (finance-channel/voice-scripts/NNN.json), so it only
+# needs redeploying when the page itself changes.
+#
+# One-time setup: Settings -> Pages -> Build and deployment -> Source: "GitHub Actions".
+
+on:
+  push:
+    paths: ["finance-channel/recorder/**", ".github/workflows/finance-pages.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: finance-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build the site
+        env:
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          mkdir -p site/fonts
+          cp finance-channel/recorder/index.html site/
+          cp finance-channel/assets/fonts/NotoSansTamil.ttf finance-channel/assets/fonts/OFL-NotoSansTamil.txt site/fonts/
+          printf 'window.RECORDER_CONFIG = %s;\n' "$(jq -cn --arg repo "$REPO" --arg branch "$BRANCH" '{repo: $repo, branch: $branch}')" > site/config.js
+          cat site/config.js
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v4

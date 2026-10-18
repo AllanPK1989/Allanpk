@@ -1,0 +1,16 @@
+{
+  "env": {
+    "CLAUDE_MEM_TELEMETRY": "0"
+  },
+  "extraKnownMarketplaces": {
+    "thedotmack": {
+      "source": {
+        "source": "github",
+        "repo": "thedotmack/claude-mem"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "claude-mem@thedotmack": true
+  }
+}

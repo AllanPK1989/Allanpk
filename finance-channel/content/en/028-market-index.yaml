@@ -1,0 +1,89 @@
+# Translated by Claude from content/028-market-index.yaml; review before approving.
+id: "028"
+category: stocks
+title_en: "What is a Market Index?"
+thumb_en: "What does '**the market rose**' mean?"
+icon: chart
+keywords: [market index, Nifty 50, Sensex, index basics, free float market cap, stock index explained]
+summary:
+  - "What is a market index?"
+  - "Nifty 50 and Sensex: what are they, and how many companies?"
+  - "How an index is calculated (simply)"
+  - "What does 'the market rose 1%' mean?"
+
+short:
+  scenes:
+    - type: hook
+      icon: chart
+      heading: "What does\n'**the market rose today**' mean?"
+      say: "On the news, we hear that the market rose today. With thousands of shares out there, what does the market rising actually mean?"
+    - type: define
+      term: "Market Index"
+      text: "A **basket** of important shares. **A single number** that shows how the basket's total value changes."
+      say: "A market index is a basket of important shares. It shows, in a single number, how the basket's total value changes."
+    - type: compare
+      heading: "India's **two main** indices"
+      left: {title: "Nifty 50"}
+      right: {title: "Sensex"}
+      rows:
+        - {left: "On the NSE", right: "On the BSE", say: "The Nifty fifty is the NSE's index. The Sensex is the BSE's index."}
+        - {left: "**50** large companies", right: "**30** large companies", say: "The Nifty has fifty large companies. The Sensex has thirty large companies."}
+    - type: takeaway
+      text: "An index = the market's **thermometer**. It shows **the overall direction**, not every share."
+      say: "An index is like the market's thermometer. It shows the overall direction. Not the state of every single share."
+
+long:
+  intro_say: "Hello! We hear the words Nifty and Sensex on the news every day. What are they? And what does it mean when the market rises or falls? Let's find out today."
+  scenes:
+    - type: hook
+      chapter: "One number, thousands of shares"
+      icon: question
+      heading: "Thousands of shares.\nHow do you sum them up **in one number?**"
+      say:
+        - "Shares of thousands of companies trade on the Indian stock market. On any day, some go up and some go down."
+        - "So how do you say, in one number, how the market did today? That's what an index is for."
+    - type: define
+      chapter: "What is an index?"
+      term: "Market Index"
+      text: "A **basket** of shares chosen by set rules. It shows the change in their value **as a single number**."
+      say:
+        - "A market index is a basket of shares chosen according to set rules."
+        - "It shows, as a single number, how the basket's total value changes. Like the price of gold, it changes every day."
+    - type: compare
+      chapter: "Nifty 50 and Sensex"
+      heading: "India's **two main** indices"
+      left: {title: "Nifty 50"}
+      right: {title: "Sensex"}
+      rows:
+        - {left: "The NSE's index", right: "The BSE's index", say: "The Nifty fifty is the main index of the National Stock Exchange. The Sensex is the main index of the Bombay Stock Exchange."}
+        - {left: "**50** large companies", right: "**30** large companies", say: "The Nifty has fifty large companies from many sectors. The Sensex has thirty large companies."}
+        - {left: "**Revised** from time to time", right: "**Revised** from time to time", say: "In both, which companies are included is revised from time to time according to the rules. So today's list may look different ten years from now."}
+    - type: donut
+      chapter: "How is it calculated?"
+      heading: "Bigger company = **more weight**"
+      center: "Index"
+      say: "In an index, not every company has the same weight. Let's look at an imaginary example."
+      slices:
+        - {label: "Company A (the biggest)", value: 40, say: "Company A is the biggest company in the basket. So it gets the most weight."}
+        - {label: "Company B", value: 25, say: "Company B is the next biggest."}
+        - {label: "Company C", value: 20, say: "Company C."}
+        - {label: "Others", value: 15, say: "The others have smaller weights."}
+      after: "Indian indices are generally calculated by free-float market capitalisation. That means the weight depends on the value of the shares available for trading in the market. So price changes in big companies move the index more."
+    - type: points
+      chapter: "What are indices for?"
+      heading: "What are indices **used for?**"
+      marker: check
+      items:
+        - {text: "Gauging **the overall mood** of the market", say: "First, to gauge the overall mood of the market."}
+        - {text: "**Comparing** how funds perform (benchmark)", say: "Second, to compare how mutual funds are performing. This is called a benchmark."}
+        - {text: "**Index funds, ETFs**: investments that follow the index", say: "Third, they're the basis for investments like index funds and ETFs that simply follow the index. There are separate videos on these coming up."}
+    - type: points
+      chapter: "Things to remember"
+      heading: "**Remember**"
+      marker: dot
+      items:
+        - {text: "Even when the index rises, **some shares may fall**", say: "Even on a day the index rose, many shares may have fallen. An index is only an average picture."}
+        - {text: "**The percentage change** matters, not **the number** itself", say: "Rather than the index rising a hundred points, what's meaningful is by what percentage it rose."}
+    - type: takeaway
+      text: "Index = the market's **thermometer**. Nifty 50 and Sensex: **baskets of big companies**."
+      say: "In short, an index is like the market's thermometer. The Nifty fifty and the Sensex are baskets of India's big companies. They show the overall direction."

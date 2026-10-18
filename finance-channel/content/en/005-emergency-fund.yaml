@@ -1,0 +1,98 @@
+# Translated by Claude from content/005-emergency-fund.yaml; review before approving.
+id: "005"
+category: savings
+title_en: "Emergency Fund"
+thumb_en: "Lose your job: **how many months** could you last?"
+icon: umbrella
+keywords: [emergency fund, how much emergency fund, emergency fund india, savings, financial safety net]
+summary:
+  - "What is an emergency fund?"
+  - "How much do you need? An example"
+  - "Where to keep it, and where not to"
+  - "How to build it step by step"
+
+short:
+  scenes:
+    - type: hook
+      icon: umbrella
+      heading: "If you lost your job tomorrow,\n**how many months could you last?**"
+      say: "If you lost your job tomorrow, or a big expense suddenly came up, how many months could you manage?"
+    - type: define
+      term: "Emergency Fund"
+      text: "Money set aside **only** for unexpected expenses and loss of income."
+      say: "Money set aside only for unexpected expenses and loss of income is called an emergency fund."
+    - type: steps
+      heading: "How much do you need?"
+      lines:
+        - {text: "Essential monthly expenses: **₹30,000**", say: "Let's say your essential expenses are thirty thousand a month."}
+        - {text: "× **6 months**", say: "It's generally said to be good to keep six months of expenses."}
+      result: {text: "Goal: ₹1,80,000", say: "So your goal is one lakh eighty thousand rupees."}
+    - type: takeaway
+      text: "This money must be **safe and available right away**. Earning returns is not its job."
+      say: "This money must be safe, and available right away when you need it. Earning high returns is not its job."
+
+long:
+  intro_say: "Hello! Before we talk about investing, let's look at a safety net everyone should have. The emergency fund."
+  scenes:
+    - type: hook
+      chapter: "Why do you need one?"
+      icon: alert
+      heading: "Life doesn't **send a warning** first"
+      say:
+        - "Losing a job, a medical bill, a vehicle breakdown, a sudden repair at home. None of these tell you in advance."
+        - "If you don't have cash at that moment, you may have to take a high-interest loan, or sell long-term investments at a loss."
+    - type: define
+      chapter: "What is an emergency fund?"
+      term: "Emergency Fund"
+      text: "Money set aside **only** for unexpected expenses and loss of income. It's **not an investment**, it's a **safety net**."
+      say:
+        - "Money set aside only for unexpected expenses and loss of income is called an emergency fund."
+        - "Don't think of it as an investment. It's a safety net. It catches you when you fall."
+    - type: points
+      chapter: "How much do you need?"
+      heading: "How many months of expenses?"
+      say: "How much should you keep? The usual advice is three to six months of essential expenses. But it depends on your situation."
+      items:
+        - {text: "Stable job, two earners in the family: **3-6 months**", say: "If you have a stable job and two people earn in your family, three to six months."}
+        - {text: "Only one earner: **6 months or more**", say: "If only one person in the family earns, six months or more."}
+        - {text: "Self-employed, irregular income: **9-12 months**", say: "If you're self-employed, or your income changes from month to month, nine to twelve months is safer."}
+    - type: steps
+      chapter: "An example"
+      heading: "Essential monthly expenses"
+      say: "Let's see what essential monthly expenses means, with an example."
+      lines:
+        - {text: "Rent + groceries + bills: **₹22,000**", say: "Rent, groceries, electricity and phone bills come to twenty-two thousand."}
+        - {text: "Loan EMI: **₹5,000**", say: "If you have a loan EMI, that's five thousand."}
+        - {text: "Insurance premiums (monthly average): **₹3,000**", say: "Insurance premiums average three thousand a month. That's thirty thousand in total."}
+        - {text: "₹30,000 × 6 months", say: "Multiply that by six months."}
+      result: {text: "Goal: ₹1,80,000", say: "Your emergency fund goal is one lakh eighty thousand rupees. You don't need to include spending on wants."}
+    - type: compare
+      chapter: "Where to keep it?"
+      heading: "Where can you keep it?"
+      left: {title: "Suitable", color: "#4ade80"}
+      right: {title: "Not suitable", color: "#f87171"}
+      say: "This money needs two qualities. Safety, and being available right away."
+      rows:
+        - {left: "Savings account", right: "Shares", say: "You can keep part of it in a savings account. Not in shares, because the market may be down just when the emergency hits."}
+        - {left: "Fixed Deposit (FD)", right: "Long lock-in schemes", say: "You can keep part of it in an FD. Schemes with a long lock-in don't fit."}
+        - {left: "Liquid fund", right: "Land, property", say: "Some people also use low-risk liquid funds. Land and property can't be sold quickly."}
+      after: "Bank deposits are insured up to a certain limit. Check that limit on the bank's website."
+    - type: points
+      chapter: "Building it step by step"
+      heading: "**Build it** step by step"
+      marker: check
+      items:
+        - {text: "First goal: **one month of expenses**", say: "You don't need the full amount at once. Your first goal is one month of expenses."}
+        - {text: "Add to it **automatically** every month", say: "Set things up so a small amount goes into this account automatically as soon as your salary arrives."}
+        - {text: "Bonus, gift money → **emergency fund**", say: "Put part of any extra income, like a bonus or gift money, into it."}
+        - {text: "If you use it, **refill it**", say: "If you ever have to use it, make refilling it your first priority afterwards."}
+    - type: points
+      chapter: "Mistakes to avoid"
+      heading: "**Mistakes** to avoid"
+      marker: cross
+      items:
+        - {text: "**Dipping into it** for sales or holidays", say: "Using this money for a sale or a holiday is the first big mistake."}
+        - {text: "Treating it as **a replacement for insurance**", say: "The second is thinking: I have an emergency fund, so I don't need health insurance. One big hospital bill can empty an emergency fund in a single day."}
+    - type: takeaway
+      text: "Before investing, a **safety net**. An emergency fund gives you **peace of mind**."
+      say: "In short, before you invest, you need a safety net. An emergency fund helps you get through hard times without borrowing and without touching your investments. More importantly, it gives you peace of mind."
