@@ -1,0 +1,466 @@
+{
+ "id": "002",
+ "title_ta": "",
+ "title_en": "The Power of Compounding",
+ "sentences": [
+  {
+   "key": "7f818b9873f0",
+   "text": "One lakh rupees, twenty years, ten percent interest a year.",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "3443d0fce099",
+   "text": "Do you end up with three lakh, or more than six and a half lakh?",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "9d13266bb358",
+   "text": "With simple interest, you earn interest only on the principal.",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "a49f038d7781",
+   "text": "With compound interest, you also earn interest on the interest you've already earned.",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "7dff5fd7250f",
+   "text": "So in twenty years, simple interest gives you three lakh.",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "69c899fbbcbb",
+   "text": "Compound interest gives you about six lakh seventy thousand.",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "4c5fe71bfca0",
+   "text": "In thirty years, simple interest reaches only four lakh.",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "0c63de4be2da",
+   "text": "Compound interest reaches about seventeen and a half lakh.",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "b0999898e954",
+   "text": "Slow at first, then fast.",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "b301d01e5fb0",
+   "text": "The real secret of compounding is time.",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "34420053f585",
+   "text": "The sooner you start, the harder it works for you.",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "df2130bf1742",
+   "text": "This video is for education only.",
+   "formats": [
+    "short",
+    "long"
+   ]
+  },
+  {
+   "key": "5e0183614a91",
+   "text": "It is not investment advice.",
+   "formats": [
+    "short",
+    "long"
+   ]
+  },
+  {
+   "key": "5d3f69962d0c",
+   "text": "I am not a SEBI-registered adviser.",
+   "formats": [
+    "short",
+    "long"
+   ]
+  },
+  {
+   "key": "f97fce32e586",
+   "text": "Please do your own research and consult a registered adviser before you invest.",
+   "formats": [
+    "short",
+    "long"
+   ]
+  },
+  {
+   "key": "69342c5c39e5",
+   "text": "Hello!",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "1d02cf79a2ec",
+   "text": "There's a famous line, often credited to Einstein: compound interest is the eighth wonder of the world.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "c5d52ccb04de",
+   "text": "Today, let's understand that wonder in simple terms.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "50e2c4d6252e",
+   "text": "Here's an old story.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "69378afc746d",
+   "text": "A king asked the inventor of chess what reward he wanted.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "0b297c99c52c",
+   "text": "He said: one grain of rice on the first square, two on the second, four on the third.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "3595fca270d2",
+   "text": "Double on every square.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "01a8c68dbdb8",
+   "text": "The king thought it was a tiny reward.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "f4e2f6105973",
+   "text": "But by the sixty-fourth square, it was more rice than the whole world grows in many years!",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "1eb95d634689",
+   "text": "That is the power of growth that keeps multiplying.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "0cd9ba08da3f",
+   "text": "Compound interest works the same way.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "f2cd3b4f1ebe",
+   "text": "First, simple interest.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "98e89a58c88f",
+   "text": "Here, you earn interest every year only on the principal you put in.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "d7cc91b3c74d",
+   "text": "At ten percent on one lakh rupees, you get the same ten thousand rupees of interest every year.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "cf84100db619",
+   "text": "With compound interest, the interest you earn is added back to the principal.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "6d3bcd9ecba2",
+   "text": "Next year, you earn interest on that bigger amount.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "87199ffd3330",
+   "text": "That's what we call interest on interest.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "0768ecd1a5dd",
+   "text": "Let's say you have one lakh rupees earning ten percent compound interest a year.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "9ded2effac96",
+   "text": "At the end of year one, ten thousand in interest is added, making one lakh ten thousand.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "1a2ccdb3ff76",
+   "text": "In year two, the interest is not ten thousand but eleven thousand, because now it's interest on one lakh ten thousand.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "2e7f2dcfe926",
+   "text": "In year three, the interest is twelve thousand one hundred.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "94852118bd7b",
+   "text": "Every year, the interest itself gets bigger.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "0ab55de67a58",
+   "text": "This extra amount, over and above simple interest, is the interest on interest.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "af0ee3b1d436",
+   "text": "Year after year, it rolls like a snowball.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "139428f24d9d",
+   "text": "Now let's stretch it to thirty years.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "dba194a17d63",
+   "text": "With simple interest, one lakh becomes four lakh.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "2096fa2d278c",
+   "text": "In a straight line, slowly.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "a47a5942306f",
+   "text": "With compound interest, the same one lakh becomes about seventeen and a half lakh.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "2fd5a30f65b3",
+   "text": "Notice that for the first ten years, the two lines stay close together.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "a2fcf51e5073",
+   "text": "The big growth happens in the last ten years.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "2b8cbdc98320",
+   "text": "There's a simple formula to calculate this.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "4cee89230849",
+   "text": "A is the amount you end up with.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "1c84e41aee44",
+   "text": "P is the principal you put in at the start.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "15f7e0da10e4",
+   "text": "r is the yearly interest rate.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "9864312556c2",
+   "text": "Ten percent is zero point one.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "8d455b5d4438",
+   "text": "n is the number of years.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "cddf5b72380b",
+   "text": "Because n sits in the exponent, time is so powerful.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "9d1d6c8b7a3b",
+   "text": "Compounding has three ingredients.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "785f47e30c26",
+   "text": "First, the amount you put in.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "fab9fe4a7bd1",
+   "text": "Second, the rate of growth.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "8d11c976500a",
+   "text": "But a higher rate usually comes with higher risk.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "78e98ce1a642",
+   "text": "Third, and most important, time.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "d4b9c1b97d3c",
+   "text": "Nobody can go back and buy time.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "4c132202a00e",
+   "text": "A warning.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "4e6848e5f4c6",
+   "text": "Compounding can work against you too.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "d4a35f524644",
+   "text": "If you leave a credit card balance unpaid, interest builds on interest.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "480a7a568144",
+   "text": "High-interest loans left unpaid can grow faster than your savings.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "de1a4d8a9984",
+   "text": "In short, compound interest is interest on interest.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "1c04b18a0d72",
+   "text": "Its power lies in time.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "738b71335ce9",
+   "text": "Starting early and staying patient is the whole secret.",
+   "formats": [
+    "long"
+   ]
+  }
+ ]
+}
