@@ -1,0 +1,403 @@
+{
+ "id": "003",
+ "title_ta": "",
+ "title_en": "Needs vs Wants",
+ "sentences": [
+  {
+   "key": "bd7a4aee0ab6",
+   "text": "You're thinking of buying a new mobile phone.",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "e08127412902",
+   "text": "Is it a need, or a want?",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "ef8677e4a569",
+   "text": "A need is something you can't live without.",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "204118fa54a5",
+   "text": "Like rent, food and electricity.",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "0981621bbf32",
+   "text": "A want makes life more enjoyable, but you can manage without it.",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "f43046ba755a",
+   "text": "Ask three questions before you buy.",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "95969d8d7d4d",
+   "text": "Can I live without it?",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "40829ec62f8b",
+   "text": "Without it, will my job or income suffer?",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "0f73da1e010e",
+   "text": "Can I wait thirty days?",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "7b47b605cb81",
+   "text": "If you can wait, it's most likely a want.",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "ea2104d8d099",
+   "text": "Wants aren't wrong.",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "3f89ad47b4ef",
+   "text": "But needs and savings come first, and wants come after that.",
+   "formats": [
+    "short"
+   ]
+  },
+  {
+   "key": "df2130bf1742",
+   "text": "This video is for education only.",
+   "formats": [
+    "short",
+    "long"
+   ]
+  },
+  {
+   "key": "5e0183614a91",
+   "text": "It is not investment advice.",
+   "formats": [
+    "short",
+    "long"
+   ]
+  },
+  {
+   "key": "5d3f69962d0c",
+   "text": "I am not a SEBI-registered adviser.",
+   "formats": [
+    "short",
+    "long"
+   ]
+  },
+  {
+   "key": "f97fce32e586",
+   "text": "Please do your own research and consult a registered adviser before you invest.",
+   "formats": [
+    "short",
+    "long"
+   ]
+  },
+  {
+   "key": "69342c5c39e5",
+   "text": "Hello!",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "4e98a26e0c36",
+   "text": "This is the first lesson to learn before you make a budget.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "462d44194894",
+   "text": "The difference between needs and wants.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "8f2e8c72b7fa",
+   "text": "Many people say that by the end of the month, they don't even know where their salary went.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "2ee758397952",
+   "text": "Most of the time, the reason is small spends on wants, disguised as needs.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "f8e05a8ad86d",
+   "text": "Needs are the things that are essential to live, and to go to work and earn.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "5967affa4377",
+   "text": "Rent or your home loan EMI, food, electricity, water, medical care, your children's education, and transport to work.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "baf11bf39e66",
+   "text": "These are all needs.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "c5198f04ec68",
+   "text": "Wants are the things that make life more enjoyable.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "9139db99a5aa",
+   "text": "But we can manage without them.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "3240d10a7143",
+   "text": "Eating at restaurants, new clothes, the latest phone, several OTT subscriptions, holidays.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "e549b79a37a2",
+   "text": "These are wants.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "b02776af0e73",
+   "text": "Sometimes the same item mixes a need and a want.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "bc55f58d4f20",
+   "text": "You could call this the grey area.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "6d2ad8117dd7",
+   "text": "A mobile phone for work is a need.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "73e12bac2415",
+   "text": "But an expensive new model every year is a want.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "635e4eb62de4",
+   "text": "You need transport to get to work.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "1201d80b2c63",
+   "text": "But buying a new car when a bus or a bike would do is a want.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "9d3675f5d829",
+   "text": "Food is a need.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "664ec1054748",
+   "text": "But ordering food online every day is a want.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "102e411b86af",
+   "text": "Before you buy something, ask yourself three questions.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "c96df17fcae1",
+   "text": "The first question: can I live without it?",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "3cc8bca2385b",
+   "text": "Second: without it, will my job or income suffer?",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "89a7e01c13bb",
+   "text": "Third: can I wait thirty days?",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "ba440384c47b",
+   "text": "Often, after thirty days, the urge is simply gone.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "83257f652f1e",
+   "text": "This is called the thirty-day rule.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "0fe764653117",
+   "text": "Another hidden problem is lifestyle inflation.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "f577069348b4",
+   "text": "For example, say your salary was thirty thousand.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "442ae09fcb9c",
+   "text": "In a few years, it rises to fifty thousand.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "ef124843da0f",
+   "text": "But if new spending on wants grows just as fast, your savings never go up.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "97b27ce2fc0b",
+   "text": "First, for one whole month, write down every expense.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "5c8298059835",
+   "text": "Then sort them into needs and wants.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "4b47b0700f73",
+   "text": "Second, every time your salary goes up, set aside part of the raise for savings first.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "d25059299215",
+   "text": "Third, set a monthly limit for spending on wants.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "dbe8befc3b7b",
+   "text": "Then enjoy spending within that limit.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "214ced348079",
+   "text": "In short, wants aren't wrong.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "0ea7f3859dfc",
+   "text": "You should enjoy life too.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "24fffa7cfe4e",
+   "text": "But the order matters.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "5c8fc74a0775",
+   "text": "Needs and savings first, wants after that.",
+   "formats": [
+    "long"
+   ]
+  },
+  {
+   "key": "578601233130",
+   "text": "In the next video, we'll use this to look at a simple budgeting rule.",
+   "formats": [
+    "long"
+   ]
+  }
+ ]
+}
