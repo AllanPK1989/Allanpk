@@ -1,0 +1,14 @@
+# Python
+backend/.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+backend/media/
+backend/*.db
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/dev-dist/
+# Local config and data
+.env
+backups/
