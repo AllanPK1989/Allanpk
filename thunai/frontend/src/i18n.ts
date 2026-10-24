@@ -161,6 +161,13 @@ const en = {
   view_machine: "Machine page",
   view_log: "View log",
   question_from_ai: "Thunai asks",
+  needs_review: "Needs review",
+  fault_cards_review: "Fault cards to review",
+  card_status_draft: "Draft",
+  card_status_approved: "Approved",
+  card_status_needs_review: "Needs review",
+  card_status_rejected: "Rejected",
+  card_status_retired: "Retired",
 };
 
 type Key = keyof typeof en;
@@ -288,6 +295,7 @@ const ta: Partial<Record<Key, string>> = {
   view_machine: "Machine page",
   view_log: "Log பார்",
   question_from_ai: "Thunai கேட்குது",
+  needs_review: "Review தேவை",
 };
 
 const dictionaries: Record<Lang, Partial<Record<Key, string>>> = { en, ta };

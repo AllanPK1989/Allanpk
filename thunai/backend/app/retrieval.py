@@ -112,6 +112,8 @@ def card_item(card: FaultCard, tier: int, score: float, machine_no: str) -> Item
     causes = ", ".join(f"{c.get('cause')} ({c.get('count', 0)}x)" for c in card.causes or [])
     steps = " | ".join(card.steps_en or [])
     text = f"Symptom: {card.symptom}. Causes by frequency: {causes or 'n/a'}. Verified steps: {steps}."
+    if card.status == "needs_review":
+        text += " (A newer log does not match this card; it is waiting for supervisor review.)"
     if card.avg_fix_min:
         text += f" Average fix {card.avg_fix_min} min."
     return Item(
@@ -131,6 +133,7 @@ def card_item(card: FaultCard, tier: int, score: float, machine_no: str) -> Item
             "steps_ta": card.steps_ta or [],
             "version": card.version,
             "avg_fix_min": card.avg_fix_min,
+            "needs_review": card.status == "needs_review",
         },
     )
 
@@ -176,7 +179,9 @@ def build_context(db: Session, machine: Machine, query: str, alarm_code: str = "
         card_filter.append(FaultCard.machine_type_id == machine.machine_type_id)
     if sibling_ids:
         card_filter.append(FaultCard.machine_id.in_(sibling_ids))
-    cards = list(db.scalars(select(FaultCard).where(FaultCard.status == "approved", or_(*card_filter))))
+    cards = list(
+        db.scalars(select(FaultCard).where(FaultCard.status.in_(("approved", "needs_review")), or_(*card_filter)))
+    )
     if cards:
         docs = [f"{c.symptom} {' '.join(x.get('cause', '') for x in c.causes or [])}" for c in cards]
         scores = rank(query, docs, variants)

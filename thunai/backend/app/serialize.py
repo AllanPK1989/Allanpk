@@ -136,6 +136,14 @@ def fault_card(c: FaultCard) -> dict:
         "status": c.status,
         "version": c.version,
         "approved_at": c.approved_at.isoformat() if c.approved_at else None,
+        "machine_id": c.machine_id,
+        "machine_type_id": c.machine_type_id,
+        "source_log_ids": c.source_log_ids,
+        "flagged_log_ids": c.flagged_log_ids,
+        "review_note": c.review_note,
+        "history": c.history,
+        "replaces_id": c.replaces_id,
+        "drafted_at": c.drafted_at.isoformat() if c.drafted_at else None,
     }
 
 

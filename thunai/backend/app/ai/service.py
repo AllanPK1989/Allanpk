@@ -51,8 +51,12 @@ def call_json[T: BaseModel](
     session: AISession | None = None,
     log_id: int | None = None,
     validate: Callable[[T], T] | None = None,
+    info: dict | None = None,
 ) -> tuple[T | None, str]:
-    """Return (validated output, "") or (None, error). Invalid output is retried once."""
+    """Return (validated output, "") or (None, error). Invalid output is retried once.
+
+    `info`, when given, receives the model and prompt version that produced the answer.
+    """
     prompt = prompts.load(prompt_name)
     system, user = prompt.render(variables)
     schema = strict_schema(out_model)
@@ -119,6 +123,8 @@ def call_json[T: BaseModel](
             session.input_tokens += result.input_tokens + result.cache_read_tokens + result.cache_write_tokens
             session.output_tokens += result.output_tokens
             session.cost_usd = round(session.cost_usd + cost, 6)
+        if info is not None:
+            info.update(model=result.model, prompt_version=prompt.tag)
         if output is not None:
             return output, ""
         log.warning("AI %s attempt %d failed: %s", purpose, attempt + 1, error)

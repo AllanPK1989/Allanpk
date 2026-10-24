@@ -82,9 +82,22 @@ export interface FaultCard {
   causes: { cause: string; cause_ta?: string; count: number }[];
   steps_en: string[];
   steps_ta: string[];
+  parts: string[];
   tools: string[];
   avg_fix_min: number | null;
   version: number;
+  status: "draft" | "approved" | "needs_review" | "rejected" | "retired";
+  review_note: string;
+  replaces_id: number | null;
+  history: { version: number; symptom: string; steps_en: string[]; archived_at: string }[];
+  source_log_ids: number[];
+  flagged_log_ids: number[];
+  // detail view
+  scope?: "machine" | "type";
+  scope_name?: string;
+  machine_no?: string | null;
+  source_logs?: Log[];
+  flagged_logs?: Log[];
 }
 
 export interface KPI {

@@ -313,6 +313,100 @@ class FaultCard(Timestamps, Base):
     version: Mapped[int] = mapped_column(Integer, default=1)
     approved_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
     approved_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
+    # Phase 2: automatic drafting, review and versions
+    group_key: Mapped[str] = mapped_column(String(200), default="", index=True)  # normalised symptom
+    drafted_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
+    ai_model: Mapped[str] = mapped_column(String(80), default="")
+    review_note: Mapped[str] = mapped_column(Text, default="")  # why it needs review / was rejected
+    flagged_log_ids: Mapped[list] = mapped_column(JSONType, default=list)  # logs that contradict it
+    history: Mapped[list] = mapped_column(JSONType, default=list)  # earlier approved versions
+    # A re-draft of an approved card; approving it retires the old card and continues its versions.
+    replaces_id: Mapped[int | None] = mapped_column(ForeignKey("fault_cards.id"))
+
+
+class ExpertTip(Timestamps, Base):
+    __tablename__ = "expert_tips"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    machine_id: Mapped[int] = mapped_column(ForeignKey("machines.id"), index=True)
+    author_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    original: Mapped[str] = mapped_column(Text)  # the technician's own words
+    original_lang: Mapped[str] = mapped_column(String(10), default="")
+    english: Mapped[str] = mapped_column(Text, default="")
+    tamil: Mapped[str] = mapped_column(Text, default="")
+    media_id: Mapped[int | None] = mapped_column(ForeignKey("log_media.id"))
+    status: Mapped[str] = mapped_column(String(20), default="pending", index=True)  # pending | approved | rejected
+    reviewed_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    reviewed_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
+    reject_reason: Mapped[str] = mapped_column(Text, default="")
+
+    machine: Mapped[Machine] = relationship()
+    author: Mapped[User] = relationship(foreign_keys=[author_id])
+
+    def text(self, lang: str = "en") -> str:
+        preferred = self.english if lang == "en" else self.tamil
+        return preferred or self.original
+
+
+DOCUMENT_KINDS = ("manual", "sop", "drawing", "alarm_list", "other")
+
+
+class Document(Timestamps, Base):
+    __tablename__ = "documents"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    machine_id: Mapped[int | None] = mapped_column(ForeignKey("machines.id"), index=True)
+    machine_type_id: Mapped[int | None] = mapped_column(ForeignKey("machine_types.id"), index=True)
+    title: Mapped[str] = mapped_column(String(300))
+    kind: Mapped[str] = mapped_column(String(20), default="manual")
+    file_path: Mapped[str] = mapped_column(String(400))
+    mime: Mapped[str] = mapped_column(String(120), default="")
+    size_bytes: Mapped[int] = mapped_column(Integer, default=0)
+    pages: Mapped[int] = mapped_column(Integer, default=0)
+    # stored | indexed | no_text (e.g. a scanned drawing) | failed
+    status: Mapped[str] = mapped_column(String(20), default="stored")
+    error: Mapped[str] = mapped_column(Text, default="")
+    indexed_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
+    uploaded_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    active: Mapped[bool] = mapped_column(Boolean, default=True)
+
+    chunks: Mapped[list["DocumentChunk"]] = relationship(back_populates="document", order_by="DocumentChunk.seq")
+
+
+class DocumentChunk(Base):
+    __tablename__ = "document_chunks"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    document_id: Mapped[int] = mapped_column(ForeignKey("documents.id"), index=True)
+    page: Mapped[int] = mapped_column(Integer, default=1)
+    seq: Mapped[int] = mapped_column(Integer, default=0)
+    text: Mapped[str] = mapped_column(Text)
+
+    document: Mapped[Document] = relationship(back_populates="chunks")
+
+
+class AlarmCode(Timestamps, Base):
+    __tablename__ = "alarm_codes"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    machine_id: Mapped[int | None] = mapped_column(ForeignKey("machines.id"), index=True)
+    machine_type_id: Mapped[int | None] = mapped_column(ForeignKey("machine_types.id"), index=True)
+    code: Mapped[str] = mapped_column(String(60), index=True)
+    message: Mapped[str] = mapped_column(Text, default="")
+    cause: Mapped[str] = mapped_column(Text, default="")
+    remedy: Mapped[str] = mapped_column(Text, default="")
+    document_id: Mapped[int | None] = mapped_column(ForeignKey("documents.id"))
+    active: Mapped[bool] = mapped_column(Boolean, default=True)
+
+
+class Embedding(Base):
+    """Optional vectors from an embeddings provider (Phase 2). Stored as JSON; see SPEC 11.5."""
+
+    __tablename__ = "embeddings"
+    __table_args__ = (UniqueConstraint("source_type", "source_id", "model"),)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    source_type: Mapped[str] = mapped_column(String(20))  # log | card | tip | chunk
+    source_id: Mapped[int] = mapped_column(Integer, index=True)
+    model: Mapped[str] = mapped_column(String(120))
+    vector: Mapped[list] = mapped_column(JSONType)
+    text_hash: Mapped[str] = mapped_column(String(64))
+    created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow)
 
 
 class Glossary(Timestamps, Base):

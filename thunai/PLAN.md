@@ -16,3 +16,15 @@ Each step ends with a demo (API call or screen) before the next starts.
 | 8 | Machine page: open issues, timeline, top 5 repeat faults, fault cards, MTTR / MTBF | Numbers match unit tests |
 | 9 | Historical import + Excel export; supervisor review queue; admin users / glossary / settings | Import → export round trip |
 | 10 | Tests, eval harness, README, RUNBOOK, demo script with screenshots | All tests pass; `EVAL.md` written |
+
+## Phase 2 build plan
+
+| # | Step | Done when |
+|---|---|---|
+| 11 | Migration `0002`: tip, document, chunk, alarm-code and embedding tables; fault-card fields | upgrade and downgrade run on PostgreSQL |
+| 12 | Fault-card engine: grouping, AI draft (`draft_fault_card` prompt), approve / edit / reject / retire, versions, contradiction flag; review UI | a 4th similar sample log drafts a card; approval shows it on the machine page and in Ask |
+| 13 | Dashboard API and page; dashboard sheets in the Excel export | numbers match the unit tests |
+| 14 | Expert tips: record by voice or text, review, machine page, AI source | an approved tip is cited in "Why this step?" |
+| 15 | Documents and alarm lists: upload, PDF text, chunks, alarm-code lookup in Ask, AI source | entering a sample alarm code shows its meaning |
+| 16 | Embeddings adapter (optional), hybrid similarity, `reindex` command | tests with a fake embeddings server |
+| 17 | Tests, evaluation, docs and screenshots | all tests pass on SQLite and PostgreSQL; Docker stack starts |

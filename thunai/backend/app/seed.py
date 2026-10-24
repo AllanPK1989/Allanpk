@@ -12,6 +12,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from . import machines_service
+from .knowledge import group_key
 from .config import get_config
 from .logs_service import set_text
 from .models import BreakdownLog, Component, FaultCard, Glossary, LogClassification, LogPart, User, utcnow
@@ -237,6 +238,7 @@ def seed(db: Session) -> None:
             source_log_ids=list(sf_logs),
             status="approved",
             version=1,
+            group_key=group_key("Cylinder not returning"),  # the logs' symptom category
             approved_by=users["D-SUP1"].id,
             approved_at=utcnow() - timedelta(days=3),
         )

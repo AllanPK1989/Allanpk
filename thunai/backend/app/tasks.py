@@ -1,7 +1,7 @@
 """Job bodies. Each opens its own database session (see jobs.py)."""
 import logging
 
-from . import logs_service, media
+from . import knowledge, logs_service, media
 from .db import SessionLocal
 from .models import LogMedia
 from .schemas import TextIn
@@ -13,6 +13,16 @@ def enrich_log(log_id: int) -> None:
     with SessionLocal() as db:
         logs_service.enrich_log(db, log_id)
         db.commit()
+    update_knowledge(log_id)
+
+
+def update_knowledge(log_id: int) -> None:
+    """Flag fault cards the log contradicts and draft a new card when enough similar logs exist."""
+    with SessionLocal() as db:
+        result = knowledge.update_for_log(db, log_id)
+        db.commit()
+        if result["flagged"] or result["drafted"]:
+            log.info("Knowledge update for log %s: %s", log_id, result)
 
 
 def process_offline_voice(log_id: int, media_id: int, language: str) -> None:

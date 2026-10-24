@@ -159,7 +159,7 @@ def machine_page(db: Session, machine: Machine) -> dict:
     cards = db.scalars(
         select(FaultCard)
         .where(
-            FaultCard.status == "approved",
+            FaultCard.status.in_(("approved", "needs_review")),
             (FaultCard.machine_id == machine.id)
             | ((FaultCard.machine_type_id == machine.machine_type_id) & FaultCard.machine_id.is_(None)),
         )

@@ -233,6 +233,7 @@ def verify_log(db: Session, user: User, log: BreakdownLog) -> BreakdownLog:
     log.verified_by = user.id
     log.verified_at = utcnow()
     audit.record(db, user, "breakdown_log", log.id, "verify", before, snapshot(log))
+    jobs.enqueue(db, "update_knowledge", log_id=log.id)
     return log
 
 

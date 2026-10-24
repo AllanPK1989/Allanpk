@@ -15,6 +15,7 @@ import { useApp } from "./state";
 
 // Loaded on demand to keep the first download small on slow networks.
 const Admin = lazy(() => import("./pages/Admin"));
+const CardPage = lazy(() => import("./pages/CardPage"));
 const QrSheet = lazy(() => import("./pages/QrSheet"));
 const Scan = lazy(() => import("./pages/Scan"));
 
@@ -43,6 +44,7 @@ export default function App() {
         <Route path="/log/:id" element={<Guard><LogPage /></Guard>} />
         <Route path="/logs" element={<Guard><Logs /></Guard>} />
         <Route path="/review" element={<Guard roles={["supervisor", "admin"]}><Review /></Guard>} />
+        <Route path="/cards/:id" element={<Guard roles={["supervisor", "admin"]}><CardPage /></Guard>} />
         <Route path="/admin" element={<Guard roles={["admin"]}><Admin /></Guard>} />
         <Route path="/admin/qr" element={<Guard roles={["admin"]}><QrSheet /></Guard>} />
         <Route path="*" element={<Navigate to="/" replace />} />

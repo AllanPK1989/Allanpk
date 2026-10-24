@@ -109,7 +109,9 @@ export default function MachinePage() {
                   <div key={c.id} className="card">
                     <button className="card-toggle" onClick={() => setOpenCard(openCard === c.id ? null : c.id)} aria-expanded={openCard === c.id}>
                       <span>
-                        <span className="chip chip-verified">{c.ref}</span> {lang === "ta" && c.symptom_ta ? c.symptom_ta : c.symptom}
+                        <span className="chip chip-verified">{c.ref}</span>{" "}
+                        {c.status === "needs_review" && <span className="chip chip-draft">{t("needs_review")}</span>}{" "}
+                        {lang === "ta" && c.symptom_ta ? c.symptom_ta : c.symptom}
                       </span>
                       <Icon name="book" />
                     </button>

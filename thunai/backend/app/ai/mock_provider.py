@@ -357,3 +357,38 @@ class MockProvider:
             "failure_mode": failure,
             "confidence": 0.4,
         }
+
+    # ---- fault cards (Phase 2) -------------------------------------------------------------
+    def _draft_fault_card(self, h: dict) -> dict:
+        logs = h.get("logs", [])
+        groups: dict[str, dict] = {}
+        for log in logs:
+            cause = (log.get("cause_en") or "").strip()
+            if not cause:
+                continue
+            g = groups.setdefault(
+                cause.lower(),
+                {"cause_en": cause, "cause_ta": log.get("cause_ta") or "", "log_refs": [], "fixes": []},
+            )
+            g["log_refs"].append(log["ref"])
+            if log.get("fix_en"):
+                g["fixes"].append((log["fix_en"], log.get("fix_ta") or ""))
+        ranked = sorted(groups.values(), key=lambda g: -len(g["log_refs"]))
+        steps = []
+        for g in ranked[:4]:
+            steps.append({"en": f"Check: {g['cause_en']}.", "ta": f"இதை பாருங்க: {g['cause_ta'] or g['cause_en']}."})
+            if g["fixes"]:
+                en, ta = g["fixes"][-1]
+                steps.append({"en": en, "ta": ta})
+        if not steps:
+            steps = [{"en": log["fix_en"], "ta": log.get("fix_ta") or ""} for log in logs if log.get("fix_en")][:4]
+        symptom_ta = next((log["issue_ta"] for log in logs if log.get("issue_ta") and log["issue_ta"] != log.get("issue_en")), "")
+        parts = sorted({p for log in logs for p in log.get("parts", [])})
+        return {
+            "symptom_en": h.get("symptom", ""),
+            "symptom_ta": symptom_ta,
+            "causes": [{k: g[k] for k in ("cause_en", "cause_ta", "log_refs")} for g in ranked],
+            "steps": steps[:8],
+            "parts": parts,
+            "tools": [],
+        }
