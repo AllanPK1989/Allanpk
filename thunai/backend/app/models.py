@@ -185,8 +185,6 @@ class BreakdownLog(Timestamps, Base):
     client_uuid: Mapped[str | None] = mapped_column(String(64), unique=True)
     original_language: Mapped[str] = mapped_column(String(10), default="")
     enriched_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
-    # Phase 3: reference written back by the PM system or SAP, e.g. a notification number.
-    external_ref: Mapped[str] = mapped_column(String(80), default="", index=True)
 
     machine: Mapped[Machine] = relationship()
     technician: Mapped[User | None] = relationship(foreign_keys=[technician_id])
@@ -417,11 +415,11 @@ class Embedding(Base):
 
 # ---- Phase 3: integration -------------------------------------------------------------------
 class SparePart(Timestamps, Base):
-    """Mirror of the stores system (SAP or other). Thunai never changes stock itself."""
+    """Mirror of the stores system's stock list. Thunai never changes stock itself."""
 
     __tablename__ = "spare_parts"
     id: Mapped[int] = mapped_column(primary_key=True)
-    part_no: Mapped[str] = mapped_column(String(80), unique=True, index=True)  # plant or SAP material no.
+    part_no: Mapped[str] = mapped_column(String(80), unique=True, index=True)  # the plant's part number
     description: Mapped[str] = mapped_column(String(300), default="")
     unit: Mapped[str] = mapped_column(String(20), default="")
     stock_qty: Mapped[float | None] = mapped_column(Float)
@@ -453,24 +451,6 @@ class PartFit(Base):
     part: Mapped[SparePart] = relationship(back_populates="fits")
 
 
-class PMTask(Timestamps, Base):
-    """Mirror of the PM system's plan for a machine. Thunai does not schedule PM."""
-
-    __tablename__ = "pm_tasks"
-    __table_args__ = (UniqueConstraint("machine_id", "task_code"),)
-    id: Mapped[int] = mapped_column(primary_key=True)
-    machine_id: Mapped[int] = mapped_column(ForeignKey("machines.id"), index=True)
-    task_code: Mapped[str] = mapped_column(String(80))
-    title: Mapped[str] = mapped_column(String(300), default="")
-    frequency_days: Mapped[int | None] = mapped_column(Integer)
-    last_done_on: Mapped[date | None] = mapped_column(Date)
-    next_due_on: Mapped[date | None] = mapped_column(Date, index=True)
-    source: Mapped[str] = mapped_column(String(40), default="")
-    active: Mapped[bool] = mapped_column(Boolean, default=True)
-
-    machine: Mapped[Machine] = relationship()
-
-
 class MachineAlarm(Base):
     """An alarm event from a PLC, SCADA or alarm historian (POST /api/integrations/alarms)."""
 
@@ -490,8 +470,7 @@ class MachineAlarm(Base):
     machine: Mapped[Machine] = relationship()
 
 
-INTEGRATION_SCOPES = ("alarms", "parts", "pm", "logs")
-WEBHOOK_EVENTS = ("breakdown.opened", "breakdown.closed", "breakdown.verified")
+INTEGRATION_SCOPES = ("alarms", "parts")
 
 
 class IntegrationKey(Timestamps, Base):
@@ -504,35 +483,6 @@ class IntegrationKey(Timestamps, Base):
     active: Mapped[bool] = mapped_column(Boolean, default=True)
     last_used_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
     created_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
-
-
-class Webhook(Timestamps, Base):
-    __tablename__ = "webhooks"
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(120), default="")
-    url: Mapped[str] = mapped_column(String(500))
-    events: Mapped[list] = mapped_column(JSONType, default=list)
-    secret: Mapped[str] = mapped_column(String(120))  # needed to sign, so stored; shown once
-    active: Mapped[bool] = mapped_column(Boolean, default=True)
-    created_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
-
-
-class WebhookDelivery(Base):
-    __tablename__ = "webhook_deliveries"
-    id: Mapped[int] = mapped_column(primary_key=True)
-    webhook_id: Mapped[int] = mapped_column(ForeignKey("webhooks.id"), index=True)
-    event: Mapped[str] = mapped_column(String(40))
-    entity_id: Mapped[str] = mapped_column(String(40), default="")
-    payload: Mapped[dict] = mapped_column(JSONType, default=dict)
-    status: Mapped[str] = mapped_column(String(20), default="pending", index=True)  # pending | sent | failed
-    attempts: Mapped[int] = mapped_column(Integer, default=0)
-    next_attempt_at: Mapped[datetime | None] = mapped_column(UTCDateTime, index=True)
-    last_status: Mapped[int | None] = mapped_column(Integer)
-    last_error: Mapped[str] = mapped_column(Text, default="")
-    sent_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
-    created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow, index=True)
-
-    webhook: Mapped[Webhook] = relationship()
 
 
 class Glossary(Timestamps, Base):

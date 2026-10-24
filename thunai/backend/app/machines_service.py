@@ -10,7 +10,7 @@ from fastapi import HTTPException
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
-from . import alarm_feed, audit, documents, kpi, parts, pm, retrieval, serialize, settings_store
+from . import alarm_feed, audit, documents, kpi, parts, retrieval, serialize, settings_store
 from .config import get_config
 from .models import AISession, BreakdownLog, Component, ExpertTip, FaultCard, Machine, MachineType, User
 from .schemas import ComponentIn, MachineIn, MachineUpdate
@@ -185,7 +185,6 @@ def machine_page(db: Session, machine: Machine) -> dict:
     return {
         "machine": serialize.machine(machine, with_components=True),
         "spare_parts": [parts.info(p) for p in machine_parts],
-        "pm_tasks": pm.machine_summary(db, machine),
         "active_alarm": active_alarm(db, machine, alarm),
         "alarms_24h": [{**r, "first": r["first"].isoformat(), "last": r["last"].isoformat()} for r in alarm_feed.counts(alarm_feed.recent(db, machine))],
         "tips": [serialize.tip(t) for t in tips],

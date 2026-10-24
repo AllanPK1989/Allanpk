@@ -103,7 +103,6 @@ def log(lg: BreakdownLog, full: bool = True) -> dict:
         "verified_at": lg.verified_at.isoformat() if lg.verified_at else None,
         "reject_reason": lg.reject_reason,
         "ai_session_id": lg.ai_session_id,
-        "external_ref": lg.external_ref,
         "texts": {f: texts.get(f, dict(empty)) for f in ("issue", "root_cause", "corrective_action")},
     }
     if full:

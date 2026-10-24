@@ -50,7 +50,7 @@ class Config(BaseSettings):
         "claude-opus-5-5=4/20,claude-sonnet-5-5=2/10,claude-haiku-5-5=0.10/0.50,"
         "claude-fable-5-1=10/50"
     )
-    # Phase 3: send photos to the AI provider (SPEC 12.6). The mock provider never sends anything.
+    # Phase 3: send photos to the AI provider (SPEC 12.4). The mock provider never sends anything.
     ai_photos: bool = False
     prompts_dir: Path = BACKEND_DIR / "prompts"
     # Active prompt versions, "name=vN" pairs. Missing names use DEFAULT_PROMPT_VERSIONS, then v1.
@@ -70,9 +70,6 @@ class Config(BaseSettings):
     embeddings_base_url: str = ""
     embeddings_model: str = "multilingual-e5-base"
     embeddings_api_key: str = ""
-
-    # Outbound webhooks (SPEC 12.5)
-    webhook_timeout_s: float = 10.0
 
     # Sample data
     seed_sample_data: bool = True

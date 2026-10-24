@@ -4,7 +4,7 @@ Tier 0  this breakdown now: photos read by the AI and the machine's PLC/SCADA al
 Tier 1  approved fault cards for this machine (cards flagged for review are included and labelled)
 Tier 2  verified logs and approved expert tips for this machine
 Tier 3  fault cards, logs and tips for the same machine type
-Tier 4  manuals, drawings, alarm lists and overdue PM tasks for the machine or its type
+Tier 4  manuals, drawings and alarm lists for the machine or its type
 Tier 5  closed logs on this machine that are not yet verified (labelled)
 (no ref) general knowledge; the UI labels such steps "General suggestion"
 
@@ -19,7 +19,7 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session, selectinload
 
-from . import alarm_feed, embeddings, parts, pm
+from . import alarm_feed, embeddings, parts
 from .config import get_config
 from .models import (
     AlarmCode,
@@ -32,7 +32,6 @@ from .models import (
     Glossary,
     LogMedia,
     Machine,
-    PMTask,
     SparePart,
 )
 from .textutil import rank
@@ -42,11 +41,10 @@ TIER_LABELS = {
     1: "approved fault card, this machine",
     2: "verified log or expert tip, this machine",
     3: "same machine type",
-    4: "manual, drawing, alarm list or PM plan",
+    4: "manual, drawing or alarm list",
     5: "not yet verified, this machine",
 }
-LIMITS = {0: 5, 1: 3, 2: 6, 3: 4, 4: 5, 5: 3}
-MAX_PM_ITEMS = 2
+LIMITS = {0: 5, 1: 3, 2: 6, 3: 4, 4: 4, 5: 3}
 MIN_SCORE = 0.08
 HISTORY_DAYS = 3 * 365
 
@@ -54,7 +52,7 @@ HISTORY_DAYS = 3 * 365
 @dataclass
 class Item:
     ref: str
-    kind: str  # fault_card | log | tip | doc | alarm | pm | scada | photo
+    kind: str  # fault_card | log | tip | doc | alarm | scada | photo
     tier: int
     score: float
     machine_no: str
@@ -210,24 +208,6 @@ def alarm_item(alarm: AlarmCode, machine_no: str) -> Item:
         when="",
         text_en=f"Alarm {alarm.code}: {alarm.message}. Cause: {alarm.cause or 'not listed'}. Remedy: {alarm.remedy or 'not listed'}.",
         data={"code": alarm.code, "message": alarm.message, "cause": alarm.cause, "remedy": alarm.remedy},
-    )
-
-
-def pm_item(task: PMTask, machine_no: str, on, score: float) -> Item:
-    due = pm.due_on(task)
-    late = (on - due).days if due else 0
-    every = f"every {task.frequency_days} days; " if task.frequency_days else ""
-    last = task.last_done_on.isoformat() if task.last_done_on else "not recorded"
-    code = task.task_code
-    return Item(
-        ref=code if code.upper().startswith("PM") else f"PM-{code}",
-        kind="pm",
-        tier=4,
-        score=score,
-        machine_no=machine_no,
-        when=due.isoformat() if due else "",
-        text_en=f"PM task {task.task_code} '{task.title}' ({every}last done {last}) is overdue by {late} days.",
-        data={"task_code": task.task_code, "title": task.title, "days_overdue": late, "last_done_on": last},
     )
 
 
@@ -445,15 +425,6 @@ def build_context(
     alarm = lookup_alarm(db, machine, alarm_code)
     if alarm:
         items.append(alarm_item(alarm, machine.machine_no))
-
-    # Overdue PM tasks on this machine (tier 4): the most overdue first, keyword match as a tiebreak.
-    on = pm.today()
-    late = pm.overdue(db, machine, on)
-    if late:
-        scores = rank(query, [f"{t.title} {t.task_code}" for t in late], variants)
-        late_items = [pm_item(t, machine.machine_no, on, 0.5 + sc) for t, sc in zip(late, scores)]
-        late_items.sort(key=lambda i: (-i.data["days_overdue"], -i.score))
-        items.extend(late_items[:MAX_PM_ITEMS])
 
     # Keep the best few per tier, in tier order (an exact alarm-code match always stays).
     chosen: list[Item] = []

@@ -41,7 +41,7 @@ class PhotoReadIn(BaseModel):
 
 @router.post("/{media_id}/read")
 def read_photo(media_id: int, body: PhotoReadIn, user: User = Depends(current_user), db: Session = Depends(get_db)):
-    """Photo-based diagnosis: what the AI reads from the photo (SPEC 12.6). Shown to the technician."""
+    """Photo-based diagnosis: what the AI reads from the photo (SPEC 12.4). Shown to the technician."""
     md = db.get(LogMedia, media_id)
     if md is None or md.kind != "photo":
         raise HTTPException(404, "Photo not found")

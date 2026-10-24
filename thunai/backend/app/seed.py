@@ -11,7 +11,7 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from . import machines_service, parts, pm
+from . import machines_service, parts
 from .knowledge import group_key
 from .config import get_config
 from .logs_service import set_text
@@ -167,7 +167,7 @@ FAULT_CARD = {
 }
 
 
-# SAMPLE spare parts and PM plan (Phase 3). Part numbers start with DEMO-P- so they cannot be
+# SAMPLE spare parts (Phase 3). Part numbers start with DEMO-P- so they cannot be
 # mistaken for real ones. (part no, description, unit, stock, min, location, machine type code)
 SAMPLE_PARTS = [
     ("DEMO-P-1001", "[SAMPLE] Solenoid coil 24 V DC", "EA", 1, 2, "Store A-12", "SF"),
@@ -176,13 +176,6 @@ SAMPLE_PARTS = [
     ("DEMO-P-1004", "[SAMPLE] FRL bowl seal kit", "EA", 0, 2, "Store A-14", "SF"),
     ("DEMO-P-2001", "[SAMPLE] Print head cleaning pen", "EA", 6, 2, "Store C-01", "LP"),
     ("DEMO-P-3001", "[SAMPLE] Autoclave door gasket", "EA", 1, 1, "Store D-02", "AC"),
-]
-# (machine, task code, title, every n days, last done n days ago)
-SAMPLE_PM = [
-    ("DEMO-SF-01", "PM-SF-01", "[SAMPLE] Clean and check filling cylinder and solenoid valve", 30, 41),
-    ("DEMO-SF-01", "PM-SF-02", "[SAMPLE] Check FRL pressure and drain the bowl", 7, 3),
-    ("DEMO-SF-02", "PM-SF-01", "[SAMPLE] Clean and check filling cylinder and solenoid valve", 30, 10),
-    ("DEMO-AC-01", "PM-AC-01", "[SAMPLE] Inspect door gasket and clamps", 30, 35),
 ]
 
 
@@ -318,13 +311,6 @@ def seed(db: Session) -> None:
         for i, (no, desc, unit, stock, minimum, loc, code) in enumerate(SAMPLE_PARTS)
     ]
     parts.upsert(db, None, rows, "sample")
-    today = now_local.date()
-    pm_rows = [
-        (i, {"machine_no": no, "task_code": code, "title": title, "frequency_days": every,
-             "last_done_on": today - timedelta(days=ago)})
-        for i, (no, code, title, every, ago) in enumerate(SAMPLE_PM)
-    ]
-    pm.upsert(db, None, pm_rows, "sample")
     for no, days, problem in SAMPLE_SESSIONS:
         at = utcnow() - timedelta(days=days)
         db.add(AISession(

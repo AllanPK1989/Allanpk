@@ -31,7 +31,6 @@ function evidenceText(item: Step["evidence"]["items"][number], lang: Lang): stri
   if (item.kind === "alarm") return `${d.code}: ${d.message}${d.remedy ? ` → ${d.remedy}` : ""}`;
   if (item.kind === "photo") return pickText(d.shows_en, d.shows_ta);
   if (item.kind === "scada") return `${d.code} ${d.message ?? ""} · ${d.count}×`;
-  if (item.kind === "pm") return `${d.title} · +${d.days_overdue} d`;
   const issue = pickText(d.issue_en, d.issue_ta);
   const fix = pickText(d.corrective_action_en, d.corrective_action_ta);
   return fix ? `${issue} → ${fix}` : issue || item.text_en;
@@ -536,7 +535,6 @@ export default function Ask() {
                     {(i.kind === "doc" || i.kind === "alarm") && <em> · {t("evidence_doc")}</em>}
                     {i.kind === "photo" && <em> · {t("evidence_photo")}</em>}
                     {i.kind === "scada" && <em> · {t("evidence_scada")}</em>}
-                    {i.kind === "pm" && <em> · {t("evidence_pm")}</em>}
                     {i.tier === 5 && <em> · {t("evidence_unverified")}</em>}
                     <div className="muted">{evidenceText(i, lang)}</div>
                   </li>

@@ -3,13 +3,9 @@
 //
 // Needs: a running Thunai with fresh SAMPLE data (python -m app.cli init) and Playwright.
 //   BASE_URL=http://localhost:8000 node docs/capture-demo.mjs
-// Phase 3 also starts a small webhook receiver on port 8790. When the API runs in Docker, set
-// DEMO_WEBHOOK_URL to an address the api container can reach, e.g. http://172.18.0.1:8790/thunai.
 import { createRequire } from "node:module";
 import { mkdirSync } from "node:fs";
 import { execSync } from "node:child_process";
-import { createHmac } from "node:crypto";
-import { createServer } from "node:http";
 
 const require = createRequire(import.meta.url);
 let playwright;
@@ -286,26 +282,10 @@ const log = (machine, issue, cause, fix, min) => ({
 
 // ================= Phase 3 =================
 const PHOTO = new URL("./sample-photos/hmi-a101.png", import.meta.url).pathname;
-const WEBHOOK_URL = process.env.DEMO_WEBHOOK_URL ?? "http://127.0.0.1:8790/thunai";
-const received = [];
-let webhookSecret = "";
-// A stand-in for the PM system's middleware: checks the signature like a real receiver should.
-const receiver = createServer((req, res) => {
-  let body = "";
-  req.on("data", (c) => (body += c));
-  req.on("end", () => {
-    const stamp = req.headers["x-thunai-timestamp"];
-    const expected = createHmac("sha256", webhookSecret).update(`${stamp}.${body}`).digest("hex");
-    const ok = req.headers["x-thunai-signature"] === `sha256=${expected}`;
-    received.push({ event: req.headers["x-thunai-event"], ok });
-    res.writeHead(ok ? 200 : 401).end();
-  });
-});
-await new Promise((resolve) => receiver.listen(8790, "0.0.0.0", resolve));
 
 const wide = { viewport: { width: 1024, height: 768 }, deviceScaleFactor: 1, timezoneId: "Asia/Kolkata", ignoreHTTPSErrors: true };
 
-// ---- 6. Admin: connect a SCADA gateway and the PM system --------------------------------------
+// ---- 6. Admin: connect a SCADA gateway ---------------------------------------------------------
 let scadaKey = "";
 {
   const admin = await browser.newContext(wide);
@@ -317,12 +297,6 @@ let scadaKey = "";
   await a.locator(".secret").waitFor();
   scadaKey = (await a.locator(".secret").textContent()).trim();
   await shot(a, "30-admin-integration-key");
-  await a.getByRole("button", { name: "Done" }).click();
-  await a.getByLabel("Name", { exact: true }).fill("[SAMPLE] PM system middleware");
-  await a.getByLabel("URL").fill(WEBHOOK_URL);
-  await a.getByRole("button", { name: "Save" }).nth(1).click();
-  await a.locator(".secret").waitFor();
-  webhookSecret = (await a.locator(".secret").textContent()).trim();
   await a.getByRole("button", { name: "Done" }).click();
 
   // The gateway posts three A101 alarms from today (the last one still active).
@@ -376,8 +350,8 @@ async function noToast(page) {
   await page.goto(`${BASE}/m/DEMO-SF-01`);
   await page.locator(".alarm-card").waitFor();
   await shot(page, "34-machine-alarm-en");
-  await page.getByText("PM plan").scrollIntoViewIfNeeded();
-  await shot(page, "35-machine-pm-alarms-parts-en");
+  await page.getByText("Alarms in the last 24 hours").scrollIntoViewIfNeeded();
+  await shot(page, "35-machine-alarms-parts-en");
 
   await page.goto(`${BASE}/log/new/DEMO-SF-01`);
   await page.locator(".prefill-note").waitFor();
@@ -397,7 +371,7 @@ async function noToast(page) {
   await ctx.close();
 }
 
-// ---- 8. Supervisor: skills and the dashboard's parts and PM; admin: deliveries ----------------
+// ---- 8. Supervisor: skills and the dashboard's spare parts ------------------------------------
 {
   const ctx = await browser.newContext(phone);
   const page = await ctx.newPage();
@@ -409,24 +383,9 @@ async function noToast(page) {
   await shot(page, "38-skills-coverage-en");
   await page.goto(`${BASE}/dashboard`);
   await page.getByText("Spare parts used in breakdowns").scrollIntoViewIfNeeded();
-  await shot(page, "39-dashboard-parts-pm-en");
+  await shot(page, "39-dashboard-parts-en");
   await ctx.close();
-
-  // The closed log above was sent to the PM system's middleware, signed.
-  for (let i = 0; i < 20 && !received.length; i++) await new Promise((r) => setTimeout(r, 500));
-  const admin = await browser.newContext(wide);
-  const a = await admin.newPage();
-  await login(a, "D-ADMIN", "en");
-  await a.goto(`${BASE}/admin?tab=integrations`);
-  await a.getByText("Recent deliveries").scrollIntoViewIfNeeded();
-  await a.locator(".chip", { hasText: /sent|pending|failed/ }).first().waitFor();
-  await shot(a, "40-admin-webhook-deliveries");
-  await admin.close();
-  if (received.length) console.log("webhook received:", JSON.stringify(received));
-  else console.log("webhook: nothing received (is DEMO_WEBHOOK_URL reachable from the API?)");
-  if (received.some((r) => !r.ok)) throw new Error("webhook signature did not verify");
 }
 
-receiver.close();
 await browser.close();
 console.log("Demo run finished");

@@ -1,4 +1,4 @@
-"""Photo-based diagnosis (SPEC 12.6): the AI reads a photo before the questions and steps.
+"""Photo-based diagnosis (SPEC 12.4): the AI reads a photo before the questions and steps.
 
 The technician sees what was read and can correct it. The observation becomes evidence PHOTO-<id>.
 Photos are sent to the AI provider only when AI_PHOTOS=true (the mock provider never sends them),

@@ -66,15 +66,6 @@ def cmd_purge_media(_args) -> int:
     return 0
 
 
-def cmd_deliver_webhooks(_args) -> int:
-    from .tasks import deliver_due_webhooks
-
-    count = deliver_due_webhooks()
-    if count:
-        print(f"Webhook deliveries attempted: {count}")
-    return 0
-
-
 def cmd_reindex(_args) -> int:
     if not embeddings.enabled():
         print("No embeddings provider configured (EMBEDDINGS_PROVIDER); keyword search is used.")
@@ -97,7 +88,6 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--pin", required=True)
     sub.add_parser("purge-media")
     sub.add_parser("reindex")
-    sub.add_parser("deliver-webhooks")
     args = parser.parse_args(argv)
     handler = {
         "init": cmd_init,
@@ -105,7 +95,6 @@ def main(argv: list[str] | None = None) -> int:
         "create-admin": cmd_create_admin,
         "purge-media": cmd_purge_media,
         "reindex": cmd_reindex,
-        "deliver-webhooks": cmd_deliver_webhooks,
     }[args.command]
     return handler(args)
 

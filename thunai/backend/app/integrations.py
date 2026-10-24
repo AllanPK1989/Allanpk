@@ -1,6 +1,6 @@
 """Integration keys for machine-to-machine access (SPEC 12.1).
 
-One key per connected system (SCADA gateway, stores system, PM system, middleware), with scopes.
+One key per connected system (SCADA or PLC gateway, stores system), with scopes.
 The token is shown once; only its SHA-256 hash is stored. A random 32-byte token does not need a
 slow hash: there is nothing to guess.
 """

@@ -68,7 +68,6 @@ export interface Log {
   verified_by: string | null;
   reject_reason: string;
   ai_session_id: number | null;
-  external_ref?: string;
   texts: Record<TextField, LogText>;
   parts?: { part_no: string; description: string; qty: number }[];
   media?: { id: number; kind: string; transcript: string; available: boolean }[];
@@ -120,7 +119,6 @@ export interface MachinePage {
   tips: Tip[];
   documents: DocumentInfo[];
   spare_parts: PartInfo[];
-  pm_tasks: PMTask[];
   active_alarm: MachineAlarm | null;
   alarms_24h: { code: string; count: number; first: string; last: string; message: string; active: boolean }[];
 }
@@ -136,17 +134,6 @@ export interface PartInfo {
   stock_at: string | null;
   low: boolean;
   alt_part_nos: string[];
-}
-
-export interface PMTask {
-  id: number;
-  task_code: string;
-  title: string;
-  frequency_days: number | null;
-  last_done_on: string | null;
-  next_due_on: string | null;
-  state: "overdue" | "due_soon" | "ok" | "unknown";
-  days_overdue: number;
 }
 
 /** An alarm from the PLC/SCADA feed; `meaning` comes from the alarm list. */
@@ -221,7 +208,7 @@ export interface Alarm {
 export interface Evidence {
   items: {
     ref: string;
-    kind: "fault_card" | "log" | "tip" | "doc" | "alarm" | "pm" | "scada" | "photo";
+    kind: "fault_card" | "log" | "tip" | "doc" | "alarm" | "scada" | "photo";
     tier: number;
     label: string;
     machine_no: string;
@@ -357,31 +344,6 @@ export interface IntegrationKey {
   created_at: string;
   token?: string;
 }
-
-export interface Webhook {
-  id: number;
-  name: string;
-  url: string;
-  events: string[];
-  active: boolean;
-  created_at: string;
-  secret?: string;
-}
-
-export interface WebhookDelivery {
-  id: number;
-  webhook: string;
-  event: string;
-  entity_id: string;
-  status: "pending" | "sent" | "failed";
-  attempts: number;
-  next_attempt_at: string | null;
-  last_status: number | null;
-  last_error: string;
-  sent_at: string | null;
-  created_at: string;
-}
-
 export class ApiError extends Error {
   status: number;
   detail: unknown;

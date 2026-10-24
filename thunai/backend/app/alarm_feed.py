@@ -1,4 +1,4 @@
-"""Alarm events from PLCs, SCADA or an alarm historian (SPEC 12.4).
+"""Alarm events from PLCs, SCADA or an alarm historian (SPEC 12.3).
 
 Events arrive through POST /api/integrations/alarms. The newest active alarm pre-fills Ask Thunai and
 New log on that machine, and the last 24 hours of alarms are evidence about the current breakdown.

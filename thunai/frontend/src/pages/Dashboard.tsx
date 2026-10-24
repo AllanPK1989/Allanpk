@@ -33,7 +33,6 @@ interface Data {
   };
   ask_thunai: { sessions: number; resolved: number; escalated: number; refused: number; failed: number; helpful: number; not_helpful: number; cost_usd: number };
   parts: { used: { part_no: string; description: string; times: number; qty: number; stock: PartInfo | null }[]; low_stock: PartInfo[] };
-  pm: { overdue: { machine_no: string; zone: string; task_code: string; title: string; days_overdue: number }[]; tasks: number; breakdowns_while_overdue: number };
 }
 
 const PERIODS = [7, 30, 90];
@@ -214,31 +213,6 @@ export default function Dashboard() {
                     ))}
                   </div>
                 </>
-              )}
-            </section>
-
-            <section>
-              <h2 className="section-title">PM tasks overdue</h2>
-              {data.pm.tasks === 0 && <p className="muted">No PM plan imported yet (Admin → Import → PM plan).</p>}
-              {data.pm.tasks > 0 && data.pm.overdue.length === 0 && <p className="muted">No PM task is overdue.</p>}
-              {data.pm.overdue.map((r) => (
-                <div key={`${r.machine_no}|${r.task_code}`} className="fault-row pm-overdue">
-                  <div>
-                    <strong>{r.title || r.task_code}</strong>
-                    <div className="muted small">
-                      <Link className="mono" to={`/m/${encodeURIComponent(r.machine_no)}`}>
-                        {r.machine_no}
-                      </Link>{" "}
-                      · {r.task_code} · {r.zone}
-                    </div>
-                  </div>
-                  <span className="chip chip-open">+{r.days_overdue} d</span>
-                </div>
-              ))}
-              {data.pm.tasks > 0 && (
-                <p className="muted small">
-                  Breakdowns while a PM task on that machine was overdue: at least {data.pm.breakdowns_while_overdue} of {data.totals.breakdowns}.
-                </p>
               )}
             </section>
 

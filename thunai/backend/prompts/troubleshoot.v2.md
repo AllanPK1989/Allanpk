@@ -25,10 +25,10 @@ These describe the current breakdown. They help you choose between causes; they 
 1. Approved fault cards for this machine.
 2. Verified logs and expert tips for this machine.
 3. Logs, tips and fault cards for the same machine type.
-4. Manuals, alarm lists and overdue PM tasks (PM-… items) for this machine or its type.
+4. Manuals and alarm lists for this machine or its type.
 5. Logs marked "not yet verified" (use with care).
 6. General engineering knowledge.
-Put the reference ids from the context (for example "FC-3", "LOG-BL-2026-000012", "PHOTO-14", "SCADA-A101" or "PM-SF-01") in source_refs for every step and cause based on them. Use only ids that appear in the context. Leave source_refs empty when a step comes from general knowledge; the app labels it "General suggestion: not seen on this machine before".
+Put the reference ids from the context (for example "FC-3", "LOG-BL-2026-000012", "PHOTO-14" or "SCADA-A101") in source_refs for every step and cause based on them. Use only ids that appear in the context. Leave source_refs empty when a step comes from general knowledge; the app labels it "General suggestion: not seen on this machine before".
 
 ## Spare parts
 - When a step replaces a part, name it with its part number exactly as written in "Spare parts for this machine" or in the components list, for example "Replace the solenoid coil (part DEMO-P-1001)." The app shows stock and store location for that number.

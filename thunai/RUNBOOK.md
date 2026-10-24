@@ -99,9 +99,6 @@ docker compose start api worker
 To test a backup without touching live data, restore into a scratch database
 (`createdb -U thunai thunai_restore_test`, restore, count rows, `dropdb`).
 
-The database also holds webhook signing secrets (they are needed to sign events). Keep backups as
-protected as the server itself.
-
 Audio and photos live in the `thunai_media` volume (audio is deleted after the retention period;
 the database row stays). Back it up with:
 
@@ -152,11 +149,11 @@ The API applies database migrations at start (`alembic upgrade head`). Take a ba
 - [ ] Backups copied off the server daily.
 - [ ] Alarm lists and key manuals uploaded for the pilot machines (section 11.2).
 - [ ] Supervisors know the review queue: logs, fault-card drafts, flagged cards, tips (section 11.1).
-- [ ] Spare-parts stock and PM plan imported, or their sync running (section 12.3); `machine_type`
-      filled so parts show for the right machines.
+- [ ] Spare-parts stock imported, or its sync running (section 12.3); `machine_type` filled so
+      parts show for the right machines.
 - [ ] One integration key per connected system, with only the scopes it needs (section 12.1).
-- [ ] `AI_PHOTOS` left `false` unless Eaton IT approved sending photos (section 12.5).
-- [ ] HR has agreed how the Skills page is used (SPEC.md 12.7).
+- [ ] `AI_PHOTOS` left `false` unless Eaton IT approved sending photos (section 12.4).
+- [ ] HR has agreed how the Skills page is used (SPEC.md 12.5).
 
 ## 10. Troubleshooting
 
@@ -173,7 +170,6 @@ The API applies database migrations at start (`alembic upgrade head`). Take a ba
 | No fault cards appear | Cards are drafted after logs are translated and classified; check `docker compose logs worker` and the similar-logs threshold in Admin → Settings |
 | A document shows "stored (no text)" | It is a scan or image without a text layer; it is listed for technicians but not read by the AI |
 | Machine alarm does not pre-fill | Admin → Integrations: key active and "last used" recent? Alarm older than `alarm_prefill_hours` or already cleared? Machine number in the alarm must match Thunai's exactly |
-| Webhook deliveries "failed" | Admin → Integrations → Recent deliveries shows the HTTP status or error; fix the receiver, then **Retry**. `docker compose logs worker` |
 | Photo says "reading photos is switched off" | `AI_PHOTOS=false` (default with the real AI). Photos are still stored with the session |
 | A part on a step shows no stock | The step's part number is not in the catalogue, or the part is inactive. Import the stock list (section 12.3) |
 
@@ -230,16 +226,14 @@ search falls back to keywords. Changing the model needs another `reindex`.
 
 ## 12. Integration, photos and skills (Phase 3)
 
-The API reference for everything below is at `https://<SITE_ADDRESS>/api/docs` (section
-"integrations").
+PM system links and SAP integration are out of scope (owner decision, SPEC.md section 12). The API
+reference for what follows is at `https://<SITE_ADDRESS>/api/docs` (section "integrations").
 
 ### 12.1 Integration keys
-Admin → Integrations → Integration keys. Make one key per connected system (SCADA gateway, stores
-system, PM system or middleware) and tick only what it needs:
+Admin → Integrations. Make one key per connected system (SCADA or PLC gateway, stores system) and tick
+only what it needs:
 - **alarms:** post PLC or SCADA alarms;
-- **parts:** update spare-parts stock;
-- **pm:** update the PM plan;
-- **logs:** read closed logs and write back a reference.
+- **parts:** update spare-parts stock.
 
 The key is shown once; Thunai stores only its hash. Lost key: deactivate it and make a new one.
 "Last used" shows whether the system is still sending.
@@ -262,56 +256,22 @@ curl -X POST https://thunai.plant.local/api/integrations/alarms \
   start.
 - No alarm opens a log by itself.
 
-### 12.3 Spare parts and PM plan
-- **Files:** Admin → Import → *Spare parts and stock* or *PM plan*: Excel or CSV (comma or semicolon),
-  template on the same card.
-  - **Stock list:** part number, description, stock, minimum, storage bin, and `machine_type` or
-    `machine_no` so the part shows for those machines. An SAP stock export works if its columns are
-    renamed to match, or if they already use common names ("Material", "Unrestricted", "Storage
-    bin").
-  - **PM plan:** machine, task code, title, frequency in days, last done, next due.
-- **API:** `PUT /api/integrations/parts` and `PUT /api/integrations/pm-tasks` take the same fields as
-  JSON, up to 1,000 rows per call. A nightly job from the stores or PM system keeps them current.
-- **Matching:** rows are matched by part number (stock) or by machine and task code (PM). Rows that
-  are missing are left as they are; deactivate a part in the API (`PATCH /api/admin/parts/{id}`) if
-  it is no longer stocked.
-- **Read-only:** Thunai never changes stock or the PM schedule. Each part shows its stock with the
-  "as of" time of the last update.
+### 12.3 Spare parts and stock
+- **File:** Admin → Import → *Spare parts and stock*: Excel or CSV (comma or semicolon), template on the
+  same card.
+  - Columns: part number, description, stock, minimum, storage bin, and `machine_type` or
+    `machine_no` so the part shows for those machines.
+  - Common export headings ("Material", "Unrestricted", "Storage bin") are recognised.
+- **API:** `PUT /api/integrations/parts` takes the same fields as JSON, up to 1,000 rows per call. A
+  nightly job from the stores system keeps it current.
+- **Matching:** rows are matched by part number. Parts missing from a file are left as they are;
+  deactivate a part in the API (`PATCH /api/admin/parts/{id}`) if it is no longer stocked.
+- **Read-only:** Thunai never changes stock. Each part shows its stock with the "as of" time of the
+  last update.
 - **On steps:** a step shows stock only when its text contains the exact catalogue part number, so
   part numbers on fault cards should be written exactly.
 
-### 12.4 Events to the PM system or SAP (webhooks)
-Admin → Integrations → Webhooks. Give the receiver's URL and pick the events:
-- `breakdown.opened`: saved with the machine still down;
-- `breakdown.closed`;
-- `breakdown.verified`.
-
-The signing secret is shown once (**New secret** makes another). Each request carries:
-- `X-Thunai-Event`;
-- `X-Thunai-Delivery`: unique, use it to ignore repeats;
-- `X-Thunai-Timestamp`;
-- `X-Thunai-Signature: sha256=<hex>`.
-
-The receiver checks the signature like this:
-
-```python
-import hashlib, hmac
-expected = hmac.new(secret.encode(), timestamp.encode() + b"." + raw_body, hashlib.sha256).hexdigest()
-ok = hmac.compare_digest(signature_header, "sha256=" + expected)   # also reject old timestamps
-```
-
-- **Payload:** the log in English plus the technician's own words: log number, machine, times,
-  downtime, alarm, issue, root cause, action, parts, technician employee ID.
-- **Write-back:** a typical middleware creates a maintenance notification in SAP PM, then writes its
-  number back:
-  `PATCH /api/integrations/logs/{log_no}` with `{"external_ref": "..."}` (key with the `logs` scope).
-  The log page shows it.
-- **Polling instead:** systems that cannot receive webhooks can poll
-  `GET /api/integrations/logs?since=<time>` and pass back `next_since`.
-- **Failures:** the worker retries after 1, 5, 30 and 120 minutes, then marks the delivery "failed".
-  **Retry** in the delivery list sends it again. **Test** sends a `ping` event.
-
-### 12.5 Photo diagnosis
+### 12.4 Photo diagnosis
 With the real AI, photos are read only when `AI_PHOTOS=true` in `.env`. Set it only after Eaton IT
 approves sending photos to the Claude API (SPEC.md question 6), then `docker compose up -d`.
 
@@ -322,7 +282,7 @@ approves sending photos to the Claude API (SPEC.md question 6), then `docker com
 - **Cost:** about $0.03 per photo on Opus 5.5, shown under Admin → AI usage as `read_photo`.
 - **Training:** tell technicians not to photograph people.
 
-### 12.6 Skills page
+### 12.5 Skills page
 Supervisors (their zone) and admins open **Skills** from the home screen.
 - **What it shows:** who has fixed what by machine type, machine types only one person can fix,
   pairing suggestions, and authorised-only steps that could not be done.

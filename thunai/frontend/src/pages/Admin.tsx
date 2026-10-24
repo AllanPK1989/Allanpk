@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { api, downloadFile, openFile } from "../api";
-import type { DocumentInfo, IntegrationKey, Machine, User, Webhook, WebhookDelivery } from "../api";
+import type { DocumentInfo, IntegrationKey, Machine, User } from "../api";
 import { ErrorNote, Header, Icon, Page, Spinner } from "../components";
 import { useApp } from "../state";
 
@@ -168,7 +168,7 @@ function ImportTab() {
   const [result, setResult] = useState<unknown>(null);
   const [error, setError] = useState<unknown>(null);
   const [verified, setVerified] = useState(true);
-  const upload = async (kind: "machines" | "logs" | "parts" | "pm", file: File | undefined) => {
+  const upload = async (kind: "machines" | "logs" | "parts", file: File | undefined) => {
     if (!file) return;
     setError(null);
     setResult(null);
@@ -216,7 +216,7 @@ function ImportTab() {
       <section className="card">
         <h3>Spare parts and stock (Excel or CSV)</h3>
         <p className="muted">
-          A stock list from the stores system or SAP. Rows are matched by part number; Thunai never changes stock itself. Fill
+          A stock list from the stores system. Rows are matched by part number; Thunai never changes stock itself. Fill
           machine_type or machine_no so the part shows for the right machines.
         </p>
         <div className="row-wrap">
@@ -229,19 +229,6 @@ function ImportTab() {
           </label>
         </div>
       </section>
-      <section className="card">
-        <h3>PM plan (Excel or CSV)</h3>
-        <p className="muted">Preventive maintenance tasks from the PM system: machine, task code, title, frequency, last done, next due.</p>
-        <div className="row-wrap">
-          <button className="btn btn-ghost" onClick={() => void downloadFile("/api/admin/templates/pm.xlsx", "thunai-pm-template.xlsx")}>
-            <Icon name="download" /> Template
-          </button>
-          <label className="btn btn-primary file-btn">
-            Upload .xlsx / .csv
-            <input type="file" accept=".xlsx,.csv" hidden onChange={(e) => void upload("pm", e.target.files?.[0])} />
-          </label>
-        </div>
-      </section>
       <ErrorNote error={error} />
       {result !== null && <pre className="summary">{JSON.stringify(result, null, 2)}</pre>}
     </>
@@ -251,19 +238,13 @@ function ImportTab() {
 const SCOPES = [
   ["alarms", "Alarms (PLC / SCADA)"],
   ["parts", "Spare parts stock"],
-  ["pm", "PM plan"],
-  ["logs", "Read logs, write back references"],
 ] as const;
-const EVENTS = ["breakdown.opened", "breakdown.closed", "breakdown.verified"];
 
-/** Keys and webhooks for the PM system, SAP or stores, and SCADA gateways (SPEC 12.1, 12.5). */
+/** Integration keys for PLC / SCADA gateways and the stores system (SPEC 12.1). */
 function IntegrationsTab() {
   const { toast } = useApp();
   const [keys, keysError, reloadKeys] = useLoad<IntegrationKey[]>("/api/admin/integration-keys");
-  const [hooks, hooksError, reloadHooks] = useLoad<Webhook[]>("/api/admin/webhooks");
-  const [deliveries, deliveriesError, reloadDeliveries] = useLoad<WebhookDelivery[]>("/api/admin/webhook-deliveries?limit=30");
   const [keyForm, setKeyForm] = useState({ name: "", scopes: ["alarms"] as string[] });
-  const [hookForm, setHookForm] = useState({ name: "", url: "", events: ["breakdown.closed"] as string[] });
   const [secret, setSecret] = useState<{ label: string; value: string } | null>(null);
   const [error, setError] = useState<unknown>(null);
 
@@ -281,10 +262,11 @@ function IntegrationsTab() {
   return (
     <>
       <p className="muted">
-        Connect the PM system, SAP or stores, and PLC / SCADA gateways. API reference: <a href="/api/docs#/integrations">/api/docs</a>.
+        Connect PLC / SCADA gateways (machine alarms) and the stores system (spare-parts stock). API reference:{" "}
+        <a href="/api/docs#/integrations">/api/docs</a>.
         Calls send the key in the <code>X-Thunai-Key</code> header.
       </p>
-      <ErrorNote error={error ?? keysError ?? hooksError ?? deliveriesError} />
+      <ErrorNote error={error ?? keysError} />
       {secret && (
         <div className="note note-warn" role="alert">
           <strong>{secret.label}: copy it now. It is shown only once.</strong>
@@ -353,121 +335,6 @@ function IntegrationsTab() {
         </table>
       </section>
 
-      <section className="card">
-        <h3>Webhooks (events to other systems)</h3>
-        <p className="muted small">
-          Each request is signed: <code>X-Thunai-Signature: sha256=HMAC(secret, timestamp + "." + body)</code> with the time in{" "}
-          <code>X-Thunai-Timestamp</code>. Failed deliveries are retried up to 5 times.
-        </p>
-        <Form
-          onSubmit={async () => {
-            const w = await api.post<Webhook>("/api/admin/webhooks", hookForm);
-            setSecret({ label: `Signing secret for ${w.name || w.url}`, value: w.secret ?? "" });
-            setHookForm({ name: "", url: "", events: ["breakdown.closed"] });
-            reloadHooks();
-          }}
-        >
-          <label className="field">
-            <span>Name</span>
-            <input className="input" value={hookForm.name} placeholder="e.g. SAP PM middleware" onChange={(e) => setHookForm({ ...hookForm, name: e.target.value })} />
-          </label>
-          <label className="field">
-            <span>URL</span>
-            <input className="input" type="url" value={hookForm.url} placeholder="https://" onChange={(e) => setHookForm({ ...hookForm, url: e.target.value })} required />
-          </label>
-          <fieldset className="field">
-            <legend>Events</legend>
-            {EVENTS.map((ev) => (
-              <label key={ev} className="check-row">
-                <input type="checkbox" checked={hookForm.events.includes(ev)} onChange={() => setHookForm({ ...hookForm, events: toggleIn(hookForm.events, ev) })} />
-                <span className="mono">{ev}</span>
-              </label>
-            ))}
-          </fieldset>
-        </Form>
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Endpoint</th>
-              <th>Events</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
-            {hooks?.map((w) => (
-              <tr key={w.id} className={w.active ? "" : "row-inactive"}>
-                <td>
-                  {w.name}
-                  <div className="mono small muted">{w.url}</div>
-                </td>
-                <td className="small mono">{w.events.join(", ")}</td>
-                <td>
-                  <div className="row-wrap">
-                    <button className="btn btn-ghost btn-small" onClick={() => void act(async () => { await api.post(`/api/admin/webhooks/${w.id}/test`); reloadDeliveries(); }, "Test event queued")}>
-                      Test
-                    </button>
-                    <button
-                      className="btn btn-ghost btn-small"
-                      onClick={() => void act(async () => { const r = await api.post<{ secret: string }>(`/api/admin/webhooks/${w.id}/rotate-secret`); setSecret({ label: `New signing secret for ${w.name || w.url}`, value: r.secret }); })}
-                    >
-                      New secret
-                    </button>
-                    <button className="btn btn-ghost btn-small" onClick={() => void act(async () => { await api.patch(`/api/admin/webhooks/${w.id}`, { active: !w.active }); reloadHooks(); })}>
-                      {w.active ? "Deactivate" : "Activate"}
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
-
-      <section className="card">
-        <div className="row-between">
-          <h3>Recent deliveries</h3>
-          <button className="btn btn-ghost btn-small" onClick={reloadDeliveries}>
-            Refresh
-          </button>
-        </div>
-        {deliveries?.length === 0 && <p className="muted">No deliveries yet.</p>}
-        {!!deliveries?.length && (
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Event</th>
-                <th>Status</th>
-                <th>Result</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {deliveries.map((d) => (
-                <tr key={d.id}>
-                  <td>
-                    <span className="mono small">{d.event}</span> {d.entity_id}
-                    <div className="small muted">
-                      {d.webhook} · {new Date(d.created_at).toLocaleString("en-IN")}
-                    </div>
-                  </td>
-                  <td>
-                    <span className={`chip ${d.status === "sent" ? "chip-verified" : d.status === "failed" ? "chip-open" : "chip-draft"}`}>{d.status}</span>
-                    <div className="small muted">{d.attempts} attempt(s)</div>
-                  </td>
-                  <td className="small">{d.last_status ?? ""} {d.last_error}</td>
-                  <td>
-                    {d.status !== "sent" && (
-                      <button className="btn btn-ghost btn-small" onClick={() => void act(async () => { await api.post(`/api/admin/webhook-deliveries/${d.id}/retry`); reloadDeliveries(); }, "Retry queued")}>
-                        Retry
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </section>
     </>
   );
 }
@@ -768,7 +635,6 @@ const NUMBER_SETTINGS: [string, string][] = [
   ["audio_retention_days", "Keep audio (days)"],
   ["max_clarifying_questions", "Max clarifying questions"],
   ["alarm_prefill_hours", "Machine alarm pre-fills a log for (hours) (Phase 3)"],
-  ["pm_due_soon_days", "PM task shown as due soon within (days)"],
   ["skill_min_events", "Minimum events before a skill figure is shown"],
 ];
 

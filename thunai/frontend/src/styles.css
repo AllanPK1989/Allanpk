@@ -1718,10 +1718,6 @@ button {
   font-weight: 600;
 }
 
-.pm-overdue strong {
-  color: var(--danger-ink);
-}
-
 /* ---- Phase 3: skills ------------------------------------------------------------------------ */
 .suggestion {
   background: var(--surface);

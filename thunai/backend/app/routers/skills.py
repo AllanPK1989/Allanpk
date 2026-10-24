@@ -11,7 +11,7 @@ XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
 
 def _zone(user: User, zone: str) -> str:
-    """Supervisors see their own zone only (per-person figures, SPEC 12.7); admins choose."""
+    """Supervisors see their own zone only (per-person figures, SPEC 12.5); admins choose."""
     return user.zone if user.role == "supervisor" and user.zone else zone
 
 

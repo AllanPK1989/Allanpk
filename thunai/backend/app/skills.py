@@ -1,4 +1,4 @@
-"""Skill-gap analytics by technician and machine type (SPEC 12.7).
+"""Skill-gap analytics by technician and machine type (SPEC 12.5).
 
 For training and shift planning, not appraisal. Every figure comes with its count, and figures based
 on fewer than `skill_min_events` events are not shown. Suggestions come from fixed rules, not the AI.

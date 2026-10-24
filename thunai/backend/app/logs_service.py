@@ -7,7 +7,7 @@ from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
-from . import alarm_feed, audit, jobs, retrieval, settings_store, webhooks
+from . import alarm_feed, audit, jobs, retrieval, settings_store
 from .ai import schemas as ai_schemas
 from .ai.service import call_json
 from .config import get_config
@@ -150,16 +150,6 @@ def _finish_submit(db: Session, log: BreakdownLog, still_down: bool) -> None:
     log.machine.status = "down" if still_down else "running"
 
 
-EVENTS = {"open": "breakdown.opened", "closed": "breakdown.closed", "verified": "breakdown.verified"}
-
-
-def _emit_status_event(db: Session, log: BreakdownLog, before_status: str | None) -> None:
-    """Tell connected systems (webhooks) when a log becomes open, closed or verified."""
-    event = EVENTS.get(log.status)
-    if event and log.status != before_status:
-        webhooks.emit(db, event, log)
-
-
 def find_open_log(db: Session, machine: Machine) -> BreakdownLog | None:
     return db.scalar(
         select(BreakdownLog)
@@ -204,7 +194,6 @@ def create_log(db: Session, user: User, machine: Machine, data: LogIn, source: s
     db.flush()
     if data.submit:
         jobs.enqueue(db, "enrich_log", log_id=log.id)
-    _emit_status_event(db, log, None)  # after enrich_log, so the event body carries English text
     return log
 
 
@@ -214,7 +203,6 @@ def update_log(db: Session, user: User, log: BreakdownLog, data: LogUpdate) -> B
     if user.role == "technician" and log.technician_id not in (None, user.id) and log.status != "open":
         raise HTTPException(403, "You can only edit your own logs")
     before = snapshot(log)
-    before_status = log.status
     for field in TEXT_FIELDS:
         apply_text(db, log, field, getattr(data, field))
     if data.append_note.strip():
@@ -235,7 +223,6 @@ def update_log(db: Session, user: User, log: BreakdownLog, data: LogUpdate) -> B
     db.flush()
     if data.submit or before["texts"] != after["texts"]:
         jobs.enqueue(db, "enrich_log", log_id=log.id)
-    _emit_status_event(db, log, before_status)
     return log
 
 
@@ -248,7 +235,6 @@ def verify_log(db: Session, user: User, log: BreakdownLog) -> BreakdownLog:
     log.verified_at = utcnow()
     audit.record(db, user, "breakdown_log", log.id, "verify", before, snapshot(log))
     jobs.enqueue(db, "update_knowledge", log_id=log.id)
-    webhooks.emit(db, "breakdown.verified", log)
     return log
 
 

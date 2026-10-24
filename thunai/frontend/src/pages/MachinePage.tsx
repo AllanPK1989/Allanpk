@@ -174,32 +174,6 @@ export default function MachinePage() {
               </section>
             )}
 
-            {data.pm_tasks.length > 0 && (
-              <section>
-                <h2 className="section-title">{t("pm_plan")}</h2>
-                {data.pm_tasks.map((task) => (
-                  <div key={task.id} className={`fault-row pm-${task.state}`}>
-                    <div>
-                      <strong>{task.title || task.task_code}</strong>
-                      <div className="muted small">
-                        <span className="mono">{task.task_code}</span>
-                        {task.frequency_days ? ` · ${task.frequency_days} d` : ""}
-                      </div>
-                    </div>
-                    <span className={`chip ${task.state === "overdue" ? "chip-open" : task.state === "due_soon" ? "chip-draft" : ""}`}>
-                      {task.state === "overdue"
-                        ? t("pm_overdue", { n: task.days_overdue })
-                        : task.state === "due_soon"
-                          ? t("pm_due_soon", { date: formatDate(task.next_due_on) })
-                          : task.next_due_on
-                            ? t("pm_next", { date: formatDate(task.next_due_on) })
-                            : "–"}
-                    </span>
-                  </div>
-                ))}
-              </section>
-            )}
-
             {data.alarms_24h.length > 0 && (
               <section>
                 <h2 className="section-title">{t("alarms_24h")}</h2>

@@ -50,11 +50,10 @@ services:
 
   worker:
     <<: *backend
-    # Background jobs (translation, classification, offline transcription, webhooks) plus a daily
-    # clean-up of audio files older than the retention period and a webhook retry pass every minute.
+    # Background jobs (translation, classification, offline transcription) plus a daily
+    # clean-up of audio files older than the retention period.
     command: >
       sh -c "while true; do python -m app.cli purge-media; sleep 86400; done &
-             while true; do sleep 60; python -m app.cli deliver-webhooks; done &
              exec rq worker --url redis://redis:6379/0 --path /app thunai"
     healthcheck:
       disable: true  # no HTTP server in this container

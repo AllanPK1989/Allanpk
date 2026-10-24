@@ -1,4 +1,4 @@
-// Photo-based diagnosis on the phone: shrink before upload, show what Thunai read (SPEC 12.6).
+// Photo-based diagnosis on the phone: shrink before upload, show what Thunai read (SPEC 12.4).
 import type { PhotoRead } from "./api";
 import { Icon } from "./components";
 import { useApp } from "./state";

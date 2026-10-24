@@ -33,10 +33,10 @@ Each step ends with a demo (API call or screen) before the next starts.
 
 | # | Step | Done when |
 |---|---|---|
-| 18 | Migration `0003`: spare parts, part fits, PM tasks, machine alarms, integration keys, webhooks and deliveries; photo observation and external reference columns | upgrade, downgrade and `alembic check` run on PostgreSQL |
-| 19 | Spare parts and PM plan: Excel/CSV import with templates, machine page sections, parts picker in the log form, stock shown on steps and fault cards, AI context (parts, overdue PM) | a step naming a sample part number shows its stock |
-| 20 | Integration API: keys with scopes, alarm feed, parts and PM sync, logs poll and external reference write-back; alarm pre-fill in Ask Thunai and New log | a posted sample alarm pre-fills the next log's alarm code and start time |
-| 21 | Outbound webhooks: signed deliveries from the worker, retries, delivery log and retry in Admin → Integrations | a test receiver gets a verifiable `breakdown.closed` event |
+| 18 | Migration `0003`: spare parts, part fits, machine alarms, integration keys; photo observation columns | upgrade, downgrade and `alembic check` run on PostgreSQL |
+| 19 | Spare parts: Excel/CSV import with template, machine page section, parts picker in the log form, stock shown on steps and fault cards, AI context | a step naming a sample part number shows its stock |
+| 20 | Integration API: keys with scopes, alarm feed, parts sync; alarm pre-fill in Ask Thunai and New log | a posted sample alarm pre-fills the next log's alarm code and start time |
+| 21 | ~~PM plan and outbound webhooks for the PM system and SAP~~ | out of scope (owner decision, 24 Oct 2026); removed |
 | 22 | Photo diagnosis: image input in the AI adapter, `read_photo` prompt, server-side re-encoding, observations on the Ask screen, `PHOTO-` evidence, `AI_PHOTOS` switch | a sample HMI photo fills the alarm code and is cited in "Why this step?" |
 | 23 | Skill-gap analytics: API, page, rules, Excel export | numbers match the unit tests |
 | 24 | Tests, evaluation, docs and screenshots | all tests pass on SQLite and PostgreSQL; Docker stack starts |

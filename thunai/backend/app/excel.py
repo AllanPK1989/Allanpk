@@ -1,4 +1,4 @@
-"""Excel import (machine master, historical breakdowns, spare parts, PM plan) and export."""
+"""Excel import (machine master, historical breakdowns, spare parts) and export."""
 import csv
 import io
 import re
@@ -12,7 +12,7 @@ from pydantic import ValidationError
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
-from . import audit, jobs, machines_service, parts, pm, settings_store
+from . import audit, jobs, machines_service, parts, settings_store
 from .config import get_config
 from .kpi import COUNTED_STATUSES, compute
 from .logs_service import set_text
@@ -269,7 +269,7 @@ SAMPLE_ALARM = {
 
 
 PART_COLUMNS = {
-    "part_no": ("part_no", "part no", "part number", "material", "material no", "material number", "item code", "sap code"),
+    "part_no": ("part_no", "part no", "part number", "material", "material no", "material number", "item code"),
     "description": ("description", "material description", "part description", "part name"),
     "unit": ("unit", "uom", "base unit"),
     "stock_qty": ("stock_qty", "stock", "stock on hand", "on hand", "unrestricted", "qty", "quantity"),
@@ -291,22 +291,6 @@ SAMPLE_PART = {
     "machine_type": "Sand filling machine",
     "machine_no": "",
     "stock_at": "",
-}
-PM_COLUMNS = {
-    "machine_no": MACHINE_COLUMNS["machine_no"],
-    "task_code": ("task_code", "task code", "pm code", "maintenance plan", "plan no", "task no", "item"),
-    "title": ("title", "task", "task description", "description", "activity"),
-    "frequency_days": ("frequency_days", "frequency (days)", "frequency", "interval (days)", "interval", "cycle"),
-    "last_done_on": ("last_done_on", "last done", "last date", "completed on", "last completed"),
-    "next_due_on": ("next_due_on", "next due", "due date", "planned date", "next date"),
-}
-SAMPLE_PM = {
-    "machine_no": "DEMO-XX-01",
-    "task_code": "PM-001",
-    "title": "[SAMPLE] Delete this row",
-    "frequency_days": 30,
-    "last_done_on": "2026-09-01",
-    "next_due_on": "",
 }
 
 
@@ -334,14 +318,6 @@ def import_parts(db: Session, user: User, content: bytes) -> dict:
     return parts.upsert(db, user, rows, "import")
 
 
-def import_pm(db: Session, user: User, content: bytes) -> dict:
-    rows = [
-        (row_no, {k: (v if k.endswith("_on") else _s(v)) for k, v in row.items()})  # dates may be Excel dates
-        for row_no, row in _read_rows(content, PM_COLUMNS)
-    ]
-    return pm.upsert(db, user, rows, "import")
-
-
 def template(kind: str) -> bytes:
     wb = Workbook()
     ws = wb.active
@@ -350,7 +326,6 @@ def template(kind: str) -> bytes:
         "logs": SAMPLE_LOG,
         "alarms": SAMPLE_ALARM,
         "parts": SAMPLE_PART,
-        "pm": SAMPLE_PM,
     }[kind]
     ws.title = kind
     _styled(ws, list(sample))
@@ -503,10 +478,7 @@ def export_dashboard(data: dict) -> bytes:
     for p in data["parts"]["low_stock"]:
         if not any((r["part_no"] or "").upper() == p["part_no"].upper() for r in data["parts"]["used"]):
             sheet.append([p["part_no"], p["description"], 0, 0, p["stock_qty"], p["min_qty"], p["location"], "yes"])
-    sheet = wb.create_sheet("PM overdue")
-    _styled(sheet, ["Machine no", "Zone", "Task code", "Task", "Days overdue"])
-    for r in data["pm"]["overdue"]:
-        sheet.append([r["machine_no"], r["zone"], r["task_code"], r["title"], r["days_overdue"]])
+
     for s in wb.worksheets:
         for col in s.columns:
             s.column_dimensions[col[0].column_letter].width = 22
@@ -516,7 +488,7 @@ def export_dashboard(data: dict) -> bytes:
 
 
 def export_skills(data: dict) -> bytes:
-    """Skill-gap tables (SPEC 12.7). Blank cells: fewer events than the minimum."""
+    """Skill-gap tables (SPEC 12.5). Blank cells: fewer events than the minimum."""
     wb = Workbook()
     ws = wb.active
     ws.title = "Technicians"

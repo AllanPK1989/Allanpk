@@ -191,7 +191,7 @@ def ai_usage(days: int = 30, user: User = Depends(supervisor_or_admin), db: Sess
 # ---- import / export -----------------------------------------------------------------------------
 @router.get("/admin/templates/{kind}.xlsx")
 def template(kind: str, user: User = Depends(admin_only)):
-    if kind not in ("machines", "logs", "parts", "pm"):
+    if kind not in ("machines", "logs", "parts"):
         raise HTTPException(404, "Unknown template")
     return Response(
         excel.template(kind),
@@ -221,16 +221,8 @@ async def import_logs(
 
 @router.post("/admin/import/parts")
 async def import_parts(file: UploadFile = File(...), user: User = Depends(admin_only), db: Session = Depends(get_db)):
-    """Spare parts and stock from the stores system (SAP or other), Excel or CSV."""
+    """Spare parts and stock from the stores system, Excel or CSV."""
     result = excel.import_parts(db, user, await file.read())
-    db.commit()
-    return result
-
-
-@router.post("/admin/import/pm")
-async def import_pm(file: UploadFile = File(...), user: User = Depends(admin_only), db: Session = Depends(get_db)):
-    """PM plan from the PM system, Excel or CSV."""
-    result = excel.import_pm(db, user, await file.read())
     db.commit()
     return result
 

@@ -1,6 +1,6 @@
 """Supervisor dashboard (SPEC.md 11.2): breakdowns, downtime, KPIs, repeat faults, knowledge coverage.
 
-Phase 3 (SPEC 12.2, 12.3): spare parts used with current stock, low stock, overdue PM tasks.
+Phase 3 (SPEC 12.2): spare parts used in breakdowns with current stock, and low stock.
 """
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
@@ -8,8 +8,8 @@ from datetime import datetime, timedelta, timezone
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
-from . import kpi, machines_service, parts, pm, settings_store
-from .models import AISession, BreakdownLog, Component, ExpertTip, FaultCard, LogPart, Machine, PartFit, PMTask, SparePart
+from . import kpi, machines_service, parts, settings_store
+from .models import AISession, BreakdownLog, Component, ExpertTip, FaultCard, LogPart, Machine, PartFit, SparePart
 
 LIVE = ("approved", "needs_review")
 
@@ -100,7 +100,6 @@ def build(db: Session, *, days: int, zone: str = "") -> dict:
     all_downtimes = [l.downtime_min for l in counted]
     overall = kpi.compute(all_downtimes, days, hours * max(len(machines), 1))
     stores = _parts(db, machines, counted)
-    pm_plan = _pm(db, machines, counted, by_id)
 
     return {
         "days": days,
@@ -140,7 +139,6 @@ def build(db: Session, *, days: int, zone: str = "") -> dict:
             "tips_pending": db.scalar(select(func.count(ExpertTip.id)).where(ExpertTip.status == "pending")) or 0,
         },
         "parts": stores,
-        "pm": pm_plan,
         "ask_thunai": {
             "sessions": len(sessions),
             "resolved": outcomes.get("resolved", 0),
@@ -190,29 +188,3 @@ def _parts(db: Session, machines: list[Machine], counted: list[BreakdownLog]) ->
         "low_stock": [parts.info(sp) for sp in sorted(low, key=lambda sp: (sp.stock_qty or 0, sp.part_no))],
     }
 
-
-def _pm(db: Session, machines: list[Machine], counted: list[BreakdownLog], by_id: dict) -> dict:
-    """Overdue PM tasks now, and breakdowns that happened while a task was known to be overdue."""
-    on = pm.today()
-    ids = [m.id for m in machines] or [0]
-    tasks = list(db.scalars(select(PMTask).where(PMTask.machine_id.in_(ids), PMTask.active.is_(True))))
-    overdue = []
-    for t in tasks:
-        due = pm.due_on(t)
-        if due and due < on:
-            overdue.append({"machine_no": by_id[t.machine_id].machine_no, "zone": by_id[t.machine_id].zone,
-                            "task_code": t.task_code, "title": t.title, "days_overdue": (on - due).days})
-    overdue.sort(key=lambda r: -r["days_overdue"])
-    # Known overdue at the time: last done before the breakdown and the next due date already passed.
-    # PM done after a breakdown hides earlier lateness, so this is a lower bound.
-    by_machine: dict[int, list[PMTask]] = defaultdict(list)
-    for t in tasks:
-        by_machine[t.machine_id].append(t)
-    during = 0
-    for l in counted:
-        day = l.shift_date or l.reported_at.date()
-        for t in by_machine.get(l.machine_id, []):
-            if t.last_done_on and t.frequency_days and t.last_done_on <= day and t.last_done_on + timedelta(days=t.frequency_days) < day:
-                during += 1
-                break
-    return {"overdue": overdue, "tasks": len(tasks), "breakdowns_while_overdue": during}

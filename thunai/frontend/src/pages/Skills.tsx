@@ -1,4 +1,4 @@
-// Skill-gap analytics (SPEC 12.7): for training and shift planning, not appraisal.
+// Skill-gap analytics (SPEC 12.5): for training and shift planning, not appraisal.
 // The coverage table is a heat table: one blue ramp (light = few fixes, dark = many) and every
 // count printed in its cell, so the colour only helps scanning and never carries the value alone.
 import { useEffect, useState } from "react";

@@ -502,12 +502,6 @@ function LogSummary({ log, lang }: { log: Log; lang: Lang }) {
           <span className="kv-v">{log.parts.map((p) => `${[p.part_no, p.description].filter(Boolean).join(" ")} × ${p.qty}`).join(", ")}</span>
         </div>
       )}
-      {log.external_ref && (
-        <div className="kv">
-          <span className="kv-k">{t("external_ref")}</span>
-          <span className="kv-v mono">{log.external_ref}</span>
-        </div>
-      )}
       {log.classification && (
         <p className="muted small">
           {log.classification.symptom_category} · {log.classification.component_name} · {log.classification.failure_mode}

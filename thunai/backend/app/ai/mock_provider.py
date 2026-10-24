@@ -213,7 +213,7 @@ class MockProvider:
             plan.append({"kind": "check", "action_en": f"Expert tip: {d['text_en']}"[:200],
                          "action_ta": f"Expert tip: {d['text_ta'] or d['text_en']}"[:200],
                          "source_refs": [tip["ref"]], "confidence": 0.6})
-        # Phase 3 sources: what a photo showed and the machine's alarm feed go first; overdue PM last.
+        # Phase 3 sources: what a photo showed and the machine's alarm feed go first.
         now_steps = []
         for photo in [i for i in items if i["kind"] == "photo"][:1]:
             d = photo["data"]
@@ -229,13 +229,6 @@ class MockProvider:
                               "action_ta": f"Machine இன்னைக்கு alarm {d['code']} {d['count']} தடவை காட்டிச்சு. HMI alarm history பாருங்க."[:200],
                               "source_refs": [feed["ref"]], "confidence": 0.6})
         plan[:0] = now_steps
-        for task in [i for i in items if i["kind"] == "pm"][:1]:
-            d = task["data"]
-            # Before any "remove your LOTO" step, so the check is done while isolated.
-            at = next((n for n, x in enumerate(plan) if "remove your loto" in x["action_en"].lower()), len(plan))
-            plan.insert(at, {"kind": "check", "action_en": f"PM task '{d['title']}' is {d['days_overdue']} days overdue. Do its checks if they fit this fault."[:200],
-                         "action_ta": f"PM task '{d['title']}' {d['days_overdue']} நாள் late. இந்த fault-க்கு பொருந்தினா அதோட check-ஐ பண்ணுங்க."[:200],
-                         "source_refs": [task["ref"]], "confidence": 0.5})
         if not plan:
             for doc in [i for i in items if i["kind"] == "doc"][:1]:
                 d = doc["data"]

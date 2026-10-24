@@ -42,7 +42,7 @@ blocked the Phase 1 build; changing any of them is a configuration or small code
 | 17 | Mandatory fields | Machine, technician, date, time, shift (auto); issue and corrective action (required); downtime start and end, root cause, parts, alarm code, photos (optional). |
 | 18 | Verification | Zone supervisor. Unverified logs inform the AI but are labelled "not yet verified". |
 | 19 | Glossary | Seeded with common technical terms; admin edits; used in prompts for speech, translation and Tamil output. |
-| 20 | Integration | Phase 3. Phase 1 has Excel export and a REST API (OpenAPI docs at `/api/docs`). |
+| 20 | Integration | Phase 3: PLC/SCADA alarms and spare-parts stock. PM system and SAP: out of scope (owner, 24 Oct 2026). Excel export and a REST API (OpenAPI docs at `/api/docs`). |
 | 21 | Reports | MTTR, MTBF, top repeat faults per machine in Phase 1; zone/shift dashboards in Phase 2; Excel export now. |
 | 22 | Pilot | One zone, 10 to 15 machines. MVP in 4 to 6 weeks. |
 | 23 | Maintainers | In-house team. README, RUNBOOK and code comments. |
@@ -78,9 +78,9 @@ blocked the Phase 1 build; changing any of them is a configuration or small code
 ≥3 similar logs exist, approval and versioning; contradiction flags; dashboards (zone, shift,
 knowledge coverage); expert tips; manual, drawing and alarm-list ingestion; optional embeddings.
 
-**Phase 3 – Integration (this build, see section 12)**: PM plan and spare-parts links (file import
-and API, so SAP or any CMMS can feed them), PLC/SCADA alarm feed that pre-fills logs, outbound events
-for the PM system, photo-based diagnosis, skill-gap analytics by technician and machine type.
+**Phase 3 – Integration (this build, see section 12)**: spare-parts stock (file import and API),
+PLC/SCADA alarm feed that pre-fills logs, photo-based diagnosis, skill-gap analytics by technician and
+machine type. PM system links and SAP integration are out of scope (owner decision, 24 Oct 2026).
 
 Pulled forward from Phase 2: offline log queue (question 4 needs it) and device read-aloud (free).
 
@@ -106,7 +106,7 @@ Login · Home · Machine picker (search, recent first, zone filter) · QR scanne
 Ask Thunai (describe → questions → steps → finish) · Log form (new / confirm / view) · My logs ·
 Review queue · Admin: Machines, QR sheet, Users, Glossary, Settings, Imports, Export, Audit.
 Phase 2 adds: Fault-card review · Dashboard · Admin: Documents. Phase 3 adds: Skills · Admin:
-Integrations (keys, webhooks, deliveries).
+Integrations (keys).
 
 ## 6. Data model
 
@@ -295,27 +295,25 @@ The owner asked to start Phase 3 directly. The brief lists: PM system, spare par
 or SCADA alarm codes to pre-fill logs; photo-based diagnosis; skill-gap analytics by technician and
 machine.
 
-Which PM system, SAP modules and SCADA or PLC gateways the plant uses, and how Thunai may reach them,
-is not known yet (question 20). Guessing at one vendor's interface would build the wrong thing, so
-Thunai offers **system-neutral connection points** that any of those systems, or a small middleware
-script owned by Eaton IT, can use:
+**Owner decision, 24 Oct 2026: PM system links and SAP integration are out of scope.** A first build
+had a PM plan mirror, signed webhooks for the PM system and SAP, a logs poll and an external-reference
+write-back; they were removed (they are in the git history, commit 3d8872b, if this changes). The
+breakdown log stays Thunai's own record; Excel export and the REST API (question 20) remain for
+monthly reports.
 
-- **files:** Excel or CSV imports, the same way machines and history are imported now;
-- **an inbound API** with integration keys;
-- **outbound, signed webhooks.**
+Which SCADA or PLC gateways and stores system the plant uses is not known yet, so Thunai offers
+**system-neutral connection points** rather than a vendor connector:
+- **files:** Excel or CSV imports, the same way machines and history are imported;
+- **an inbound API** with integration keys.
 
-A direct connector for a named system (for example SAP OData services or an OPC UA server) can be
-added behind the same endpoints once the system and access are confirmed.
-
-**CONFIRM:** systems and versions, access method (files, API, middleware), owner on the IT side.
+**CONFIRM:** which gateway and stores system, access method (files or API), owner on the IT side.
 
 Not built, by design:
-- Thunai never writes stock or PM schedules back. The stores system and the PM system stay the
-  records.
+- Thunai never writes stock back. The stores system stays the record.
 - No alarm opens a log by itself. Technicians start logs.
 
 ### 12.1 Integration keys and inbound API
-- **Keys.** Admins create one key per connected system, with scopes `alarms`, `parts`, `pm`, `logs`.
+- **Keys.** Admins create one key per connected system, with scopes `alarms` and `parts`.
   - The key is shown once and stored only as a SHA-256 hash; it is a long random token, so a fast
     hash is enough.
   - It is sent in the `X-Thunai-Key` header. Keys can be deactivated, show "last used", and every
@@ -327,14 +325,11 @@ Not built, by design:
 |---|---|---|
 | `POST /api/integrations/alarms` | alarms | PLC or SCADA alarm events |
 | `PUT /api/integrations/parts` | parts | spare-parts stock (upsert by part number) |
-| `PUT /api/integrations/pm-tasks` | pm | PM plan (upsert by machine and task code) |
-| `GET /api/integrations/logs?since=` | logs | closed and verified logs changed since a time (for systems that poll) |
-| `PATCH /api/integrations/logs/{log_no}` | logs | write back an external reference, for example an SAP notification number |
 
-### 12.2 Spare parts (stores or SAP stock)
-- **Catalogue fields:** part number (plant or SAP material number), description, unit, stock on hand,
-  minimum stock, store location, manufacturer part numbers, and the machine types or machines it fits.
-  Each stock figure carries the time it was valid ("as of").
+### 12.2 Spare parts (stores stock)
+- **Catalogue fields:** part number (the plant's own), description, unit, stock on hand, minimum stock,
+  store location, manufacturer part numbers, and the machine types or machines it fits. Each stock
+  figure carries the time it was valid ("as of").
 - **Sources:** Admin → Import → Spare parts (Excel or CSV, template provided) or `PUT
   /api/integrations/parts`.
   - Rows are matched by part number.
@@ -352,18 +347,7 @@ Not built, by design:
   - **Machine page:** spare parts with stock, and low stock highlighted.
   - **Dashboard:** parts used in breakdowns in the period, with current stock and a low-stock flag.
 
-### 12.3 PM plan (preventive maintenance)
-- **Task fields:** machine, task code (from the PM system), title, frequency in days, last done, next
-  due.
-- **Sources:** Admin → Import → PM plan (Excel or CSV) or `PUT /api/integrations/pm-tasks`. Thunai does
-  not schedule PM.
-- **Uses:**
-  - **Machine page:** overdue tasks, plus tasks due within `pm_due_soon_days` (setting, default 7).
-  - **AI evidence:** overdue tasks are given to the AI as evidence `PM-<code>` (with manuals, tier 4).
-    For example, an overdue lubrication task is a reasonable thing to check on a jam.
-  - **Dashboard:** overdue PM tasks per zone, and breakdowns on machines whose PM was overdue.
-
-### 12.4 PLC and SCADA alarms
+### 12.3 PLC and SCADA alarms
 - **Feed.** Alarm events come from a SCADA system, an alarm historian or a gateway (for example an OPC
   UA or Modbus bridge run by IT), posted to `POST /api/integrations/alarms`.
   - Each event has: machine number, alarm code, optional message, raised time, optional cleared time,
@@ -382,25 +366,7 @@ Not built, by design:
 - **CONFIRM:** which gateway, how machine numbers appear in alarm tags, and whether an alarm should
   open a draft log automatically. That is not done by default.
 
-### 12.5 Outbound events for the PM system and SAP
-- **Endpoints.** Admins register webhook endpoints: URL, events, secret.
-  - **Events:** `breakdown.opened` (a log saved with the machine still down), `breakdown.closed`,
-    `breakdown.verified`.
-  - **Payload:** the log in English: log number, machine, times, downtime, alarm, issue, root cause,
-    action, parts, technician employee ID, external reference.
-- **Signing.** Each request carries `X-Thunai-Timestamp` and `X-Thunai-Signature: sha256=<hex>`, an
-  HMAC-SHA256 over `timestamp.body` with the endpoint's secret. The receiver can therefore check
-  both who sent it and that it is not a replay.
-  - Secrets must be readable to sign, so they are stored in the database, shown once, and can be
-    rotated.
-- **Delivery.** The worker sends events and tries up to 5 times (after 1, 5, 30 and 120 minutes).
-  - Admin → Integrations lists deliveries with their status and last error, and has a Retry button.
-  - Only `http` and `https` URLs are accepted, and only admins can add them.
-- **Typical use.** Middleware creates a maintenance notification in SAP PM from `breakdown.closed`, then
-  writes the notification number back with `PATCH /api/integrations/logs/{log_no}`. The log page
-  shows it.
-
-### 12.6 Photo-based diagnosis
+### 12.4 Photo-based diagnosis
 - **Reading the photo.** A technician adds a photo in Ask Thunai, for example of a gauge, an HMI
   screen, indicator LEDs or a damaged part. The diagnosis model reads it straight away, and the
   technician sees:
@@ -426,7 +392,7 @@ Not built, by design:
 - **Cost:** up to about 4,800 input tokens per full-size photo plus a short answer, about $0.03 per
   photo on Opus 5.5.
 
-### 12.7 Skill-gap analytics
+### 12.5 Skill-gap analytics
 - **Who sees it:** supervisors (their own zone) and admins, over 30, 90 or 365 days.
 - **Per technician and machine type:**
   - fixes (closed or verified logs);
@@ -447,31 +413,25 @@ Not built, by design:
   are shown beyond supervisors.
 - **Export:** Excel.
 
-### 12.8 Data model additions (migration 0003)
+### 12.6 Data model additions (migration 0003)
 | Table | Key fields |
 |---|---|
-| spare_parts | part_no (unique), description, unit, stock_qty, min_qty, location, alt_part_nos, stock_at, source, active |
+| spare_parts | part_no (unique), description, unit, stock_qty, min_qty, location, alt_part_nos, match_keys, stock_at, source, active |
 | part_fits | part_id, machine_id or machine_type_id |
-| pm_tasks | machine_id, task_code (unique per machine), title, frequency_days, last_done_on, next_due_on, source, active |
 | machine_alarms | machine_id, code, message, raised_at, cleared_at, source, event_id, log_id |
 | integration_keys | name, key_hash, key_prefix, scopes, active, last_used_at, created_by |
-| webhooks | url, events, secret, active, created_by |
-| webhook_deliveries | webhook_id, event, entity_id, payload, status (pending / sent / failed), attempts, next_attempt_at, last_status, last_error, sent_at |
 | log_media (extended) | observation (JSON), observed_at, observation_model |
-| breakdown_logs (extended) | external_ref |
 
-New settings: `alarm_prefill_hours` (8), `pm_due_soon_days` (7), `skill_min_events` (3).
+New settings: `alarm_prefill_hours` (8), `skill_min_events` (3).
 
-New environment variables:
-- `AI_PHOTOS` (false);
-- `WEBHOOK_TIMEOUT_S` (10).
+New environment variable: `AI_PHOTOS` (false).
 
 Prompt versions:
-- `troubleshoot.v2` and `clarify.v2` add the photo, alarm-feed, parts and PM sections. They are the
+- `troubleshoot.v2` and `clarify.v2` add the photo, alarm-feed and parts sections. They are the
   defaults; the v1 prompts still work.
 - `read_photo.v1` is new.
 
-### 12.9 Phase 3 risks
+### 12.7 Phase 3 risks
 | Risk | Mitigation |
 |---|---|
 | Leaked integration key | Scoped, hashed, revocable keys; last-used time shown; HTTPS only |
@@ -479,4 +439,3 @@ Prompt versions:
 | Misread gauge or screen | Shown to the technician first; "could not read" instead of guesses; steps still ask for a check |
 | Wrong part number on screen | Only exact matches against the catalogue are shown; the AI may only cite listed numbers |
 | Skill figures used unfairly | Minimum event counts, counts always shown, supervisors and admins only, HR to confirm |
-| Webhook receiver down | Retries with backoff, delivery log, manual retry; events are never lost silently |
