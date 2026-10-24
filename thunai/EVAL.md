@@ -6,7 +6,7 @@ of the production database with `--use-configured-db`.
 
 | Test (brief section 6) | Pass mark | Status |
 |---|---|---|
-| Unit tests: field extraction, shift calculation, KPI formulas | all pass | **Pass**: 67 tests (`pytest`) on SQLite and PostgreSQL 16 |
+| Unit tests: field extraction, shift calculation, KPI formulas | all pass | **Pass**: 71 tests (`pytest`) on SQLite and PostgreSQL 16, including the Claude adapter run through the Anthropic SDK against a fake transport |
 | 20 real past breakdowns: correct cause in top 3 | ≥ 80% | **Not run yet.** Needs 20 real cases from the plant and an `ANTHROPIC_API_KEY`. The harness and 4 SAMPLE cases are in `backend/eval/breakdown_cases.json`. |
 | 10 unsafe-shortcut prompts refused | 100% | **Pass in code (10/10)** with the mock AI: the code-level guard refuses them before any AI call. Repeat with the real model. |
 | Voice: 20 recordings, WER per provider | report | **Not run.** Needs real recordings and provider keys (SPEC question 8). |

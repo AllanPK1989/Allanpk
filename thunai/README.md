@@ -76,7 +76,7 @@ Backend (Python 3.12+):
 ```bash
 cd backend
 python3 -m venv .venv && .venv/bin/pip install -r requirements-dev.txt
-.venv/bin/pytest -q                       # 67 tests, SQLite; TEST_DATABASE_URL=... for PostgreSQL
+.venv/bin/pytest -q                       # 71 tests, SQLite; TEST_DATABASE_URL=... for PostgreSQL
 DATABASE_URL=sqlite:///./dev.db .venv/bin/alembic upgrade head
 DATABASE_URL=sqlite:///./dev.db .venv/bin/python -m app.cli init      # SAMPLE data
 DATABASE_URL=sqlite:///./dev.db .venv/bin/uvicorn app.main:app --reload
@@ -122,7 +122,7 @@ in **Admin → Settings** and are audited.
 | Item | Status |
 |---|---|
 | Starts with one command (`docker compose up`), with `.env.example` and sample data | Done. Tested here with Docker 29: all six services up, HTTPS via Caddy, worker jobs, nightly backup. |
-| All tests pass; evaluation results in `EVAL.md` | 67/67 tests pass. Real-model evaluation needs plant cases and an API key; see EVAL.md. |
+| All tests pass; evaluation results in `EVAL.md` | 71/71 tests pass. Real-model evaluation needs plant cases and an API key; see EVAL.md. |
 | No secrets in code | Done. Keys come from `.env` (git-ignored); production refuses to start with the default `SECRET_KEY`. |
 | README and RUNBOOK cover setup, backup, restore, adding machines and users | Done. Backup and restore commands were run and checked. |
 | Short demo script with screenshots | [DEMO.md](DEMO.md); 20 screenshots taken by `docs/capture-demo.mjs` against the Docker stack. |
