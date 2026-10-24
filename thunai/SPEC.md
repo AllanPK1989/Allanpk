@@ -1,9 +1,10 @@
 # Thunai: specification (Phase 0 output)
 
-Status: **draft for approval**. Written 24 Oct 2026 from `Claude Code Prompt – AI Troubleshooting App for Technicians`.
-The owner asked to build the application directly, so every Phase 0 question was answered with the
-**proposed default from the brief**. Items marked **CONFIRM** need a decision from the plant before the
-pilot. None of them blocks the Phase 1 build.
+Status: **Phase 1 built on the defaults below; open for correction.** Written 24 Oct 2026 from
+`Claude Code Prompt – AI Troubleshooting App for Technicians`. The owner asked to build the
+application directly, so every Phase 0 question was answered with the **proposed default from the
+brief**. Items marked **CONFIRM** need a decision from the plant before the pilot. None of them
+blocked the Phase 1 build; changing any of them is a configuration or small code change.
 
 ## 1. Understanding (10 lines)
 
@@ -171,7 +172,7 @@ until confirmed; no hard deletes (deactivate / reject / retire); every change wr
 
 | Layer | Choice |
 |---|---|
-| Frontend | React 18 + TypeScript + Vite PWA, EN/TA strings, IndexedDB offline queue, MediaRecorder audio, Noto Sans Tamil bundled |
+| Frontend | React 19 + TypeScript + Vite PWA, EN/TA strings, IndexedDB offline queue, MediaRecorder audio, Noto Sans Tamil bundled |
 | Backend | Python 3.12, FastAPI, SQLAlchemy 2, Alembic |
 | Database | PostgreSQL 16 (pgvector image, extension used from Phase 2) |
 | Jobs | Redis + RQ worker; inline fallback for development |

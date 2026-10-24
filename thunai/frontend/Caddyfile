@@ -1,0 +1,32 @@
+# SITE_ADDRESS: the name phones use, e.g. thunai.plant.local (default: localhost).
+# CADDY_TLS: "internal" (Caddy's own certificate authority; install its root certificate on
+# the phones, see RUNBOOK.md), an e-mail address for public ACME certificates, or
+# "/certs/cert.pem /certs/key.pem" for a certificate from IT (mount ./certs).
+{$SITE_ADDRESS:localhost} {
+	tls {$CADDY_TLS:internal}
+	encode zstd gzip
+
+	request_body {
+		max_size 20MB
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options nosniff
+		Referrer-Policy same-origin
+		Permissions-Policy "camera=(self), microphone=(self), geolocation=()"
+		-Server
+	}
+
+	handle /api/* {
+		reverse_proxy api:8000
+	}
+
+	handle {
+		root * /srv
+		header /assets/* Cache-Control "public, max-age=31536000, immutable"
+		header /sw.js Cache-Control "no-cache"
+		try_files {path} /index.html
+		file_server
+	}
+}

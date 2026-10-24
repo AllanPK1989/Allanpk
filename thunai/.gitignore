@@ -12,3 +12,4 @@ frontend/dev-dist/
 # Local config and data
 .env
 backups/
+certs/

@@ -23,6 +23,7 @@ const browser = await playwright.chromium.launch({
   args: ["--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream"],
 });
 const phone = {
+  ignoreHTTPSErrors: true, // Caddy's internal certificate on https://localhost
   viewport: { width: 360, height: 780 },
   deviceScaleFactor: 2,
   isMobile: true,
@@ -166,7 +167,7 @@ async function login(page, emp, lang, beforeSubmit) {
   await shot(page, "17-machine-page-en");
   await ctx.close();
 
-  const admin = await browser.newContext({ viewport: { width: 1024, height: 768 }, deviceScaleFactor: 1, timezoneId: "Asia/Kolkata" });
+  const admin = await browser.newContext({ viewport: { width: 1024, height: 768 }, deviceScaleFactor: 1, timezoneId: "Asia/Kolkata", ignoreHTTPSErrors: true });
   const a = await admin.newPage();
   await login(a, "D-ADMIN", "en");
   await a.goto(`${BASE}/admin?tab=import`);
