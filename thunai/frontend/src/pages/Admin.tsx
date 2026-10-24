@@ -2,14 +2,15 @@
 import { useCallback, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { api, downloadFile } from "../api";
-import type { Machine, User } from "../api";
+import { api, downloadFile, openFile } from "../api";
+import type { DocumentInfo, Machine, User } from "../api";
 import { ErrorNote, Header, Icon, Page, Spinner } from "../components";
 import { useApp } from "../state";
 
 const TABS = [
   ["machines", "Machines"],
   ["import", "Import"],
+  ["documents", "Documents"],
   ["users", "Users"],
   ["glossary", "Glossary"],
   ["settings", "Settings"],
@@ -35,6 +36,7 @@ export default function Admin() {
         </div>
         {tab === "machines" && <MachinesTab />}
         {tab === "import" && <ImportTab />}
+        {tab === "documents" && <DocumentsTab />}
         {tab === "users" && <UsersTab />}
         {tab === "glossary" && <GlossaryTab />}
         {tab === "settings" && <SettingsTab />}
@@ -211,6 +213,141 @@ function ImportTab() {
       </section>
       <ErrorNote error={error} />
       {result !== null && <pre className="summary">{JSON.stringify(result, null, 2)}</pre>}
+    </>
+  );
+}
+
+const KINDS = [
+  ["manual", "Manual"],
+  ["sop", "SOP"],
+  ["drawing", "Drawing"],
+  ["alarm_list", "Alarm list (Excel or CSV)"],
+  ["other", "Other"],
+] as const;
+
+function DocumentsTab() {
+  const { toast } = useApp();
+  const [docs, error, reload] = useLoad<DocumentInfo[]>("/api/documents?include_inactive=true");
+  const [machines] = useLoad<Machine[]>("/api/machines?limit=1000");
+  const [form, setForm] = useState({ title: "", kind: "manual", scope: "machine", machine_no: "", machine_type: "" });
+  const [file, setFile] = useState<File | null>(null);
+  const [uploadError, setUploadError] = useState<unknown>(null);
+  const [busy, setBusy] = useState(false);
+  const types = [...new Set((machines ?? []).map((m) => m.machine_type).filter(Boolean))].sort();
+
+  const upload = async () => {
+    if (!file) return;
+    setBusy(true);
+    setUploadError(null);
+    const body = new FormData();
+    body.append("file", file);
+    body.append("title", form.title || file.name);
+    body.append("kind", form.kind);
+    if (form.scope === "machine") body.append("machine_no", form.machine_no);
+    else body.append("machine_type", form.machine_type);
+    try {
+      await api.upload("/api/documents", body);
+      toast("Uploaded. Text is extracted in the background.");
+      setFile(null);
+      setForm({ ...form, title: "" });
+      setTimeout(reload, 1500);
+    } catch (e) {
+      setUploadError(e);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const toggle = async (d: DocumentInfo) => {
+    await api.patch(`/api/documents/${d.id}`, { active: !d.active });
+    reload();
+  };
+
+  return (
+    <>
+      <section className="card">
+        <h3>Upload a manual, SOP, drawing or alarm list</h3>
+        <p className="muted small">
+          PDF text is read page by page (scanned drawings are stored but not read). Alarm lists need an alarm_code column;
+          message, cause and remedy are optional.{" "}
+          <button className="btn btn-ghost btn-small" onClick={() => void downloadFile("/api/admin/templates/alarms.xlsx", "thunai-alarms-template.xlsx")}>
+            <Icon name="download" size={16} /> Alarm list template
+          </button>
+        </p>
+        <input className="input" placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+        <select className="input" value={form.kind} onChange={(e) => setForm({ ...form, kind: e.target.value })}>
+          {KINDS.map(([k, label]) => (
+            <option key={k} value={k}>
+              {label}
+            </option>
+          ))}
+        </select>
+        <div className="segmented" role="radiogroup" aria-label="Applies to">
+          {[
+            ["machine", "One machine"],
+            ["type", "Machine type"],
+          ].map(([k, label]) => (
+            <button key={k} role="radio" aria-checked={form.scope === k} className={form.scope === k ? "on" : ""} onClick={() => setForm({ ...form, scope: k })}>
+              {label}
+            </button>
+          ))}
+        </div>
+        {form.scope === "machine" ? (
+          <select className="input" value={form.machine_no} onChange={(e) => setForm({ ...form, machine_no: e.target.value })}>
+            <option value="">Choose machine</option>
+            {machines?.map((m) => (
+              <option key={m.id} value={m.machine_no}>
+                {m.machine_no} · {m.name}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <select className="input" value={form.machine_type} onChange={(e) => setForm({ ...form, machine_type: e.target.value })}>
+            <option value="">Choose machine type</option>
+            {types.map((t) => (
+              <option key={t}>{t}</option>
+            ))}
+          </select>
+        )}
+        <input className="input" type="file" accept=".pdf,.txt,.md,.csv,.xlsx,image/*" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+        <ErrorNote error={uploadError} />
+        <button className="btn btn-primary" disabled={busy || !file || (form.scope === "machine" ? !form.machine_no : !form.machine_type)} onClick={() => void upload()}>
+          Upload
+        </button>
+      </section>
+      <ErrorNote error={error} />
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>For</th>
+            <th>Status</th>
+            <th />
+          </tr>
+        </thead>
+        <tbody>
+          {docs?.map((d) => (
+            <tr key={d.id} className={d.active === false ? "inactive" : ""}>
+              <td>
+                <button className="link-btn" onClick={() => void openFile(`/api/documents/${d.id}/file`)}>
+                  {d.title}
+                </button>
+                <div className="muted small">
+                  {d.kind.replace("_", " ")}
+                  {d.pages ? ` · ${d.pages} ${d.pages === 1 ? "page" : "pages"}` : ""}
+                </div>
+              </td>
+              <td>{d.scope === "machine" ? d.machine_no : d.type_name}</td>
+              <td>{d.status === "no_text" ? "stored (no text)" : d.status}</td>
+              <td>
+                <button className="btn btn-small" onClick={() => void toggle(d)}>
+                  {d.active === false ? "Activate" : "Deactivate"}
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </>
   );
 }

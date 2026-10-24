@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 
 from . import jobs  # noqa: F401  (registers the after-commit job hooks)
 from .config import get_config
-from .routers import admin, ai, auth, logs, machines, media, review
+from .routers import admin, ai, auth, dashboard, documents, fault_cards, logs, machines, media, review, tips
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 cfg = get_config()
@@ -24,7 +24,7 @@ if cfg.cors_origins:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-for module in (auth, machines, logs, media, ai, review, admin):
+for module in (auth, machines, logs, media, ai, review, fault_cards, tips, documents, dashboard, admin):
     app.include_router(module.router)
 
 

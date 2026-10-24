@@ -1,9 +1,9 @@
 """Job bodies. Each opens its own database session (see jobs.py)."""
 import logging
 
-from . import logs_service, media
+from . import documents, indexing, knowledge, logs_service, media, tips
 from .db import SessionLocal
-from .models import LogMedia
+from .models import Document, ExpertTip, LogMedia
 from .schemas import TextIn
 
 log = logging.getLogger("thunai.tasks")
@@ -13,6 +13,46 @@ def enrich_log(log_id: int) -> None:
     with SessionLocal() as db:
         logs_service.enrich_log(db, log_id)
         db.commit()
+    index_item("log", log_id)
+    update_knowledge(log_id)
+
+
+def index_item(kind: str, item_id: int) -> None:
+    with SessionLocal() as db:
+        indexing.index_item(db, kind, item_id)
+        db.commit()
+
+
+def index_document(document_id: int) -> None:
+    """Extract text and alarm codes from an uploaded document, then embed its chunks if enabled."""
+    with SessionLocal() as db:
+        doc = db.get(Document, document_id)
+        if doc is None:
+            return
+        documents.index(db, doc)
+        db.commit()
+        indexing.index_item(db, "document", doc.id)
+        db.commit()
+
+
+def enrich_tip(tip_id: int) -> None:
+    with SessionLocal() as db:
+        tip = db.get(ExpertTip, tip_id)
+        if tip is not None:
+            tips.translate(db, tip)
+            db.commit()
+
+
+def update_knowledge(log_id: int) -> None:
+    """Flag fault cards the log contradicts and draft a new card when enough similar logs exist."""
+    with SessionLocal() as db:
+        result = knowledge.update_for_log(db, log_id)
+        db.commit()
+        if result["drafted"]:
+            indexing.index_item(db, "card", result["drafted"])
+            db.commit()
+        if result["flagged"] or result["drafted"]:
+            log.info("Knowledge update for log %s: %s", log_id, result)
 
 
 def process_offline_voice(log_id: int, media_id: int, language: str) -> None:

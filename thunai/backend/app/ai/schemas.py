@@ -117,6 +117,32 @@ class EnrichOut(Strict):
     confidence: float
 
 
+class TranslateOut(Strict):
+    en: str
+    ta: str
+
+
+# ---- fault cards (Phase 2) ------------------------------------------------------------------
+class DraftCause(Strict):
+    cause_en: str
+    cause_ta: str
+    log_refs: list[str]  # the logs where this was the root cause; counts are computed in code
+
+
+class DraftStep(Strict):
+    en: str
+    ta: str
+
+
+class DraftCardOut(Strict):
+    symptom_en: str
+    symptom_ta: str
+    causes: list[DraftCause]
+    steps: list[DraftStep]
+    parts: list[str]
+    tools: list[str]
+
+
 def strict_schema(model: type[BaseModel]) -> dict:
     """JSON schema with $refs inlined, titles removed and every property required."""
     raw = model.model_json_schema()

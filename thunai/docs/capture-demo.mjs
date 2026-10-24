@@ -182,5 +182,103 @@ async function login(page, emp, lang, beforeSubmit) {
   await admin.close();
 }
 
+
+// ================= Phase 2 =================
+/** Calls the API with the logged-in user's token (setup steps that are not the point of a screenshot). */
+async function apiCall(page, method, path, body) {
+  return page.evaluate(
+    async ([m, p, b]) => {
+      const auth = JSON.parse(sessionStorage.getItem("thunai-auth") ?? localStorage.getItem("thunai-auth"));
+      const r = await fetch(p, {
+        method: m,
+        headers: { authorization: `Bearer ${auth.token}`, "content-type": "application/json" },
+        body: b ? JSON.stringify(b) : undefined,
+      });
+      if (!r.ok) throw new Error(`${m} ${p}: ${r.status} ${await r.text()}`);
+      return r.json();
+    },
+    [method, path, body],
+  );
+}
+
+const log = (machine, issue, cause, fix, min) => ({
+  machine_no: machine,
+  issue: { original: issue },
+  root_cause: { original: cause },
+  corrective_action: { original: fix },
+  downtime_min: min,
+});
+
+// ---- 4. Technician: more logs, an expert tip and an alarm code (Tamil) ------------------------
+{
+  const ctx = await browser.newContext({ ...phone, permissions: ["microphone"] });
+  const page = await ctx.newPage();
+  await login(page, "D-TECH1", "ta");
+  // Two more "label print faded" logs: with the sample log that makes 3, so a fault card is drafted.
+  await apiCall(page, "POST", "/api/logs", log("DEMO-LP-01", "Label print faded", "Print head dirty", "Cleaned print head with IPA", 15));
+  await apiCall(page, "POST", "/api/logs", log("DEMO-LP-01", "Label print faded", "Ribbon wrinkled", "Reloaded ribbon and set tension", 25));
+  // A log that contradicts the approved card FC-1 (its causes do not include an air leak).
+  await apiCall(page, "POST", "/api/logs", log("DEMO-SF-01", "Cylinder not returning", "Air leak at push-in fitting", "Replaced the fitting", 30));
+
+  await page.goto(`${BASE}/m/DEMO-SF-01`);
+  await page.locator(".kpis").waitFor();
+  await page.getByRole("button", { name: /Tip சேர்/ }).click();
+  await page.locator(".sheet textarea").fill("Coil seekiram burn aagum, air pressure 6 bar mela irundha. FRL-a first check pannunga.");
+  await shot(page, "21-add-expert-tip-ta");
+  await page.locator(".sheet .btn-primary").click();
+  await page.waitForTimeout(800);
+
+  await page.goto(`${BASE}/ask/DEMO-SF-01`);
+  await page.locator("textarea").fill("Machine nikkudhu");
+  await page.locator("input.input").first().fill("A101");
+  await page.locator(".alarm-card").waitFor();
+  await shot(page, "22-alarm-code-lookup-ta");
+  await ctx.close();
+}
+
+// ---- 5. Supervisor: review fault cards and tips, dashboard -----------------------------------
+{
+  const ctx = await browser.newContext(phone);
+  const page = await ctx.newPage();
+  await login(page, "D-SUP1", "en");
+  await page.goto(`${BASE}/review`);
+  await page.getByText("Fault cards to review").waitFor();
+  await page.locator(".list-item", { hasText: "FC-" }).first().waitFor({ timeout: 20000 });
+  await shot(page, "23-review-cards-and-tips-en");
+  // Approve the expert tip.
+  const tipCard = page.locator(".card", { hasText: "Coil seekiram" });
+  await tipCard.getByRole("button", { name: "Approve" }).click();
+  await page.waitForTimeout(600);
+  // Open the new draft card for the label printer.
+  await page.locator(".list-item", { hasText: "DEMO-LP-01" }).first().click();
+  await page.locator(".chip", { hasText: "Draft" }).waitFor();
+  await shot(page, "24-draft-fault-card-en");
+  await page.getByRole("button", { name: "Approve" }).click();
+  await page.locator(".chip", { hasText: "Approved" }).waitFor();
+  // The flagged card FC-1.
+  await page.goto(`${BASE}/cards/1`);
+  await page.locator(".note-warn").waitFor();
+  await shot(page, "25-flagged-card-en");
+  await page.goto(`${BASE}/dashboard`);
+  await page.locator(".stat-grid").first().waitFor();
+  await shot(page, "26-dashboard-en");
+  await page.goto(`${BASE}/m/DEMO-SF-01`);
+  await page.locator(".tip").first().waitFor();
+  await page.locator(".tip").first().scrollIntoViewIfNeeded();
+  await shot(page, "27-machine-tips-documents-en");
+  await ctx.close();
+
+  const admin = await browser.newContext({ viewport: { width: 1024, height: 768 }, deviceScaleFactor: 1, timezoneId: "Asia/Kolkata", ignoreHTTPSErrors: true });
+  const a = await admin.newPage();
+  await login(a, "D-ADMIN", "en");
+  await a.goto(`${BASE}/admin?tab=documents`);
+  await a.locator(".table tbody tr").first().waitFor();
+  await shot(a, "28-admin-documents");
+  await a.goto(`${BASE}/dashboard`);
+  await a.locator(".bars").first().waitFor();
+  await shot(a, "29-dashboard-wide");
+  await admin.close();
+}
+
 await browser.close();
 console.log("Demo run finished");

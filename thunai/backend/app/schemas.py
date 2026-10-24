@@ -183,3 +183,28 @@ class GlossaryIn(BaseModel):
 
 class SettingIn(BaseModel):
     value: dict | list | int | float | str | bool | None
+
+
+class CauseEdit(BaseModel):
+    cause: str = Field(min_length=1, max_length=300)
+    cause_ta: str = ""
+
+
+class FaultCardEdit(BaseModel):
+    symptom: str | None = Field(default=None, min_length=1, max_length=300)
+    symptom_ta: str | None = None
+    causes: list[CauseEdit] | None = None  # counts stay as computed from the logs
+    steps_en: list[str] | None = None
+    steps_ta: list[str] | None = None
+    parts: list[str] | None = None
+    tools: list[str] | None = None
+
+
+class ReasonIn(BaseModel):
+    reason: str = Field(default="", max_length=500)
+
+
+class TipIn(BaseModel):
+    machine_no: str
+    text: str = Field(min_length=2, max_length=2000)  # the technician's own words
+    media_id: int | None = None

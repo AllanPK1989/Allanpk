@@ -192,7 +192,34 @@ class MockProvider:
                         "confidence": 0.6,
                     }
                 )
-        confidence = 0.75 if cards else 0.55 if logs else 0.3
+        # Phase 2 sources: the alarm-list entry goes first, then an expert tip, then a manual page.
+        for a in [i for i in items if i["kind"] == "alarm"][:1]:
+            d = a["data"]
+            first = [
+                {
+                    "kind": "check",
+                    "action_en": f"Alarm {d['code']}: {d['message']}. Check: {d['cause'] or 'see the alarm list'}."[:200],
+                    "action_ta": f"Alarm {d['code']}: {d['message']}. இதை பாருங்க: {d['cause'] or 'alarm list'}."[:200],
+                    "source_refs": [a["ref"]],
+                    "confidence": 0.7,
+                }
+            ]
+            if d.get("remedy"):
+                first.append({"kind": "action", "action_en": d["remedy"][:200], "action_ta": d["remedy"][:200],
+                              "source_refs": [a["ref"]], "confidence": 0.7})
+            plan[:0] = first
+        for tip in [i for i in items if i["kind"] == "tip"][:1]:
+            d = tip["data"]
+            plan.append({"kind": "check", "action_en": f"Expert tip: {d['text_en']}"[:200],
+                         "action_ta": f"Expert tip: {d['text_ta'] or d['text_en']}"[:200],
+                         "source_refs": [tip["ref"]], "confidence": 0.6})
+        if not plan:
+            for doc in [i for i in items if i["kind"] == "doc"][:1]:
+                d = doc["data"]
+                plan.append({"kind": "check", "action_en": f"Open {d['title']}, page {d['page']}. Follow its check for this fault."[:200],
+                             "action_ta": f"{d['title']}, page {d['page']} திறந்து அதுல சொன்ன check-ஐ பண்ணுங்க."[:200],
+                             "source_refs": [doc["ref"]], "confidence": 0.5})
+        confidence = 0.75 if cards else 0.55 if (logs or plan) else 0.3
         if not plan:
             for en, ta, exp_en, exp_ta in GENERIC:
                 plan.append(
@@ -356,4 +383,44 @@ class MockProvider:
             "component_name": component,
             "failure_mode": failure,
             "confidence": 0.4,
+        }
+
+    def _translate(self, h: dict) -> dict:
+        text = h.get("text", "")
+        lang = detect_lang(text)
+        return {"en": text if lang == "en" else "", "ta": text if lang == "ta" else ""}
+
+    # ---- fault cards (Phase 2) -------------------------------------------------------------
+    def _draft_fault_card(self, h: dict) -> dict:
+        logs = h.get("logs", [])
+        groups: dict[str, dict] = {}
+        for log in logs:
+            cause = (log.get("cause_en") or "").strip()
+            if not cause:
+                continue
+            g = groups.setdefault(
+                cause.lower(),
+                {"cause_en": cause, "cause_ta": log.get("cause_ta") or "", "log_refs": [], "fixes": []},
+            )
+            g["log_refs"].append(log["ref"])
+            if log.get("fix_en"):
+                g["fixes"].append((log["fix_en"], log.get("fix_ta") or ""))
+        ranked = sorted(groups.values(), key=lambda g: -len(g["log_refs"]))
+        steps = []
+        for g in ranked[:4]:
+            steps.append({"en": f"Check: {g['cause_en']}.", "ta": f"இதை பாருங்க: {g['cause_ta'] or g['cause_en']}."})
+            if g["fixes"]:
+                en, ta = g["fixes"][-1]
+                steps.append({"en": en, "ta": ta})
+        if not steps:
+            steps = [{"en": log["fix_en"], "ta": log.get("fix_ta") or ""} for log in logs if log.get("fix_en")][:4]
+        symptom_ta = next((log["issue_ta"] for log in logs if log.get("issue_ta") and log["issue_ta"] != log.get("issue_en")), "")
+        parts = sorted({p for log in logs for p in log.get("parts", [])})
+        return {
+            "symptom_en": h.get("symptom", ""),
+            "symptom_ta": symptom_ta,
+            "causes": [{k: g[k] for k in ("cause_en", "cause_ta", "log_refs")} for g in ranked],
+            "steps": steps[:8],
+            "parts": parts,
+            "tools": [],
         }

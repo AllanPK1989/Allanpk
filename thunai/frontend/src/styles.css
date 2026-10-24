@@ -1317,3 +1317,265 @@ button {
     transition: none !important;
   }
 }
+
+/* ---- dashboard (Phase 2) ---------------------------------------------------------------- */
+:root {
+  --chart-bar: #2a78d6; /* validated single-series blue (dataviz palette, light surface) */
+  --chart-track: #e6eef9;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.segmented {
+  display: inline-flex;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.segmented button {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 0;
+  background: transparent;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.segmented button.on {
+  background: var(--primary);
+  color: #fff;
+}
+
+.filter-select {
+  width: auto;
+  min-height: 48px;
+  flex: 1 1 140px;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin: 8px 0 16px;
+}
+
+.stat-grid.compact {
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+}
+
+.stat {
+  display: grid;
+  gap: 2px;
+  padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.stat-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.stat-alert {
+  border-left: 6px solid var(--notok);
+}
+
+.chart-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin: 16px 0;
+}
+
+.chart-title {
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+.chart-sub {
+  margin: 2px 0 12px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.bars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.bar-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(70px, 34%) 1fr;
+  align-items: center;
+  gap: 10px;
+  min-height: 32px;
+  border-radius: 8px;
+  outline-offset: 2px;
+}
+
+.bar-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.bar-track {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  /* Room for the value label at the tip of the longest bar; bar % widths resolve against the
+     content box, so lengths stay exactly proportional. */
+  padding-right: 76px;
+}
+
+.bar {
+  display: block;
+  flex: none;
+  height: 18px;
+  background: var(--chart-bar);
+  border-radius: 0 4px 4px 0; /* square at the baseline, rounded data end */
+  transition: filter 0.15s;
+}
+
+.bar-value {
+  flex: none;
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--ink);
+}
+
+.bar-row:hover .bar,
+.bar-row:focus .bar {
+  filter: brightness(1.12);
+}
+
+.bar-tip {
+  display: none;
+  position: absolute;
+  z-index: 5;
+  left: 34%;
+  top: -36px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.bar-row:hover .bar-tip,
+.bar-row:focus .bar-tip {
+  display: block;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border-radius: var(--radius);
+}
+
+.table-full {
+  display: table;
+  margin: 0;
+}
+
+.table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.meter-wrap p {
+  margin: 8px 0 12px;
+}
+
+.meter {
+  height: 14px;
+  border-radius: 999px;
+  background: var(--chart-track);
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.meter span {
+  display: block;
+  height: 100%;
+  background: var(--chart-bar);
+  border-radius: 999px;
+}
+
+.plain-list {
+  list-style: none;
+  padding: 0;
+}
+
+.plain-list li {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.table-full td:first-child {
+  min-width: 160px;
+}
+
+.table-full td:first-child .mono {
+  white-space: nowrap;
+}
+
+.tip {
+  background: var(--surface);
+  border-left: 5px solid var(--accent);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+}
+
+.tip p {
+  margin: 0 0 4px;
+}
+
+.alarm-card {
+  background: var(--info-bg);
+  color: var(--info-ink);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin: -4px 0 12px;
+}
+
+.alarm-card p {
+  margin: 4px 0 0;
+}
+
+.link-btn {
+  border: 0;
+  background: none;
+  padding: 0;
+  color: var(--primary);
+  text-decoration: underline;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}

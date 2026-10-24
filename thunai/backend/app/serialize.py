@@ -1,5 +1,5 @@
 """JSON shapes returned by the API."""
-from .models import AISession, BreakdownLog, Component, FaultCard, Glossary, LogMedia, Machine, User
+from .models import AISession, BreakdownLog, Component, ExpertTip, FaultCard, Glossary, LogMedia, Machine, User
 
 
 def user(u: User) -> dict:
@@ -136,6 +136,14 @@ def fault_card(c: FaultCard) -> dict:
         "status": c.status,
         "version": c.version,
         "approved_at": c.approved_at.isoformat() if c.approved_at else None,
+        "machine_id": c.machine_id,
+        "machine_type_id": c.machine_type_id,
+        "source_log_ids": c.source_log_ids,
+        "flagged_log_ids": c.flagged_log_ids,
+        "review_note": c.review_note,
+        "history": c.history,
+        "replaces_id": c.replaces_id,
+        "drafted_at": c.drafted_at.isoformat() if c.drafted_at else None,
     }
 
 
@@ -173,4 +181,23 @@ def session(s: AISession) -> dict:
         "cost_usd": s.cost_usd,
         "created_at": s.created_at.isoformat(),
         "closed_at": s.closed_at.isoformat() if s.closed_at else None,
+    }
+
+
+def tip(t: ExpertTip) -> dict:
+    return {
+        "id": t.id,
+        "ref": f"TIP-{t.id}",
+        "machine_no": t.machine.machine_no,
+        "machine_name": t.machine.name,
+        "author": t.author.name,
+        "author_id": t.author_id,
+        "original": t.original,
+        "en": t.english,
+        "ta": t.tamil,
+        "media_id": t.media_id,
+        "status": t.status,
+        "reject_reason": t.reject_reason,
+        "created_at": t.created_at.isoformat(),
+        "reviewed_at": t.reviewed_at.isoformat() if t.reviewed_at else None,
     }

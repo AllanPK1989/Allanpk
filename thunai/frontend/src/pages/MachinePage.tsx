@@ -1,17 +1,38 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { api } from "../api";
+import { api, openFile } from "../api";
 import type { Log, MachinePage as Data } from "../api";
-import { ErrorNote, Header, Icon, OfflineBanner, Page, Spinner, StatusChip, formatDate } from "../components";
+import { ErrorNote, Header, Icon, MicButton, OfflineBanner, Page, Sheet, Spinner, StatusChip, formatDate } from "../components";
+import type { VoiceResult } from "../components";
 import { useApp } from "../state";
 
 export default function MachinePage() {
   const { no = "" } = useParams();
-  const { t, lang } = useApp();
+  const { t, lang, toast } = useApp();
   const navigate = useNavigate();
   const [data, setData] = useState<Data | null>(null);
   const [error, setError] = useState<unknown>(null);
   const [openCard, setOpenCard] = useState<number | null>(null);
+  const [tipOpen, setTipOpen] = useState(false);
+  const [tipText, setTipText] = useState("");
+  const [tipMedia, setTipMedia] = useState<number | null>(null);
+
+  const onTipVoice = useCallback((r: VoiceResult) => {
+    if (r.text) setTipText((v) => (v ? `${v} ${r.text}` : r.text));
+    if (r.mediaId) setTipMedia(r.mediaId);
+  }, []);
+
+  const sendTip = async () => {
+    try {
+      await api.post("/api/tips", { machine_no: no, text: tipText, media_id: tipMedia });
+      toast(t("tip_sent"));
+      setTipOpen(false);
+      setTipText("");
+      setTipMedia(null);
+    } catch (e) {
+      setError(e);
+    }
+  };
 
   useEffect(() => {
     api.get<Data>(`/api/machines/${encodeURIComponent(no)}`).then(setData).catch(setError);
@@ -109,7 +130,9 @@ export default function MachinePage() {
                   <div key={c.id} className="card">
                     <button className="card-toggle" onClick={() => setOpenCard(openCard === c.id ? null : c.id)} aria-expanded={openCard === c.id}>
                       <span>
-                        <span className="chip chip-verified">{c.ref}</span> {lang === "ta" && c.symptom_ta ? c.symptom_ta : c.symptom}
+                        <span className="chip chip-verified">{c.ref}</span>{" "}
+                        {c.status === "needs_review" && <span className="chip chip-draft">{t("needs_review")}</span>}{" "}
+                        {lang === "ta" && c.symptom_ta ? c.symptom_ta : c.symptom}
                       </span>
                       <Icon name="book" />
                     </button>
@@ -131,6 +154,43 @@ export default function MachinePage() {
                       </div>
                     )}
                   </div>
+                ))}
+              </section>
+            )}
+
+            <section>
+              <div className="row-between">
+                <h2 className="section-title">{t("expert_tips")}</h2>
+                <button className="btn btn-ghost btn-small" onClick={() => setTipOpen(true)}>
+                  <Icon name="plus" size={18} /> {t("add_tip")}
+                </button>
+              </div>
+              {data.tips.length === 0 && <p className="muted">{t("nothing_here")}</p>}
+              {data.tips.map((tip) => (
+                <div key={tip.id} className="tip">
+                  <p>{lang === "ta" ? tip.ta || tip.original : tip.en || tip.original}</p>
+                  <span className="muted small">
+                    {tip.author} · {formatDate(tip.created_at)}
+                  </span>
+                </div>
+              ))}
+            </section>
+
+            {data.documents.length > 0 && (
+              <section>
+                <h2 className="section-title">{t("documents")}</h2>
+                {data.documents.map((d) => (
+                  <button key={d.id} className="list-item" onClick={() => void openFile(`/api/documents/${d.id}/file`).catch(setError)}>
+                    <div>
+                      <strong>{d.title}</strong>
+                      <div className="muted small">
+                        {d.kind.replace("_", " ")}
+                        {d.pages ? ` · ${d.pages} ${d.pages === 1 ? "page" : "pages"}` : ""}
+                        {d.scope === "type" ? ` · ${d.type_name}` : ""}
+                      </div>
+                    </div>
+                    <Icon name="book" />
+                  </button>
                 ))}
               </section>
             )}
@@ -159,6 +219,16 @@ export default function MachinePage() {
           </>
         )}
       </Page>
+      {tipOpen && (
+        <Sheet title={t("add_tip")} onClose={() => setTipOpen(false)}>
+          <p className="muted">{t("tip_hint")}</p>
+          <MicButton onResult={onTipVoice} language={lang} compact />
+          <textarea className="input textarea" rows={4} value={tipText} onChange={(e) => setTipText(e.target.value)} />
+          <button className="btn btn-primary btn-block" disabled={tipText.trim().length < 2} onClick={() => void sendTip()}>
+            {t("submit")}
+          </button>
+        </Sheet>
+      )}
     </>
   );
 }

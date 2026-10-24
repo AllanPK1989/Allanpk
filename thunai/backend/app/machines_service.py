@@ -10,9 +10,9 @@ from fastapi import HTTPException
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
-from . import audit, kpi, serialize, settings_store
+from . import audit, documents, kpi, serialize, settings_store
 from .config import get_config
-from .models import AISession, BreakdownLog, Component, FaultCard, Machine, MachineType, User
+from .models import AISession, BreakdownLog, Component, ExpertTip, FaultCard, Machine, MachineType, User
 from .schemas import ComponentIn, MachineIn, MachineUpdate
 
 
@@ -107,7 +107,7 @@ def kpis(db: Session, machine_ids: list[int], period_days: int | None = None) ->
     return {mid: kpi.compute(downtimes.get(mid, []), period_days, hours) for mid in machine_ids}
 
 
-def _fault_key(log: BreakdownLog) -> tuple[str, str]:
+def fault_key(log: BreakdownLog) -> tuple[str, str]:
     """(group key, display text) for repeat-fault counting."""
     if log.classification and log.classification.symptom_category:
         label = log.classification.symptom_category.strip()
@@ -119,7 +119,7 @@ def _fault_key(log: BreakdownLog) -> tuple[str, str]:
 def top_faults(logs: list[BreakdownLog], limit: int = 5) -> list[dict]:
     groups: dict[str, dict] = {}
     for log in logs:
-        key, label = _fault_key(log)
+        key, label = fault_key(log)
         if not key:
             continue
         g = groups.setdefault(key, {"symptom": label, "symptom_ta": "", "count": 0, "downtime": [], "last": ""})
@@ -159,7 +159,7 @@ def machine_page(db: Session, machine: Machine) -> dict:
     cards = db.scalars(
         select(FaultCard)
         .where(
-            FaultCard.status == "approved",
+            FaultCard.status.in_(("approved", "needs_review")),
             (FaultCard.machine_id == machine.id)
             | ((FaultCard.machine_type_id == machine.machine_type_id) & FaultCard.machine_id.is_(None)),
         )
@@ -168,8 +168,16 @@ def machine_page(db: Session, machine: Machine) -> dict:
     recent_sessions = db.scalar(
         select(func.count(AISession.id)).where(AISession.machine_id == machine.id, AISession.created_at >= since)
     )
+    tips = db.scalars(
+        select(ExpertTip)
+        .where(ExpertTip.machine_id == machine.id, ExpertTip.status == "approved")
+        .options(selectinload(ExpertTip.machine), selectinload(ExpertTip.author))
+        .order_by(ExpertTip.reviewed_at.desc())
+    ).all()
     return {
         "machine": serialize.machine(machine, with_components=True),
+        "tips": [serialize.tip(t) for t in tips],
+        "documents": [documents.serialize(db, d) for d in documents.visible_for(db, machine)],
         "open_logs": [serialize.log(l, full=False) for l in timeline if l.status in ("open", "draft")],
         "timeline": [serialize.log(l, full=False) for l in timeline if l.status not in ("draft",)],
         "top_faults": top_faults(counted),

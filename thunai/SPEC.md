@@ -63,7 +63,7 @@ blocked the Phase 1 build; changing any of them is a configuration or small code
 
 ## 3. Scope by phase
 
-**Phase 1 – MVP (this build)**
+**Phase 1 – MVP (built, merged in PR #11)**
 - Machine registry: Excel import (upsert by machine number), QR code per machine, printable QR sheet.
 - Login with employee ID + PIN; roles technician / supervisor / admin.
 - Text and voice logging in English and Tamil with AI field extraction; offline queue with later sync.
@@ -74,9 +74,9 @@ blocked the Phase 1 build; changing any of them is a configuration or small code
 - Supervisor review queue: verify / reject logs; AI answers marked "not helpful".
 - Admin: users, glossary, settings, audit trail (all edits recorded, no hard deletes).
 
-**Phase 2 – Knowledge and reports**: automatic fault-card drafting when ≥3 similar logs exist, approval
-and versioning; contradiction flags; dashboards (zone, shift, knowledge coverage); expert tips; manual,
-drawing and alarm-list ingestion; vector embeddings (pgvector); server-side text-to-speech.
+**Phase 2 – Knowledge and reports (this build, see section 11)**: automatic fault-card drafting when
+≥3 similar logs exist, approval and versioning; contradiction flags; dashboards (zone, shift,
+knowledge coverage); expert tips; manual, drawing and alarm-list ingestion; optional embeddings.
 
 **Phase 3 – Integration**: PM system, SAP and spare-parts links, PLC/SCADA alarm pre-fill,
 photo-based diagnosis, skill-gap analytics.
@@ -209,3 +209,78 @@ plus speech. These are estimates. The app records real cost per session; check a
 | Low adoption | ≤3 taps, voice first, big buttons, works with gloves, offline logging |
 | Weak 4-digit PINs | Lockout after 5 tries, shared-device auto logout, HTTPS only, PIN reset by admin |
 | Unverifiable evaluation now | Eval harness ships; real 20-case set needs plant data (see `EVAL.md`) |
+
+## 11. Phase 2 design (defaults taken)
+
+The owner asked to start Phase 2 directly, so these choices follow the brief and the Phase 0 defaults.
+Items marked **CONFIRM** can be changed later without rework.
+
+### 11.1 Automatic fault cards
+- **When:** after each log is translated and classified, and after historical imports, the worker
+  looks for groups of similar logs. A group is logs with the same symptom category, or keyword
+  similarity of at least `similarity_cutoff` (setting, default 0.35) on the English issue text.
+  Only closed or verified logs count; rejected ones never do.
+- **Scope:** if a group has at least `similar_logs_threshold` (setting, default 3) logs on one machine,
+  the card belongs to that machine. Otherwise, if the machines of one type together reach the
+  threshold, the card belongs to the machine type and helps every machine of that type.
+- **Drafting:** the diagnosis model writes the card from the group's logs only: symptom (EN/TA), causes
+  ranked by how often they occurred (counts computed in code, not by the AI), verified fix steps in
+  English and Tamil, parts, tools, and average fix time (computed in code). Draft cards cite their
+  source logs. The same safety guard used for procedures rejects unsafe steps.
+- **Approval:** supervisors see drafts under Review → Fault cards. They can edit the text, approve,
+  reject (with a reason) or later retire a card. Only approved cards are used as the first AI source.
+- **Versions:** approving an edit, or approving a re-draft after new logs, increases the version and
+  keeps the previous content in the card's history. Nothing is deleted.
+- **Contradiction flag:** when a new closed or verified log matches an approved card's symptom but its
+  root cause matches none of the card's causes, the card is marked "needs review" with that log
+  attached. It stays in use (with the flag shown) until a supervisor approves or re-drafts it.
+  **CONFIRM:** whether a flagged card should stop being used until it is reviewed.
+
+### 11.2 Dashboards
+Supervisors and admins get a dashboard with period (7 / 30 / 90 days) and zone filters: open
+breakdowns, downtime by zone and by shift, MTTR and MTBF by machine (worst first), top repeat faults
+across the plant, knowledge coverage (machines with and without approved fault cards, share of logs
+verified, drafts and flags waiting), and Ask Thunai use (sessions, resolved, escalated, helpful /
+not helpful). The Excel export gains the same tables.
+
+### 11.3 Expert tips
+Any technician can record a short tip for a machine by voice or text (stored in original, English and
+Tamil, like logs). Supervisors approve or reject tips in the review queue. Approved tips show on the
+machine page and are an AI source with the same weight as verified logs, labelled "expert tip".
+
+### 11.4 Documents and alarm lists
+- **Upload** per machine or per machine type: PDF manuals, SOPs, electrical drawings (PDF or image),
+  plain text, and alarm lists (Excel or CSV).
+- **Text extraction** on the server: the PDF text layer (no OCR); images are stored and listed but not
+  read. **CONFIRM:** reading scanned drawings would mean sending them to an AI model (Phase 3,
+  photo-based diagnosis), which needs the data-location decision in question 6.
+- **Chunks** of about 1,200 characters with page numbers are indexed and become the 4th AI source
+  ("manuals, drawings and alarm lists"), cited as `DOC-<id>-p<page>`.
+- **Alarm lists** become an alarm-code table (code, message, cause, remedy). When a technician enters an
+  alarm code in Ask Thunai, the matching entry is shown at once and given to the AI as evidence
+  (`ALM-<code>`). Template: `alarm_code, message, cause, remedy, machine_type or machine_no`.
+
+### 11.5 Similarity search and embeddings
+Anthropic does not offer an embeddings API. Adding an embeddings vendor would send log text to another
+company, which question 6 has not cleared. Phase 2 therefore keeps keyword similarity as the default
+and adds an optional embeddings adapter for any OpenAI-compatible `/embeddings` endpoint, for example
+a multilingual model served on the plant network. When it is configured, retrieval and fault-card
+grouping use a mix of keyword and vector similarity, and `python -m app.cli reindex` fills the
+vectors. Vectors are stored as JSON next to the record. At this plant's size (thousands of logs per
+machine type) an exact search in Python is fast enough; a pgvector index can be added later without
+changing the API. **CONFIRM:** embeddings provider, if any.
+
+### 11.6 Read-aloud
+Phase 1 already reads steps aloud with the phone's own text-to-speech, which works offline and costs
+nothing. Server-side text-to-speech is not added: it would need a provider decision like speech-to-text
+and gives little benefit if phones have a Tamil voice installed (RUNBOOK covers installing one).
+
+### 11.7 Data model additions (migration 0002)
+| Table | Key fields |
+|---|---|
+| fault_cards (extended) | scope (machine / type), title_key, review_note, flagged_log_ids, history, drafted_at, rejected_reason |
+| expert_tips | machine_id, author_id, original, original_lang, english, tamil, media_id, status (pending / approved / rejected), reviewed_by |
+| documents | machine_id or machine_type_id, title, kind (manual / sop / drawing / alarm_list / other), file_path, mime, pages, status, indexed_at, uploaded_by, active |
+| document_chunks | document_id, page, seq, text |
+| alarm_codes | machine_id or machine_type_id, code, message, cause, remedy, document_id |
+| embeddings | source_type, source_id, model, vector (JSON), text_hash |

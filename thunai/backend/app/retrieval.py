@@ -1,29 +1,34 @@
 """Builds the evidence the AI may use, in the brief's priority order.
 
-Tier 1  approved fault cards for this machine
-Tier 2  verified logs for this machine
-Tier 3  approved fault cards and verified/closed logs for the same machine type
-Tier 4  closed logs on this machine that are not yet verified (labelled)
-Tier 5  general knowledge (no reference; the UI labels it)
+Tier 1  approved fault cards for this machine (cards flagged for review are included and labelled)
+Tier 2  verified logs and approved expert tips for this machine
+Tier 3  fault cards, logs and tips for the same machine type
+Tier 4  manuals, drawings and alarm lists for the machine or its type
+Tier 5  closed logs on this machine that are not yet verified (labelled)
+(no ref) general knowledge; the UI labels such steps "General suggestion"
 
-Phase 1 ranks with keyword similarity (see textutil.rank). Results are filtered to the machine
-or its type first, so candidate sets stay small.
+Ranking is keyword similarity (textutil.rank), mixed with vector similarity when an embeddings
+provider is configured (embeddings.py). Results are filtered to the machine or its type first, so
+candidate sets stay small.
 """
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timedelta, timezone
 
-from sqlalchemy import or_, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session, selectinload
 
-from .models import BreakdownLog, Component, FaultCard, Glossary, Machine
+from . import embeddings
+from .models import AlarmCode, BreakdownLog, Component, Document, DocumentChunk, ExpertTip, FaultCard, Glossary, Machine
 from .textutil import rank
 
 TIER_LABELS = {
     1: "approved fault card, this machine",
-    2: "verified log, this machine",
+    2: "verified log or expert tip, this machine",
     3: "same machine type",
-    4: "not yet verified, this machine",
+    4: "manual, drawing or alarm list",
+    5: "not yet verified, this machine",
 }
+LIMITS = {1: 3, 2: 6, 3: 4, 4: 4, 5: 3}
 MIN_SCORE = 0.08
 HISTORY_DAYS = 3 * 365
 
@@ -31,7 +36,7 @@ HISTORY_DAYS = 3 * 365
 @dataclass
 class Item:
     ref: str
-    kind: str  # fault_card | log
+    kind: str  # fault_card | log | tip | doc | alarm
     tier: int
     score: float
     machine_no: str
@@ -112,6 +117,8 @@ def card_item(card: FaultCard, tier: int, score: float, machine_no: str) -> Item
     causes = ", ".join(f"{c.get('cause')} ({c.get('count', 0)}x)" for c in card.causes or [])
     steps = " | ".join(card.steps_en or [])
     text = f"Symptom: {card.symptom}. Causes by frequency: {causes or 'n/a'}. Verified steps: {steps}."
+    if card.status == "needs_review":
+        text += " (A newer log does not match this card; it is waiting for supervisor review.)"
     if card.avg_fix_min:
         text += f" Average fix {card.avg_fix_min} min."
     return Item(
@@ -131,8 +138,92 @@ def card_item(card: FaultCard, tier: int, score: float, machine_no: str) -> Item
             "steps_ta": card.steps_ta or [],
             "version": card.version,
             "avg_fix_min": card.avg_fix_min,
+            "needs_review": card.status == "needs_review",
         },
     )
+
+
+def tip_ref(tip: ExpertTip) -> str:
+    return f"TIP-{tip.id}"
+
+
+def tip_item(tip: ExpertTip, tier: int, score: float) -> Item:
+    return Item(
+        ref=tip_ref(tip),
+        kind="tip",
+        tier=tier,
+        score=score,
+        machine_no=tip.machine.machine_no,
+        when=(tip.reviewed_at or tip.created_at).date().isoformat(),
+        text_en=f"Expert tip from {tip.author.name}: {tip.text('en')}",
+        data={"tip_id": tip.id, "text_en": tip.text("en"), "text_ta": tip.text("ta")},
+    )
+
+
+def chunk_ref(chunk: DocumentChunk) -> str:
+    return f"DOC-{chunk.document_id}-p{chunk.page}"
+
+
+def chunk_item(chunk: DocumentChunk, doc: Document, score: float, machine_no: str) -> Item:
+    return Item(
+        ref=chunk_ref(chunk),
+        kind="doc",
+        tier=4,
+        score=score,
+        machine_no=machine_no,
+        when=doc.indexed_at.date().isoformat() if doc.indexed_at else "",
+        text_en=f"{doc.title} ({doc.kind}), page {chunk.page}: {chunk.text[:900]}",
+        data={"document_id": doc.id, "title": doc.title, "page": chunk.page, "kind": doc.kind},
+    )
+
+
+def alarm_ref(alarm: AlarmCode) -> str:
+    return f"ALM-{alarm.code}"
+
+
+def alarm_item(alarm: AlarmCode, machine_no: str) -> Item:
+    return Item(
+        ref=alarm_ref(alarm),
+        kind="alarm",
+        tier=4,
+        score=1.0,
+        machine_no=machine_no,
+        when="",
+        text_en=f"Alarm {alarm.code}: {alarm.message}. Cause: {alarm.cause or 'not listed'}. Remedy: {alarm.remedy or 'not listed'}.",
+        data={"code": alarm.code, "message": alarm.message, "cause": alarm.cause, "remedy": alarm.remedy},
+    )
+
+
+def lookup_alarm(db: Session, machine: Machine, code: str) -> AlarmCode | None:
+    """The alarm-list entry for a code: this machine's list first, then its machine type's."""
+    code = (code or "").strip()
+    if not code:
+        return None
+    rows = list(
+        db.scalars(
+            select(AlarmCode).where(
+                AlarmCode.active.is_(True),
+                func.upper(AlarmCode.code) == code.upper(),  # exact match; no wildcards from user input
+                or_(
+                    AlarmCode.machine_id == machine.id,
+                    (AlarmCode.machine_type_id == machine.machine_type_id) & AlarmCode.machine_id.is_(None)
+                    if machine.machine_type_id
+                    else False,
+                ),
+            )
+        )
+    )
+    rows.sort(key=lambda a: 0 if a.machine_id == machine.id else 1)
+    return rows[0] if rows else None
+
+
+def _scores(db: Session, query: str, docs: list[str], keys: list[tuple[str, int]], variants: dict) -> list[float]:
+    """Keyword similarity, mixed with vector similarity when embeddings are configured."""
+    keyword = rank(query, docs, variants)
+    vector = embeddings.similarities(db, query, keys)
+    if vector is None:
+        return keyword
+    return [k if v is None else round(0.5 * k + 0.5 * v, 4) for k, v in zip(keyword, vector)]
 
 
 def _log_doc(log: BreakdownLog) -> str:
@@ -142,8 +233,9 @@ def _log_doc(log: BreakdownLog) -> str:
     return " ".join(p for p in parts if p)
 
 
-def _ranked(query, docs, variants, alarm_code, alarms):
-    scores = rank(query, docs, variants)
+def _ranked(db: Session, query: str, logs: list[BreakdownLog], variants: dict, alarm_code: str) -> list[float]:
+    scores = _scores(db, query, [_log_doc(l) for l in logs], [("log", l.id) for l in logs], variants)
+    alarms = [l.alarm_code for l in logs]
     if alarm_code:
         scores = [s + (0.3 if a and a.lower() == alarm_code.lower() else 0) for s, a in zip(scores, alarms)]
     return scores
@@ -176,10 +268,12 @@ def build_context(db: Session, machine: Machine, query: str, alarm_code: str = "
         card_filter.append(FaultCard.machine_type_id == machine.machine_type_id)
     if sibling_ids:
         card_filter.append(FaultCard.machine_id.in_(sibling_ids))
-    cards = list(db.scalars(select(FaultCard).where(FaultCard.status == "approved", or_(*card_filter))))
+    cards = list(
+        db.scalars(select(FaultCard).where(FaultCard.status.in_(("approved", "needs_review")), or_(*card_filter)))
+    )
     if cards:
         docs = [f"{c.symptom} {' '.join(x.get('cause', '') for x in c.causes or [])}" for c in cards]
-        scores = rank(query, docs, variants)
+        scores = _scores(db, query, docs, [("card", c.id) for c in cards], variants)
         for card, score in zip(cards, scores):
             if score < MIN_SCORE:
                 continue
@@ -207,23 +301,63 @@ def build_context(db: Session, machine: Machine, query: str, alarm_code: str = "
         )
     )
     if logs:
-        scores = _ranked(query, [_log_doc(l) for l in logs], variants, alarm_code, [l.alarm_code for l in logs])
+        scores = _ranked(db, query, logs, variants, alarm_code)
         for log, score in zip(logs, scores):
             if score < MIN_SCORE:
                 continue
             if log.machine_id == machine.id:
-                tier = 2 if log.status == "verified" else 4
+                tier = 2 if log.status == "verified" else 5
             else:
                 tier = 3
             items.append(log_item(log, tier, score))
 
-    # Keep the best few per tier, in tier order.
-    limits = {1: 3, 2: 6, 3: 4, 4: 3}
+    # Approved expert tips: this machine (tier 2) and machines of the same type (tier 3).
+    tips = list(
+        db.scalars(
+            select(ExpertTip)
+            .where(ExpertTip.status == "approved", ExpertTip.machine_id.in_(machine_ids))
+            .options(selectinload(ExpertTip.machine), selectinload(ExpertTip.author))
+        )
+    )
+    if tips:
+        scores = _scores(db, query, [f"{t.text('en')} {t.original}" for t in tips], [("tip", t.id) for t in tips], variants)
+        for tip, score in zip(tips, scores):
+            if score >= MIN_SCORE:
+                items.append(tip_item(tip, 2 if tip.machine_id == machine.id else 3, score))
+
+    # Manuals, SOPs, drawings and alarm lists for this machine or its type (tier 4).
+    doc_scope = [Document.machine_id == machine.id]
+    if machine.machine_type_id:
+        doc_scope.append((Document.machine_type_id == machine.machine_type_id) & Document.machine_id.is_(None))
+    chunks = list(
+        db.scalars(
+            select(DocumentChunk)
+            .join(Document)
+            .where(Document.active.is_(True), Document.status == "indexed", or_(*doc_scope))
+            .options(selectinload(DocumentChunk.document))
+            .limit(3000)
+        )
+    )
+    if chunks:
+        scores = _scores(db, f"{query} {alarm_code}", [c.text for c in chunks], [("chunk", c.id) for c in chunks], variants)
+        best: dict[str, Item] = {}
+        for chunk, score in zip(chunks, scores):
+            if score < MIN_SCORE:
+                continue
+            item = chunk_item(chunk, chunk.document, score, machine.machine_no)
+            if item.ref not in best or best[item.ref].score < score:
+                best[item.ref] = item
+        items.extend(best.values())
+    alarm = lookup_alarm(db, machine, alarm_code)
+    if alarm:
+        items.append(alarm_item(alarm, machine.machine_no))
+
+    # Keep the best few per tier, in tier order (an exact alarm-code match always stays).
     chosen: list[Item] = []
-    for tier in (1, 2, 3, 4):
+    for tier in sorted(LIMITS):
         tier_items = sorted((i for i in items if i.tier == tier), key=lambda i: i.when, reverse=True)
-        tier_items.sort(key=lambda i: -i.score)  # stable: newest first among equal scores
-        chosen.extend(tier_items[: limits[tier]])
+        tier_items.sort(key=lambda i: (i.kind != "alarm", -i.score))  # stable: newest first among equals
+        chosen.extend(tier_items[: LIMITS[tier]])
     return Context(items=chosen, glossary=glossary, components=components)
 
 

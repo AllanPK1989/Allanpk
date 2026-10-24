@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api";
-import type { Log, Session } from "../api";
+import type { FaultCard, Log, Session, Tip } from "../api";
 import { ErrorNote, Header, Icon, Page, Sheet, Spinner, StatusChip, formatDate } from "../components";
 import { useApp } from "../state";
 
@@ -15,12 +15,17 @@ interface Queue {
 export default function Review() {
   const { t, lang, toast } = useApp();
   const [queue, setQueue] = useState<Queue | null>(null);
+  const [cards, setCards] = useState<FaultCard[]>([]);
+  const [tips, setTips] = useState<Tip[]>([]);
+  const [rejectingTip, setRejectingTip] = useState<Tip | null>(null);
   const [error, setError] = useState<unknown>(null);
   const [rejecting, setRejecting] = useState<Log | null>(null);
   const [reason, setReason] = useState("");
 
   const load = useCallback(() => {
     api.get<Queue>("/api/review/queue").then(setQueue).catch(setError);
+    api.get<FaultCard[]>("/api/fault-cards").then(setCards).catch(setError);
+    api.get<Tip[]>("/api/tips?status=pending").then(setTips).catch(setError);
   }, []);
   useEffect(load, [load]);
 
@@ -28,6 +33,17 @@ export default function Review() {
     try {
       await api.post(`/api/logs/${l.id}/verify`);
       toast(`${l.log_no}: ${t("status_verified")}`);
+      load();
+    } catch (e) {
+      setError(e);
+    }
+  };
+
+  const reviewTip = async (tip: Tip, approve: boolean) => {
+    try {
+      await api.post(`/api/tips/${tip.id}/${approve ? "approve" : "reject"}`, approve ? {} : { reason });
+      setRejectingTip(null);
+      setReason("");
       load();
     } catch (e) {
       setError(e);
@@ -57,6 +73,47 @@ export default function Review() {
         {!queue && !error && <Spinner label={t("loading")} />}
         {queue && (
           <>
+            <h2 className="section-title">
+              {t("fault_cards_review")} ({cards.length})
+            </h2>
+            {cards.length === 0 && <p className="muted">{t("nothing_here")}</p>}
+            {cards.map((c) => (
+              <Link key={c.id} to={`/cards/${c.id}`} className={`list-item ${c.status === "needs_review" ? "list-item-alert" : ""}`}>
+                <div>
+                  <strong className="mono">{c.ref}</strong> · {c.machine_no ?? c.scope_name}
+                  <div className="clamp">{lang === "ta" && c.symptom_ta ? c.symptom_ta : c.symptom}</div>
+                  <div className="muted small">
+                    {c.source_log_ids.length} logs
+                    {c.replaces_id ? ` · replaces FC-${c.replaces_id}` : ""}
+                    {c.flagged_log_ids.length ? ` · ${c.flagged_log_ids.length} contradicting` : ""}
+                  </div>
+                </div>
+                <span className={`chip ${c.status === "needs_review" ? "chip-open" : "chip-draft"}`}>
+                  {t(`card_status_${c.status}` as "card_status_draft")}
+                </span>
+              </Link>
+            ))}
+
+            <h2 className="section-title">
+              {t("tips_review")} ({tips.length})
+            </h2>
+            {tips.map((tip) => (
+              <div key={tip.id} className="card">
+                <strong className="mono">{tip.machine_no}</strong> · {tip.author} · {formatDate(tip.created_at)}
+                <p>{tip.original}</p>
+                {tip.en && tip.en !== tip.original && <p className="muted small">EN: {tip.en}</p>}
+                {tip.ta && tip.ta !== tip.original && <p className="muted small">TA: {tip.ta}</p>}
+                <div className="answer-row">
+                  <button className="btn btn-ok" onClick={() => void reviewTip(tip, true)}>
+                    <Icon name="check" /> {t("approve")}
+                  </button>
+                  <button className="btn btn-notok" onClick={() => setRejectingTip(tip)}>
+                    <Icon name="x" /> {t("reject")}
+                  </button>
+                </div>
+              </div>
+            ))}
+
             <h2 className="section-title">
               {t("to_verify")} ({queue.to_verify.length})
             </h2>
@@ -123,6 +180,14 @@ export default function Review() {
           </>
         )}
       </Page>
+      {rejectingTip && (
+        <Sheet title={t("reject_reason")} onClose={() => setRejectingTip(null)}>
+          <textarea className="input textarea" rows={3} value={reason} onChange={(e) => setReason(e.target.value)} />
+          <button className="btn btn-notok btn-block" disabled={reason.trim().length < 2} onClick={() => void reviewTip(rejectingTip, false)}>
+            {t("reject")}
+          </button>
+        </Sheet>
+      )}
       {rejecting && (
         <Sheet title={t("reject_reason")} onClose={() => setRejecting(null)}>
           <textarea className="input textarea" rows={3} value={reason} onChange={(e) => setReason(e.target.value)} />

@@ -4,6 +4,7 @@
   seed                 seed SAMPLE data (only into an empty database)
   create-admin         create an admin user: --employee-id E123 --name "Name" --pin 4321
   purge-media          delete audio files older than the retention period (run nightly)
+  reindex              fill embeddings for all records (only when an embeddings provider is set)
 """
 import argparse
 import sys
@@ -11,7 +12,7 @@ import sys
 from sqlalchemy import func, select
 
 from . import jobs  # noqa: F401  (job hooks)
-from . import audit, seed, tasks
+from . import audit, embeddings, indexing, seed, tasks
 from .config import get_config
 from .db import SessionLocal
 from .models import User
@@ -65,6 +66,17 @@ def cmd_purge_media(_args) -> int:
     return 0
 
 
+def cmd_reindex(_args) -> int:
+    if not embeddings.enabled():
+        print("No embeddings provider configured (EMBEDDINGS_PROVIDER); keyword search is used.")
+        return 0
+    with SessionLocal() as db:
+        counts = indexing.reindex_all(db)
+        db.commit()
+    print(f"Embedded: {counts}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m app.cli")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -75,12 +87,14 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--name", required=True)
     p.add_argument("--pin", required=True)
     sub.add_parser("purge-media")
+    sub.add_parser("reindex")
     args = parser.parse_args(argv)
     handler = {
         "init": cmd_init,
         "seed": cmd_seed,
         "create-admin": cmd_create_admin,
         "purge-media": cmd_purge_media,
+        "reindex": cmd_reindex,
     }[args.command]
     return handler(args)
 
