@@ -35,7 +35,7 @@ def qr_image(machine_no: str, kind: str) -> bytes:
     qr = segno.make(qr_url(machine_no), error="m")
     buf = io.BytesIO()
     if kind == "svg":
-        qr.save(buf, kind="svg", scale=6, border=2, xmldecl=False)
+        qr.save(buf, kind="svg", scale=6, border=2, xmldecl=False, omitsize=True)  # viewBox: scales to fit
     else:
         qr.save(buf, kind="png", scale=10, border=2)
     return buf.getvalue()
