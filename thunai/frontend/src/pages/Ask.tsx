@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../api";
-import type { Session, Step, Supervisor } from "../api";
+import type { Alarm, Session, Step, Supervisor } from "../api";
 import type { Lang } from "../i18n";
 import { ErrorNote, Header, Icon, MicButton, Page, Sheet, Spinner, SupervisorSheet, formatDate } from "../components";
 import type { VoiceResult } from "../components";
@@ -25,6 +25,9 @@ function evidenceText(item: Step["evidence"]["items"][number], lang: Lang): stri
       : "";
     return `${pickText(d.symptom, d.symptom_ta)}${causes ? ` · ${causes}` : ""}`;
   }
+  if (item.kind === "tip") return pickText(d.text_en, d.text_ta);
+  if (item.kind === "doc") return `${d.title}, page ${d.page}`;
+  if (item.kind === "alarm") return `${d.code}: ${d.message}${d.remedy ? ` → ${d.remedy}` : ""}`;
   const issue = pickText(d.issue_en, d.issue_ta);
   const fix = pickText(d.corrective_action_en, d.corrective_action_ta);
   return fix ? `${issue} → ${fix}` : issue || item.text_en;
@@ -48,6 +51,23 @@ export default function Ask() {
   const [supervisor, setSupervisor] = useState<{ summary: string; supervisors: Supervisor[] } | null>(null);
   const [resultMsg, setResultMsg] = useState("");
   const [feedbackSent, setFeedbackSent] = useState(false);
+  const [alarmInfo, setAlarmInfo] = useState<Alarm | null>(null);
+
+  // Alarm lists (Phase 2): show what the code means as soon as it is typed.
+  useEffect(() => {
+    const code = alarm.trim();
+    if (code.length < 2) {
+      setAlarmInfo(null);
+      return;
+    }
+    const timer = window.setTimeout(() => {
+      api
+        .get<{ alarm: Alarm | null }>(`/api/alarms/lookup?machine_no=${encodeURIComponent(no)}&code=${encodeURIComponent(code)}`)
+        .then((r) => setAlarmInfo(r.alarm))
+        .catch(() => setAlarmInfo(null));
+    }, 400);
+    return () => window.clearTimeout(timer);
+  }, [alarm, no]);
 
   useEffect(() => () => stopSpeaking(), []);
 
@@ -241,6 +261,25 @@ export default function Ask() {
               <span>{t("alarm_code")}</span>
               <input className="input" value={alarm} onChange={(e) => setAlarm(e.target.value)} />
             </label>
+            {alarmInfo && (
+              <div className="alarm-card" role="status">
+                <strong>
+                  {t("alarm_meaning", { code: alarmInfo.code })}: {alarmInfo.message}
+                </strong>
+                {alarmInfo.cause && (
+                  <p>
+                    <span className="muted">{t("cause")}: </span>
+                    {alarmInfo.cause}
+                  </p>
+                )}
+                {alarmInfo.remedy && (
+                  <p>
+                    <span className="muted">{t("remedy")}: </span>
+                    {alarmInfo.remedy}
+                  </p>
+                )}
+              </div>
+            )}
             <label className="btn btn-ghost btn-block file-btn">
               <Icon name="camera" /> {t("add_photo")}
               <input type="file" accept="image/*" capture="environment" hidden onChange={(e) => void addPhoto(e.target.files?.[0])} />
@@ -421,7 +460,9 @@ export default function Ask() {
                   <li key={i.ref}>
                     <span className="mono">{i.ref}</span> · {i.machine_no} · {formatDate(i.when)}
                     {i.tier === 3 && <em> · {t("evidence_type")}</em>}
-                    {i.tier === 4 && <em> · {t("evidence_unverified")}</em>}
+                    {i.kind === "tip" && <em> · {t("evidence_tip")}</em>}
+                    {(i.kind === "doc" || i.kind === "alarm") && <em> · {t("evidence_doc")}</em>}
+                    {i.tier === 5 && <em> · {t("evidence_unverified")}</em>}
                     <div className="muted">{evidenceText(i, lang)}</div>
                   </li>
                 ))}

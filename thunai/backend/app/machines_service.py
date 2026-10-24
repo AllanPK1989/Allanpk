@@ -10,9 +10,9 @@ from fastapi import HTTPException
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
-from . import audit, kpi, serialize, settings_store
+from . import audit, documents, kpi, serialize, settings_store
 from .config import get_config
-from .models import AISession, BreakdownLog, Component, FaultCard, Machine, MachineType, User
+from .models import AISession, BreakdownLog, Component, ExpertTip, FaultCard, Machine, MachineType, User
 from .schemas import ComponentIn, MachineIn, MachineUpdate
 
 
@@ -168,8 +168,16 @@ def machine_page(db: Session, machine: Machine) -> dict:
     recent_sessions = db.scalar(
         select(func.count(AISession.id)).where(AISession.machine_id == machine.id, AISession.created_at >= since)
     )
+    tips = db.scalars(
+        select(ExpertTip)
+        .where(ExpertTip.machine_id == machine.id, ExpertTip.status == "approved")
+        .options(selectinload(ExpertTip.machine), selectinload(ExpertTip.author))
+        .order_by(ExpertTip.reviewed_at.desc())
+    ).all()
     return {
         "machine": serialize.machine(machine, with_components=True),
+        "tips": [serialize.tip(t) for t in tips],
+        "documents": [documents.serialize(db, d) for d in documents.visible_for(db, machine)],
         "open_logs": [serialize.log(l, full=False) for l in timeline if l.status in ("open", "draft")],
         "timeline": [serialize.log(l, full=False) for l in timeline if l.status not in ("draft",)],
         "top_faults": top_faults(counted),

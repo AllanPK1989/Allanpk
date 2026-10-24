@@ -12,7 +12,7 @@ from fastapi import HTTPException
 from sqlalchemy import or_, select
 from sqlalchemy.orm import Session, selectinload
 
-from . import audit, retrieval, safety, settings_store
+from . import audit, jobs, retrieval, safety, settings_store
 from .ai import schemas as ai_schemas
 from .ai.service import AIOutputError, call_json
 from .models import BreakdownLog, FaultCard, Machine, User, utcnow
@@ -321,6 +321,7 @@ def edit(db: Session, user: User, card: FaultCard, changes: dict) -> FaultCard:
         if key in changes:
             setattr(card, key, changes[key])
     audit.record(db, user, "fault_card", card.id, "update", before, audit.snapshot(card))
+    jobs.enqueue(db, "index_item", kind="card", item_id=card.id)
     return card
 
 
@@ -343,6 +344,7 @@ def approve(db: Session, user: User, card: FaultCard) -> FaultCard:
     card.flagged_log_ids = []
     card.review_note = ""
     audit.record(db, user, "fault_card", card.id, "approve", before, audit.snapshot(card))
+    jobs.enqueue(db, "index_item", kind="card", item_id=card.id)
     return card
 
 

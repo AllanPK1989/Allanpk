@@ -248,10 +248,20 @@ def _styled(ws, headers: list[str]) -> None:
     ws.freeze_panes = "A2"
 
 
+SAMPLE_ALARM = {
+    "alarm_code": "A101",
+    "message": "[SAMPLE] Delete this row",
+    "cause": "",
+    "remedy": "",
+    "machine_no": "",
+    "machine_type": "",
+}
+
+
 def template(kind: str) -> bytes:
     wb = Workbook()
     ws = wb.active
-    sample = SAMPLE_MACHINE if kind == "machines" else SAMPLE_LOG
+    sample = {"machines": SAMPLE_MACHINE, "logs": SAMPLE_LOG, "alarms": SAMPLE_ALARM}[kind]
     ws.title = kind
     _styled(ws, list(sample))
     ws.append(list(sample.values()))

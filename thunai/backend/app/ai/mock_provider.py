@@ -192,7 +192,34 @@ class MockProvider:
                         "confidence": 0.6,
                     }
                 )
-        confidence = 0.75 if cards else 0.55 if logs else 0.3
+        # Phase 2 sources: the alarm-list entry goes first, then an expert tip, then a manual page.
+        for a in [i for i in items if i["kind"] == "alarm"][:1]:
+            d = a["data"]
+            first = [
+                {
+                    "kind": "check",
+                    "action_en": f"Alarm {d['code']}: {d['message']}. Check: {d['cause'] or 'see the alarm list'}."[:200],
+                    "action_ta": f"Alarm {d['code']}: {d['message']}. இதை பாருங்க: {d['cause'] or 'alarm list'}."[:200],
+                    "source_refs": [a["ref"]],
+                    "confidence": 0.7,
+                }
+            ]
+            if d.get("remedy"):
+                first.append({"kind": "action", "action_en": d["remedy"][:200], "action_ta": d["remedy"][:200],
+                              "source_refs": [a["ref"]], "confidence": 0.7})
+            plan[:0] = first
+        for tip in [i for i in items if i["kind"] == "tip"][:1]:
+            d = tip["data"]
+            plan.append({"kind": "check", "action_en": f"Expert tip: {d['text_en']}"[:200],
+                         "action_ta": f"Expert tip: {d['text_ta'] or d['text_en']}"[:200],
+                         "source_refs": [tip["ref"]], "confidence": 0.6})
+        if not plan:
+            for doc in [i for i in items if i["kind"] == "doc"][:1]:
+                d = doc["data"]
+                plan.append({"kind": "check", "action_en": f"Open {d['title']}, page {d['page']}. Follow its check for this fault."[:200],
+                             "action_ta": f"{d['title']}, page {d['page']} திறந்து அதுல சொன்ன check-ஐ பண்ணுங்க."[:200],
+                             "source_refs": [doc["ref"]], "confidence": 0.5})
+        confidence = 0.75 if cards else 0.55 if (logs or plan) else 0.3
         if not plan:
             for en, ta, exp_en, exp_ta in GENERIC:
                 plan.append(
@@ -357,6 +384,11 @@ class MockProvider:
             "failure_mode": failure,
             "confidence": 0.4,
         }
+
+    def _translate(self, h: dict) -> dict:
+        text = h.get("text", "")
+        lang = detect_lang(text)
+        return {"en": text if lang == "en" else "", "ta": text if lang == "ta" else ""}
 
     # ---- fault cards (Phase 2) -------------------------------------------------------------
     def _draft_fault_card(self, h: dict) -> dict:

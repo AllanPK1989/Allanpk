@@ -117,6 +117,11 @@ class EnrichOut(Strict):
     confidence: float
 
 
+class TranslateOut(Strict):
+    en: str
+    ta: str
+
+
 # ---- fault cards (Phase 2) ------------------------------------------------------------------
 class DraftCause(Strict):
     cause_en: str

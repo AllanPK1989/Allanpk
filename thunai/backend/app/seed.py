@@ -15,7 +15,9 @@ from . import machines_service
 from .knowledge import group_key
 from .config import get_config
 from .logs_service import set_text
-from .models import BreakdownLog, Component, FaultCard, Glossary, LogClassification, LogPart, User, utcnow
+from . import documents
+from .config import get_config as _cfg
+from .models import BreakdownLog, Component, Document, FaultCard, Glossary, LogClassification, LogPart, User, utcnow
 from .schemas import MachineIn
 from .security import hash_pin
 from .shifts import downtime_minutes, shift_for
@@ -164,6 +166,34 @@ FAULT_CARD = {
 }
 
 
+# SAMPLE alarm list and quick-check sheet for the sand filling type (made up for demos).
+SAMPLE_ALARMS_CSV = """alarm_code,message,cause,remedy
+A101,[SAMPLE] Filling cylinder did not reach home,Cylinder return slow or home sensor not made,Check the solenoid coil and the home proximity sensor
+A102,[SAMPLE] Low air pressure,FRL pressure below 5 bar,Check the FRL gauge and look for air leaks
+A205,[SAMPLE] Vibrator motor overload,Motor protection tripped,Reset the overload after LOTO; motor current check by an authorised electrician
+"""
+SAMPLE_QUICK_CHECKS = """[SAMPLE] Sand filling machine: quick checks (made up for demos, not a real manual)
+
+Filling cylinder slow or not returning: check air pressure at the FRL first. The gauge should read 5 to 6 bar. Then check the solenoid coil LED when the return signal is given.
+
+Home proximity sensor: the sensing gap is 2 mm. The sensor LED must be on with the cylinder at home. Tighten the bracket after alignment.
+
+Hopper vibrator: keep the hopper free of wet sand lumps. Clean the screen every shift.
+"""
+
+
+def _sample_document(db: Session, user: User, type_id: int, title: str, kind: str, mime: str, ext: str, content: str) -> None:
+    rel = f"documents/sample-{kind}{ext}"
+    path = _cfg().media_dir / rel
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(content, encoding="utf-8")
+    doc = Document(machine_type_id=type_id, title=title, kind=kind, file_path=rel, mime=mime,
+                   size_bytes=len(content.encode()), uploaded_by=user.id)
+    db.add(doc)
+    db.flush()
+    documents.index(db, doc)
+
+
 def is_empty(db: Session) -> bool:
     return db.scalar(select(User.id).limit(1)) is None
 
@@ -243,4 +273,8 @@ def seed(db: Session) -> None:
             approved_at=utcnow() - timedelta(days=3),
         )
     )
+    db.flush()
+    sf_type = machines["DEMO-SF-01"].machine_type_id
+    _sample_document(db, users["D-ADMIN"], sf_type, "[SAMPLE] Sand filling alarm list", "alarm_list", "text/csv", ".csv", SAMPLE_ALARMS_CSV)
+    _sample_document(db, users["D-ADMIN"], sf_type, "[SAMPLE] Sand filling quick checks", "sop", "text/plain", ".txt", SAMPLE_QUICK_CHECKS)
     db.flush()

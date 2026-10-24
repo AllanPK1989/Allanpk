@@ -115,12 +115,49 @@ export interface MachinePage {
   top_faults: { symptom: string; symptom_ta: string; count: number; last: string; avg_downtime_min: number | null }[];
   fault_cards: FaultCard[];
   kpi: KPI;
+  tips: Tip[];
+  documents: DocumentInfo[];
+}
+
+export interface Tip {
+  id: number;
+  ref: string;
+  machine_no: string;
+  machine_name: string;
+  author: string;
+  original: string;
+  en: string;
+  ta: string;
+  status: "pending" | "approved" | "rejected";
+  reject_reason: string;
+  created_at: string;
+}
+
+export interface DocumentInfo {
+  id: number;
+  active?: boolean;
+  title: string;
+  kind: string;
+  pages: number;
+  status: string;
+  scope: "machine" | "type";
+  machine_no: string | null;
+  type_name: string;
+  mime: string;
+  created_at: string;
+}
+
+export interface Alarm {
+  code: string;
+  message: string;
+  cause: string;
+  remedy: string;
 }
 
 export interface Evidence {
   items: {
     ref: string;
-    kind: "fault_card" | "log";
+    kind: "fault_card" | "log" | "tip" | "doc" | "alarm";
     tier: number;
     label: string;
     machine_no: string;
@@ -282,4 +319,14 @@ export async function downloadFile(path: string, filename: string) {
   a.download = filename;
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
+/** Opens an authenticated file (manual, drawing) in a new tab. */
+export async function openFile(path: string) {
+  const win = window.open("", "_blank");
+  const blob = await api.blob(path);
+  const url = URL.createObjectURL(blob);
+  if (win) win.location.href = url;
+  else window.location.href = url;
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }

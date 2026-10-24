@@ -202,3 +202,9 @@ class FaultCardEdit(BaseModel):
 
 class ReasonIn(BaseModel):
     reason: str = Field(default="", max_length=500)
+
+
+class TipIn(BaseModel):
+    machine_no: str
+    text: str = Field(min_length=2, max_length=2000)  # the technician's own words
+    media_id: int | None = None

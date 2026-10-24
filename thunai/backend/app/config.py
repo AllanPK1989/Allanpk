@@ -28,6 +28,7 @@ class Config(BaseSettings):
     # Files
     media_dir: Path = BACKEND_DIR / "media"
     max_upload_mb: int = 15
+    max_document_mb: int = 50
 
     # Background jobs: "sync" runs immediately (tests), "thread" runs after the response,
     # "rq" sends to the Redis worker.
@@ -59,6 +60,12 @@ class Config(BaseSettings):
     sarvam_api_key: str = ""
     sarvam_model: str = "saarika:v2.5"
     ffmpeg_path: str = "ffmpeg"
+
+    # Optional embeddings for similarity search (SPEC 11.5): none | openai_compat
+    embeddings_provider: str = "none"
+    embeddings_base_url: str = ""
+    embeddings_model: str = "multilingual-e5-base"
+    embeddings_api_key: str = ""
 
     # Sample data
     seed_sample_data: bool = True
