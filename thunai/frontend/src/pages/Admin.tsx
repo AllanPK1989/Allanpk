@@ -334,7 +334,7 @@ function DocumentsTab() {
                 </button>
                 <div className="muted small">
                   {d.kind.replace("_", " ")}
-                  {d.pages ? ` · ${d.pages} pages` : ""}
+                  {d.pages ? ` · ${d.pages} ${d.pages === 1 ? "page" : "pages"}` : ""}
                 </div>
               </td>
               <td>{d.scope === "machine" ? d.machine_no : d.type_name}</td>

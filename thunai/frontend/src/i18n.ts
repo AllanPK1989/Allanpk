@@ -131,7 +131,7 @@ const en = {
   mtbf: "MTBF",
   breakdowns: "Breakdowns",
   last_days: "Last {n} days",
-  times: "{n} times",
+  times: "{n}×",
   avg_min: "avg {n} min",
   no_history: "No breakdowns recorded yet.",
   status_open: "Open",

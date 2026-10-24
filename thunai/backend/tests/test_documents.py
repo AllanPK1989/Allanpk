@@ -74,3 +74,9 @@ def test_machine_page_lists_documents(client):
     page = client.get("/api/machines/DEMO-SF-02", headers=login(client, "D-TECH1")).json()
     titles = [d["title"] for d in page["documents"]]
     assert "[SAMPLE] Sand filling alarm list" in titles and "[SAMPLE] Sand filling quick checks" in titles
+
+
+def test_alarm_lookup_does_not_treat_input_as_a_pattern(client):
+    tech = login(client, "D-TECH1")
+    assert client.get("/api/alarms/lookup?machine_no=DEMO-SF-01&code=A%25", headers=tech).json()["alarm"] is None
+    assert client.get("/api/alarms/lookup?machine_no=DEMO-SF-01&code=A1_1", headers=tech).json()["alarm"] is None

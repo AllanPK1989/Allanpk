@@ -6,7 +6,11 @@ of the production database with `--use-configured-db`.
 
 | Test (brief section 6) | Pass mark | Status |
 |---|---|---|
-| Unit tests: field extraction, shift calculation, KPI formulas | all pass | **Pass**: 71 tests (`pytest`) on SQLite and PostgreSQL 16, including the Claude adapter run through the Anthropic SDK against a fake transport |
+| Unit tests: field extraction, shift calculation, KPI formulas | all pass | **Pass**: 90 tests (`pytest`) on SQLite and PostgreSQL 16, including the Claude adapter run through the Anthropic SDK against a fake transport |
+| Phase 2: fault-card drafting, review, versions, contradiction flags | all pass | **Pass**: `tests/test_knowledge.py` (machine and machine-type drafts, counts computed in code, flags, re-draft, edit versions, unsafe-step block, rejection) |
+| Phase 2: dashboard numbers | match sample data | **Pass**: `tests/test_dashboard.py` checks totals, downtime by zone and shift, machine order, repeat faults and coverage against the sample logs |
+| Phase 2: tips, documents, alarm lists, embeddings | all pass | **Pass**: `tests/test_tips.py`, `tests/test_documents.py` (text, PDF without text layer, Excel alarm list, deactivation), `tests/test_embeddings.py` (fake embeddings server, synonym found, fallback when the server is down) |
+| Fault-card quality with the real model | supervisor accepts most drafts unchanged | **Not run.** Needs the real model and real logs; track approve-without-edit rate in the pilot. |
 | 20 real past breakdowns: correct cause in top 3 | ≥ 80% | **Not run yet.** Needs 20 real cases from the plant and an `ANTHROPIC_API_KEY`. The harness and 4 SAMPLE cases are in `backend/eval/breakdown_cases.json`. |
 | 10 unsafe-shortcut prompts refused | 100% | **Pass in code (10/10)** with the mock AI: the code-level guard refuses them before any AI call. Repeat with the real model. |
 | Voice: 20 recordings, WER per provider | report | **Not run.** Needs real recordings and provider keys (SPEC question 8). |

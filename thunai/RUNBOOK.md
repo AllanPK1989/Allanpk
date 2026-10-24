@@ -147,6 +147,8 @@ The API applies database migrations at start (`alembic upgrade head`). Take a ba
 - [ ] Root certificate installed on phones (if `CADDY_TLS=internal`).
 - [ ] Evaluation run with the real model and real cases; results in EVAL.md.
 - [ ] Backups copied off the server daily.
+- [ ] Alarm lists and key manuals uploaded for the pilot machines (section 11.2).
+- [ ] Supervisors know the review queue: logs, fault-card drafts, flagged cards, tips (section 11.1).
 
 ## 10. Troubleshooting
 
@@ -160,5 +162,56 @@ The API applies database migrations at start (`alembic upgrade head`). Take a ba
 | "Thunai could not make a safe procedure" | The AI failed twice or produced unsafe text. See Admin → AI usage and `docker compose logs api` |
 | Locked user | Admin → Users → PIN (reset unlocks) |
 | Disk filling up | `docker system df`; old backups in `backups/`; audio retention setting |
+| No fault cards appear | Cards are drafted after logs are translated and classified; check `docker compose logs worker` and the similar-logs threshold in Admin → Settings |
+| A document shows "stored (no text)" | It is a scan or image without a text layer; it is listed for technicians but not read by the AI |
 
 API errors are logged by `docker compose logs api`. Every data change is in Admin → Audit.
+
+## 11. Knowledge base (Phase 2)
+
+### 11.1 Fault cards
+- The worker drafts a card when `similar_logs_threshold` (default 3) closed or verified logs describe
+  the same symptom on one machine, or on machines of the same type. Similarity uses the AI's symptom
+  category or keyword similarity above `similarity_cutoff` (Admin → Settings).
+- Supervisors open **Review → Fault cards to review**. Check every cause and step against the source
+  logs listed under the card, edit if needed, then **Approve**. **Reject** a draft that is wrong
+  (it is not drafted again until enough new similar logs arrive). **Retire** a card that no longer
+  applies. Nothing is deleted; every action is in Admin → Audit.
+- **Needs review:** a new log whose root cause is not among an approved card's causes flags the card.
+  It stays in use, marked, until a supervisor approves it again, edits it, or uses **Re-draft from
+  logs** (the old card stays live until the new draft is approved; the version number goes up and the
+  old content is kept under "Earlier versions").
+- The AI never adds LOTO steps to cards; the app adds safety steps in front of every procedure.
+
+### 11.2 Documents and alarm lists
+- **Admin → Documents** (admins and supervisors through the API): upload PDF manuals, SOPs, drawings,
+  text files or alarm lists for one machine or for a machine type (shared by all machines of that
+  type). Max 50 MB per file (`MAX_DOCUMENT_MB`).
+- PDF text is read page by page. A scanned PDF or an image is kept and listed on the machine page but
+  marked "stored (no text)": the AI cannot read it.
+- **Alarm lists:** Excel or CSV with an `alarm_code` column and optional `message`, `cause`,
+  `remedy`, `machine_no`, `machine_type` columns (download the template on the Documents tab). A
+  newer list replaces the same codes from an older one. When a technician types an alarm code in
+  Ask Thunai, its meaning shows at once and the AI uses it as evidence (`ALM-<code>`).
+- Deactivate a document to stop its use; its alarm codes are deactivated with it.
+
+### 11.3 Expert tips
+Technicians add tips on the machine page (voice or text). Supervisors approve or reject them (with a
+reason) in the review queue. Approved tips show on the machine page and the AI uses them like verified
+logs.
+
+### 11.4 Dashboard
+Supervisors and admins open **Dashboard** from the home screen: period 7 / 30 / 90 days and a zone
+filter. **Excel** downloads the same tables for the monthly MIS.
+
+### 11.5 Optional embeddings
+Keyword similarity is the default. To add vector similarity, run an embeddings server with an
+OpenAI-style `/embeddings` endpoint on the plant network, set `EMBEDDINGS_PROVIDER=openai_compat`,
+`EMBEDDINGS_BASE_URL` and `EMBEDDINGS_MODEL` in `.env`, restart, then fill the vectors once:
+
+```bash
+docker compose exec api python -m app.cli reindex
+```
+
+New logs, cards, tips and documents are embedded by the worker from then on. If the server is down,
+search falls back to keywords. Changing the model needs another `reindex`.

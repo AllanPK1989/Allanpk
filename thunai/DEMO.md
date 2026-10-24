@@ -1,6 +1,6 @@
 # Thunai demo script
 
-A 10-minute walk-through for the pilot review. It uses the SAMPLE data and demo AI that start with
+A 15-minute walk-through for the pilot review (sections 1 to 4: Phase 1; section 5: Phase 2). It uses the SAMPLE data and demo AI that start with
 `docker compose up -d` (README.md, Quick start). Every screenshot below was taken by
 `docs/capture-demo.mjs`, which drives the real app in a 360 px wide phone browser against the
 Docker stack over HTTPS. The script also works as an end-to-end test: it stops on the first failure
@@ -49,6 +49,20 @@ and fails if any screen is wider than the phone.
 | ![Import](docs/screenshots/18-admin-import.png) | **Admin → Import.** Excel templates for the machine master and historical breakdowns. |
 | ![QR](docs/screenshots/19-qr-stickers.png) | **QR stickers**, 3 per row, printable by zone. |
 | ![AI usage](docs/screenshots/20-ai-usage.png) | **AI usage:** calls, tokens and cost by purpose, and cost per 100 sessions. |
+
+## 5. Phase 2: knowledge base and reports
+
+| | |
+|---|---|
+| ![Add tip](docs/screenshots/21-add-expert-tip-ta.png) | **Expert tip.** On the machine page, a technician records a short tip by voice or text. It goes to the supervisor for review. |
+| ![Alarm lookup](docs/screenshots/22-alarm-code-lookup-ta.png) | **Alarm code.** Typing `A101` shows its meaning, cause and remedy from the (sample) alarm list at once; the AI also gets it as evidence. |
+| ![Review](docs/screenshots/23-review-cards-and-tips-en.png) | **Review queue.** A new draft fault card (3 similar "label print faded" logs), the approved card FC-1 flagged by a contradicting log, and the tip waiting for approval. |
+| ![Draft card](docs/screenshots/24-draft-fault-card-en.png) | **Draft fault card** written from the logs: symptom in English and Tamil, causes with counts computed from the logs, steps, source logs. Approve, reject, edit or re-draft. |
+| ![Flagged card](docs/screenshots/25-flagged-card-en.png) | **Needs review.** A log with root cause "air leak" does not match the card's causes, so the card is flagged; it stays in use until the supervisor decides. |
+| ![Dashboard](docs/screenshots/26-dashboard-en.png) | **Dashboard** on a phone: open breakdowns, downtime, MTTR, verified share, downtime by zone and shift. |
+| ![Machine page tips and documents](docs/screenshots/27-machine-tips-documents-en.png) | **Machine page:** flagged card, approved expert tip, manuals and alarm lists for this machine's type. |
+| ![Admin documents](docs/screenshots/28-admin-documents.png) | **Admin → Documents:** upload per machine or machine type; scans are kept but marked "no text". |
+| ![Dashboard wide](docs/screenshots/29-dashboard-wide.png) | **Dashboard** on a tablet or PC, with the machine table and knowledge coverage. Excel export of the same tables. |
 
 ## Regenerate the screenshots
 

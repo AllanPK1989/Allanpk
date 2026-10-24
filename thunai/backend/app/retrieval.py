@@ -14,7 +14,7 @@ candidate sets stay small.
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timedelta, timezone
 
-from sqlalchemy import or_, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session, selectinload
 
 from . import embeddings
@@ -203,7 +203,7 @@ def lookup_alarm(db: Session, machine: Machine, code: str) -> AlarmCode | None:
         db.scalars(
             select(AlarmCode).where(
                 AlarmCode.active.is_(True),
-                AlarmCode.code.ilike(code),
+                func.upper(AlarmCode.code) == code.upper(),  # exact match; no wildcards from user input
                 or_(
                     AlarmCode.machine_id == machine.id,
                     (AlarmCode.machine_type_id == machine.machine_type_id) & AlarmCode.machine_id.is_(None)

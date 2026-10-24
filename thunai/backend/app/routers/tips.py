@@ -39,14 +39,10 @@ def list_tips(status: str = "pending", mine: bool = False, user: User = Depends(
     )
     if mine or user.role == "technician":
         q = q.where(ExpertTip.author_id == user.id)
-    out = [serialize.tip(t) for t in db.scalars(q)]
+    rows = list(db.scalars(q))
     if user.role == "supervisor" and user.zone and not mine:
-        out = [t for t in out if _zone(db, t) == user.zone]
-    return out
-
-
-def _zone(db: Session, t: dict) -> str:
-    return machines_service.get_machine(db, t["machine_no"]).zone
+        rows = [t for t in rows if t.machine.zone == user.zone]
+    return [serialize.tip(t) for t in rows]
 
 
 @router.post("/{tip_id}/approve")

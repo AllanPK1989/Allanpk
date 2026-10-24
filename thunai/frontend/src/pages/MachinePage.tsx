@@ -185,7 +185,7 @@ export default function MachinePage() {
                       <strong>{d.title}</strong>
                       <div className="muted small">
                         {d.kind.replace("_", " ")}
-                        {d.pages ? ` · ${d.pages} pages` : ""}
+                        {d.pages ? ` · ${d.pages} ${d.pages === 1 ? "page" : "pages"}` : ""}
                         {d.scope === "type" ? ` · ${d.type_name}` : ""}
                       </div>
                     </div>
