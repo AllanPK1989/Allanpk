@@ -1,6 +1,6 @@
 # Thunai demo script
 
-A 15-minute walk-through for the pilot review (sections 1 to 4: Phase 1; section 5: Phase 2). It uses the SAMPLE data and demo AI that start with
+A 20-minute walk-through for the pilot review (sections 1 to 4: Phase 1; section 5: Phase 2; section 6: Phase 3). It uses the SAMPLE data and demo AI that start with
 `docker compose up -d` (README.md, Quick start). Every screenshot below was taken by
 `docs/capture-demo.mjs`, which drives the real app in a 360 px wide phone browser against the
 Docker stack over HTTPS. The script also works as an end-to-end test: it stops on the first failure
@@ -64,11 +64,33 @@ and fails if any screen is wider than the phone.
 | ![Admin documents](docs/screenshots/28-admin-documents.png) | **Admin → Documents:** upload per machine or machine type; scans are kept but marked "no text". |
 | ![Dashboard wide](docs/screenshots/29-dashboard-wide.png) | **Dashboard** on a tablet or PC, with the machine table and knowledge coverage. Excel export of the same tables. |
 
+## 6. Phase 3: integration, photos and skills
+
+A sample SCADA gateway posts three `A101` alarms through the integration API. The PM system's
+middleware is a small receiver in the demo script that checks each event's signature.
+
+| | |
+|---|---|
+| ![Integration key](docs/screenshots/30-admin-integration-key.png) | **Admin → Integrations.** A key for the SCADA gateway, allowed to post alarms only. It is shown once; only its hash is stored. |
+| ![Alarm and photo](docs/screenshots/31-ask-alarm-and-photo-en.png) | **Ask Thunai.** The alarm code is already filled from the machine (A101, with the time it was raised and its alarm-list meaning). The technician adds a photo of the HMI; Thunai shows what it read: the air pressure, a value it could not read, and the screen text. |
+| ![Why photo step](docs/screenshots/32-why-photo-step-en.png) | **Why this step?** The step that checks the air pressure cites the photo (`PHOTO-…`), marked "from your photo, read by the AI". |
+| ![Part stock](docs/screenshots/33-step-part-stock-en.png) | **Spare part on a step.** The step names part DEMO-P-1001; the app shows it is in store A-12 but low (1 left, minimum 2), as of the last stock update. |
+| ![Machine alarm](docs/screenshots/34-machine-alarm-en.png) | **Machine page:** the active machine alarm at the top. |
+| ![PM, alarms, parts](docs/screenshots/35-machine-pm-alarms-parts-en.png) | **Machine page:** PM plan (one task 11 days overdue, one due soon), alarms in the last 24 hours (A101 3×). Spare parts with stock follow below. |
+| ![New log](docs/screenshots/36-new-log-prefill-parts-en.png) | **New log:** alarm code and downtime start filled from the machine. Typing "coil" in Parts finds the catalogue part with its stock; picking it stores the real part number. Submitting sends a signed `breakdown.closed` event to the PM system. |
+| ![Skills](docs/screenshots/37-skills-en.png) | **Skills** (supervisor, own zone only): machine types only one person has fixed, a technician who calls the supervisor on every sand-filling session (pair with the colleague who fixes them), authorised-only steps that could not be done. For training, not appraisal. |
+| ![Coverage](docs/screenshots/38-skills-coverage-en.png) | **Who has fixed what:** fixes per technician and machine type (darker = more, every count printed), then per machine type. |
+| ![Dashboard parts and PM](docs/screenshots/39-dashboard-parts-pm-en.png) | **Dashboard:** spare parts used in breakdowns with current stock, low stock for these machines, and overdue PM tasks below. |
+| ![Deliveries](docs/screenshots/40-admin-webhook-deliveries.png) | **Admin → Integrations:** the webhook to the PM system and its delivery log: `breakdown.closed` sent, HTTP 200. Failed deliveries are retried and can be retried by hand. |
+
 ## Regenerate the screenshots
 
 ```bash
 docker compose down -v && docker compose up -d     # fresh SAMPLE data (deletes the demo database)
-BASE_URL=https://localhost node docs/capture-demo.mjs
+# The demo's webhook receiver runs on this computer, port 8790; the api container reaches it through
+# the Docker network's gateway:
+GW=$(docker network inspect thunai_default -f '{{(index .IPAM.Config 0).Gateway}}')
+BASE_URL=https://localhost DEMO_WEBHOOK_URL=http://$GW:8790/thunai node docs/capture-demo.mjs
 ```
 
 Needs Node 22 and Playwright with Chromium (`npm i -g playwright && npx playwright install chromium`).

@@ -1,4 +1,4 @@
-# Thunai: Phase 1 build plan
+# Thunai: build plan
 
 Order from the brief: scaffold → schema, migrations and sample data → auth → machine registry →
 text logging → voice and extraction → AI troubleshooting → history page → export.
@@ -28,3 +28,15 @@ Each step ends with a demo (API call or screen) before the next starts.
 | 15 | Documents and alarm lists: upload, PDF text, chunks, alarm-code lookup in Ask, AI source | entering a sample alarm code shows its meaning |
 | 16 | Embeddings adapter (optional), hybrid similarity, `reindex` command | tests with a fake embeddings server |
 | 17 | Tests, evaluation, docs and screenshots | all tests pass on SQLite and PostgreSQL; Docker stack starts |
+
+## Phase 3 build plan
+
+| # | Step | Done when |
+|---|---|---|
+| 18 | Migration `0003`: spare parts, part fits, PM tasks, machine alarms, integration keys, webhooks and deliveries; photo observation and external reference columns | upgrade, downgrade and `alembic check` run on PostgreSQL |
+| 19 | Spare parts and PM plan: Excel/CSV import with templates, machine page sections, parts picker in the log form, stock shown on steps and fault cards, AI context (parts, overdue PM) | a step naming a sample part number shows its stock |
+| 20 | Integration API: keys with scopes, alarm feed, parts and PM sync, logs poll and external reference write-back; alarm pre-fill in Ask Thunai and New log | a posted sample alarm pre-fills the next log's alarm code and start time |
+| 21 | Outbound webhooks: signed deliveries from the worker, retries, delivery log and retry in Admin → Integrations | a test receiver gets a verifiable `breakdown.closed` event |
+| 22 | Photo diagnosis: image input in the AI adapter, `read_photo` prompt, server-side re-encoding, observations on the Ask screen, `PHOTO-` evidence, `AI_PHOTOS` switch | a sample HMI photo fills the alarm code and is cited in "Why this step?" |
+| 23 | Skill-gap analytics: API, page, rules, Excel export | numbers match the unit tests |
+| 24 | Tests, evaluation, docs and screenshots | all tests pass on SQLite and PostgreSQL; Docker stack starts |

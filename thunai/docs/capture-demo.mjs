@@ -3,9 +3,13 @@
 //
 // Needs: a running Thunai with fresh SAMPLE data (python -m app.cli init) and Playwright.
 //   BASE_URL=http://localhost:8000 node docs/capture-demo.mjs
+// Phase 3 also starts a small webhook receiver on port 8790. When the API runs in Docker, set
+// DEMO_WEBHOOK_URL to an address the api container can reach, e.g. http://172.18.0.1:8790/thunai.
 import { createRequire } from "node:module";
 import { mkdirSync } from "node:fs";
 import { execSync } from "node:child_process";
+import { createHmac } from "node:crypto";
+import { createServer } from "node:http";
 
 const require = createRequire(import.meta.url);
 let playwright;
@@ -280,5 +284,149 @@ const log = (machine, issue, cause, fix, min) => ({
   await admin.close();
 }
 
+// ================= Phase 3 =================
+const PHOTO = new URL("./sample-photos/hmi-a101.png", import.meta.url).pathname;
+const WEBHOOK_URL = process.env.DEMO_WEBHOOK_URL ?? "http://127.0.0.1:8790/thunai";
+const received = [];
+let webhookSecret = "";
+// A stand-in for the PM system's middleware: checks the signature like a real receiver should.
+const receiver = createServer((req, res) => {
+  let body = "";
+  req.on("data", (c) => (body += c));
+  req.on("end", () => {
+    const stamp = req.headers["x-thunai-timestamp"];
+    const expected = createHmac("sha256", webhookSecret).update(`${stamp}.${body}`).digest("hex");
+    const ok = req.headers["x-thunai-signature"] === `sha256=${expected}`;
+    received.push({ event: req.headers["x-thunai-event"], ok });
+    res.writeHead(ok ? 200 : 401).end();
+  });
+});
+await new Promise((resolve) => receiver.listen(8790, "0.0.0.0", resolve));
+
+const wide = { viewport: { width: 1024, height: 768 }, deviceScaleFactor: 1, timezoneId: "Asia/Kolkata", ignoreHTTPSErrors: true };
+
+// ---- 6. Admin: connect a SCADA gateway and the PM system --------------------------------------
+let scadaKey = "";
+{
+  const admin = await browser.newContext(wide);
+  const a = await admin.newPage();
+  await login(a, "D-ADMIN", "en");
+  await a.goto(`${BASE}/admin?tab=integrations`);
+  await a.getByLabel("System name").fill("[SAMPLE] SCADA gateway Zone 1");
+  await a.getByRole("button", { name: "Save" }).first().click();
+  await a.locator(".secret").waitFor();
+  scadaKey = (await a.locator(".secret").textContent()).trim();
+  await shot(a, "30-admin-integration-key");
+  await a.getByRole("button", { name: "Done" }).click();
+  await a.getByLabel("Name", { exact: true }).fill("[SAMPLE] PM system middleware");
+  await a.getByLabel("URL").fill(WEBHOOK_URL);
+  await a.getByRole("button", { name: "Save" }).nth(1).click();
+  await a.locator(".secret").waitFor();
+  webhookSecret = (await a.locator(".secret").textContent()).trim();
+  await a.getByRole("button", { name: "Done" }).click();
+
+  // The gateway posts three A101 alarms from today (the last one still active).
+  const now = Date.now();
+  const events = [95, 40, 12].map((m, i) => ({
+    machine_no: "DEMO-SF-01", code: "A101", message: "CYL NOT HOME",
+    raised_at: new Date(now - m * 60000).toISOString(), event_id: `demo-a101-${i}`,
+    ...(i < 2 ? { cleared_at: new Date(now - (m - 3) * 60000).toISOString() } : {}),
+  }));
+  const r = await a.evaluate(async ([key, body]) => {
+    const res = await fetch("/api/integrations/alarms", { method: "POST", headers: { "x-thunai-key": key, "content-type": "application/json" }, body: JSON.stringify(body) });
+    return res.json();
+  }, [scadaKey, { events }]);
+  if (r.accepted !== 3) throw new Error(`alarm feed: ${JSON.stringify(r)}`);
+  await admin.close();
+}
+
+/** Waits until the toast message has gone, so it does not cover a screenshot. */
+async function noToast(page) {
+  await page.locator(".toast").waitFor({ state: "detached", timeout: 8000 }).catch(() => {});
+}
+
+// ---- 7. Technician (English): alarm pre-fill, photo, parts --------------------------------------
+{
+  const ctx = await browser.newContext({ ...phone, permissions: ["microphone", "camera"] });
+  const page = await ctx.newPage();
+  await login(page, "D-TECH1", "en");
+  // D-TECH1's profile language is Tamil; the header button switches this demo to English.
+  if ((await page.locator(".lang-btn").textContent()).trim() === "EN") await page.locator(".lang-btn").click();
+  await page.goto(`${BASE}/ask/DEMO-SF-01`);
+  await page.locator(".prefill-note").waitFor(); // alarm code filled from the machine
+  await page.locator("textarea").fill("Cylinder not returning, machine stopped");
+  await page.locator("input[type=file]").setInputFiles(PHOTO);
+  await page.locator(".photo-card").waitFor();
+  await noToast(page);
+  await page.locator(".photo-card").scrollIntoViewIfNeeded();
+  await shot(page, "31-ask-alarm-and-photo-en");
+  await page.getByRole("button", { name: "Get help" }).click();
+  await page.getByText("A few quick questions").waitFor();
+  for (const q of await page.locator(".question").all()) await q.locator(".option").first().click();
+  await page.getByRole("button", { name: "Continue" }).click();
+  await page.locator(".step").waitFor();
+  while (!(await page.locator(".step-action").textContent()).startsWith("The photo shows")) await okStep(page);
+  await page.getByRole("button", { name: "Why this step?" }).click();
+  await page.locator(".sheet .evidence").waitFor();
+  await shot(page, "32-why-photo-step-en");
+  await page.locator(".sheet .icon-btn").click();
+  while (!(await page.locator(".part-chip").count())) await okStep(page);
+  await shot(page, "33-step-part-stock-en");
+
+  await page.goto(`${BASE}/m/DEMO-SF-01`);
+  await page.locator(".alarm-card").waitFor();
+  await shot(page, "34-machine-alarm-en");
+  await page.getByText("PM plan").scrollIntoViewIfNeeded();
+  await shot(page, "35-machine-pm-alarms-parts-en");
+
+  await page.goto(`${BASE}/log/new/DEMO-SF-01`);
+  await page.locator(".prefill-note").waitFor();
+  const sheet = page.locator(".sheet");
+  if (await sheet.count()) await sheet.getByRole("button").last().click(); // "create a new log" if an open one exists
+  await page.locator("textarea").nth(0).fill("Cylinder not returning, alarm A101");
+  await page.locator("textarea").nth(1).fill("Solenoid coil burnt");
+  await page.locator("textarea").nth(2).fill("Replaced the solenoid coil, 10 cycles OK");
+  await page.getByRole("button", { name: "Add part" }).click();
+  await page.getByPlaceholder("Search part number or name").fill("coil");
+  await page.locator(".picker-item").first().waitFor();
+  await page.locator(".part-picker").evaluate((el) => el.scrollIntoView({ block: "center" }));
+  await shot(page, "36-new-log-prefill-parts-en");
+  await page.locator(".picker-item").first().click();
+  await page.getByRole("button", { name: "Submit", exact: true }).click();
+  await page.locator(".kpis").waitFor(); // back on the machine page
+  await ctx.close();
+}
+
+// ---- 8. Supervisor: skills and the dashboard's parts and PM; admin: deliveries ----------------
+{
+  const ctx = await browser.newContext(phone);
+  const page = await ctx.newPage();
+  await login(page, "D-SUP1", "en");
+  await page.goto(`${BASE}/skills`);
+  await page.locator(".suggestion").first().waitFor();
+  await shot(page, "37-skills-en");
+  await page.locator(".heat-table").scrollIntoViewIfNeeded();
+  await shot(page, "38-skills-coverage-en");
+  await page.goto(`${BASE}/dashboard`);
+  await page.getByText("Spare parts used in breakdowns").scrollIntoViewIfNeeded();
+  await shot(page, "39-dashboard-parts-pm-en");
+  await ctx.close();
+
+  // The closed log above was sent to the PM system's middleware, signed.
+  for (let i = 0; i < 20 && !received.length; i++) await new Promise((r) => setTimeout(r, 500));
+  const admin = await browser.newContext(wide);
+  const a = await admin.newPage();
+  await login(a, "D-ADMIN", "en");
+  await a.goto(`${BASE}/admin?tab=integrations`);
+  await a.getByText("Recent deliveries").scrollIntoViewIfNeeded();
+  await a.locator(".chip", { hasText: /sent|pending|failed/ }).first().waitFor();
+  await shot(a, "40-admin-webhook-deliveries");
+  await admin.close();
+  if (received.length) console.log("webhook received:", JSON.stringify(received));
+  else console.log("webhook: nothing received (is DEMO_WEBHOOK_URL reachable from the API?)");
+  if (received.some((r) => !r.ok)) throw new Error("webhook signature did not verify");
+}
+
+receiver.close();
 await browser.close();
 console.log("Demo run finished");
