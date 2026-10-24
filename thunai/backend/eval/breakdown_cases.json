@@ -1,0 +1,9 @@
+{
+  "note": "SAMPLE cases on the DEMO machines, only to exercise the harness. Replace with 20 real past breakdowns from the plant (problem as the technician described it, the confirmed root cause, and the log_no to hide so the AI cannot read the answer). Pass mark: correct cause in the top 3 for at least 80% of cases.",
+  "cases": [
+    {"id": "SAMPLE-01", "machine_no": "DEMO-SF-01", "language": "ta", "problem_text": "Cylinder return aagala", "expected_cause_keywords": ["coil"], "hide_log_no": ""},
+    {"id": "SAMPLE-02", "machine_no": "DEMO-SF-01", "language": "en", "problem_text": "Filling cylinder stuck at the bottom, home LED off", "expected_cause_keywords": ["sensor", "coil"], "hide_log_no": ""},
+    {"id": "SAMPLE-03", "machine_no": "DEMO-SF-03", "language": "en", "problem_text": "Air pressure low on FRL gauge, cylinders slow", "expected_cause_keywords": ["seal", "leak"], "hide_log_no": ""},
+    {"id": "SAMPLE-04", "machine_no": "DEMO-LP-01", "language": "en", "problem_text": "Labels printing very light, text faded", "expected_cause_keywords": ["head"], "hide_log_no": ""}
+  ]
+}

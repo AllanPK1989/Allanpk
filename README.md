@@ -137,3 +137,9 @@ defects that made the files fail to parse — they could never have run as publi
   doubled braces outside an f-string, so it parsed as a set of dicts (`TypeError: unhashable type`).
 
 Both now generate correct output, verified by running them and inspecting the emitted JSX/JS.
+
+## Thunai: AI troubleshooting app for maintenance technicians
+
+[`thunai/`](thunai/README.md) holds a separate project: an installable web app (FastAPI + React PWA)
+that gives maintenance technicians step-by-step, safety-first troubleshooting in English or Tamil
+and records breakdown logs by voice. Start with [thunai/README.md](thunai/README.md).
