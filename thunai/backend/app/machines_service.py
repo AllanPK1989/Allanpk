@@ -107,7 +107,7 @@ def kpis(db: Session, machine_ids: list[int], period_days: int | None = None) ->
     return {mid: kpi.compute(downtimes.get(mid, []), period_days, hours) for mid in machine_ids}
 
 
-def _fault_key(log: BreakdownLog) -> tuple[str, str]:
+def fault_key(log: BreakdownLog) -> tuple[str, str]:
     """(group key, display text) for repeat-fault counting."""
     if log.classification and log.classification.symptom_category:
         label = log.classification.symptom_category.strip()
@@ -119,7 +119,7 @@ def _fault_key(log: BreakdownLog) -> tuple[str, str]:
 def top_faults(logs: list[BreakdownLog], limit: int = 5) -> list[dict]:
     groups: dict[str, dict] = {}
     for log in logs:
-        key, label = _fault_key(log)
+        key, label = fault_key(log)
         if not key:
             continue
         g = groups.setdefault(key, {"symptom": label, "symptom_ta": "", "count": 0, "downtime": [], "last": ""})

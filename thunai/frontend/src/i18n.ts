@@ -162,6 +162,7 @@ const en = {
   view_log: "View log",
   question_from_ai: "Thunai asks",
   needs_review: "Needs review",
+  dashboard: "Dashboard",
   fault_cards_review: "Fault cards to review",
   card_status_draft: "Draft",
   card_status_approved: "Approved",

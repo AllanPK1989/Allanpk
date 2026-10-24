@@ -349,3 +349,55 @@ def export_logs(db: Session, *, since: date | None, until: date | None, zone: st
     wb.save(buf)
     return buf.getvalue()
 
+
+
+def export_dashboard(data: dict) -> bytes:
+    """The dashboard's tables as an Excel workbook for the monthly MIS."""
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Summary"
+    _styled(ws, ["Measure", "Value"])
+    t = data["totals"]
+    k = data["knowledge"]
+    a = data["ask_thunai"]
+    for row in [
+        ("Period (days)", data["days"]),
+        ("Zone", data["zone"] or "All"),
+        ("Machines", data["machines"]),
+        ("Open breakdowns now", t["open_breakdowns"]),
+        ("Breakdowns in period", t["breakdowns"]),
+        ("Downtime (min)", t["downtime_min"]),
+        ("MTTR (min)", t["mttr_min"]),
+        ("Logs verified (%)", t["logs_verified_pct"]),
+        ("Machines with a fault card", k["machines_covered"]),
+        ("Machines without a fault card", len(k["machines_uncovered"])),
+        ("Fault cards in use", k["cards_live"]),
+        ("Draft cards waiting", k["cards_draft"]),
+        ("Cards needing review", k["cards_needs_review"]),
+        ("Approved expert tips", k["tips_approved"]),
+        ("Ask Thunai sessions", a["sessions"]),
+        ("Resolved", a["resolved"]),
+        ("Escalated", a["escalated"]),
+        ("Helpful / not helpful", f"{a['helpful']} / {a['not_helpful']}"),
+        ("AI cost (USD)", a["cost_usd"]),
+    ]:
+        ws.append(list(row))
+    for title, key in (("Downtime by zone", "downtime_by_zone"), ("Downtime by shift", "downtime_by_shift")):
+        sheet = wb.create_sheet(title)
+        _styled(sheet, ["Name", "Downtime (min)", "Breakdowns"])
+        for r in data[key]:
+            sheet.append([r["name"], r["downtime_min"], r["breakdowns"]])
+    sheet = wb.create_sheet("Machines")
+    _styled(sheet, ["Machine no", "Machine", "Zone", "Criticality", "Breakdowns", "Downtime (min)", "MTTR (min)", "MTBF (h)"])
+    for r in data["machines_table"]:
+        sheet.append([r["machine_no"], r["name"], r["zone"], r["criticality"], r["breakdowns"], r["downtime_min"], r["mttr_min"], r["mtbf_h"]])
+    sheet = wb.create_sheet("Top faults")
+    _styled(sheet, ["Symptom", "Times", "Machines", "Average downtime (min)", "Last seen"])
+    for f in data["top_faults"]:
+        sheet.append([f["symptom"], f["count"], ", ".join(f["machines"]), f["avg_downtime_min"], f["last"]])
+    for s in wb.worksheets:
+        for col in s.columns:
+            s.column_dimensions[col[0].column_letter].width = 22
+    buf = io.BytesIO()
+    wb.save(buf)
+    return buf.getvalue()
