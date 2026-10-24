@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../api";
-import type { Alarm, Session, Step, Supervisor } from "../api";
+import type { Alarm, MachineAlarm, PhotoRead, Session, Step, Supervisor } from "../api";
 import type { Lang } from "../i18n";
-import { ErrorNote, Header, Icon, MicButton, Page, Sheet, Spinner, SupervisorSheet, formatDate } from "../components";
+import { ErrorNote, Header, Icon, MicButton, Page, PartChip, Sheet, Spinner, SupervisorSheet, formatDate, formatTime } from "../components";
+import { PhotoCard, shrinkPhoto } from "../photo";
 import type { VoiceResult } from "../components";
 import { hasVoice, speak, stopSpeaking } from "../speak";
 import { useApp } from "../state";
@@ -28,6 +29,9 @@ function evidenceText(item: Step["evidence"]["items"][number], lang: Lang): stri
   if (item.kind === "tip") return pickText(d.text_en, d.text_ta);
   if (item.kind === "doc") return `${d.title}, page ${d.page}`;
   if (item.kind === "alarm") return `${d.code}: ${d.message}${d.remedy ? ` → ${d.remedy}` : ""}`;
+  if (item.kind === "photo") return pickText(d.shows_en, d.shows_ta);
+  if (item.kind === "scada") return `${d.code} ${d.message ?? ""} · ${d.count}×`;
+  if (item.kind === "pm") return `${d.title} · +${d.days_overdue} d`;
   const issue = pickText(d.issue_en, d.issue_ta);
   const fix = pickText(d.corrective_action_en, d.corrective_action_ta);
   return fix ? `${issue} → ${fix}` : issue || item.text_en;
@@ -52,6 +56,27 @@ export default function Ask() {
   const [resultMsg, setResultMsg] = useState("");
   const [feedbackSent, setFeedbackSent] = useState(false);
   const [alarmInfo, setAlarmInfo] = useState<Alarm | null>(null);
+  // Phase 3: alarm pre-filled from the machine's PLC/SCADA feed or read from a photo.
+  const [machineAlarm, setMachineAlarm] = useState<MachineAlarm | null>(null);
+  const [alarmFrom, setAlarmFrom] = useState<"" | "machine" | "photo">("");
+  const [photos, setPhotos] = useState<PhotoRead[]>([]);
+  const [readingPhoto, setReadingPhoto] = useState(false);
+  const alarmRef = useRef(alarm);
+  alarmRef.current = alarm;
+
+  useEffect(() => {
+    api
+      .get<{ alarm: MachineAlarm | null }>(`/api/machines/${encodeURIComponent(no)}/active-alarm`)
+      .then((r) => {
+        if (!r.alarm) return;
+        setMachineAlarm(r.alarm);
+        if (!alarmRef.current) {
+          setAlarm(r.alarm.code);
+          setAlarmFrom("machine");
+        }
+      })
+      .catch(() => {});
+  }, [no]);
 
   // Alarm lists (Phase 2): show what the code means as soon as it is typed.
   useEffect(() => {
@@ -196,13 +221,24 @@ export default function Ask() {
   const addPhoto = async (file: File | undefined) => {
     if (!file) return;
     const form = new FormData();
-    form.append("file", file);
+    const small = await shrinkPhoto(file);
+    form.append("file", small, small === file ? file.name : "photo.jpg");
     try {
       const r = await api.upload<{ media_id: number }>("/api/media/photo", form);
       setMediaIds((ids) => [...ids, r.media_id]);
       toast(t("photo_added"));
+      // Photo-based diagnosis: show what Thunai reads before asking for help.
+      setReadingPhoto(true);
+      const read = await api.post<PhotoRead>(`/api/media/${r.media_id}/read`, { machine_no: no, note: problem });
+      setPhotos((list) => [...list, read]);
+      if (read.alarm && !alarmRef.current) {
+        setAlarm(read.alarm.code);
+        setAlarmFrom("photo");
+      }
     } catch (e) {
       setError(e);
+    } finally {
+      setReadingPhoto(false);
     }
   };
 
@@ -259,8 +295,33 @@ export default function Ask() {
             <MicButton onResult={onVoice} language={lang} />
             <label className="field">
               <span>{t("alarm_code")}</span>
-              <input className="input" value={alarm} onChange={(e) => setAlarm(e.target.value)} />
+              <input
+                className={`input ${alarmFrom ? "ai-filled" : ""}`}
+                value={alarm}
+                onChange={(e) => {
+                  setAlarm(e.target.value);
+                  setAlarmFrom("");
+                }}
+              />
             </label>
+            {alarmFrom === "machine" && machineAlarm && (
+              <p className="prefill-note">
+                <Icon name="bell" size={18} />
+                <span>
+                  {t("from_machine", { time: formatTime(machineAlarm.raised_at) })}
+                  {machineAlarm.message && ` · ${machineAlarm.message}`}
+                </span>
+                <button className="link-btn" onClick={() => { setAlarm(""); setAlarmFrom(""); }}>
+                  {t("clear")}
+                </button>
+              </p>
+            )}
+            {alarmFrom === "photo" && (
+              <p className="prefill-note">
+                <Icon name="camera" size={18} />
+                <span>{t("photo_alarm_filled")}</span>
+              </p>
+            )}
             {alarmInfo && (
               <div className="alarm-card" role="status">
                 <strong>
@@ -284,6 +345,10 @@ export default function Ask() {
               <Icon name="camera" /> {t("add_photo")}
               <input type="file" accept="image/*" capture="environment" hidden onChange={(e) => void addPhoto(e.target.files?.[0])} />
             </label>
+            {readingPhoto && <Spinner label={t("photo_reading")} />}
+            {photos.map((p) => (
+              <PhotoCard key={p.media_id} read={p} />
+            ))}
             <button className="btn btn-primary btn-block btn-big" disabled={busy || problem.trim().length < 2} onClick={() => void start()}>
               {busy ? t("thinking") : t("get_help")}
             </button>
@@ -363,6 +428,13 @@ export default function Ask() {
                   <strong>{t("tools")}: </strong>
                   {step.tools.join(", ")}
                 </p>
+              )}
+              {!!step.parts?.length && (
+                <div className="parts-list" aria-label={t("parts_needed")}>
+                  {step.parts.map((p) => (
+                    <PartChip key={p.part_no} part={p} />
+                  ))}
+                </div>
               )}
               {pick(step, "safety_note", lang) && (
                 <p className="note note-warn">
@@ -462,6 +534,9 @@ export default function Ask() {
                     {i.tier === 3 && <em> · {t("evidence_type")}</em>}
                     {i.kind === "tip" && <em> · {t("evidence_tip")}</em>}
                     {(i.kind === "doc" || i.kind === "alarm") && <em> · {t("evidence_doc")}</em>}
+                    {i.kind === "photo" && <em> · {t("evidence_photo")}</em>}
+                    {i.kind === "scada" && <em> · {t("evidence_scada")}</em>}
+                    {i.kind === "pm" && <em> · {t("evidence_pm")}</em>}
                     {i.tier === 5 && <em> · {t("evidence_unverified")}</em>}
                     <div className="muted">{evidenceText(i, lang)}</div>
                   </li>

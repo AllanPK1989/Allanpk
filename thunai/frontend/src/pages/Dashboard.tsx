@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, downloadFile } from "../api";
-import { ErrorNote, Header, Icon, Page, Spinner } from "../components";
+import type { PartInfo } from "../api";
+import { ErrorNote, Header, Icon, Page, PartChip, Spinner } from "../components";
 import { useApp } from "../state";
 
 interface Row {
@@ -31,6 +32,8 @@ interface Data {
     tips_pending: number;
   };
   ask_thunai: { sessions: number; resolved: number; escalated: number; refused: number; failed: number; helpful: number; not_helpful: number; cost_usd: number };
+  parts: { used: { part_no: string; description: string; times: number; qty: number; stock: PartInfo | null }[]; low_stock: PartInfo[] };
+  pm: { overdue: { machine_no: string; zone: string; task_code: string; title: string; days_overdue: number }[]; tasks: number; breakdowns_while_overdue: number };
 }
 
 const PERIODS = [7, 30, 90];
@@ -168,6 +171,75 @@ export default function Dashboard() {
                   <span className="count">{f.count}×</span>
                 </div>
               ))}
+            </section>
+
+            <section>
+              <h2 className="section-title">Spare parts used in breakdowns</h2>
+              {data.parts.used.length === 0 && <p className="muted">No parts recorded in this period.</p>}
+              {data.parts.used.length > 0 && (
+                <div className="table-wrap">
+                  <table className="table table-full">
+                    <thead>
+                      <tr>
+                        <th>Part</th>
+                        <th className="num">Times</th>
+                        <th className="num">Stock now</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.parts.used.map((r) => (
+                        <tr key={`${r.part_no}|${r.description}`}>
+                          <td>
+                            {r.part_no && <span className="mono">{r.part_no} </span>}
+                            {r.description}
+                            {!r.stock && <div className="muted small">Not in the catalogue</div>}
+                          </td>
+                          <td className="num">{r.times}</td>
+                          <td className={`num ${r.stock?.low ? "text-warn" : ""}`}>
+                            {r.stock ? (r.stock.stock_qty ?? "–") : "–"}
+                            {r.stock?.low && " (low)"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              {data.parts.low_stock.length > 0 && (
+                <>
+                  <h3 className="chart-title">Low stock for these machines</h3>
+                  <div className="parts-list">
+                    {data.parts.low_stock.map((p) => (
+                      <PartChip key={p.part_no} part={p} />
+                    ))}
+                  </div>
+                </>
+              )}
+            </section>
+
+            <section>
+              <h2 className="section-title">PM tasks overdue</h2>
+              {data.pm.tasks === 0 && <p className="muted">No PM plan imported yet (Admin → Import → PM plan).</p>}
+              {data.pm.tasks > 0 && data.pm.overdue.length === 0 && <p className="muted">No PM task is overdue.</p>}
+              {data.pm.overdue.map((r) => (
+                <div key={`${r.machine_no}|${r.task_code}`} className="fault-row pm-overdue">
+                  <div>
+                    <strong>{r.title || r.task_code}</strong>
+                    <div className="muted small">
+                      <Link className="mono" to={`/m/${encodeURIComponent(r.machine_no)}`}>
+                        {r.machine_no}
+                      </Link>{" "}
+                      · {r.task_code} · {r.zone}
+                    </div>
+                  </div>
+                  <span className="chip chip-open">+{r.days_overdue} d</span>
+                </div>
+              ))}
+              {data.pm.tasks > 0 && (
+                <p className="muted small">
+                  Breakdowns while a PM task on that machine was overdue: at least {data.pm.breakdowns_while_overdue} of {data.totals.breakdowns}.
+                </p>
+              )}
             </section>
 
             <section className="chart-card">

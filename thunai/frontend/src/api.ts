@@ -68,6 +68,7 @@ export interface Log {
   verified_by: string | null;
   reject_reason: string;
   ai_session_id: number | null;
+  external_ref?: string;
   texts: Record<TextField, LogText>;
   parts?: { part_no: string; description: string; qty: number }[];
   media?: { id: number; kind: string; transcript: string; available: boolean }[];
@@ -92,6 +93,7 @@ export interface FaultCard {
   history: { version: number; symptom: string; steps_en: string[]; archived_at: string }[];
   source_log_ids: number[];
   flagged_log_ids: number[];
+  parts_stock?: PartInfo[];
   // detail view
   scope?: "machine" | "type";
   scope_name?: string;
@@ -117,6 +119,68 @@ export interface MachinePage {
   kpi: KPI;
   tips: Tip[];
   documents: DocumentInfo[];
+  spare_parts: PartInfo[];
+  pm_tasks: PMTask[];
+  active_alarm: MachineAlarm | null;
+  alarms_24h: { code: string; count: number; first: string; last: string; message: string; active: boolean }[];
+}
+
+/** A spare part as the stores system last reported it (Phase 3). */
+export interface PartInfo {
+  part_no: string;
+  description: string;
+  unit: string;
+  stock_qty: number | null;
+  min_qty: number | null;
+  location: string;
+  stock_at: string | null;
+  low: boolean;
+  alt_part_nos: string[];
+}
+
+export interface PMTask {
+  id: number;
+  task_code: string;
+  title: string;
+  frequency_days: number | null;
+  last_done_on: string | null;
+  next_due_on: string | null;
+  state: "overdue" | "due_soon" | "ok" | "unknown";
+  days_overdue: number;
+}
+
+/** An alarm from the PLC/SCADA feed; `meaning` comes from the alarm list. */
+export interface MachineAlarm {
+  id: number;
+  machine_no: string;
+  code: string;
+  message: string;
+  raised_at: string;
+  cleared_at: string | null;
+  source: string;
+  meaning: Alarm | null;
+}
+
+export interface PhotoObservation {
+  usable: boolean;
+  disabled?: boolean;
+  error?: string;
+  shows_en?: string;
+  shows_ta?: string;
+  readings?: { label: string; value: string; unit: string; legible: boolean }[];
+  screen_text?: string;
+  alarm_codes?: string[];
+  damage_en?: string;
+  damage_ta?: string;
+  unusable_reason_en?: string;
+  unusable_reason_ta?: string;
+}
+
+export interface PhotoRead {
+  media_id: number;
+  enabled: boolean;
+  observation: PhotoObservation;
+  alarm: { code: string; meaning: Alarm | null } | null;
 }
 
 export interface Tip {
@@ -157,13 +221,13 @@ export interface Alarm {
 export interface Evidence {
   items: {
     ref: string;
-    kind: "fault_card" | "log" | "tip" | "doc" | "alarm";
+    kind: "fault_card" | "log" | "tip" | "doc" | "alarm" | "pm" | "scada" | "photo";
     tier: number;
     label: string;
     machine_no: string;
     when: string;
     text_en: string;
-    data: Record<string, string | number | null | { cause: string; cause_ta?: string; count: number }[]>;
+    data: Record<string, string | number | boolean | null | { cause: string; cause_ta?: string; count: number }[]>;
   }[];
   logs_this_machine: number;
   last_date: string;
@@ -191,6 +255,7 @@ export interface Step {
   general: boolean;
   injected: boolean;
   evidence: Evidence;
+  parts?: PartInfo[];
 }
 
 export interface Question {
@@ -228,6 +293,7 @@ export interface Session {
   feedback: string;
   resulting_log_id: number | null;
   cost_usd: number;
+  photos?: { media_id: number; observation: PhotoObservation | null }[];
 }
 
 export interface Supervisor {
@@ -240,7 +306,80 @@ export interface Meta {
   app: string;
   version: string;
   demo_ai: boolean;
+  photos_to_ai?: boolean;
   stt_provider: string;
+}
+
+/** Skill-gap analytics (Phase 3). Null figures: fewer events than min_events. */
+export interface Skills {
+  days: number;
+  zone: string;
+  min_events: number;
+  technicians: {
+    key: string;
+    name: string;
+    employee_id: string;
+    zone: string;
+    in_thunai: boolean;
+    fixes: number;
+    verified: number;
+    median_downtime_min: number | null;
+    vs_team: number | null;
+    sessions: number;
+    escalated: number;
+    escalation_pct: number | null;
+    cant_do: number;
+    cant_do_authorised: number;
+    tips: number;
+    machine_types: string[];
+  }[];
+  types: string[];
+  matrix: { key: string; name: string; cells: Record<string, number> }[];
+  machine_types: {
+    name: string;
+    breakdowns: number;
+    fixers: number;
+    fixer_names: string[];
+    median_downtime_min: number | null;
+    sessions: number;
+    escalation_pct: number | null;
+  }[];
+  suggestions: { kind: "single_person" | "pair" | "authorisation"; machine_type: string | null; technician: string | null; partner: string | null; text_en: string }[];
+}
+
+export interface IntegrationKey {
+  id: number;
+  name: string;
+  key_prefix: string;
+  scopes: string[];
+  active: boolean;
+  last_used_at: string | null;
+  created_at: string;
+  token?: string;
+}
+
+export interface Webhook {
+  id: number;
+  name: string;
+  url: string;
+  events: string[];
+  active: boolean;
+  created_at: string;
+  secret?: string;
+}
+
+export interface WebhookDelivery {
+  id: number;
+  webhook: string;
+  event: string;
+  entity_id: string;
+  status: "pending" | "sent" | "failed";
+  attempts: number;
+  next_attempt_at: string | null;
+  last_status: number | null;
+  last_error: string;
+  sent_at: string | null;
+  created_at: string;
 }
 
 export class ApiError extends Error {

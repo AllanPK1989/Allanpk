@@ -17,6 +17,7 @@ import { useApp } from "./state";
 const Admin = lazy(() => import("./pages/Admin"));
 const CardPage = lazy(() => import("./pages/CardPage"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Skills = lazy(() => import("./pages/Skills"));
 const QrSheet = lazy(() => import("./pages/QrSheet"));
 const Scan = lazy(() => import("./pages/Scan"));
 
@@ -47,6 +48,7 @@ export default function App() {
         <Route path="/review" element={<Guard roles={["supervisor", "admin"]}><Review /></Guard>} />
         <Route path="/dashboard" element={<Guard roles={["supervisor", "admin"]}><Dashboard /></Guard>} />
         <Route path="/cards/:id" element={<Guard roles={["supervisor", "admin"]}><CardPage /></Guard>} />
+        <Route path="/skills" element={<Guard roles={["supervisor", "admin"]}><Skills /></Guard>} />
         <Route path="/admin" element={<Guard roles={["admin"]}><Admin /></Guard>} />
         <Route path="/admin/qr" element={<Guard roles={["admin"]}><QrSheet /></Guard>} />
         <Route path="*" element={<Navigate to="/" replace />} />

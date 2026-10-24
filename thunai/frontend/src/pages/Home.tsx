@@ -62,6 +62,12 @@ export default function Home() {
               <strong>{t("dashboard")}</strong>
             </button>
           )}
+          {isSup && (
+            <button className="tile tile-small" onClick={() => navigate("/skills")}>
+              <Icon name="users" size={32} />
+              <strong>{t("skills")}</strong>
+            </button>
+          )}
           {user.role === "admin" && (
             <button className="tile tile-small" onClick={() => navigate("/admin")}>
               <Icon name="settings" size={32} />

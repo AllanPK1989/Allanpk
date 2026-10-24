@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api, ApiError, OfflineError } from "../api";
-import type { Log, TextField } from "../api";
+import type { Log, MachineAlarm, PartInfo, TextField } from "../api";
 import type { Lang } from "../i18n";
-import { ErrorNote, Header, Icon, MicButton, OfflineBanner, Page, Sheet, Spinner, StatusChip, formatDate } from "../components";
+import { ErrorNote, Header, Icon, MicButton, OfflineBanner, Page, Sheet, Spinner, StatusChip, formatDate, formatTime, stockText } from "../components";
 import type { VoiceResult } from "../components";
 import { newId, queueLog } from "../offline";
 import { speak } from "../speak";
@@ -84,6 +84,8 @@ export default function LogPage() {
   const [rejecting, setRejecting] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
   const [clientUuid] = useState(newId);
+  // Phase 3: the PLC/SCADA alarm that pre-filled the alarm code and start time.
+  const [alarmEvent, setAlarmEvent] = useState<MachineAlarm | null>(null);
 
   const machineNo = (isNew ? no : log?.machine_no) ?? "";
 
@@ -92,6 +94,15 @@ export default function LogPage() {
       api
         .get<{ log: Log | null }>(`/api/machines/${encodeURIComponent(no ?? "")}/open-log`)
         .then((r) => setOpenLog(r.log))
+        .catch(() => {});
+      api
+        .get<{ alarm: MachineAlarm | null }>(`/api/machines/${encodeURIComponent(no ?? "")}/active-alarm`)
+        .then((r) => {
+          if (!r.alarm) return;
+          setAlarmEvent(r.alarm);
+          setAlarm((a) => a || r.alarm!.code);
+          setStartAt(toLocalInput(r.alarm.raised_at)); // downtime starts when the machine raised it
+        })
         .catch(() => {});
       return;
     }
@@ -194,7 +205,7 @@ export default function LogPage() {
       end_at: fromLocalInput(endAt),
       downtime_min: startAt && endAt ? null : manualDowntime ? Number(manualDowntime) : null,
       alarm_code: alarm,
-      parts: parts.filter((p) => p.description.trim()),
+      parts: parts.filter((p) => p.description.trim() || p.part_no.trim()),
       media_ids: mediaIds,
       submit,
       still_down: mode === "down",
@@ -205,7 +216,8 @@ export default function LogPage() {
         throw new OfflineError("recorded offline");
       }
       if (isNew) {
-        const created = await api.post<Log>("/api/logs", { ...body, machine_no: machineNo, source, client_uuid: clientUuid });
+        const alarm_event_id = alarmEvent && alarmEvent.code === alarm.trim() ? alarmEvent.id : null;
+        const created = await api.post<Log>("/api/logs", { ...body, machine_no: machineNo, source, client_uuid: clientUuid, alarm_event_id });
         toast(submit ? t("submitted") : t("saved"));
         if (submit) sessionFinished();
         navigate(submit ? `/m/${encodeURIComponent(machineNo)}` : `/log/${created.id}`, { replace: true });
@@ -389,17 +401,29 @@ export default function LogPage() {
         </label>
         <label className="field">
           <span>{t("alarm_code")}</span>
-          <input className="input" value={alarm} onChange={(e) => setAlarm(e.target.value)} />
+          <input
+            className={`input ${alarmEvent && alarmEvent.code === alarm ? "ai-filled" : ""}`}
+            value={alarm}
+            onChange={(e) => setAlarm(e.target.value)}
+          />
         </label>
+        {alarmEvent && alarmEvent.code === alarm && (
+          <p className="prefill-note">
+            <Icon name="bell" size={18} />
+            <span>
+              {t("from_machine", { time: formatTime(alarmEvent.raised_at) })}
+              {alarmEvent.meaning ? ` · ${alarmEvent.meaning.message}` : alarmEvent.message ? ` · ${alarmEvent.message}` : ""}
+            </span>
+          </p>
+        )}
         <div className="field">
           <span className="field-title">{t("parts")}</span>
           {parts.map((p, i) => (
             <div key={i} className="part-row">
-              <input
-                className="input"
-                placeholder={t("part_name")}
-                value={p.description}
-                onChange={(e) => setParts((ps) => ps.map((x, j) => (j === i ? { ...x, description: e.target.value } : x)))}
+              <PartPicker
+                machineNo={machineNo}
+                part={p}
+                onChange={(next) => setParts((ps) => ps.map((x, j) => (j === i ? { ...x, ...next } : x)))}
               />
               <input
                 className="input qty"
@@ -475,7 +499,13 @@ function LogSummary({ log, lang }: { log: Log; lang: Lang }) {
       {!!log.parts?.length && (
         <div className="kv">
           <span className="kv-k">{t("parts")}</span>
-          <span className="kv-v">{log.parts.map((p) => `${p.description} × ${p.qty}`).join(", ")}</span>
+          <span className="kv-v">{log.parts.map((p) => `${[p.part_no, p.description].filter(Boolean).join(" ")} × ${p.qty}`).join(", ")}</span>
+        </div>
+      )}
+      {log.external_ref && (
+        <div className="kv">
+          <span className="kv-k">{t("external_ref")}</span>
+          <span className="kv-v mono">{log.external_ref}</span>
         </div>
       )}
       {log.classification && (
@@ -488,6 +518,69 @@ function LogSummary({ log, lang }: { log: Log; lang: Lang }) {
           {t(`status_${log.status}` as "status_verified")}: {log.verified_by}
           {log.reject_reason ? ` · ${log.reject_reason}` : ""}
         </p>
+      )}
+    </div>
+  );
+}
+
+/** Part name with catalogue search: picking a result fills the real part number (never typed by hand). */
+function PartPicker({ machineNo, part, onChange }: { machineNo: string; part: Part; onChange: (p: Partial<Part>) => void }) {
+  const { t } = useApp();
+  const [hits, setHits] = useState<PartInfo[]>([]);
+  const [focused, setFocused] = useState(false);
+  const query = part.description.trim();
+
+  useEffect(() => {
+    if (!focused || query.length < 2) {
+      setHits([]);
+      return;
+    }
+    const timer = window.setTimeout(() => {
+      api
+        .get<PartInfo[]>(`/api/parts?q=${encodeURIComponent(query)}&machine_no=${encodeURIComponent(machineNo)}&limit=5`)
+        .then(setHits)
+        .catch(() => setHits([])); // offline: free text still works
+    }, 300);
+    return () => window.clearTimeout(timer);
+  }, [query, focused, machineNo]);
+
+  return (
+    <div className="part-picker">
+      <input
+        className="input"
+        placeholder={t("search_parts")}
+        value={part.description}
+        onFocus={() => setFocused(true)}
+        onBlur={() => window.setTimeout(() => setFocused(false), 200)}
+        onChange={(e) => onChange({ description: e.target.value, part_no: "" })}
+      />
+      {part.part_no ? (
+        <small className="mono">{part.part_no}</small>
+      ) : (
+        part.description.trim() && <small className="muted">{t("not_in_catalogue")}</small>
+      )}
+      {focused && hits.length > 0 && (
+        <ul className="picker-list" role="listbox">
+          {hits.map((h) => (
+            <li key={h.part_no}>
+              <button
+                type="button"
+                className="picker-item"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
+                  onChange({ description: h.description, part_no: h.part_no });
+                  setFocused(false);
+                }}
+              >
+                <strong className="mono">{h.part_no}</strong> {h.description}
+                <span className={`small ${h.low ? "text-warn" : "muted"}`}>
+                  {stockText(h, t)}
+                  {h.low && h.stock_qty !== null && h.stock_qty > 0 && ` · ${t("low_stock")}`}
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );

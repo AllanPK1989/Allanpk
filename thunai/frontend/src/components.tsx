@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { api, OfflineError } from "./api";
-import type { Log, Supervisor } from "./api";
+import type { Log, PartInfo, Supervisor } from "./api";
 import { useRecorder } from "./recorder";
 import { useApp } from "./state";
 
@@ -30,6 +30,11 @@ const PATHS: Record<string, string> = {
   plus: "M12 5v14M5 12h14",
   chart: "M3 3v18h18M7 15l4-4 3 3 5-6",
   book: "M4 19.5A2.5 2.5 0 0 1 6.5 17H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15zM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5",
+  box: "M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.7zM3.3 7 12 12l8.7-5M12 22V12",
+  calendar: "M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z",
+  bell: "M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0",
+  users: "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8",
+  link: "M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7",
   wifiOff: "M2 2l20 20M8.5 16.4a5 5 0 0 1 7 0M5 12.6a10 10 0 0 1 5.2-2.7M19 12.6a10 10 0 0 0-2.4-1.7M1.4 9a15 15 0 0 1 4.4-2.7M22.6 9A15 15 0 0 0 10.7 5M12 20h.01",
 };
 
@@ -299,4 +304,37 @@ export function formatDate(iso: string | null | undefined, withTime = false): st
     year: "numeric",
     ...(withTime ? { hour: "2-digit", minute: "2-digit" } : {}),
   });
+}
+
+/** "14:05" in plant time. */
+export function formatTime(iso: string | null | undefined): string {
+  if (!iso) return "";
+  return new Date(iso).toLocaleTimeString("en-IN", { timeZone: PLANT_TZ, hour: "2-digit", minute: "2-digit", hour12: false });
+}
+
+/** "2 EA in stock", "Out of stock" or "Stock not known". */
+export function stockText(part: PartInfo, t: ReturnType<typeof useApp>["t"]): string {
+  if (part.stock_qty === null) return t("stock_unknown");
+  if (part.stock_qty <= 0) return t("out_of_stock");
+  return t("in_stock", { n: part.stock_qty, unit: part.unit }).replace(/\s{2,}/g, " ");
+}
+
+/** A catalogue part with stock as the stores system last reported it. */
+export function PartChip({ part }: { part: PartInfo }) {
+  const { t } = useApp();
+  const out = part.stock_qty !== null && part.stock_qty <= 0;
+  const stock = stockText(part, t) + (!out && part.stock_qty !== null && part.location ? ` · ${part.location}` : "");
+  return (
+    <div className={`part-chip ${out ? "part-out" : part.low ? "part-low" : ""}`}>
+      <Icon name="box" size={18} />
+      <div>
+        <strong className="mono">{part.part_no}</strong> {part.description}
+        <div className="small">
+          {stock}
+          {part.low && !out && ` · ${t("low_stock")}`}
+          {part.stock_at && <span className="muted"> · {t("as_of", { date: formatDate(part.stock_at) })}</span>}
+        </div>
+      </div>
+    </div>
+  );
 }

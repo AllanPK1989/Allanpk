@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { api, openFile } from "../api";
 import type { Log, MachinePage as Data } from "../api";
-import { ErrorNote, Header, Icon, MicButton, OfflineBanner, Page, Sheet, Spinner, StatusChip, formatDate } from "../components";
+import { ErrorNote, Header, Icon, MicButton, OfflineBanner, Page, PartChip, Sheet, Spinner, StatusChip, formatDate, formatTime } from "../components";
 import type { VoiceResult } from "../components";
 import { useApp } from "../state";
 
@@ -62,6 +62,15 @@ export default function MachinePage() {
                 {data.machine.plc_model && <span className="chip">{data.machine.plc_model}</span>}
               </div>
             </section>
+            {data.active_alarm && (
+              <div className="alarm-card" role="status">
+                <strong>
+                  <Icon name="bell" size={18} /> {t("machine_alarm")} {data.active_alarm.code}
+                  {data.active_alarm.meaning ? `: ${data.active_alarm.meaning.message}` : data.active_alarm.message ? `: ${data.active_alarm.message}` : ""}
+                </strong>
+                <p className="muted small">{t("from_machine", { time: formatTime(data.active_alarm.raised_at) })}</p>
+              </div>
+            )}
             <div className="tile-row two">
               <button className="tile tile-primary tile-compact" onClick={() => navigate(`/ask/${encodeURIComponent(no)}`)}>
                 <Icon name="help" size={30} />
@@ -150,11 +159,73 @@ export default function MachinePage() {
                             <li key={i}>{s}</li>
                           ))}
                         </ol>
+                        {!!c.parts_stock?.length && (
+                          <div className="parts-list">
+                            {c.parts_stock.map((p) => (
+                              <PartChip key={p.part_no} part={p} />
+                            ))}
+                          </div>
+                        )}
                         {c.avg_fix_min && <p className="muted">{t("avg_min", { n: c.avg_fix_min })}</p>}
                       </div>
                     )}
                   </div>
                 ))}
+              </section>
+            )}
+
+            {data.pm_tasks.length > 0 && (
+              <section>
+                <h2 className="section-title">{t("pm_plan")}</h2>
+                {data.pm_tasks.map((task) => (
+                  <div key={task.id} className={`fault-row pm-${task.state}`}>
+                    <div>
+                      <strong>{task.title || task.task_code}</strong>
+                      <div className="muted small">
+                        <span className="mono">{task.task_code}</span>
+                        {task.frequency_days ? ` · ${task.frequency_days} d` : ""}
+                      </div>
+                    </div>
+                    <span className={`chip ${task.state === "overdue" ? "chip-open" : task.state === "due_soon" ? "chip-draft" : ""}`}>
+                      {task.state === "overdue"
+                        ? t("pm_overdue", { n: task.days_overdue })
+                        : task.state === "due_soon"
+                          ? t("pm_due_soon", { date: formatDate(task.next_due_on) })
+                          : task.next_due_on
+                            ? t("pm_next", { date: formatDate(task.next_due_on) })
+                            : "–"}
+                    </span>
+                  </div>
+                ))}
+              </section>
+            )}
+
+            {data.alarms_24h.length > 0 && (
+              <section>
+                <h2 className="section-title">{t("alarms_24h")}</h2>
+                {data.alarms_24h.map((a) => (
+                  <div key={a.code} className="fault-row">
+                    <div>
+                      <strong className="mono">{a.code}</strong> {a.message}
+                      <div className="muted small">
+                        {formatTime(a.first)}–{formatTime(a.last)}
+                        {a.active && ` · ${t("active_now")}`}
+                      </div>
+                    </div>
+                    <span className="count">{t("times", { n: a.count })}</span>
+                  </div>
+                ))}
+              </section>
+            )}
+
+            {data.spare_parts.length > 0 && (
+              <section>
+                <h2 className="section-title">{t("spare_parts")}</h2>
+                <div className="parts-list">
+                  {data.spare_parts.map((p) => (
+                    <PartChip key={p.part_no} part={p} />
+                  ))}
+                </div>
               </section>
             )}
 
