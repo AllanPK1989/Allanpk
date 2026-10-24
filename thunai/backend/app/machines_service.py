@@ -10,7 +10,7 @@ from fastapi import HTTPException
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
-from . import audit, documents, kpi, serialize, settings_store
+from . import alarm_feed, audit, documents, kpi, parts, pm, retrieval, serialize, settings_store
 from .config import get_config
 from .models import AISession, BreakdownLog, Component, ExpertTip, FaultCard, Machine, MachineType, User
 from .schemas import ComponentIn, MachineIn, MachineUpdate
@@ -174,14 +174,41 @@ def machine_page(db: Session, machine: Machine) -> dict:
         .options(selectinload(ExpertTip.machine), selectinload(ExpertTip.author))
         .order_by(ExpertTip.reviewed_at.desc())
     ).all()
+    machine_parts = parts.for_machine(db, machine)
+    part_index = parts.index(machine_parts)
+    card_rows = []
+    for c in cards:
+        row = serialize.fault_card(c)
+        row["parts_stock"] = [parts.info(p) for p in parts.find_in_text(" ".join(c.parts or []), part_index)]
+        card_rows.append(row)
+    alarm = alarm_feed.active(db, machine)
     return {
         "machine": serialize.machine(machine, with_components=True),
+        "spare_parts": [parts.info(p) for p in machine_parts],
+        "pm_tasks": pm.machine_summary(db, machine),
+        "active_alarm": active_alarm(db, machine, alarm),
+        "alarms_24h": [{**r, "first": r["first"].isoformat(), "last": r["last"].isoformat()} for r in alarm_feed.counts(alarm_feed.recent(db, machine))],
         "tips": [serialize.tip(t) for t in tips],
         "documents": [documents.serialize(db, d) for d in documents.visible_for(db, machine)],
         "open_logs": [serialize.log(l, full=False) for l in timeline if l.status in ("open", "draft")],
         "timeline": [serialize.log(l, full=False) for l in timeline if l.status not in ("draft",)],
         "top_faults": top_faults(counted),
-        "fault_cards": [serialize.fault_card(c) for c in cards],
+        "fault_cards": card_rows,
         "kpi": kpis(db, [machine.id], period)[machine.id].as_dict(),
         "ai_sessions_in_period": recent_sessions or 0,
     }
+
+
+def active_alarm(db: Session, machine: Machine, alarm=None) -> dict | None:
+    """The alarm that pre-fills Ask Thunai and New log, with its alarm-list meaning if there is one."""
+    alarm = alarm or alarm_feed.active(db, machine)
+    if alarm is None:
+        return None
+    meaning = retrieval.lookup_alarm(db, machine, alarm.code)
+    out = alarm_feed.serialize(alarm)
+    out["meaning"] = (
+        {"code": meaning.code, "message": meaning.message, "cause": meaning.cause, "remedy": meaning.remedy}
+        if meaning
+        else None
+    )
+    return out

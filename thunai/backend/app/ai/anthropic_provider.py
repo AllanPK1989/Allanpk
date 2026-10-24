@@ -25,14 +25,20 @@ class AnthropicProvider:
             return self.cfg.ai_model_diagnosis, self.cfg.ai_effort_diagnosis
         return self.cfg.ai_model_extraction, self.cfg.ai_effort_extraction
 
-    def generate_json(self, *, tier, purpose, system, user, schema, max_tokens, hints) -> AIResult:
+    def generate_json(self, *, tier, purpose, system, user, schema, max_tokens, hints, images=None) -> AIResult:
         model, effort = self._model_and_effort(tier)
+        content: str | list = user
+        if images:
+            content = [
+                {"type": "image", "source": {"type": "base64", "media_type": media_type, "data": data}}
+                for media_type, data in images
+            ] + [{"type": "text", "text": user}]
         request = dict(
             model=model,
             max_tokens=max_tokens,
             # The rules prompt is identical across calls, so cache it.
             system=[{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
-            messages=[{"role": "user", "content": user}],
+            messages=[{"role": "user", "content": content}],
             output_config={
                 "effort": effort,
                 "format": {"type": "json_schema", "schema": schema},

@@ -1,4 +1,5 @@
-"""Excel import (machine master, historical breakdowns) and export (logs + KPIs)."""
+"""Excel import (machine master, historical breakdowns, spare parts, PM plan) and export."""
+import csv
 import io
 import re
 from datetime import date, datetime, time, timedelta, timezone
@@ -11,7 +12,7 @@ from pydantic import ValidationError
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
-from . import audit, jobs, machines_service, settings_store
+from . import audit, jobs, machines_service, parts, pm, settings_store
 from .config import get_config
 from .kpi import COUNTED_STATUSES, compute
 from .logs_service import set_text
@@ -80,13 +81,22 @@ def _norm(header) -> str:
     return re.sub(r"\s+", " ", str(header or "").strip().lower().replace("_", " ")).replace(" ", "_")
 
 
-def _read_rows(content: bytes, columns: dict) -> list[tuple[int, dict]]:
-    try:
-        wb = load_workbook(io.BytesIO(content), read_only=True, data_only=True)
-    except Exception as e:  # openpyxl raises several types for bad files
-        raise HTTPException(400, f"Not a readable .xlsx file: {e}")
-    ws = wb.worksheets[0]
-    rows = ws.iter_rows(values_only=True)
+def _sheet_rows(content: bytes):
+    """Rows of the first sheet of an .xlsx file, or of a CSV file (comma or semicolon)."""
+    if content[:2] == b"PK":  # .xlsx files are zip archives
+        try:
+            wb = load_workbook(io.BytesIO(content), read_only=True, data_only=True)
+        except Exception as e:  # openpyxl raises several types for bad files
+            raise HTTPException(400, f"Not a readable .xlsx file: {e}")
+        return wb.worksheets[0].iter_rows(values_only=True)
+    text = content.decode("utf-8-sig", errors="replace")
+    first = text.split("\n", 1)[0]
+    delimiter = ";" if first.count(";") > first.count(",") else ","
+    return iter(list(csv.reader(io.StringIO(text), delimiter=delimiter)))
+
+
+def _read_rows(content: bytes, columns: dict, required: str = "machine_no") -> list[tuple[int, dict]]:
+    rows = _sheet_rows(content)
     try:
         headers = [_norm(h) for h in next(rows)]
     except StopIteration:
@@ -98,8 +108,8 @@ def _read_rows(content: bytes, columns: dict) -> list[tuple[int, dict]]:
             if n in headers:
                 lookup[key] = headers.index(n)
                 break
-    if "machine_no" not in lookup:
-        raise HTTPException(400, "The first row must have a 'machine_no' column")
+    if required not in lookup:
+        raise HTTPException(400, f"The first row must have a '{required}' column")
     out = []
     for i, row in enumerate(rows, start=2):
         if row is None or all(v in (None, "") for v in row):
@@ -258,10 +268,90 @@ SAMPLE_ALARM = {
 }
 
 
+PART_COLUMNS = {
+    "part_no": ("part_no", "part no", "part number", "material", "material no", "material number", "item code", "sap code"),
+    "description": ("description", "material description", "part description", "part name"),
+    "unit": ("unit", "uom", "base unit"),
+    "stock_qty": ("stock_qty", "stock", "stock on hand", "on hand", "unrestricted", "qty", "quantity"),
+    "min_qty": ("min_qty", "min stock", "minimum", "min", "reorder level", "safety stock"),
+    "location": ("location", "storage bin", "bin", "store", "storage location"),
+    "alt_part_nos": ("alt_part_nos", "manufacturer part no", "mfr part no", "oem part no", "make part no"),
+    "machine_type": ("machine_type", "machine type", "fits type"),
+    "machine_no": ("machine_no", "machine no", "fits machine"),
+    "stock_at": ("stock_at", "stock date", "as of"),
+}
+SAMPLE_PART = {
+    "part_no": "DEMO-PART-1",
+    "description": "[SAMPLE] Delete this row",
+    "unit": "EA",
+    "stock_qty": 2,
+    "min_qty": 1,
+    "location": "Store A-12",
+    "alt_part_nos": "",
+    "machine_type": "Sand filling machine",
+    "machine_no": "",
+    "stock_at": "",
+}
+PM_COLUMNS = {
+    "machine_no": MACHINE_COLUMNS["machine_no"],
+    "task_code": ("task_code", "task code", "pm code", "maintenance plan", "plan no", "task no", "item"),
+    "title": ("title", "task", "task description", "description", "activity"),
+    "frequency_days": ("frequency_days", "frequency (days)", "frequency", "interval (days)", "interval", "cycle"),
+    "last_done_on": ("last_done_on", "last done", "last date", "completed on", "last completed"),
+    "next_due_on": ("next_due_on", "next due", "due date", "planned date", "next date"),
+}
+SAMPLE_PM = {
+    "machine_no": "DEMO-XX-01",
+    "task_code": "PM-001",
+    "title": "[SAMPLE] Delete this row",
+    "frequency_days": 30,
+    "last_done_on": "2026-09-01",
+    "next_due_on": "",
+}
+
+
+def _list(value) -> list[str]:
+    return [x.strip() for x in re.split(r"[;,\n]", _s(value)) if x.strip()]
+
+
+def _stamp(value) -> datetime | None:
+    day = _parse_date(value)
+    if day is None:
+        return None
+    tz = ZoneInfo(get_config().plant_tz)
+    return datetime.combine(day, time(0, 0), tz).astimezone(timezone.utc)
+
+
+def import_parts(db: Session, user: User, content: bytes) -> dict:
+    rows = []
+    for row_no, row in _read_rows(content, PART_COLUMNS, required="part_no"):
+        values = {k: _s(v) for k, v in row.items()}
+        values["alt_part_nos"] = _list(row.get("alt_part_nos"))
+        values["machine_nos"] = _list(row.get("machine_no"))
+        values["machine_types"] = _list(row.get("machine_type"))
+        values["stock_at"] = _stamp(row.get("stock_at"))
+        rows.append((row_no, values))
+    return parts.upsert(db, user, rows, "import")
+
+
+def import_pm(db: Session, user: User, content: bytes) -> dict:
+    rows = [
+        (row_no, {k: (v if k.endswith("_on") else _s(v)) for k, v in row.items()})  # dates may be Excel dates
+        for row_no, row in _read_rows(content, PM_COLUMNS)
+    ]
+    return pm.upsert(db, user, rows, "import")
+
+
 def template(kind: str) -> bytes:
     wb = Workbook()
     ws = wb.active
-    sample = {"machines": SAMPLE_MACHINE, "logs": SAMPLE_LOG, "alarms": SAMPLE_ALARM}[kind]
+    sample = {
+        "machines": SAMPLE_MACHINE,
+        "logs": SAMPLE_LOG,
+        "alarms": SAMPLE_ALARM,
+        "parts": SAMPLE_PART,
+        "pm": SAMPLE_PM,
+    }[kind]
     ws.title = kind
     _styled(ws, list(sample))
     ws.append(list(sample.values()))
@@ -405,9 +495,57 @@ def export_dashboard(data: dict) -> bytes:
     _styled(sheet, ["Symptom", "Times", "Machines", "Average downtime (min)", "Last seen"])
     for f in data["top_faults"]:
         sheet.append([f["symptom"], f["count"], ", ".join(f["machines"]), f["avg_downtime_min"], f["last"]])
+    sheet = wb.create_sheet("Spare parts")
+    _styled(sheet, ["Part no", "Description", "Times used", "Qty used", "Stock now", "Min stock", "Location", "Low"])
+    for r in data["parts"]["used"]:
+        st = r["stock"] or {}
+        sheet.append([r["part_no"], r["description"], r["times"], r["qty"], st.get("stock_qty"), st.get("min_qty"), st.get("location", ""), "yes" if st.get("low") else ""])
+    for p in data["parts"]["low_stock"]:
+        if not any((r["part_no"] or "").upper() == p["part_no"].upper() for r in data["parts"]["used"]):
+            sheet.append([p["part_no"], p["description"], 0, 0, p["stock_qty"], p["min_qty"], p["location"], "yes"])
+    sheet = wb.create_sheet("PM overdue")
+    _styled(sheet, ["Machine no", "Zone", "Task code", "Task", "Days overdue"])
+    for r in data["pm"]["overdue"]:
+        sheet.append([r["machine_no"], r["zone"], r["task_code"], r["title"], r["days_overdue"]])
     for s in wb.worksheets:
         for col in s.columns:
             s.column_dimensions[col[0].column_letter].width = 22
+    buf = io.BytesIO()
+    wb.save(buf)
+    return buf.getvalue()
+
+
+def export_skills(data: dict) -> bytes:
+    """Skill-gap tables (SPEC 12.7). Blank cells: fewer events than the minimum."""
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Technicians"
+    _styled(ws, ["Technician", "Employee ID", "Zone", "Fixes", "Verified", "Median downtime (min)", "vs team median",
+                 "Ask Thunai sessions", "Supervisor called", "Called (%)", "Can't do steps", "Authorised-only can't do",
+                 "Approved tips", "Machine types fixed"])
+    for t in data["technicians"]:
+        ws.append([t["name"], t["employee_id"], t["zone"], t["fixes"], t["verified"], t["median_downtime_min"], t["vs_team"],
+                   t["sessions"], t["escalated"], t["escalation_pct"], t["cant_do"], t["cant_do_authorised"], t["tips"],
+                   ", ".join(t["machine_types"])])
+    cov = wb.create_sheet("Coverage")
+    _styled(cov, ["Technician", *data["types"]])
+    for row in data["matrix"]:
+        cov.append([row["name"], *[row["cells"].get(t, 0) or None for t in data["types"]]])
+    mt = wb.create_sheet("Machine types")
+    _styled(mt, ["Machine type", "Breakdowns", "People who fixed it", "Names", "Median downtime (min)", "Ask Thunai sessions", "Called (%)"])
+    for r in data["machine_types"]:
+        mt.append([r["name"], r["breakdowns"], r["fixers"], ", ".join(r["fixer_names"]), r["median_downtime_min"], r["sessions"], r["escalation_pct"]])
+    sg = wb.create_sheet("Suggestions")
+    _styled(sg, ["Kind", "Machine type", "Technician", "Partner", "Suggestion"])
+    for g in data["suggestions"]:
+        sg.append([g["kind"], g["machine_type"] or "", g["technician"] or "", g["partner"] or "", g["text_en"]])
+    for s in wb.worksheets:
+        for col in s.columns:
+            s.column_dimensions[col[0].column_letter].width = 20
+    sg.column_dimensions["E"].width = 90
+    info = wb.create_sheet("About")
+    info.append([f"Period: last {data['days']} days. Zone: {data['zone'] or 'All'}. Figures need at least {data['min_events']} events."])
+    info.append(["For training and shift planning, not appraisal."])
     buf = io.BytesIO()
     wb.save(buf)
     return buf.getvalue()

@@ -47,6 +47,7 @@ class LogIn(BaseModel):
     client_uuid: str | None = Field(default=None, max_length=64)
     submit: bool = True
     still_down: bool = False
+    alarm_event_id: int | None = None  # the PLC/SCADA alarm that pre-filled this log (Phase 3)
 
 
 class LogUpdate(BaseModel):

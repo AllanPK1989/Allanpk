@@ -24,6 +24,9 @@ DEFAULTS: dict = {
     "audio_retention_days": 90,
     "idle_logout_minutes": 10,
     "max_clarifying_questions": 3,
+    "alarm_prefill_hours": 8,  # Phase 3: a machine alarm this recent pre-fills Ask Thunai and New log
+    "pm_due_soon_days": 7,  # Phase 3: PM tasks due within this many days are shown as "due soon"
+    "skill_min_events": 3,  # Phase 3: skill figures need at least this many events
 }
 
 

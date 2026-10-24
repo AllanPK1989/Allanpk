@@ -11,13 +11,13 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from . import machines_service
+from . import machines_service, parts, pm
 from .knowledge import group_key
 from .config import get_config
 from .logs_service import set_text
 from . import documents
 from .config import get_config as _cfg
-from .models import BreakdownLog, Component, Document, FaultCard, Glossary, LogClassification, LogPart, User, utcnow
+from .models import AISession, BreakdownLog, Component, Document, FaultCard, Glossary, LogClassification, LogPart, User, utcnow
 from .schemas import MachineIn
 from .security import hash_pin
 from .shifts import downtime_minutes, shift_for
@@ -85,6 +85,7 @@ USERS = [
     ("D-SUP2", "[Sample] Supervisor Zone 2", "supervisor", "Zone 2", "en"),
     ("D-TECH1", "[Sample] Technician 1", "technician", "Bussmann Zone 1", "ta"),
     ("D-TECH2", "[Sample] Technician 2", "technician", "Zone 2", "en"),
+    ("D-TECH3", "[Sample] Technician 3", "technician", "Bussmann Zone 1", "ta"),
 ]
 
 # (machine, days ago, start, minutes, status, issue(orig, en, ta), cause(...), action(...), part, symptom, failure)
@@ -147,7 +148,7 @@ FAULT_CARD = {
     "steps_en": [
         "Check the solenoid coil connector and cable for burn marks.",
         "Measure coil resistance with a multimeter. Compare with the coil label.",
-        "If the coil is burnt or open, replace the solenoid coil.",
+        "If the coil is burnt or open, replace the solenoid coil (part DEMO-P-1001).",
         "Check the home sensor is tight. Gap should be 2 mm.",
         "Remove your LOTO. Restore air and power. Keep hands clear.",
         "Run 10 cycles and watch the cylinder return.",
@@ -155,15 +156,47 @@ FAULT_CARD = {
     "steps_ta": [
         "Solenoid coil connector, cable-ல burn mark இருக்கான்னு பாருங்க.",
         "Multimeter-ல coil resistance அளந்து, coil label-ஓட compare பண்ணுங்க.",
-        "Coil burn அல்லது open-ஆ இருந்தா, solenoid coil-ஐ மாத்துங்க.",
+        "Coil burn அல்லது open-ஆ இருந்தா, solenoid coil-ஐ மாத்துங்க (part DEMO-P-1001).",
         "Home sensor tight-ஆ இருக்கான்னு பாருங்க. Gap 2 mm இருக்கணும்.",
         "உங்க LOTO-ஐ எடுங்க. Air, power திரும்ப கொடுங்க. கை வைக்காதீங்க.",
         "10 cycle ஓட்டி cylinder return ஆகுதான்னு பாருங்க.",
     ],
-    "parts": ["Solenoid coil"],
+    "parts": ["DEMO-P-1001 Solenoid coil 24 V DC"],
     "tools": ["Multimeter", "Screwdriver set", "Spanner set"],
     "avg_fix_min": 33,
 }
+
+
+# SAMPLE spare parts and PM plan (Phase 3). Part numbers start with DEMO-P- so they cannot be
+# mistaken for real ones. (part no, description, unit, stock, min, location, machine type code)
+SAMPLE_PARTS = [
+    ("DEMO-P-1001", "[SAMPLE] Solenoid coil 24 V DC", "EA", 1, 2, "Store A-12", "SF"),
+    ("DEMO-P-1002", "[SAMPLE] 5/2 solenoid valve", "EA", 2, 1, "Store A-12", "SF"),
+    ("DEMO-P-1003", "[SAMPLE] Proximity sensor M12", "EA", 4, 2, "Store B-03", "SF"),
+    ("DEMO-P-1004", "[SAMPLE] FRL bowl seal kit", "EA", 0, 2, "Store A-14", "SF"),
+    ("DEMO-P-2001", "[SAMPLE] Print head cleaning pen", "EA", 6, 2, "Store C-01", "LP"),
+    ("DEMO-P-3001", "[SAMPLE] Autoclave door gasket", "EA", 1, 1, "Store D-02", "AC"),
+]
+# (machine, task code, title, every n days, last done n days ago)
+SAMPLE_PM = [
+    ("DEMO-SF-01", "PM-SF-01", "[SAMPLE] Clean and check filling cylinder and solenoid valve", 30, 41),
+    ("DEMO-SF-01", "PM-SF-02", "[SAMPLE] Check FRL pressure and drain the bowl", 7, 3),
+    ("DEMO-SF-02", "PM-SF-01", "[SAMPLE] Clean and check filling cylinder and solenoid valve", 30, 10),
+    ("DEMO-AC-01", "PM-AC-01", "[SAMPLE] Inspect door gasket and clamps", 30, 35),
+]
+
+
+# SAMPLE Ask Thunai sessions for the skills page: a newer technician who calls the supervisor on
+# sand filling machines. (machine, days ago, problem)
+SAMPLE_SESSIONS = [
+    ("DEMO-SF-01", 20, "[SAMPLE] Cylinder slow, not sure what to check"),
+    ("DEMO-SF-02", 11, "[SAMPLE] Air pressure low on FRL"),
+    ("DEMO-SF-01", 4, "[SAMPLE] Cylinder not returning, coil warm"),
+]
+SAMPLE_SESSION_STEPS = [
+    {"step_no": 1, "kind": "safety", "action_en": "Switch off main power and apply LOTO before you start.", "authorised_only": False},
+    {"step_no": 2, "kind": "check", "action_en": "Measure 24 V DC at the valve connector with power on.", "authorised_only": True},
+]
 
 
 # SAMPLE alarm list and quick-check sheet for the sand filling type (made up for demos).
@@ -277,4 +310,28 @@ def seed(db: Session) -> None:
     sf_type = machines["DEMO-SF-01"].machine_type_id
     _sample_document(db, users["D-ADMIN"], sf_type, "[SAMPLE] Sand filling alarm list", "alarm_list", "text/csv", ".csv", SAMPLE_ALARMS_CSV)
     _sample_document(db, users["D-ADMIN"], sf_type, "[SAMPLE] Sand filling quick checks", "sop", "text/plain", ".txt", SAMPLE_QUICK_CHECKS)
+    db.flush()
+
+    rows = [
+        (i, {"part_no": no, "description": desc, "unit": unit, "stock_qty": stock, "min_qty": minimum,
+             "location": loc, "machine_types": [TYPES[code]]})
+        for i, (no, desc, unit, stock, minimum, loc, code) in enumerate(SAMPLE_PARTS)
+    ]
+    parts.upsert(db, None, rows, "sample")
+    today = now_local.date()
+    pm_rows = [
+        (i, {"machine_no": no, "task_code": code, "title": title, "frequency_days": every,
+             "last_done_on": today - timedelta(days=ago)})
+        for i, (no, code, title, every, ago) in enumerate(SAMPLE_PM)
+    ]
+    pm.upsert(db, None, pm_rows, "sample")
+    for no, days, problem in SAMPLE_SESSIONS:
+        at = utcnow() - timedelta(days=days)
+        db.add(AISession(
+            machine_id=machines[no].id, technician_id=users["D-TECH3"].id, language="ta", problem_text=problem,
+            steps=SAMPLE_SESSION_STEPS, outcome="escalated", supervisor_called=True, model="sample",
+            step_responses=[{"step_no": 1, "response": "ok", "at": at.isoformat()},
+                            {"step_no": 2, "response": "cant_do", "at": at.isoformat()}],
+            created_at=at, closed_at=at + timedelta(minutes=12),
+        ))
     db.flush()

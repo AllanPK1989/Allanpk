@@ -1,9 +1,9 @@
 """Job bodies. Each opens its own database session (see jobs.py)."""
 import logging
 
-from . import documents, indexing, knowledge, logs_service, media, tips
+from . import documents, indexing, knowledge, logs_service, media, tips, webhooks
 from .db import SessionLocal
-from .models import Document, ExpertTip, LogMedia
+from .models import Document, ExpertTip, LogMedia, WebhookDelivery
 from .schemas import TextIn
 
 log = logging.getLogger("thunai.tasks")
@@ -93,3 +93,22 @@ def purge_expired_media() -> int:
         log.info("Purged %d expired media files", count)
         return count
 
+
+
+def deliver_webhook(delivery_id: int) -> None:
+    with SessionLocal() as db:
+        d = db.get(WebhookDelivery, delivery_id)
+        if d is not None:
+            webhooks.deliver(db, d)
+            db.commit()
+
+
+def deliver_due_webhooks() -> int:
+    """Retries whose wait is over (run every minute by the worker container)."""
+    with SessionLocal() as db:
+        count = 0
+        for d in webhooks.due(db):
+            webhooks.deliver(db, d)
+            db.commit()
+            count += 1
+        return count

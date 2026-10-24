@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from . import logs_service, retrieval, safety, settings_store
+from . import alarm_feed, logs_service, parts, photos, retrieval, safety, settings_store
 from .ai import schemas as ai_schemas
 from .ai.service import AIOutputError, call_json
 from .config import get_config
@@ -35,11 +35,24 @@ def _answers_text(session: AISession, lang: str = "en") -> str:
     return "\n".join(rows) or "(no questions asked)"
 
 
+def _photos(db: Session, session: AISession) -> list[LogMedia]:
+    rows = db.scalars(
+        select(LogMedia).where(LogMedia.ai_session_id == session.id, LogMedia.kind == "photo").order_by(LogMedia.id)
+    )
+    return [m for m in rows if (m.observation or {}).get("usable")]
+
+
+def _context(db: Session, session: AISession) -> retrieval.Context:
+    # Search on the technician's words only; the answers go to the AI but would drown the query.
+    return retrieval.build_context(db, session.machine, session.problem_text, session.alarm_code, _photos(db, session))
+
+
 def _variables(db: Session, session: AISession, ctx: retrieval.Context) -> dict:
     machine = session.machine
     return {
         "machine": retrieval.format_machine(machine),
         "components": retrieval.format_components(ctx.components),
+        "parts": retrieval.format_parts(ctx.parts),
         "glossary": retrieval.format_glossary(ctx.glossary),
         "context": retrieval.format_context(ctx),
         "language": {"en": "English", "ta": "Tamil"}.get(session.language, "English"),
@@ -76,12 +89,15 @@ def start(db: Session, user: User, machine: Machine, data: SessionStart) -> AISe
         media = db.get(LogMedia, media_id)
         if media and media.created_by == user.id:
             media.ai_session_id = session.id
+            if media.kind == "photo" and not media.observed_at:
+                photos.read(db, media, machine)  # normally already read when the photo was added
+    db.flush()
 
     if safety.check_request(session.problem_text).refused:
         _refuse(session)
         return session
 
-    ctx = retrieval.build_context(db, machine, session.problem_text, session.alarm_code)
+    ctx = _context(db, session)
     session.sources_used = [i.as_dict() for i in ctx.items]
     hints = {
         "problem": session.problem_text,
@@ -136,8 +152,7 @@ def _validator(proc: ai_schemas.TroubleshootOut) -> ai_schemas.TroubleshootOut:
 
 def generate(db: Session, session: AISession) -> None:
     machine = session.machine
-    # Search on the technician's words only; the answers go to the AI but would drown the query.
-    ctx = retrieval.build_context(db, machine, session.problem_text, session.alarm_code)
+    ctx = _context(db, session)
     session.sources_used = [i.as_dict() for i in ctx.items]
     texts = _machine_texts(machine)
     hints = {
@@ -171,6 +186,11 @@ def generate(db: Session, session: AISession) -> None:
         pneumatic=safety.is_pneumatic(session.problem_text, *texts),
         pressure_machine=safety.is_pressure_machine(*texts),
     )
+    # Spare parts named in a step (exact part numbers from the catalogue only); stock is added when shown.
+    part_index = parts.index(ctx.parts)
+    for step in steps:
+        text = " ".join(str(step.get(k, "")) for k in ("action_en", "check_en", "expected_result_en", "action_ta"))
+        step["part_nos"] = [p.part_no for p in parts.find_in_text(text, part_index)]
     threshold = float(settings_store.get(db, "low_confidence_threshold"))
     causes = []
     for c in out.likely_causes[:3]:
@@ -289,6 +309,11 @@ def call_supervisor(db: Session, session: AISession) -> dict:
     return {"summary": summary_text(session), "supervisors": supervisors_for(db, session.machine.zone)}
 
 
+def _alarm_event_id(db: Session, session: AISession) -> int | None:
+    event = alarm_feed.match(db, session.machine, session.alarm_code, session.created_at)
+    return event.id if event else None
+
+
 def close(db: Session, user: User, session: AISession, running: bool) -> dict:
     if session.outcome not in ("in_progress", "failed", "refused"):
         raise HTTPException(409, f"Session is already {session.outcome}")
@@ -338,6 +363,7 @@ def close(db: Session, user: User, session: AISession, running: bool) -> dict:
             source="ai_session",
             ai_session_id=session.id,
             submit=False,
+            alarm_event_id=_alarm_event_id(db, session),
         )
         log = logs_service.create_log(db, user, machine, body, source="ai_session")
         log.needs_confirmation = True
@@ -359,6 +385,7 @@ def close(db: Session, user: User, session: AISession, running: bool) -> dict:
             ai_session_id=session.id,
             submit=False,
             still_down=True,
+            alarm_event_id=_alarm_event_id(db, session),
         )
         log = logs_service.create_log(db, user, machine, body, source="ai_session")
         log.escalated = True

@@ -30,4 +30,5 @@ class AIProvider(Protocol):
         schema: dict,
         max_tokens: int,
         hints: dict,  # raw context; only the mock provider reads it
+        images: list[tuple[str, str]] | None = None,  # (media type, base64) photos, placed before the text
     ) -> AIResult: ...

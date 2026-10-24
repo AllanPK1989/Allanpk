@@ -36,4 +36,6 @@ def test_dashboard_excel_export(client):
     r = client.get("/api/export/dashboard.xlsx?days=90", headers=login(client, "D-ADMIN"))
     assert r.status_code == 200
     wb = load_workbook(io.BytesIO(r.content))
-    assert wb.sheetnames == ["Summary", "Downtime by zone", "Downtime by shift", "Machines", "Top faults"]
+    assert wb.sheetnames == [
+        "Summary", "Downtime by zone", "Downtime by shift", "Machines", "Top faults", "Spare parts", "PM overdue",
+    ]

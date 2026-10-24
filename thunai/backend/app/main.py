@@ -9,7 +9,22 @@ from fastapi.staticfiles import StaticFiles
 
 from . import jobs  # noqa: F401  (registers the after-commit job hooks)
 from .config import get_config
-from .routers import admin, ai, auth, dashboard, documents, fault_cards, logs, machines, media, review, tips
+from .routers import (
+    admin,
+    ai,
+    auth,
+    dashboard,
+    documents,
+    fault_cards,
+    integrations,
+    logs,
+    machines,
+    media,
+    parts,
+    review,
+    skills,
+    tips,
+)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 cfg = get_config()
@@ -24,7 +39,7 @@ if cfg.cors_origins:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-for module in (auth, machines, logs, media, ai, review, fault_cards, tips, documents, dashboard, admin):
+for module in (auth, machines, logs, media, ai, review, fault_cards, tips, documents, dashboard, skills, parts, integrations, admin):
     app.include_router(module.router)
 
 
@@ -39,6 +54,7 @@ def meta():
         "app": cfg.app_name,
         "version": app.version,
         "demo_ai": cfg.ai_provider == "mock",
+        "photos_to_ai": cfg.photos_to_ai,
         "stt_provider": cfg.stt_provider,
         "environment": cfg.environment,
     }

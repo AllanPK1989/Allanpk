@@ -185,6 +185,8 @@ class BreakdownLog(Timestamps, Base):
     client_uuid: Mapped[str | None] = mapped_column(String(64), unique=True)
     original_language: Mapped[str] = mapped_column(String(10), default="")
     enriched_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
+    # Phase 3: reference written back by the PM system or SAP, e.g. a notification number.
+    external_ref: Mapped[str] = mapped_column(String(80), default="", index=True)
 
     machine: Mapped[Machine] = relationship()
     technician: Mapped[User | None] = relationship(foreign_keys=[technician_id])
@@ -246,6 +248,10 @@ class LogMedia(Base):
     created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow)
     expires_at: Mapped[datetime | None] = mapped_column(UTCDateTime, index=True)
     purged_at: Mapped[datetime | None] = mapped_column(UTCDateTime)  # file removed, row kept
+    # Phase 3: what the AI read from a photo (see photos.py); empty until read.
+    observation: Mapped[dict] = mapped_column(JSONType, default=dict)
+    observed_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
+    observation_model: Mapped[str] = mapped_column(String(80), default="")
 
     log: Mapped[BreakdownLog | None] = relationship(back_populates="media", foreign_keys=[log_id])
 
@@ -407,6 +413,126 @@ class Embedding(Base):
     vector: Mapped[list] = mapped_column(JSONType)
     text_hash: Mapped[str] = mapped_column(String(64))
     created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow)
+
+
+# ---- Phase 3: integration -------------------------------------------------------------------
+class SparePart(Timestamps, Base):
+    """Mirror of the stores system (SAP or other). Thunai never changes stock itself."""
+
+    __tablename__ = "spare_parts"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    part_no: Mapped[str] = mapped_column(String(80), unique=True, index=True)  # plant or SAP material no.
+    description: Mapped[str] = mapped_column(String(300), default="")
+    unit: Mapped[str] = mapped_column(String(20), default="")
+    stock_qty: Mapped[float | None] = mapped_column(Float)
+    min_qty: Mapped[float | None] = mapped_column(Float)
+    location: Mapped[str] = mapped_column(String(120), default="")
+    alt_part_nos: Mapped[list] = mapped_column(JSONType, default=list)  # manufacturer part numbers
+    # " PART_NO ALT1 ALT2 " in upper case, so a component's part number finds its stock row.
+    match_keys: Mapped[str] = mapped_column(String(600), default="")
+    stock_at: Mapped[datetime | None] = mapped_column(UTCDateTime)  # when the stock figure was valid
+    source: Mapped[str] = mapped_column(String(40), default="")  # import | api:<key name>
+    active: Mapped[bool] = mapped_column(Boolean, default=True)
+
+    fits: Mapped[list["PartFit"]] = relationship(back_populates="part", cascade="all, delete-orphan")
+
+    @property
+    def low(self) -> bool:
+        if self.stock_qty is None:
+            return False
+        return self.stock_qty <= 0 or (self.min_qty is not None and self.stock_qty <= self.min_qty)
+
+
+class PartFit(Base):
+    __tablename__ = "part_fits"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    part_id: Mapped[int] = mapped_column(ForeignKey("spare_parts.id"), index=True)
+    machine_id: Mapped[int | None] = mapped_column(ForeignKey("machines.id"), index=True)
+    machine_type_id: Mapped[int | None] = mapped_column(ForeignKey("machine_types.id"), index=True)
+
+    part: Mapped[SparePart] = relationship(back_populates="fits")
+
+
+class PMTask(Timestamps, Base):
+    """Mirror of the PM system's plan for a machine. Thunai does not schedule PM."""
+
+    __tablename__ = "pm_tasks"
+    __table_args__ = (UniqueConstraint("machine_id", "task_code"),)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    machine_id: Mapped[int] = mapped_column(ForeignKey("machines.id"), index=True)
+    task_code: Mapped[str] = mapped_column(String(80))
+    title: Mapped[str] = mapped_column(String(300), default="")
+    frequency_days: Mapped[int | None] = mapped_column(Integer)
+    last_done_on: Mapped[date | None] = mapped_column(Date)
+    next_due_on: Mapped[date | None] = mapped_column(Date, index=True)
+    source: Mapped[str] = mapped_column(String(40), default="")
+    active: Mapped[bool] = mapped_column(Boolean, default=True)
+
+    machine: Mapped[Machine] = relationship()
+
+
+class MachineAlarm(Base):
+    """An alarm event from a PLC, SCADA or alarm historian (POST /api/integrations/alarms)."""
+
+    __tablename__ = "machine_alarms"
+    __table_args__ = (UniqueConstraint("machine_id", "code", "raised_at"),)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    machine_id: Mapped[int] = mapped_column(ForeignKey("machines.id"), index=True)
+    code: Mapped[str] = mapped_column(String(60), index=True)
+    message: Mapped[str] = mapped_column(Text, default="")
+    raised_at: Mapped[datetime] = mapped_column(UTCDateTime, index=True)
+    cleared_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
+    source: Mapped[str] = mapped_column(String(80), default="")
+    event_id: Mapped[str | None] = mapped_column(String(120), unique=True)  # sender's id, for de-duplication
+    log_id: Mapped[int | None] = mapped_column(ForeignKey("breakdown_logs.id"), index=True)
+    created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow)
+
+    machine: Mapped[Machine] = relationship()
+
+
+INTEGRATION_SCOPES = ("alarms", "parts", "pm", "logs")
+WEBHOOK_EVENTS = ("breakdown.opened", "breakdown.closed", "breakdown.verified")
+
+
+class IntegrationKey(Timestamps, Base):
+    __tablename__ = "integration_keys"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(120))
+    key_hash: Mapped[str] = mapped_column(String(64), unique=True)  # sha256 of the token
+    key_prefix: Mapped[str] = mapped_column(String(12))  # first characters, to tell keys apart
+    scopes: Mapped[list] = mapped_column(JSONType, default=list)
+    active: Mapped[bool] = mapped_column(Boolean, default=True)
+    last_used_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
+    created_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+
+
+class Webhook(Timestamps, Base):
+    __tablename__ = "webhooks"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(120), default="")
+    url: Mapped[str] = mapped_column(String(500))
+    events: Mapped[list] = mapped_column(JSONType, default=list)
+    secret: Mapped[str] = mapped_column(String(120))  # needed to sign, so stored; shown once
+    active: Mapped[bool] = mapped_column(Boolean, default=True)
+    created_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+
+
+class WebhookDelivery(Base):
+    __tablename__ = "webhook_deliveries"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    webhook_id: Mapped[int] = mapped_column(ForeignKey("webhooks.id"), index=True)
+    event: Mapped[str] = mapped_column(String(40))
+    entity_id: Mapped[str] = mapped_column(String(40), default="")
+    payload: Mapped[dict] = mapped_column(JSONType, default=dict)
+    status: Mapped[str] = mapped_column(String(20), default="pending", index=True)  # pending | sent | failed
+    attempts: Mapped[int] = mapped_column(Integer, default=0)
+    next_attempt_at: Mapped[datetime | None] = mapped_column(UTCDateTime, index=True)
+    last_status: Mapped[int | None] = mapped_column(Integer)
+    last_error: Mapped[str] = mapped_column(Text, default="")
+    sent_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
+    created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow, index=True)
+
+    webhook: Mapped[Webhook] = relationship()
 
 
 class Glossary(Timestamps, Base):

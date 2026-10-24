@@ -66,6 +66,13 @@ def open_log(machine_no: str, user: User = Depends(current_user), db: Session = 
     return {"log": serialize.log(logs_service.load_log(db, log.id), full=False) if log else None}
 
 
+@router.get("/{machine_no}/active-alarm")
+def active_alarm(machine_no: str, user: User = Depends(current_user), db: Session = Depends(get_db)):
+    """The alarm that pre-fills Ask Thunai and New log (PLC/SCADA feed), or null."""
+    machine = machines_service.get_machine(db, machine_no)
+    return {"alarm": machines_service.active_alarm(db, machine)}
+
+
 @router.get("/{machine_no}/qr.{fmt}")
 def qr(machine_no: str, fmt: str, user: User = Depends(current_user), db: Session = Depends(get_db)):
     machine = machines_service.get_machine(db, machine_no)

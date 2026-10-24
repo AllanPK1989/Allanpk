@@ -1,9 +1,10 @@
 """Builds the evidence the AI may use, in the brief's priority order.
 
+Tier 0  this breakdown now: photos read by the AI and the machine's PLC/SCADA alarm feed (Phase 3)
 Tier 1  approved fault cards for this machine (cards flagged for review are included and labelled)
 Tier 2  verified logs and approved expert tips for this machine
 Tier 3  fault cards, logs and tips for the same machine type
-Tier 4  manuals, drawings and alarm lists for the machine or its type
+Tier 4  manuals, drawings, alarm lists and overdue PM tasks for the machine or its type
 Tier 5  closed logs on this machine that are not yet verified (labelled)
 (no ref) general knowledge; the UI labels such steps "General suggestion"
 
@@ -13,22 +14,39 @@ candidate sets stay small.
 """
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session, selectinload
 
-from . import embeddings
-from .models import AlarmCode, BreakdownLog, Component, Document, DocumentChunk, ExpertTip, FaultCard, Glossary, Machine
+from . import alarm_feed, embeddings, parts, pm
+from .config import get_config
+from .models import (
+    AlarmCode,
+    BreakdownLog,
+    Component,
+    Document,
+    DocumentChunk,
+    ExpertTip,
+    FaultCard,
+    Glossary,
+    LogMedia,
+    Machine,
+    PMTask,
+    SparePart,
+)
 from .textutil import rank
 
 TIER_LABELS = {
+    0: "this breakdown now (photo or machine alarm feed)",
     1: "approved fault card, this machine",
     2: "verified log or expert tip, this machine",
     3: "same machine type",
-    4: "manual, drawing or alarm list",
+    4: "manual, drawing, alarm list or PM plan",
     5: "not yet verified, this machine",
 }
-LIMITS = {1: 3, 2: 6, 3: 4, 4: 4, 5: 3}
+LIMITS = {0: 5, 1: 3, 2: 6, 3: 4, 4: 5, 5: 3}
+MAX_PM_ITEMS = 2
 MIN_SCORE = 0.08
 HISTORY_DAYS = 3 * 365
 
@@ -36,7 +54,7 @@ HISTORY_DAYS = 3 * 365
 @dataclass
 class Item:
     ref: str
-    kind: str  # fault_card | log | tip | doc | alarm
+    kind: str  # fault_card | log | tip | doc | alarm | pm | scada | photo
     tier: int
     score: float
     machine_no: str
@@ -59,6 +77,7 @@ class Context:
     items: list[Item]
     glossary: list[Glossary]
     components: list[Component]
+    parts: list[SparePart] = field(default_factory=list)
 
     @property
     def refs(self) -> set[str]:
@@ -194,6 +213,72 @@ def alarm_item(alarm: AlarmCode, machine_no: str) -> Item:
     )
 
 
+def pm_item(task: PMTask, machine_no: str, on, score: float) -> Item:
+    due = pm.due_on(task)
+    late = (on - due).days if due else 0
+    every = f"every {task.frequency_days} days; " if task.frequency_days else ""
+    last = task.last_done_on.isoformat() if task.last_done_on else "not recorded"
+    code = task.task_code
+    return Item(
+        ref=code if code.upper().startswith("PM") else f"PM-{code}",
+        kind="pm",
+        tier=4,
+        score=score,
+        machine_no=machine_no,
+        when=due.isoformat() if due else "",
+        text_en=f"PM task {task.task_code} '{task.title}' ({every}last done {last}) is overdue by {late} days.",
+        data={"task_code": task.task_code, "title": task.title, "days_overdue": late, "last_done_on": last},
+    )
+
+
+def scada_item(row: dict, machine_no: str) -> Item:
+    tz = ZoneInfo(get_config().plant_tz)
+    first, last = row["first"].astimezone(tz), row["last"].astimezone(tz)
+    state = "still active" if row.get("active") else "cleared"
+    return Item(
+        ref=f"SCADA-{row['code']}",
+        kind="scada",
+        tier=0,
+        score=1.0 + row["count"] / 100,
+        machine_no=machine_no,
+        when=last.date().isoformat(),
+        text_en=(
+            f"Machine alarm feed: {row['code']} {row['message'] or ''} raised {row['count']} time(s) in the last "
+            f"{alarm_feed.FEED_HOURS} h (first {first:%d %b %H:%M}, last {last:%d %b %H:%M} plant time); latest {state}."
+        ),
+        data={"code": row["code"], "message": row["message"], "count": row["count"], "last": last.isoformat(), "active": row.get("active")},
+    )
+
+
+def photo_item(media: LogMedia, machine_no: str) -> Item:
+    o = media.observation or {}
+    readings = []
+    for r in o.get("readings", []):
+        if r.get("legible") and r.get("value"):
+            readings.append(f"{r['label']} about {r['value']} {r.get('unit', '')}".strip())
+        else:
+            readings.append(f"{r['label']}: could not be read")
+    parts_text = [f"shows {o.get('shows_en', '')}"]
+    if readings:
+        parts_text.append("readings (approximate): " + "; ".join(readings))
+    if o.get("screen_text"):
+        parts_text.append(f"screen text: \"{o['screen_text'][:300]}\"")
+    if o.get("alarm_codes"):
+        parts_text.append("alarm codes on screen: " + ", ".join(o["alarm_codes"]))
+    if o.get("damage_en"):
+        parts_text.append(f"visible damage: {o['damage_en']}")
+    return Item(
+        ref=f"PHOTO-{media.id}",
+        kind="photo",
+        tier=0,
+        score=2.0,
+        machine_no=machine_no,
+        when=media.created_at.date().isoformat(),
+        text_en="Photo taken now, read by the AI: " + "; ".join(parts_text) + ".",
+        data={"media_id": media.id, **{k: o.get(k) for k in ("shows_en", "shows_ta", "readings", "alarm_codes", "damage_en", "damage_ta", "screen_text")}},
+    )
+
+
 def lookup_alarm(db: Session, machine: Machine, code: str) -> AlarmCode | None:
     """The alarm-list entry for a code: this machine's list first, then its machine type's."""
     code = (code or "").strip()
@@ -245,12 +330,21 @@ def active_glossary(db: Session) -> list[Glossary]:
     return list(db.scalars(select(Glossary).where(Glossary.active.is_(True)).order_by(Glossary.term_en).limit(300)))
 
 
-def build_context(db: Session, machine: Machine, query: str, alarm_code: str = "") -> Context:
+def build_context(
+    db: Session, machine: Machine, query: str, alarm_code: str = "", photos: list[LogMedia] | tuple = ()
+) -> Context:
     glossary = active_glossary(db)
     variants = glossary_variants(glossary)
     components = [c for c in machine.components if c.active]
     since = datetime.now(timezone.utc) - timedelta(days=HISTORY_DAYS)
     items: list[Item] = []
+
+    # Tier 0: what is known about this breakdown now (photos read by the AI, the alarm feed).
+    for media in photos:
+        if (media.observation or {}).get("usable"):
+            items.append(photo_item(media, machine.machine_no))
+    for row in alarm_feed.counts(alarm_feed.recent(db, machine))[:3]:
+        items.append(scada_item(row, machine.machine_no))
 
     # Machines of the same type (other than this one).
     sibling_ids: dict[int, str] = {}
@@ -352,13 +446,22 @@ def build_context(db: Session, machine: Machine, query: str, alarm_code: str = "
     if alarm:
         items.append(alarm_item(alarm, machine.machine_no))
 
+    # Overdue PM tasks on this machine (tier 4): the most overdue first, keyword match as a tiebreak.
+    on = pm.today()
+    late = pm.overdue(db, machine, on)
+    if late:
+        scores = rank(query, [f"{t.title} {t.task_code}" for t in late], variants)
+        late_items = [pm_item(t, machine.machine_no, on, 0.5 + sc) for t, sc in zip(late, scores)]
+        late_items.sort(key=lambda i: (-i.data["days_overdue"], -i.score))
+        items.extend(late_items[:MAX_PM_ITEMS])
+
     # Keep the best few per tier, in tier order (an exact alarm-code match always stays).
     chosen: list[Item] = []
     for tier in sorted(LIMITS):
         tier_items = sorted((i for i in items if i.tier == tier), key=lambda i: i.when, reverse=True)
         tier_items.sort(key=lambda i: (i.kind != "alarm", -i.score))  # stable: newest first among equals
         chosen.extend(tier_items[: LIMITS[tier]])
-    return Context(items=chosen, glossary=glossary, components=components)
+    return Context(items=chosen, glossary=glossary, components=components, parts=parts.for_machine(db, machine))
 
 
 def format_context(ctx: Context) -> str:
@@ -384,6 +487,23 @@ def format_components(components: list[Component]) -> str:
         for c in components
     ]
     return "\n".join(rows) or "(none recorded)"
+
+
+def format_parts(rows: list[SparePart], limit: int = 60) -> str:
+    """Spare parts for the prompt. Stock is what the stores system last reported."""
+    out = []
+    for p in rows[:limit]:
+        if p.stock_qty is None:
+            stock = "stock not known"
+        else:
+            stock = f"stock {p.stock_qty:g} {p.unit}".strip() + (f" at {p.location}" if p.location else "")
+            if p.stock_at:
+                stock += f" (as of {p.stock_at.date().isoformat()})"
+            if p.low:
+                stock += ", LOW"
+        alts = f"; also known as {', '.join(p.alt_part_nos)}" if p.alt_part_nos else ""
+        out.append(f"- {p.part_no}: {p.description}{alts}; {stock}")
+    return "\n".join(out) or "(no spare parts recorded for this machine)"
 
 
 def format_machine(m: Machine) -> str:

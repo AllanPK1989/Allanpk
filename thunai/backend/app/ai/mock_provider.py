@@ -84,7 +84,7 @@ def _step(no: int, total: int, **fields) -> dict:
 class MockProvider:
     name = "mock"
 
-    def generate_json(self, *, tier, purpose, system, user, schema, max_tokens, hints) -> AIResult:
+    def generate_json(self, *, tier, purpose, system, user, schema, max_tokens, hints, images=None) -> AIResult:
         handler = getattr(self, f"_{purpose}", None)
         if handler is None:
             return AIResult(None, "mock", error=f"mock has no handler for {purpose}")
@@ -213,6 +213,29 @@ class MockProvider:
             plan.append({"kind": "check", "action_en": f"Expert tip: {d['text_en']}"[:200],
                          "action_ta": f"Expert tip: {d['text_ta'] or d['text_en']}"[:200],
                          "source_refs": [tip["ref"]], "confidence": 0.6})
+        # Phase 3 sources: what a photo showed and the machine's alarm feed go first; overdue PM last.
+        now_steps = []
+        for photo in [i for i in items if i["kind"] == "photo"][:1]:
+            d = photo["data"]
+            seen = "; ".join(
+                f"{r['label']} {r['value']} {r['unit']}".strip() for r in d.get("readings") or [] if r.get("legible")
+            )
+            now_steps.append({"kind": "check", "action_en": f"The photo shows: {d.get('shows_en', '')}. Check it yourself: {seen or 'look at the same place'}."[:200],
+                              "action_ta": f"Photo-ல தெரியுது: {d.get('shows_ta') or d.get('shows_en', '')}. நீங்களே பாருங்க: {seen or 'அதே இடத்தை பாருங்க'}."[:200],
+                              "source_refs": [photo["ref"]], "confidence": 0.6})
+        for feed in [i for i in items if i["kind"] == "scada"][:1]:
+            d = feed["data"]
+            now_steps.append({"kind": "check", "action_en": f"The machine raised alarm {d['code']} {d['count']} time(s) today. Check the HMI alarm history."[:200],
+                              "action_ta": f"Machine இன்னைக்கு alarm {d['code']} {d['count']} தடவை காட்டிச்சு. HMI alarm history பாருங்க."[:200],
+                              "source_refs": [feed["ref"]], "confidence": 0.6})
+        plan[:0] = now_steps
+        for task in [i for i in items if i["kind"] == "pm"][:1]:
+            d = task["data"]
+            # Before any "remove your LOTO" step, so the check is done while isolated.
+            at = next((n for n, x in enumerate(plan) if "remove your loto" in x["action_en"].lower()), len(plan))
+            plan.insert(at, {"kind": "check", "action_en": f"PM task '{d['title']}' is {d['days_overdue']} days overdue. Do its checks if they fit this fault."[:200],
+                         "action_ta": f"PM task '{d['title']}' {d['days_overdue']} நாள் late. இந்த fault-க்கு பொருந்தினா அதோட check-ஐ பண்ணுங்க."[:200],
+                         "source_refs": [task["ref"]], "confidence": 0.5})
         if not plan:
             for doc in [i for i in items if i["kind"] == "doc"][:1]:
                 d = doc["data"]
@@ -256,6 +279,19 @@ class MockProvider:
             "refuse_reason_en": "",
             "refuse_reason_ta": "",
         }
+
+    def _read_photo(self, h: dict) -> dict:
+        """SAMPLE photos carry their answer (see photos.DEMO_KEY); the demo AI cannot see real photos."""
+        empty = {
+            "usable": False, "shows_en": "", "shows_ta": "", "readings": [], "screen_text": "", "alarm_codes": [],
+            "damage_en": "", "damage_ta": "", "confidence": 0.0,
+            "unusable_reason_en": "Demo AI cannot read photos. With the real AI, Thunai describes what the photo shows.",
+            "unusable_reason_ta": "Demo AI photo-வை படிக்காது. உண்மையான AI-ல photo-ல என்ன இருக்குன்னு Thunai சொல்லும்.",
+        }
+        demo = h.get("demo")
+        if not isinstance(demo, dict):
+            return empty
+        return {**empty, "unusable_reason_en": "", "unusable_reason_ta": "", **demo}
 
     def _explain(self, h: dict) -> dict:
         step = h.get("step", {})

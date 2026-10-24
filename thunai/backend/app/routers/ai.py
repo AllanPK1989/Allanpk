@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
-from .. import machines_service, retrieval, serialize, troubleshoot
+from .. import machines_service, parts, retrieval, serialize, troubleshoot
 from ..db import get_db
-from ..models import AISession, Machine, User
+from ..models import AISession, LogMedia, Machine, SparePart, User
 from ..schemas import AnswersIn, CloseIn, ExplainIn, FeedbackIn, SessionStart, StepResponseIn
 from ..security import current_user
 
@@ -28,10 +28,17 @@ def _load(db: Session, session_id: int, user: User) -> AISession:
     return session
 
 
-def _out(session: AISession) -> dict:
+def _out(db: Session, session: AISession) -> dict:
     data = serialize.session(session)
+    wanted = {n for step in data["steps"] for n in step.get("part_nos", [])}
+    stock = {p.part_no: parts.info(p) for p in db.scalars(select(SparePart).where(SparePart.part_no.in_(wanted)))} if wanted else {}
     for step in data["steps"]:
         step["evidence"] = retrieval.evidence(session.sources_used, step.get("source_refs", []), session.machine.machine_no)
+        step["parts"] = [stock[n] for n in step.get("part_nos", []) if n in stock]  # live stock, not a copy
+    data["photos"] = [
+        {"media_id": m.id, "observation": m.observation or None}
+        for m in db.scalars(select(LogMedia).where(LogMedia.ai_session_id == session.id, LogMedia.kind == "photo"))
+    ]
     return data
 
 
@@ -40,19 +47,19 @@ def start(body: SessionStart, user: User = Depends(current_user), db: Session = 
     machine = machines_service.get_machine(db, body.machine_no)
     session = troubleshoot.start(db, user, machine, body)
     db.commit()
-    return _out(_load(db, session.id, user))
+    return _out(db, _load(db, session.id, user))
 
 
 @router.get("/sessions/{session_id}")
 def get_session(session_id: int, user: User = Depends(current_user), db: Session = Depends(get_db)):
-    return _out(_load(db, session_id, user))
+    return _out(db, _load(db, session_id, user))
 
 
 @router.post("/sessions/{session_id}/answers")
 def answers(session_id: int, body: AnswersIn, user: User = Depends(current_user), db: Session = Depends(get_db)):
     session = troubleshoot.answer(db, _load(db, session_id, user), body.answers)
     db.commit()
-    return _out(session)
+    return _out(db, session)
 
 
 @router.post("/sessions/{session_id}/steps")

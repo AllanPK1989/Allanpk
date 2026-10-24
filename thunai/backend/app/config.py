@@ -9,6 +9,8 @@ from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
+# Prompts whose newest version is the default. v1 files stay for comparison (PROMPT_VERSIONS).
+DEFAULT_PROMPT_VERSIONS = {"troubleshoot": "v2", "clarify": "v2"}
 
 
 class Config(BaseSettings):
@@ -48,8 +50,10 @@ class Config(BaseSettings):
         "claude-opus-5-5=4/20,claude-sonnet-5-5=2/10,claude-haiku-5-5=0.10/0.50,"
         "claude-fable-5-1=10/50"
     )
+    # Phase 3: send photos to the AI provider (SPEC 12.6). The mock provider never sends anything.
+    ai_photos: bool = False
     prompts_dir: Path = BACKEND_DIR / "prompts"
-    # Active prompt versions, "name=vN" pairs. Missing names use v1.
+    # Active prompt versions, "name=vN" pairs. Missing names use DEFAULT_PROMPT_VERSIONS, then v1.
     prompt_versions: str = ""
 
     # Speech to text
@@ -67,8 +71,15 @@ class Config(BaseSettings):
     embeddings_model: str = "multilingual-e5-base"
     embeddings_api_key: str = ""
 
+    # Outbound webhooks (SPEC 12.5)
+    webhook_timeout_s: float = 10.0
+
     # Sample data
     seed_sample_data: bool = True
+
+    @property
+    def photos_to_ai(self) -> bool:
+        return self.ai_provider == "mock" or self.ai_photos
 
     @property
     def is_sqlite(self) -> bool:
@@ -90,7 +101,7 @@ class Config(BaseSettings):
                 key, value = pair.split("=", 1)
                 if key.strip() == name:
                     return value.strip()
-        return "v1"
+        return DEFAULT_PROMPT_VERSIONS.get(name, "v1")
 
 
 @lru_cache

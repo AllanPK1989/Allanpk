@@ -52,10 +52,12 @@ def call_json[T: BaseModel](
     log_id: int | None = None,
     validate: Callable[[T], T] | None = None,
     info: dict | None = None,
+    images: list[tuple[str, str]] | None = None,
 ) -> tuple[T | None, str]:
     """Return (validated output, "") or (None, error). Invalid output is retried once.
 
     `info`, when given, receives the model and prompt version that produced the answer.
+    `images` are (media type, base64) pairs sent before the text (photo diagnosis only).
     """
     prompt = prompts.load(prompt_name)
     system, user = prompt.render(variables)
@@ -78,6 +80,7 @@ def call_json[T: BaseModel](
             schema=schema,
             max_tokens=max_tokens,
             hints=hints or {},
+            **({"images": images} if images else {}),
         )
         output: T | None = None
         error = result.error
