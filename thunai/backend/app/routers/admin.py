@@ -5,8 +5,9 @@ from sqlalchemy import Integer, func, select
 from sqlalchemy.orm import Session
 
 from .. import audit, excel, serialize, settings_store
+from ..config import get_config
 from ..db import get_db
-from ..models import AICall, AISession, AuditLog, Glossary, User
+from ..models import AISession, AuditLog, CopilotCall, Glossary, User
 from ..schemas import GlossaryIn, PinReset, SettingIn, UserIn, UserUpdate
 from ..security import admin_only, current_user, hash_pin, supervisor_or_admin, valid_pin
 from ..shifts import parse_hhmm
@@ -16,6 +17,16 @@ XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
 
 # ---- users ---------------------------------------------------------------------------------------
+def _upn(db: Session, value: str | None, user_id: int | None) -> str | None:
+    """Normalise a Microsoft account (UPN) and refuse one that another user already has."""
+    upn = (value or "").strip().lower() or None
+    if upn and ("@" not in upn or " " in upn):
+        raise HTTPException(422, "Microsoft account must look like name@company.com")
+    if upn and db.scalar(select(User.id).where(func.lower(User.entra_upn) == upn, User.id != (user_id or 0))):
+        raise HTTPException(409, "Another user already has this Microsoft account")
+    return upn
+
+
 @router.get("/admin/users")
 def list_users(user: User = Depends(admin_only), db: Session = Depends(get_db)):
     return [serialize.user(u) for u in db.scalars(select(User).order_by(User.employee_id))]
@@ -28,7 +39,12 @@ def create_user(body: UserIn, user: User = Depends(admin_only), db: Session = De
     emp = body.employee_id.strip().upper()
     if db.scalar(select(User).where(func.upper(User.employee_id) == emp)):
         raise HTTPException(409, "Employee ID already exists")
-    new = User(**body.model_dump(exclude={"pin", "employee_id"}), employee_id=emp, pin_hash=hash_pin(body.pin))
+    new = User(
+        **body.model_dump(exclude={"pin", "employee_id", "entra_upn"}),
+        employee_id=emp,
+        pin_hash=hash_pin(body.pin),
+        entra_upn=_upn(db, body.entra_upn, None),
+    )
     db.add(new)
     db.flush()
     audit.record(db, user, "user", new.employee_id, "create", None, audit.snapshot(new))
@@ -44,7 +60,13 @@ def update_user(user_id: int, body: UserUpdate, user: User = Depends(admin_only)
     if target.id == user.id and (body.active is False or (body.role and body.role != "admin")):
         raise HTTPException(409, "You cannot remove your own admin access")
     before = audit.snapshot(target)
-    for key, value in body.model_dump(exclude_unset=True).items():
+    changes = body.model_dump(exclude_unset=True)
+    if "entra_upn" in changes:
+        upn = _upn(db, changes.pop("entra_upn"), target.id)
+        if upn != target.entra_upn:
+            target.entra_upn = upn
+            target.entra_oid = None  # a new account is bound again on its first use
+    for key, value in changes.items():
         setattr(target, key, value)
     audit.record(db, user, "user", target.employee_id, "update", before, audit.snapshot(target))
     db.commit()
@@ -150,40 +172,50 @@ def audit_trail(
     ]
 
 
-@router.get("/admin/ai-usage")
-def ai_usage(days: int = 30, user: User = Depends(supervisor_or_admin), db: Session = Depends(get_db)):
+@router.get("/admin/copilot-usage")
+def copilot_usage(days: int = Query(30, ge=1, le=365), user: User = Depends(admin_only), db: Session = Depends(get_db)):
+    """The Copilot connection's set-up state and tool calls per tool (SPEC 13.3)."""
+    cfg = get_config()
     since = datetime.now(timezone.utc) - timedelta(days=days)
     rows = db.execute(
         select(
-            AICall.purpose,
-            AICall.model,
-            func.count(AICall.id),
-            func.sum(AICall.input_tokens),
-            func.sum(AICall.output_tokens),
-            func.sum(AICall.cost_usd),
-            func.sum(func.cast(AICall.ok, Integer)),
+            CopilotCall.operation,
+            func.count(CopilotCall.id),
+            func.sum(func.cast(CopilotCall.ok, Integer)),
+            func.count(func.distinct(CopilotCall.user_id)),
+            func.max(CopilotCall.created_at),
         )
-        .where(AICall.created_at >= since)
-        .group_by(AICall.purpose, AICall.model)
+        .where(CopilotCall.created_at >= since)
+        .group_by(CopilotCall.operation)
+        .order_by(func.count(CopilotCall.id).desc())
     ).all()
-    sessions = db.scalar(select(func.count(AISession.id)).where(AISession.created_at >= since)) or 0
-    total = sum(float(r[5] or 0) for r in rows)
+    errors = db.scalars(
+        select(CopilotCall).where(CopilotCall.created_at >= since, CopilotCall.ok.is_(False)).order_by(CopilotCall.id.desc()).limit(10)
+    ).all()
+    users = db.scalars(select(User).where(User.active.is_(True))).all()
+    sessions = db.execute(
+        select(AISession.channel, func.count(AISession.id)).where(AISession.created_at >= since).group_by(AISession.channel)
+    ).all()
     return {
         "days": days,
-        "sessions": sessions,
-        "total_cost_usd": round(total, 4),
-        "cost_per_100_sessions_usd": round(total / sessions * 100, 2) if sessions else None,
-        "by_purpose": [
-            {
-                "purpose": r[0],
-                "model": r[1],
-                "calls": r[2],
-                "input_tokens": int(r[3] or 0),
-                "output_tokens": int(r[4] or 0),
-                "cost_usd": round(float(r[5] or 0), 4),
-                "ok": int(r[6] or 0),
-            }
+        "enabled": cfg.copilot_enabled,
+        "ready": cfg.copilot_ready,
+        "tenant_set": bool(cfg.entra_tenant_id),
+        "audience_set": bool(cfg.entra_audiences),
+        "scope": cfg.entra_scope,
+        "teams_url": cfg.copilot_teams_url,
+        "users_active": len(users),
+        "users_with_account": sum(1 for u in users if u.entra_upn),
+        "users_linked": sum(1 for u in users if u.entra_oid),
+        "sessions_by_channel": {c or "app": n for c, n in sessions},
+        "calls": sum(r[1] for r in rows),
+        "by_tool": [
+            {"operation": r[0], "calls": r[1], "ok": int(r[2] or 0), "users": r[3], "last_at": r[4].isoformat() if r[4] else None}
             for r in rows
+        ],
+        "recent_errors": [
+            {"at": e.created_at.isoformat(), "operation": e.operation, "status_code": e.status_code, "error": e.error}
+            for e in errors
         ],
     }
 

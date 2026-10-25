@@ -1,6 +1,6 @@
 # Thunai: specification (Phase 0 output)
 
-Status: **Phases 1 and 2 built on the defaults below, Phase 3 in section 12; open for correction.** Written 24 Oct 2026 from
+Status: **Phases 1 and 2 built on the defaults below, Phase 3 in section 12, Microsoft Copilot in section 13 (replaces the Claude API); open for correction.** Written 24 Oct 2026 from
 `Claude Code Prompt – AI Troubleshooting App for Technicians`. The owner asked to build the
 application directly, so every Phase 0 question was answered with the **proposed default from the
 brief**. Items marked **CONFIRM** need a decision from the plant before the pilot. None of them
@@ -28,8 +28,8 @@ blocked the Phase 1 build; changing any of them is a configuration or small code
 | 3 | Login | Employee ID + 4-digit PIN. "Shared device" switch at login logs out after each session and after 10 min idle. 5 wrong PINs lock the account for 15 min. |
 | 4 | Network | Patchy. Logging works offline and syncs later. AI guidance needs a connection. |
 | 5 | Hosting | Docker Compose; same build on a plant server or cloud. **CONFIRM with Eaton IT before pilot.** |
-| 6 | Data location | Database, audio and photos stay on the plant server. **CONFIRM:** problem text and log text are sent to the Claude API for processing (not stored for training under Anthropic's commercial terms), and that processing happens outside India. If text must not leave India, the AI adapter can point at an in-country deployment; that needs IT approval. |
-| 7 | AI provider | Anthropic Claude API behind a provider-agnostic interface. Models set by environment variable. |
+| 6 | Data location | **Superseded by section 13 (Microsoft Copilot).** Was: database, audio and photos stay on the plant server. **CONFIRM:** problem text and log text are sent to the Claude API for processing (not stored for training under Anthropic's commercial terms), and that processing happens outside India. If text must not leave India, the AI adapter can point at an in-country deployment; that needs IT approval. |
+| 7 | AI provider | **Microsoft Copilot Studio agent** calling Thunai's tool API (section 13, owner decision 25 Oct 2026). Was: Anthropic Claude API. |
 | 8 | Speech | Pluggable adapter. Shipped: OpenAI-compatible transcription endpoint (works with a self-hosted Whisper server, so audio stays on-premise) and Sarvam AI (Indian provider). Benchmark on 20 real recordings before choosing. |
 | 9 | Budget | Cost per 100 queries and per 100 voice logs shown in section 9. The app logs real tokens and cost per call. |
 | 10 | Tamil style | Simple spoken Tamil in Tamil script; technical terms stay in English. |
@@ -143,6 +143,8 @@ until confirmed; no hard deletes (deactivate / reject / retire); every change wr
 
 ## 7. AI design
 
+> **Superseded in part by section 13.** Since 25 Oct 2026 the server runs the rules engine only; the Copilot agent does conversation, photos and translation. The prompts, contracts, retrieval order and safety rules below still apply.
+
 - Prompts live in `backend/prompts/<name>.v<N>.md`, never in code. Active version per prompt is an
   environment setting; each AI call records the prompt version.
 - Calls: `clarify` (≤3 tap questions), `troubleshoot` (procedure JSON), `explain` (on tap),
@@ -180,7 +182,7 @@ until confirmed; no hard deletes (deactivate / reject / retire); every change wr
 | Database | PostgreSQL 16 (pgvector image, extension used from Phase 2) |
 | Jobs | Redis + RQ worker; inline fallback for development |
 | Files | Local volume `/data/media` (S3-compatible later) |
-| AI | Anthropic Python SDK behind `AIProvider` interface |
+| AI | Rules engine behind the `AIProvider` interface; conversation in a Copilot Studio agent (section 13) |
 | Speech | `STTProvider` interface: OpenAI-compatible (self-hosted Whisper), Sarvam AI, mock |
 | Auth | Employee ID + PIN (scrypt hash), JWT, role checks |
 | Deploy | Docker Compose: db, redis, api, worker, web (Caddy: HTTPS + static files + `/api` proxy), nightly `pg_dump` backup |
@@ -189,6 +191,8 @@ Server sizing for the pilot: 2 vCPU, 4 GB RAM, 50 GB disk. A self-hosted Whisper
 GPU or a larger CPU machine. Size it after the benchmark.
 
 ## 9. Cost estimate (Claude API list prices, USD, Oct 2026)
+
+> **No longer applies** (section 13.6): Thunai makes no model calls. Kept for comparison.
 
 | Item | Assumption | Per 100 |
 |---|---|---|
@@ -367,6 +371,10 @@ Not built, by design:
   open a draft log automatically. That is not done by default.
 
 ### 12.4 Photo-based diagnosis
+
+> **Superseded by section 13.1.** Photos are read by the Copilot agent in Teams. Thunai stores and
+> checks the readings, and they are still evidence `PHOTO-n`. In the PWA, photos are attachments
+> only. `AI_PHOTOS` and the server-side reading below were removed.
 - **Reading the photo.** A technician adds a photo in Ask Thunai, for example of a gauge, an HMI
   screen, indicator LEDs or a damaged part. The diagnosis model reads it straight away, and the
   technician sees:
@@ -435,7 +443,213 @@ Prompt versions:
 | Risk | Mitigation |
 |---|---|
 | Leaked integration key | Scoped, hashed, revocable keys; last-used time shown; HTTPS only |
-| Photos leave the plant | Off unless `AI_PHOTOS=true`; metadata stripped; question 6 |
+| Photos leave the plant | Now: photos sent in Teams stay in Microsoft 365 (section 13.5); PWA photos stay on the plant server |
 | Misread gauge or screen | Shown to the technician first; "could not read" instead of guesses; steps still ask for a check |
 | Wrong part number on screen | Only exact matches against the catalogue are shown; the AI may only cite listed numbers |
 | Skill figures used unfairly | Minimum event counts, counts always shown, supervisors and admins only, HR to confirm |
+
+## 13. Microsoft Copilot (owner decision, 25 Oct 2026)
+
+**Owner decision, 25 Oct 2026:** Eaton will approve Microsoft Copilot, not the Claude API. So Thunai
+moves to **Microsoft 365 Copilot / Copilot Studio**. Technicians talk to a Thunai agent in Microsoft
+Teams or Microsoft 365 Copilot. The agent calls Thunai's tool API for machine facts, safe repair
+steps and logging. The Claude adapter, its dependency and its settings are removed. The Thunai server
+has no language model of its own any more.
+
+Before this choice the owner was told what it costs:
+- a Microsoft licence or Copilot Studio capacity for every technician;
+- a weaker safety screen, because Microsoft's model, not Thunai's code, writes the chat (13.4);
+- no offline use and no push-to-talk in Teams.
+
+The PWA stays for:
+- offline logging;
+- supervisors and admins;
+- technicians without a Microsoft account.
+
+### 13.1 Who does what
+
+| Work | Before (sections 7 and 12) | Now |
+|---|---|---|
+| Conversation, English and Tamil | Claude | Thunai agent in Copilot Studio (Microsoft's models) |
+| Clarifying questions | Claude (`clarify`) | Thunai rules (fixed tap questions), asked by the agent |
+| Repair steps | Claude, checked by `safety.py` | **Thunai rules engine**, checked by `safety.py`. Sources: fault cards, logs, alarm list, alarm feed, tips, manuals. The agent shows the steps as given |
+| Refusing unsafe requests | `safety.py` before any AI call | `safety.py` in `startTroubleshooting` and `checkSafety`, plus the agent instructions |
+| "Why this step?" | Claude (`explain`) | The agent explains from the step text and its evidence. It may not add actions |
+| Reading photos | Claude (`AI_PHOTOS`) | The agent reads photos sent in Teams and passes the readings to Thunai as evidence (`PHOTO-n`). In the PWA, photos are attachments only |
+| Log from speech or text | Claude (`extract_log`) | In Teams: the agent fills the log fields from the chat (`createLog`). In the PWA: rules extraction, then the technician checks the form as before |
+| English ↔ Tamil translation of logs | Claude (`enrich_log`, `translate`) | The agent sends both versions when it creates a log. Supervisors ask the agent to translate PWA logs (`listLogsToTranslate`, `saveTranslations`). Until then the original is shown |
+| Fault-card drafts, classification | Claude | Thunai rules (group logs by cause; keyword match for component and failure mode) |
+
+The AI interface (`backend/app/ai/`) stays, with the rules engine as its only provider. The prompts
+and output contracts stay too. If Eaton later approves a model API, adding an adapter there brings
+the earlier behaviour back without other code changes.
+
+### 13.2 Tool API (`/api/copilot`)
+
+The custom connector is built from `copilot/thunai-tools.swagger.json`. That file is OpenAPI 2.0,
+which Copilot Studio and Power Platform custom connectors expect; Copilot Studio converts OpenAPI 3
+to 2. It is generated from the code (`python -m app.cli copilot-spec`), and a test fails if the
+committed file is out of date. Microsoft suggests at most 25 to 30 tools per agent; Thunai has 15.
+
+| Tool (operationId) | Call | Who | What it does |
+|---|---|---|---|
+| `whoAmI` | `GET /me` | all | Name, role, zone and language of the signed-in technician |
+| `findMachines` | `GET /machines?q=` | all | Find machines by number, name or line |
+| `getMachine` | `GET /machines/{machine_no}` | all | Status, active PLC alarm with its meaning, open logs, last fixes, low-stock parts |
+| `lookupAlarm` | `GET /machines/{machine_no}/alarms/{code}` | all | Alarm-list meaning, cause, remedy and past fixes for the code |
+| `startTroubleshooting` | `POST /sessions` | all | Safety refusal check. Returns tap questions, or the first step. Accepts photo readings |
+| `answerQuestions` | `POST /sessions/{id}/answers` | session owner | Returns the first step |
+| `getSession` | `GET /sessions/{id}` | owner, supervisor | Current step and progress |
+| `reportStep` | `POST /sessions/{id}/steps` | owner | OK / Not OK / Can't do. Returns the next step, "finished" or "stop and call the supervisor" |
+| `callSupervisor` | `POST /sessions/{id}/call-supervisor` | owner | Summary to send, supervisors' names and phone numbers |
+| `closeSession` | `POST /sessions/{id}/close` | owner | Machine running or not, what fixed it. Creates the breakdown log |
+| `createLog` | `POST /logs` | all | Log a fix directly, in the technician's words plus the English version |
+| `searchParts` | `GET /parts?q=&machine_no=` | all | Catalogue matches with stock and store location |
+| `checkSafety` | `POST /safety-check` | all | Is this instruction allowed? Used before the agent says anything that is not a Thunai step |
+| `listLogsToTranslate` | `GET /translations` | supervisor, admin | Log texts that lack English or Tamil |
+| `saveTranslations` | `POST /translations` | supervisor, admin | Store the agent's translations (only fills empty versions) |
+
+Every answer is small, well under Microsoft's connector payload limits. Thunai makes no model calls,
+so no call comes near the tool time-out. Each step comes as fields and as a ready `display` text in
+the session language. The agent is told to show that text as it is.
+
+### 13.3 Sign-in and users
+
+- **Microsoft Entra ID OAuth 2.0, the technician's own account.** The custom connector uses Entra
+  ID as its identity provider. Each technician signs in once in the chat, and the connector sends
+  their access token to Thunai. There is no shared key: every log must name the person who did the work.
+- **Thunai checks every token:**
+  - the signature, against the tenant's published keys;
+  - the issuer is the configured tenant (v1 or v2 tokens);
+  - the audience is the Thunai API app (`ENTRA_AUDIENCE`);
+  - the delegated scope `ENTRA_SCOPE` (default `Thunai.Use`) is present;
+  - expiry, with 60 s leeway.
+  Application-only tokens are refused.
+- **Linking people.** An admin enters each person's Microsoft account (UPN, for example
+  `name@eaton.com`) on their Thunai user. On first use Thunai matches the token's UPN to that user and
+  then binds the account's object ID. After that it matches only on the object ID, which never
+  changes. Unknown or inactive accounts are refused with "ask your Thunai admin to link your account".
+- **Roles** are Thunai's, not Microsoft's. The same rules apply as in the PWA: technicians see only
+  their own sessions, and the translation tools are for supervisors and admins.
+- Every tool call is recorded (`copilot_calls`: tool, user, result, time). Admins see the usage in
+  Admin → Integrations.
+
+### 13.4 Safety: what is enforced and what is only instructed
+
+**Enforced in Thunai's code**, whatever the agent does:
+- unsafe requests that reach `startTroubleshooting` are refused;
+- every procedure starts with LOTO, plus stored-air release for pneumatics and the pressure step for
+  autoclaves;
+- no step contains a bypass instruction;
+- steps come only from plant data, with source references;
+- authorised-only badges;
+- part numbers only from the catalogue;
+- logs carry the signed-in person.
+
+**Only instructed** (`copilot/agent-instructions.md`). Microsoft's model writes the chat, so Thunai
+cannot guarantee that the agent:
+- shows the steps unchanged and one at a time;
+- adds no advice of its own;
+- calls `checkSafety`;
+- translates faithfully.
+
+Mitigations:
+- **Copilot Studio settings.** General knowledge and web search off; only Thunai's tools.
+- **Safety and quality test** (`copilot/TEST-SCRIPT.md`). Run it in Teams before go-live, after
+  every agent change and monthly. It includes the 10 refusal prompts; all 10 must pass.
+- **Transcript review.** Supervisors review conversations in Copilot Studio analytics during the pilot.
+- **Thunai's record is the authority.** Logs and step results are stored by Thunai, not taken from
+  the chat.
+
+**CONFIRM:** the plant safety officer accepts this split before the pilot.
+
+### 13.5 Hosting, network and data location
+
+Copilot Studio calls the connector from Microsoft's cloud, so it must reach Thunai over HTTPS with a
+publicly trusted certificate. Two options:
+- **On-premises data gateway (recommended).** Thunai stays on the plant network. Custom connectors
+  can route through the gateway.
+- **Public HTTPS endpoint** behind Eaton's reverse proxy or API gateway, limited to the
+  `/api/copilot` path.
+
+Either way, the Thunai server needs outbound HTTPS to `login.microsoftonline.com` to fetch the token
+signing keys. **CONFIRM** both with Eaton IT.
+
+Data location (replaces question 6):
+- The database, audio and PWA photos stay on the plant server.
+- Chat messages and photos sent in Teams are processed by Microsoft 365 under Eaton's tenant
+  agreement.
+- Tool answers (machine facts, steps, log text) pass through Microsoft's service to the agent.
+- Nothing is sent to Anthropic.
+
+### 13.6 Licensing and cost
+
+According to Microsoft's billing FAQ:
+- use by people with a Microsoft 365 Copilot licence is not billed to the agent;
+- other users of an agent built in Copilot Studio consume Copilot Credits, through capacity or
+  pay-as-you-go with an Azure subscription;
+- an agent that only uses its instructions or public websites is not billed.
+
+Thunai's agent calls Thunai's tools, so expect credits for unlicensed users. The Claude cost table
+(section 9) no longer applies. Thunai itself has no per-call AI cost.
+
+**CONFIRM** the licence model and monthly credit estimate with Eaton IT and Microsoft.
+
+### 13.7 Languages
+
+Copilot Studio says that agents using generative orchestration answer in the user's language and can
+switch languages turn by turn. One of its FAQ pages still says "English only". Whether Tamil is
+supported is not confirmed.
+
+Thunai returns Tamil text for its own steps and questions wherever it has it:
+- fault cards;
+- safety steps;
+- tap questions.
+
+The agent is told to show that text and to translate only what has no Tamil version.
+
+**CONFIRM** Tamil on Microsoft's language-support page and with 30 native-reviewed answers, as in
+section 10. If Tamil is not good enough, technicians keep the PWA for Tamil.
+
+### 13.8 Data model (migration 0004)
+
+| Table | Change |
+|---|---|
+| users | + `entra_upn` (unique, lower case), + `entra_oid` (unique) |
+| ai_sessions | + `channel` (`app` or `copilot`), + `observations` (photo readings sent by the agent) |
+| copilot_calls | new: operation, user_id, status_code, ok, duration_ms, created_at |
+| log_media | − `observation`, `observed_at`, `observation_model` (PWA photo reading removed) |
+
+New environment variables:
+- `COPILOT_ENABLED` (false);
+- `ENTRA_TENANT_ID`;
+- `ENTRA_AUDIENCE`;
+- `ENTRA_SCOPE` (`Thunai.Use`);
+- `COPILOT_TEAMS_URL` (optional link shown on the PWA home screen).
+
+Removed environment variables:
+- `ANTHROPIC_API_KEY`;
+- `AI_MODEL_*`, `AI_EFFORT_*`;
+- `AI_PRICES`;
+- `AI_PHOTOS`;
+- `AI_REFUSAL_FALLBACK`;
+- `AI_TIMEOUT_S`.
+
+`AI_PROVIDER` accepts only `rules`.
+
+### 13.9 Risks
+
+| Risk | Mitigation |
+|---|---|
+| The agent changes or adds to a step | Instructions; general knowledge off; `display` text to show unchanged; test script; transcript review; Thunai's stored steps are the record |
+| Unsafe request phrased so that it never reaches a tool | Instructions; Copilot's own content filters; refusal prompts in the test script (must be 10/10) |
+| Tamil quality or support | Thunai sends its own Tamil text; native review; PWA fallback |
+| Wrong person on a log | Entra token checks; admin-controlled linking; binding to the object ID |
+| Thunai exposed to the internet | Data gateway preferred; only `/api/copilot` published; HTTPS; tokens checked on every call |
+| Licence cost | Measure Copilot Credits in the pilot (13.6) |
+| No offline use in Teams | Technicians log in the PWA when the network is down; it syncs later |
+| Photo readings wrong | The agent is told to pass only clearly legible values. Readings are evidence only, and steps still ask the technician to check |
+
+**Not verified here:** Thunai was not tried in a real Copilot Studio tenant. The tool API, the token
+checks (with test-signed tokens) and the OpenAPI file are tested in code. The agent's behaviour must
+be tested in Eaton's tenant with `copilot/TEST-SCRIPT.md`.

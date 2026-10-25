@@ -1,4 +1,4 @@
-from app.ai.mock_provider import MockProvider
+from app.ai.rules_provider import RulesProvider
 from app.ai.schemas import ExtractOut, FieldValue, strict_schema
 from app.logs_service import _check_originals
 from app.textutil import detect_lang, overlap_ratio, rank, tokens
@@ -7,7 +7,7 @@ BRIEF_EXAMPLE = "Cylinder return aagala, solenoid coil burnt, coil maathiten, 10
 
 
 def test_mock_extracts_the_brief_example_into_fields():
-    out = MockProvider()._extract_log({"transcript": BRIEF_EXAMPLE})
+    out = RulesProvider()._extract_log({"transcript": BRIEF_EXAMPLE})
     parsed = ExtractOut.model_validate(out)
     assert parsed.issue.original == "Cylinder return aagala"
     assert parsed.root_cause.original == "solenoid coil burnt"
@@ -17,7 +17,7 @@ def test_mock_extracts_the_brief_example_into_fields():
 
 
 def test_missing_corrective_action_asks_one_question():
-    out = ExtractOut.model_validate(MockProvider()._extract_log({"transcript": "Hopper jam, vibrator not running"}))
+    out = ExtractOut.model_validate(RulesProvider()._extract_log({"transcript": "Hopper jam, vibrator not running"}))
     assert out.corrective_action.original == ""
     assert out.missing_question_en and out.missing_question_ta
 

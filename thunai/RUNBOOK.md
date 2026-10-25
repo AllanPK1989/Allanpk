@@ -61,8 +61,9 @@ certificate → CA certificate. (Menu names vary by brand.) Then open the site i
 
 ## 4. Adding users
 
-Admin → Users → Add user: employee ID, name, role, zone, language, 4-digit PIN. Supervisors need a
-phone number for the "Call" button. Reset a PIN with the **PIN** button. Five wrong PINs lock an
+Admin → Users → Add user: employee ID, name, role, zone, language, 4-digit PIN, and their Microsoft
+account if they will use Thunai in Teams (section 13.1). Supervisors need a phone number for the
+"Call" button. Reset a PIN with the **PIN** button. Five wrong PINs lock an
 account for 15 minutes; a PIN reset unlocks it. Users are never deleted: use **Deactivate**.
 
 Shared tablets: tick "Shared phone or tablet" at login. The app logs out after each finished
@@ -116,16 +117,17 @@ docker compose up -d --build
 The API applies database migrations at start (`alembic upgrade head`). Take a backup first
 (`docker compose restart backup` writes one immediately).
 
-## 8. AI and speech settings
+## 8. Rules engine, Copilot and speech settings
 
-- **Models:** `AI_MODEL_DIAGNOSIS` (procedures, questions) and `AI_MODEL_EXTRACTION` (voice-log
-  extraction, translation, classification, explanations). Change in `.env`, then
-  `docker compose up -d`.
-- **Prompts:** in `backend/prompts/<name>.v<N>.md`. To try a change, copy to the next version
-  (`troubleshoot.v2.md`), set `PROMPT_VERSIONS=troubleshoot=v2`, rebuild, and run the evaluation
-  (`docker compose exec api python -m eval.run_eval`). Each AI call records its prompt version.
-- **Cost:** Admin → AI usage shows calls, tokens and cost by purpose for the last 30 days, and the
-  cost per 100 sessions. Prices per model are in `AI_PRICES` (USD per million tokens).
+- **No model API.** The Thunai server runs its rules engine only (`AI_PROVIDER=rules`). It builds
+  steps from fault cards, logs, alarm lists, the alarm feed, tips and manuals. The Claude adapter
+  was removed on 25 Oct 2026 (SPEC.md section 13). An old `.env` with `AI_PROVIDER=anthropic` stops
+  the API at start with a message saying so; set `AI_PROVIDER=rules` and delete the `ANTHROPIC_*`,
+  `AI_MODEL_*`, `AI_EFFORT_*`, `AI_PRICES` and `AI_PHOTOS` lines.
+- **Microsoft Copilot:** set up with [copilot/SETUP.md](copilot/SETUP.md); operations in section 13.
+- **Prompts** (`backend/prompts/`) are kept for a model adapter Eaton may approve later; the rules
+  engine does not read them. After changing the rules, run the evaluation
+  (`docker compose exec api python -m eval.run_eval`).
 - **Safety rules** are in `backend/app/safety.py` and cannot be switched off by settings. Any change
   there must keep `tests/test_safety.py` and the safety evaluation at 100%.
 - **Speech:** `STT_PROVIDER=openai_compat` with `STT_BASE_URL` pointing at any server that offers the
@@ -135,7 +137,7 @@ The API applies database migrations at start (`alembic upgrade head`). Take a ba
 
 ## 9. Going live checklist
 
-- [ ] Eaton IT approval: hosting, data location (SPEC.md questions 5 and 6).
+- [ ] Eaton IT approval: hosting, network path for Copilot, data location (SPEC.md question 5 and 13.5).
 - [ ] `.env` filled: `ENVIRONMENT=production`, new `SECRET_KEY` and `POSTGRES_PASSWORD`,
       `SEED_SAMPLE_DATA=false`, real `SITE_ADDRESS` and `PUBLIC_BASE_URL`.
 - [ ] Started on an **empty** database (if you ran the demo, `docker compose down -v` first:
@@ -145,14 +147,15 @@ The API applies database migrations at start (`alembic upgrade head`). Take a ba
 - [ ] Shift calendar and planned hours checked in Admin → Settings (SPEC.md questions 1 and 2).
 - [ ] Glossary extended with plant terms and spoken forms.
 - [ ] Root certificate installed on phones (if `CADDY_TLS=internal`).
-- [ ] Evaluation run with the real model and real cases; results in EVAL.md.
+- [ ] Evaluation run with real cases (`eval.run_eval`); results in EVAL.md.
+- [ ] Copilot set up (copilot/SETUP.md); pilot people have their Microsoft account in Admin → Users.
+- [ ] copilot/TEST-SCRIPT.md run in Teams: safety 13/13; safety officer signed off (SPEC 13.4).
 - [ ] Backups copied off the server daily.
 - [ ] Alarm lists and key manuals uploaded for the pilot machines (section 11.2).
 - [ ] Supervisors know the review queue: logs, fault-card drafts, flagged cards, tips (section 11.1).
 - [ ] Spare-parts stock imported, or its sync running (section 12.3); `machine_type` filled so
       parts show for the right machines.
 - [ ] One integration key per connected system, with only the scopes it needs (section 12.1).
-- [ ] `AI_PHOTOS` left `false` unless Eaton IT approved sending photos (section 12.4).
 - [ ] HR has agreed how the Skills page is used (SPEC.md 12.5).
 
 ## 10. Troubleshooting
@@ -163,14 +166,14 @@ The API applies database migrations at start (`alembic upgrade head`). Take a ba
 | "Network" errors on phones | Phone on plant Wi-Fi? `SITE_ADDRESS` resolves to the server? Certificate trusted? |
 | Mic or camera button does nothing | Page must be HTTPS with a trusted certificate; allow the permission in Chrome site settings |
 | Logs stay "Waiting to send" | Phone offline or logged out; open the app online and tap "Send now" |
-| No English/Tamil versions on new logs | `docker compose logs worker`; AI key valid? Admin → AI usage shows failed calls |
-| "Thunai could not make a safe procedure" | The AI failed twice or produced unsafe text. See Admin → AI usage and `docker compose logs api` |
+| No English/Tamil versions on new PWA logs | Expected: Thunai does not translate. A supervisor asks the Teams agent to translate them (section 13.3) |
+| "Thunai could not make a safe procedure" | The rules engine produced no usable steps. See `docker compose logs api` |
 | Locked user | Admin → Users → PIN (reset unlocks) |
 | Disk filling up | `docker system df`; old backups in `backups/`; audio retention setting |
 | No fault cards appear | Cards are drafted after logs are translated and classified; check `docker compose logs worker` and the similar-logs threshold in Admin → Settings |
-| A document shows "stored (no text)" | It is a scan or image without a text layer; it is listed for technicians but not read by the AI |
+| A document shows "stored (no text)" | It is a scan or image without a text layer; it is listed for technicians but cannot be searched |
 | Machine alarm does not pre-fill | Admin → Integrations: key active and "last used" recent? Alarm older than `alarm_prefill_hours` or already cleared? Machine number in the alarm must match Thunai's exactly |
-| Photo says "reading photos is switched off" | `AI_PHOTOS=false` (default with the real AI). Photos are still stored with the session |
+| The Teams agent says Thunai cannot be reached | See the troubleshooting table in copilot/SETUP.md, and Admin → Integrations → Microsoft Copilot → Recent errors |
 | A part on a step shows no stock | The step's part number is not in the catalogue, or the part is inactive. Import the stock list (section 12.3) |
 
 API errors are logged by `docker compose logs api`. Every data change is in Admin → Audit.
@@ -271,15 +274,10 @@ curl -X POST https://thunai.plant.local/api/integrations/alarms \
 - **On steps:** a step shows stock only when its text contains the exact catalogue part number, so
   part numbers on fault cards should be written exactly.
 
-### 12.4 Photo diagnosis
-With the real AI, photos are read only when `AI_PHOTOS=true` in `.env`. Set it only after Eaton IT
-approves sending photos to the Claude API (SPEC.md question 6), then `docker compose up -d`.
-
-- **Without it:** photos are still stored with the session, and the technician sees "Reading photos is
-  switched off".
-- **With it:** the server re-encodes each photo first (no location or camera data, long edge ≤ 2,576
-  px).
-- **Cost:** about $0.03 per photo on Opus 5.5, shown under Admin → AI usage as `read_photo`.
+### 12.4 Photos
+- **In Teams:** the agent reads photos and sends Thunai the readings, never the photo (SPEC 13.1).
+  They show in the session's evidence as `PHOTO-1`, `PHOTO-2`.
+- **In the PWA:** photos are attachments to the session and log; nothing reads them.
 - **Training:** tell technicians not to photograph people.
 
 ### 12.5 Skills page
@@ -289,3 +287,57 @@ Supervisors (their zone) and admins open **Skills** from the home screen.
 - **Minimum events:** figures with fewer than `skill_min_events` events (Admin → Settings, default 3)
   show "–".
 - **Purpose:** training and shift planning; agree its use with HR before the pilot.
+
+## 13. Microsoft Copilot
+
+Set-up for Eaton IT is in [copilot/SETUP.md](copilot/SETUP.md). The design and its limits are in
+SPEC.md section 13. Day to day:
+
+### 13.1 People
+- **New person.** In Admin → Users, enter their Microsoft account (for example `name@eaton.com`). It
+  shows "not used yet" until their first sign-in in Teams binds it ("linked").
+- **Someone leaves, or changes account.** Deactivate the user, or change the Microsoft account:
+  changing it unbinds the old one.
+- **Roles** (technician, supervisor, admin) are Thunai's own, as in the PWA.
+
+### 13.2 Monitoring
+**Admin → Integrations → Microsoft Copilot** shows, for the last 30 days:
+- the set-up state;
+- accounts entered and used;
+- tool calls per tool;
+- sessions started in Teams;
+- recent errors.
+
+What the errors mean:
+- **401:** the token was refused. The API log line `Copilot token refused:` gives the reason.
+- **403:** the account is not linked, the user is inactive, or the role is not allowed.
+- **404:** an unknown machine.
+
+Conversation transcripts are in Copilot Studio → Analytics. Supervisors should read a sample every
+week during the pilot.
+
+### 13.3 Translations
+Thunai does not translate. Logs typed or spoken in the PWA keep only their original language until
+a supervisor asks the Teams agent, for example "translate the logs that need English".
+
+The agent then:
+1. lists the texts (`listLogsToTranslate`, own zone only);
+2. translates them;
+3. saves them (`saveTranslations`).
+
+Only empty versions are filled. The technician's words are never changed, and every save is in the
+audit trail.
+
+### 13.4 Changes
+- **A tool changes in the code.** Regenerate the connector file:
+  `docker compose exec api python -m app.cli copilot-spec --host … --tenant … --scope …`.
+  Then update the custom connector (Power Apps → Custom connectors → Update from OpenAPI file), and
+  refresh the tools in the agent.
+- **The agent's instructions or tools change.** Run copilot/TEST-SCRIPT.md again before
+  publishing.
+- **The connector's client secret expires.** The Teams agent stops working. Renew the secret in
+  Entra, then update it in the custom connector.
+
+### 13.5 Switching Copilot off
+Set `COPILOT_ENABLED=false` and run `docker compose up -d`. The agent's tools then answer "not set
+up". The PWA keeps working.

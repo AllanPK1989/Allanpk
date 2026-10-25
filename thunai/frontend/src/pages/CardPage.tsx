@@ -134,7 +134,7 @@ export default function CardPage() {
           </span>
         </div>
         {card.status === "draft" && (
-          <p className="note note-info">Written by the AI from the logs below. Check every cause and step before approving.</p>
+          <p className="note note-info">Drafted by Thunai from the logs below. Check every cause and step before approving.</p>
         )}
         {card.review_note && <p className="note note-warn">{card.review_note}</p>}
 

@@ -1,4 +1,4 @@
-"""Test set-up: a throw-away SQLite database, mock AI and speech, jobs run right after commit.
+"""Test set-up: a throw-away SQLite database, the rules engine, mock speech, jobs run right after commit.
 
 Set TEST_DATABASE_URL to run the same tests against PostgreSQL.
 """
@@ -10,7 +10,7 @@ _tmp = Path(tempfile.mkdtemp(prefix="thunai-test-"))
 os.environ.update(
     DATABASE_URL=os.environ.get("TEST_DATABASE_URL", f"sqlite:///{_tmp / 'test.db'}"),
     JOBS_MODE="sync",
-    AI_PROVIDER="mock",
+    AI_PROVIDER="rules",
     STT_PROVIDER="mock",
     MEDIA_DIR=str(_tmp / "media"),
     SEED_SAMPLE_DATA="false",

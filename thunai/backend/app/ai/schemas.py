@@ -143,28 +143,6 @@ class DraftCardOut(Strict):
     tools: list[str]
 
 
-# ---- photos (Phase 3) -----------------------------------------------------------------------
-class Reading(Strict):
-    label: str  # what is being read, e.g. "FRL pressure gauge"
-    value: str  # as shown, e.g. "3.5"; "" when it cannot be read
-    unit: str
-    legible: bool
-
-
-class PhotoOut(Strict):
-    usable: bool  # false when blurred, too dark, or not machine equipment
-    shows_en: str
-    shows_ta: str
-    readings: list[Reading]
-    screen_text: str  # text on an HMI or display, copied as written
-    alarm_codes: list[str]
-    damage_en: str
-    damage_ta: str
-    unusable_reason_en: str
-    unusable_reason_ta: str
-    confidence: float
-
-
 def strict_schema(model: type[BaseModel]) -> dict:
     """JSON schema with $refs inlined, titles removed and every property required."""
     raw = model.model_json_schema()

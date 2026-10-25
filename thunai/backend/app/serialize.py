@@ -15,6 +15,8 @@ def user(u: User) -> dict:
         "active": u.active,
         "locked": bool(u.locked_until),
         "last_login_at": u.last_login_at.isoformat() if u.last_login_at else None,
+        "entra_upn": u.entra_upn or "",
+        "entra_linked": bool(u.entra_oid),
     }
 
 
@@ -63,7 +65,6 @@ def media(md: LogMedia) -> dict:
         "status": md.status,
         "available": md.purged_at is None,
         "created_at": md.created_at.isoformat(),
-        "observation": md.observation or None,
     }
 
 
@@ -179,7 +180,7 @@ def session(s: AISession) -> dict:
         "resulting_log_id": s.resulting_log_id,
         "supervisor_called": s.supervisor_called,
         "model": s.model,
-        "cost_usd": s.cost_usd,
+        "channel": s.channel,
         "created_at": s.created_at.isoformat(),
         "closed_at": s.closed_at.isoformat() if s.closed_at else None,
     }

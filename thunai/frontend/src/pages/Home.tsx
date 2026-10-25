@@ -22,7 +22,14 @@ export default function Home() {
       <OfflineBanner />
       <Page>
         <p className="greeting">{t("hello", { name: user.name })}</p>
-        {meta?.demo_ai && <p className="note note-info">{t("demo_ai_note")}</p>}
+        {meta?.copilot?.enabled && meta.copilot.teams_url && (
+          <a className="note note-info teams-link" href={meta.copilot.teams_url} target="_blank" rel="noreferrer">
+            <Icon name="chat" size={20} />
+            <span>
+              <strong>{t("open_in_teams")}</strong> {t("open_in_teams_sub")}
+            </span>
+          </a>
+        )}
         <button className="tile tile-primary" onClick={() => navigate("/machines?next=ask")}>
           <Icon name="help" size={40} />
           <span>

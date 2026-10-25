@@ -14,6 +14,8 @@ export interface User {
   phone: string;
   active: boolean;
   locked: boolean;
+  entra_upn?: string; // Microsoft account for the Copilot agent (SPEC 13.3)
+  entra_linked?: boolean; // bound on the person's first use in Teams
 }
 
 export interface Machine {
@@ -148,26 +150,14 @@ export interface MachineAlarm {
   meaning: Alarm | null;
 }
 
+/** What the Copilot agent read from a photo sent in Teams (SPEC 13.1). */
 export interface PhotoObservation {
   usable: boolean;
-  disabled?: boolean;
-  error?: string;
   shows_en?: string;
-  shows_ta?: string;
   readings?: { label: string; value: string; unit: string; legible: boolean }[];
   screen_text?: string;
   alarm_codes?: string[];
   damage_en?: string;
-  damage_ta?: string;
-  unusable_reason_en?: string;
-  unusable_reason_ta?: string;
-}
-
-export interface PhotoRead {
-  media_id: number;
-  enabled: boolean;
-  observation: PhotoObservation;
-  alarm: { code: string; meaning: Alarm | null } | null;
 }
 
 export interface Tip {
@@ -279,8 +269,9 @@ export interface Session {
   outcome: "in_progress" | "resolved" | "escalated" | "refused" | "failed" | "abandoned";
   feedback: string;
   resulting_log_id: number | null;
-  cost_usd: number;
-  photos?: { media_id: number; observation: PhotoObservation | null }[];
+  channel?: "app" | "copilot";
+  photos?: { media_id: number }[]; // PWA photos: attachments only
+  observations?: PhotoObservation[];
 }
 
 export interface Supervisor {
@@ -292,8 +283,7 @@ export interface Supervisor {
 export interface Meta {
   app: string;
   version: string;
-  demo_ai: boolean;
-  photos_to_ai?: boolean;
+  copilot?: { enabled: boolean; teams_url: string };
   stt_provider: string;
 }
 
@@ -332,6 +322,23 @@ export interface Skills {
     escalation_pct: number | null;
   }[];
   suggestions: { kind: "single_person" | "pair" | "authorisation"; machine_type: string | null; technician: string | null; partner: string | null; text_en: string }[];
+}
+
+export interface CopilotUsage {
+  days: number;
+  enabled: boolean;
+  ready: boolean;
+  tenant_set: boolean;
+  audience_set: boolean;
+  scope: string;
+  teams_url: string;
+  users_active: number;
+  users_with_account: number;
+  users_linked: number;
+  sessions_by_channel: Record<string, number>;
+  calls: number;
+  by_tool: { operation: string; calls: number; ok: number; users: number; last_at: string | null }[];
+  recent_errors: { at: string; operation: string; status_code: number; error: string }[];
 }
 
 export interface IntegrationKey {

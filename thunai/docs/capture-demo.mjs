@@ -176,9 +176,14 @@ async function login(page, emp, lang, beforeSubmit) {
   await a.goto(`${BASE}/admin/qr`);
   await a.locator(".qr-img svg").first().waitFor();
   await shot(a, "19-qr-stickers");
-  await a.goto(`${BASE}/admin?tab=usage`);
-  await a.locator(".table").waitFor();
-  await shot(a, "20-ai-usage");
+  // Microsoft account for Thunai in Teams (SPEC 13.3): bound on the person's first use.
+  await a.goto(`${BASE}/admin?tab=users`);
+  a.once("dialog", (d) => d.accept("tech1@eaton.example"));
+  await a.locator("tr", { hasText: "D-TECH1" }).getByRole("button", { name: "Microsoft" }).click();
+  await a.getByText("tech1@eaton.example").waitFor();
+  await noToast(a);
+  await a.locator("tr", { hasText: "D-TECH1" }).evaluate((el) => el.scrollIntoView({ block: "center" }));
+  await shot(a, "20-admin-users-microsoft");
   await admin.close();
 }
 
@@ -281,7 +286,12 @@ const log = (machine, issue, cause, fix, min) => ({
 }
 
 // ================= Phase 3 =================
-const PHOTO = new URL("./sample-photos/hmi-a101.png", import.meta.url).pathname;
+// A plain test image: in the PWA a photo is an attachment; Thunai in Teams reads photos (SPEC 13.1).
+const PHOTO = {
+  name: "hmi.png",
+  mimeType: "image/png",
+  buffer: Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNoaGgAAAMEAYFL09IQAAAAAElFTkSuQmCC", "base64"),
+};
 
 const wide = { viewport: { width: 1024, height: 768 }, deviceScaleFactor: 1, timezoneId: "Asia/Kolkata", ignoreHTTPSErrors: true };
 
@@ -292,10 +302,13 @@ let scadaKey = "";
   const a = await admin.newPage();
   await login(a, "D-ADMIN", "en");
   await a.goto(`${BASE}/admin?tab=integrations`);
+  await a.getByText("Microsoft accounts used / entered").waitFor();
+  await shot(a, "40-admin-copilot");
   await a.getByLabel("System name").fill("[SAMPLE] SCADA gateway Zone 1");
   await a.getByRole("button", { name: "Save" }).first().click();
   await a.locator(".secret").waitFor();
   scadaKey = (await a.locator(".secret").textContent()).trim();
+  await a.locator(".secret").scrollIntoViewIfNeeded();
   await shot(a, "30-admin-integration-key");
   await a.getByRole("button", { name: "Done" }).click();
 
@@ -319,30 +332,31 @@ async function noToast(page) {
   await page.locator(".toast").waitFor({ state: "detached", timeout: 8000 }).catch(() => {});
 }
 
-// ---- 7. Technician (English): alarm pre-fill, photo, parts --------------------------------------
+// ---- 7. Technician (English): Teams link, alarm pre-fill, parts ---------------------------------
 {
   const ctx = await browser.newContext({ ...phone, permissions: ["microphone", "camera"] });
   const page = await ctx.newPage();
   await login(page, "D-TECH1", "en");
   // D-TECH1's profile language is Tamil; the header button switches this demo to English.
   if ((await page.locator(".lang-btn").textContent()).trim() === "EN") await page.locator(".lang-btn").click();
+  await page.locator(".teams-link").waitFor(); // shown when COPILOT_TEAMS_URL is set
+  await shot(page, "41-home-teams-link-en");
   await page.goto(`${BASE}/ask/DEMO-SF-01`);
   await page.locator(".prefill-note").waitFor(); // alarm code filled from the machine
   await page.locator("textarea").fill("Cylinder not returning, machine stopped");
   await page.locator("input[type=file]").setInputFiles(PHOTO);
-  await page.locator(".photo-card").waitFor();
+  await page.getByText("1 photo(s) attached to the log.").waitFor();
   await noToast(page);
-  await page.locator(".photo-card").scrollIntoViewIfNeeded();
-  await shot(page, "31-ask-alarm-and-photo-en");
+  await shot(page, "31-ask-alarm-prefill-en");
   await page.getByRole("button", { name: "Get help" }).click();
   await page.getByText("A few quick questions").waitFor();
   for (const q of await page.locator(".question").all()) await q.locator(".option").first().click();
   await page.getByRole("button", { name: "Continue" }).click();
   await page.locator(".step").waitFor();
-  while (!(await page.locator(".step-action").textContent()).startsWith("The photo shows")) await okStep(page);
+  while (!(await page.locator(".step-action").textContent()).startsWith("The machine raised alarm")) await okStep(page);
   await page.getByRole("button", { name: "Why this step?" }).click();
   await page.locator(".sheet .evidence").waitFor();
-  await shot(page, "32-why-photo-step-en");
+  await shot(page, "32-why-alarm-feed-step-en");
   await page.locator(".sheet .icon-btn").click();
   while (!(await page.locator(".part-chip").count())) await okStep(page);
   await shot(page, "33-step-part-stock-en");

@@ -165,11 +165,6 @@ button {
   color: var(--accent-ink);
 }
 
-.pill-demo {
-  background: #fff;
-  color: var(--primary);
-}
-
 /* ---- page ------------------------------------------------------------------------------- */
 .page {
   flex: 1;
@@ -1648,30 +1643,6 @@ button {
   min-height: 32px;
 }
 
-.photo-card {
-  background: var(--surface);
-  border: 2px solid var(--primary);
-  border-radius: var(--radius);
-  padding: 12px 14px;
-  margin: 0 0 14px;
-}
-
-.photo-card p {
-  margin: 4px 0;
-}
-
-.photo-card-head {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--primary);
-}
-
-.readings {
-  margin: 4px 0 6px;
-  padding-left: 1.2em;
-}
-
 .part-picker {
   position: relative;
   flex: 1;
@@ -1832,4 +1803,25 @@ fieldset.field legend {
 
 .row-inactive td {
   opacity: 0.55;
+}
+
+/* Link to the Thunai agent in Microsoft Teams (SPEC 13), on the home screen. */
+.teams-link {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.teams-link svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+/* Admin → Users: the Microsoft account under the name (SPEC 13.3). */
+.user-account {
+  display: block;
+  margin-top: 2px;
+  overflow-wrap: anywhere;
 }

@@ -1,4 +1,5 @@
-"""Provider-agnostic AI interface. Swap providers with AI_PROVIDER; no other code changes."""
+"""Provider-agnostic AI interface. The rules engine is the only provider (SPEC 13); an adapter for a
+model API approved by Eaton can be added here later without other code changes."""
 from dataclasses import dataclass, field
 from typing import Protocol
 
@@ -29,6 +30,5 @@ class AIProvider(Protocol):
         user: str,
         schema: dict,
         max_tokens: int,
-        hints: dict,  # raw context; only the mock provider reads it
-        images: list[tuple[str, str]] | None = None,  # (media type, base64) photos, placed before the text
+        hints: dict,  # raw context; the rules engine works from this, a model would read `user`
     ) -> AIResult: ...

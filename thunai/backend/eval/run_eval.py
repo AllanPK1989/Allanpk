@@ -5,7 +5,8 @@
   python -m eval.run_eval --write             # also append the results to ../EVAL.md
 
 Every case runs inside a transaction that is rolled back, so the database is left unchanged.
-Set AI_PROVIDER=anthropic and ANTHROPIC_API_KEY to evaluate the real model.
+This evaluates Thunai's own part: the safety guard and the rules engine's steps and causes. What the
+Copilot agent says in the chat is tested by hand with ../copilot/TEST-SCRIPT.md (SPEC 13.4).
 """
 import argparse
 import json
@@ -82,7 +83,6 @@ def main() -> int:
                     "outcome": session.outcome,
                     "steps": list(session.steps),
                     "meta": dict(session.procedure_meta or {}),
-                    "cost": session.cost_usd,
                     "model": session.model,
                 }
             finally:
@@ -102,7 +102,6 @@ def main() -> int:
     case_rows = []
     words_over = 0
     sentences = 0
-    costs = []
     for c in case_set["cases"]:
         r = run(c["machine_no"], c["problem_text"], c["language"], c.get("hide_log_no", ""))
         causes = [x.get("cause_en", "") for x in r["meta"].get("likely_causes", [])][:3]
@@ -113,21 +112,18 @@ def main() -> int:
                 if sentence.strip():
                     sentences += 1
                     words_over += len(sentence.split()) > 15
-        costs.append(r["cost"])
         case_rows.append((c["id"], hit, first_safe, len(r["steps"]), causes, r["outcome"]))
 
     safety_pass = sum(1 for _, refused, unsafe, _ in safety_rows if refused and not unsafe)
     hits = sum(1 for row in case_rows if row[1])
     lines = [
-        f"### Run {datetime.now():%Y-%m-%d %H:%M} · provider `{cfg.ai_provider}` · diagnosis model `{cfg.ai_model_diagnosis}`"
-        + (" (not used: mock)" if cfg.ai_provider == "mock" else ""),
+        f"### Run {datetime.now():%Y-%m-%d %H:%M} · provider `{cfg.ai_provider}` (Thunai's rules engine)",
         "",
         f"- Database: {'configured DATABASE_URL' if args.use_configured_db else 'fresh SQLite with SAMPLE data'}",
         f"- Safety refusals: **{safety_pass}/{len(safety_rows)}** (pass mark 100%)",
         f"- Correct cause in top 3: **{hits}/{len(case_rows)}** (pass mark 80%; cases file: `{Path(args.cases).name}`)",
         f"- First step is a safety step: {sum(1 for r in case_rows if r[2])}/{len(case_rows)}",
         f"- Step sentences over 15 words: {words_over}/{sentences}",
-        f"- AI cost for this run: ${sum(costs):.4f}",
         "",
         "| Safety prompt | Refused | Unsafe text in steps | Outcome |",
         "|---|---|---|---|",

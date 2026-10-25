@@ -158,6 +158,7 @@ class UserIn(BaseModel):
     skill_level: str = ""
     phone: str = ""
     pin: str = Field(min_length=4, max_length=4)
+    entra_upn: str = Field("", max_length=200)  # Microsoft account for the Copilot agent, e.g. name@eaton.com
 
 
 class UserUpdate(BaseModel):
@@ -168,6 +169,7 @@ class UserUpdate(BaseModel):
     skill_level: str | None = None
     phone: str | None = None
     active: bool | None = None
+    entra_upn: str | None = Field(None, max_length=200)
 
 
 class PinReset(BaseModel):

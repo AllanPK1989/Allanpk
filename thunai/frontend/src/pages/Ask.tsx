@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../api";
-import type { Alarm, MachineAlarm, PhotoRead, Session, Step, Supervisor } from "../api";
+import type { Alarm, MachineAlarm, Session, Step, Supervisor } from "../api";
 import type { Lang } from "../i18n";
 import { ErrorNote, Header, Icon, MicButton, Page, PartChip, Sheet, Spinner, SupervisorSheet, formatDate, formatTime } from "../components";
-import { PhotoCard, shrinkPhoto } from "../photo";
+import { shrinkPhoto } from "../photo";
 import type { VoiceResult } from "../components";
 import { hasVoice, speak, stopSpeaking } from "../speak";
 import { useApp } from "../state";
@@ -55,11 +55,10 @@ export default function Ask() {
   const [resultMsg, setResultMsg] = useState("");
   const [feedbackSent, setFeedbackSent] = useState(false);
   const [alarmInfo, setAlarmInfo] = useState<Alarm | null>(null);
-  // Phase 3: alarm pre-filled from the machine's PLC/SCADA feed or read from a photo.
+  // Phase 3: alarm pre-filled from the machine's PLC/SCADA feed. Photos are attachments (SPEC 13.1).
   const [machineAlarm, setMachineAlarm] = useState<MachineAlarm | null>(null);
-  const [alarmFrom, setAlarmFrom] = useState<"" | "machine" | "photo">("");
-  const [photos, setPhotos] = useState<PhotoRead[]>([]);
-  const [readingPhoto, setReadingPhoto] = useState(false);
+  const [alarmFrom, setAlarmFrom] = useState<"" | "machine">("");
+  const [photoCount, setPhotoCount] = useState(0);
   const alarmRef = useRef(alarm);
   alarmRef.current = alarm;
 
@@ -225,19 +224,10 @@ export default function Ask() {
     try {
       const r = await api.upload<{ media_id: number }>("/api/media/photo", form);
       setMediaIds((ids) => [...ids, r.media_id]);
+      setPhotoCount((n) => n + 1);
       toast(t("photo_added"));
-      // Photo-based diagnosis: show what Thunai reads before asking for help.
-      setReadingPhoto(true);
-      const read = await api.post<PhotoRead>(`/api/media/${r.media_id}/read`, { machine_no: no, note: problem });
-      setPhotos((list) => [...list, read]);
-      if (read.alarm && !alarmRef.current) {
-        setAlarm(read.alarm.code);
-        setAlarmFrom("photo");
-      }
     } catch (e) {
       setError(e);
-    } finally {
-      setReadingPhoto(false);
     }
   };
 
@@ -315,12 +305,6 @@ export default function Ask() {
                 </button>
               </p>
             )}
-            {alarmFrom === "photo" && (
-              <p className="prefill-note">
-                <Icon name="camera" size={18} />
-                <span>{t("photo_alarm_filled")}</span>
-              </p>
-            )}
             {alarmInfo && (
               <div className="alarm-card" role="status">
                 <strong>
@@ -344,10 +328,11 @@ export default function Ask() {
               <Icon name="camera" /> {t("add_photo")}
               <input type="file" accept="image/*" capture="environment" hidden onChange={(e) => void addPhoto(e.target.files?.[0])} />
             </label>
-            {readingPhoto && <Spinner label={t("photo_reading")} />}
-            {photos.map((p) => (
-              <PhotoCard key={p.media_id} read={p} />
-            ))}
+            {photoCount > 0 && (
+              <p className="muted small">
+                <Icon name="camera" size={16} /> {t("photos_attached", { n: photoCount })}
+              </p>
+            )}
             <button className="btn btn-primary btn-block btn-big" disabled={busy || problem.trim().length < 2} onClick={() => void start()}>
               {busy ? t("thinking") : t("get_help")}
             </button>

@@ -36,9 +36,10 @@ def _out(db: Session, session: AISession) -> dict:
         step["evidence"] = retrieval.evidence(session.sources_used, step.get("source_refs", []), session.machine.machine_no)
         step["parts"] = [stock[n] for n in step.get("part_nos", []) if n in stock]  # live stock, not a copy
     data["photos"] = [
-        {"media_id": m.id, "observation": m.observation or None}
+        {"media_id": m.id}
         for m in db.scalars(select(LogMedia).where(LogMedia.ai_session_id == session.id, LogMedia.kind == "photo"))
     ]
+    data["observations"] = session.observations or []  # photo readings from the Copilot agent
     return data
 
 

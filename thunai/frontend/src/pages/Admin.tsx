@@ -3,8 +3,8 @@ import { useCallback, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { api, downloadFile, openFile } from "../api";
-import type { DocumentInfo, IntegrationKey, Machine, User } from "../api";
-import { ErrorNote, Header, Icon, Page, Spinner } from "../components";
+import type { CopilotUsage, DocumentInfo, IntegrationKey, Machine, User } from "../api";
+import { ErrorNote, Header, Icon, Page, Spinner, formatTime } from "../components";
 import { useApp } from "../state";
 
 const TABS = [
@@ -16,7 +16,6 @@ const TABS = [
   ["glossary", "Glossary"],
   ["settings", "Settings"],
   ["export", "Export"],
-  ["usage", "AI usage"],
   ["audit", "Audit"],
 ] as const;
 type Tab = (typeof TABS)[number][0];
@@ -43,7 +42,6 @@ export default function Admin() {
         {tab === "glossary" && <GlossaryTab />}
         {tab === "settings" && <SettingsTab />}
         {tab === "export" && <ExportTab />}
-        {tab === "usage" && <UsageTab />}
         {tab === "audit" && <AuditTab />}
       </Page>
     </>
@@ -261,6 +259,7 @@ function IntegrationsTab() {
 
   return (
     <>
+      <CopilotCard />
       <p className="muted">
         Connect PLC / SCADA gateways (machine alarms) and the stores system (spare-parts stock). API reference:{" "}
         <a href="/api/docs#/integrations">/api/docs</a>.
@@ -477,7 +476,7 @@ function DocumentsTab() {
 function UsersTab() {
   const { toast } = useApp();
   const [users, error, reload] = useLoad<User[]>("/api/admin/users");
-  const blank = { employee_id: "", name: "", role: "technician", zone: "", preferred_language: "ta", phone: "", pin: "" };
+  const blank = { employee_id: "", name: "", role: "technician", zone: "", preferred_language: "ta", phone: "", pin: "", entra_upn: "" };
   const [form, setForm] = useState(blank);
   const [showForm, setShowForm] = useState(false);
   const set = (k: keyof typeof blank) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setForm({ ...form, [k]: e.target.value });
@@ -488,6 +487,17 @@ function UsersTab() {
     try {
       await api.post(`/api/admin/users/${u.id}/pin`, { pin });
       toast("PIN changed");
+    } catch (e) {
+      toast(e instanceof Error ? e.message : "Failed");
+    }
+  };
+  const setAccount = async (u: User) => {
+    const upn = window.prompt(`Microsoft account for ${u.name} (e.g. name@eaton.com). Leave empty to remove.`, u.entra_upn ?? "");
+    if (upn === null) return;
+    try {
+      await api.patch(`/api/admin/users/${u.id}`, { entra_upn: upn.trim() });
+      toast(upn.trim() ? "Microsoft account saved" : "Microsoft account removed");
+      reload();
     } catch (e) {
       toast(e instanceof Error ? e.message : "Failed");
     }
@@ -529,6 +539,7 @@ function UsersTab() {
             <option value="en">English</option>
           </select>
           <input className="input" placeholder="Phone (supervisors)" value={form.phone} onChange={set("phone")} />
+          <input className="input" type="email" placeholder="Microsoft account, for Thunai in Teams (optional)" value={form.entra_upn} onChange={set("entra_upn")} />
           <input className="input" placeholder="4-digit PIN" inputMode="numeric" maxLength={4} required value={form.pin} onChange={set("pin")} />
         </Form>
       )}
@@ -550,12 +561,21 @@ function UsersTab() {
               <td>
                 {u.name}
                 {u.locked && <span className="chip chip-rejected"> locked</span>}
+                {u.entra_upn && (
+                  <span className="user-account small">
+                    <span className="mono">{u.entra_upn}</span>{" "}
+                    <span className={`chip ${u.entra_linked ? "chip-verified" : ""}`}>{u.entra_linked ? "linked" : "not used yet"}</span>
+                  </span>
+                )}
               </td>
               <td>{u.role}</td>
               <td>{u.zone}</td>
               <td className="row-wrap">
                 <button className="btn btn-small" onClick={() => void resetPin(u)}>
                   PIN
+                </button>
+                <button className="btn btn-small" onClick={() => void setAccount(u)}>
+                  Microsoft
                 </button>
                 <button className="btn btn-small" onClick={() => void toggle(u)}>
                   {u.active ? "Deactivate" : "Activate"}
@@ -732,60 +752,121 @@ function ExportTab() {
   );
 }
 
-interface Usage {
-  days: number;
-  sessions: number;
-  total_cost_usd: number;
-  cost_per_100_sessions_usd: number | null;
-  by_purpose: { purpose: string; model: string; calls: number; input_tokens: number; output_tokens: number; cost_usd: number; ok: number }[];
-}
+const TOOL_NAMES: Record<string, string> = {
+  whoAmI: "Who is signed in",
+  findMachines: "Find machines",
+  getMachine: "Machine status",
+  lookupAlarm: "Alarm meaning",
+  startTroubleshooting: "Start troubleshooting",
+  answerQuestions: "Answer questions",
+  getSession: "Session state",
+  reportStep: "Step result",
+  callSupervisor: "Call supervisor",
+  closeSession: "Close session",
+  createLog: "Log a fix",
+  searchParts: "Spare parts",
+  checkSafety: "Safety check",
+  listLogsToTranslate: "Logs to translate",
+  saveTranslations: "Save translations",
+};
 
-function UsageTab() {
-  const [usage, error] = useLoad<Usage>("/api/admin/ai-usage?days=30");
+/** Microsoft Copilot agent (SPEC 13): set-up state, linked people and tool calls over 30 days. */
+function CopilotCard() {
+  const [usage, error] = useLoad<CopilotUsage>("/api/admin/copilot-usage?days=30");
   if (!usage) return error ? <ErrorNote error={error} /> : <Spinner />;
+  const missing = [
+    !usage.enabled && "COPILOT_ENABLED=true",
+    !usage.tenant_set && "ENTRA_TENANT_ID",
+    !usage.audience_set && "ENTRA_AUDIENCE",
+  ].filter(Boolean);
+  const inTeams = usage.sessions_by_channel.copilot ?? 0;
+  const inApp = usage.sessions_by_channel.app ?? 0;
   return (
-    <>
+    <section className="card">
+      <div className="row-between">
+        <h3>Microsoft Copilot</h3>
+        <span className={`chip ${usage.ready ? "chip-verified" : "chip-draft"}`}>{usage.ready ? "Ready" : "Not set up"}</span>
+      </div>
+      {usage.ready ? (
+        <p className="muted">
+          Technicians use the Thunai agent in Teams. Tokens need the <code>{usage.scope}</code> scope.{" "}
+          {usage.teams_url ? (
+            <a href={usage.teams_url} target="_blank" rel="noreferrer">
+              Open the agent
+            </a>
+          ) : (
+            "Set COPILOT_TEAMS_URL to show the Teams link on the home screen."
+          )}
+        </p>
+      ) : (
+        <p className="muted">
+          Set {missing.join(", ")} in <code>.env</code> and restart. Steps: <code>copilot/SETUP.md</code>.
+        </p>
+      )}
       <div className="kpis">
         <div className="kpi">
-          <span className="kpi-value">{usage.sessions}</span>
-          <span className="kpi-label">Sessions (30 days)</span>
+          <span className="kpi-value">
+            {usage.users_linked}/{usage.users_with_account}
+          </span>
+          <span className="kpi-label">Microsoft accounts used / entered</span>
         </div>
         <div className="kpi">
-          <span className="kpi-value">${usage.total_cost_usd.toFixed(2)}</span>
-          <span className="kpi-label">AI cost</span>
+          <span className="kpi-value">{usage.calls}</span>
+          <span className="kpi-label">Tool calls (30 days)</span>
         </div>
         <div className="kpi">
-          <span className="kpi-value">{usage.cost_per_100_sessions_usd != null ? `$${usage.cost_per_100_sessions_usd}` : "–"}</span>
-          <span className="kpi-label">per 100 sessions</span>
+          <span className="kpi-value">
+            {inTeams}/{inTeams + inApp}
+          </span>
+          <span className="kpi-label">Sessions in Teams</span>
         </div>
       </div>
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Purpose</th>
-            <th>Model</th>
-            <th>Calls</th>
-            <th>Tokens in/out</th>
-            <th>Cost</th>
-          </tr>
-        </thead>
-        <tbody>
-          {usage.by_purpose.map((r) => (
-            <tr key={`${r.purpose}-${r.model}`}>
-              <td>{r.purpose}</td>
-              <td className="mono">{r.model}</td>
-              <td>
-                {r.ok}/{r.calls}
-              </td>
-              <td>
-                {r.input_tokens} / {r.output_tokens}
-              </td>
-              <td>${r.cost_usd.toFixed(4)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </>
+      {usage.users_with_account < usage.users_active && (
+        <p className="muted small">
+          {usage.users_active - usage.users_with_account} active users have no Microsoft account yet (Users tab).
+        </p>
+      )}
+      {usage.by_tool.length > 0 && (
+        <div className="table-wrap">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Tool</th>
+                <th className="num">Calls</th>
+                <th className="num">OK</th>
+                <th className="num">People</th>
+                <th>Last</th>
+              </tr>
+            </thead>
+            <tbody>
+              {usage.by_tool.map((r) => (
+                <tr key={r.operation}>
+                  <td>{TOOL_NAMES[r.operation] ?? r.operation}</td>
+                  <td className="num">{r.calls}</td>
+                  <td className="num">{r.ok}</td>
+                  <td className="num">{r.users}</td>
+                  <td className="small">{r.last_at ? formatTime(r.last_at) : "–"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {usage.recent_errors.length > 0 && (
+        <>
+          <h4>Recent errors</h4>
+          <ul className="plain-list small">
+            {usage.recent_errors.map((e, i) => (
+              <li key={i}>
+                {formatTime(e.at)} · {TOOL_NAMES[e.operation] ?? e.operation} · {e.status_code}
+                {e.status_code === 401 && " (sign-in not accepted)"}
+                {e.status_code === 403 && " (account not linked or not allowed)"}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </section>
   );
 }
 

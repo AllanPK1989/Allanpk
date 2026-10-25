@@ -454,7 +454,7 @@ def export_dashboard(data: dict) -> bytes:
         ("Resolved", a["resolved"]),
         ("Escalated", a["escalated"]),
         ("Helpful / not helpful", f"{a['helpful']} / {a['not_helpful']}"),
-        ("AI cost (USD)", a["cost_usd"]),
+        ("Started in Teams (Copilot)", a["in_teams"]),
     ]:
         ws.append(list(row))
     for title, key in (("Downtime by zone", "downtime_by_zone"), ("Downtime by shift", "downtime_by_shift")):

@@ -1,8 +1,9 @@
-"""Rule-based stand-in for the AI, used for demos without an API key and in tests.
+"""Thunai's rules engine: the only AI provider since the move to Microsoft Copilot (SPEC 13).
 
-It builds answers from the retrieved plant data only (fault cards, logs). It does not translate:
-missing language versions stay empty and the UI shows the original text. The UI shows a
-"Demo AI" badge whenever this provider is active.
+It builds answers from the retrieved plant data only (fault cards, logs, alarm list, alarm feed,
+tips, manuals) with fixed templates; nothing leaves the server. It does not translate: missing
+language versions stay empty and the UI shows the original text. Conversation, photo reading and
+translation happen in the Copilot agent, which calls Thunai's tool API (app/routers/copilot.py).
 """
 import re
 
@@ -81,14 +82,14 @@ def _step(no: int, total: int, **fields) -> dict:
     return base
 
 
-class MockProvider:
-    name = "mock"
+class RulesProvider:
+    name = "rules"
 
-    def generate_json(self, *, tier, purpose, system, user, schema, max_tokens, hints, images=None) -> AIResult:
+    def generate_json(self, *, tier, purpose, system, user, schema, max_tokens, hints) -> AIResult:
         handler = getattr(self, f"_{purpose}", None)
         if handler is None:
-            return AIResult(None, "mock", error=f"mock has no handler for {purpose}")
-        return AIResult(handler(hints), "mock")
+            return AIResult(None, "rules", error=f"the rules engine has no handler for {purpose}")
+        return AIResult(handler(hints), "rules")
 
     # ---- troubleshooting -----------------------------------------------------------------------
     def _clarify(self, h: dict) -> dict:
@@ -213,7 +214,7 @@ class MockProvider:
             plan.append({"kind": "check", "action_en": f"Expert tip: {d['text_en']}"[:200],
                          "action_ta": f"Expert tip: {d['text_ta'] or d['text_en']}"[:200],
                          "source_refs": [tip["ref"]], "confidence": 0.6})
-        # Phase 3 sources: what a photo showed and the machine's alarm feed go first.
+        # Phase 3 sources: photo readings from the Copilot agent and the machine's alarm feed go first.
         now_steps = []
         for photo in [i for i in items if i["kind"] == "photo"][:1]:
             d = photo["data"]
@@ -259,12 +260,9 @@ class MockProvider:
             if c["cause_en"].lower() not in seen:
                 seen.add(c["cause_en"].lower())
                 unique_causes.append(c)
-        history = "Based on this machine's history." if (cards or logs) else "No matching history found."
         return {
-            "summary_en": f"Demo AI. {history}",
-            "summary_ta": "Demo AI. " + (
-                "இந்த machine-ன் history-ல இருந்து." if (cards or logs) else "இதுக்கு முன்னாடி history இல்லை."
-            ),
+            "summary_en": "From this machine's history." if (cards or logs) else "No matching history found.",
+            "summary_ta": "இந்த machine-ன் history-ல இருந்து." if (cards or logs) else "இதுக்கு முன்னாடி history இல்லை.",
             "likely_causes": unique_causes[:3],
             "steps": steps,
             "confidence": confidence,
@@ -273,27 +271,14 @@ class MockProvider:
             "refuse_reason_ta": "",
         }
 
-    def _read_photo(self, h: dict) -> dict:
-        """SAMPLE photos carry their answer (see photos.DEMO_KEY); the demo AI cannot see real photos."""
-        empty = {
-            "usable": False, "shows_en": "", "shows_ta": "", "readings": [], "screen_text": "", "alarm_codes": [],
-            "damage_en": "", "damage_ta": "", "confidence": 0.0,
-            "unusable_reason_en": "Demo AI cannot read photos. With the real AI, Thunai describes what the photo shows.",
-            "unusable_reason_ta": "Demo AI photo-வை படிக்காது. உண்மையான AI-ல photo-ல என்ன இருக்குன்னு Thunai சொல்லும்.",
-        }
-        demo = h.get("demo")
-        if not isinstance(demo, dict):
-            return empty
-        return {**empty, "unusable_reason_en": "", "unusable_reason_ta": "", **demo}
-
     def _explain(self, h: dict) -> dict:
         step = h.get("step", {})
         check = step.get("check_en") or step.get("action_en", "")
         check_ta = step.get("check_ta") or step.get("action_ta", "")
         return {
-            "text_en": f"Demo AI. This step checks: {check} If the result is not as expected, "
+            "text_en": f"This step checks: {check} If the result is not as expected, "
             "the fault is likely here. Fix it before you move on.",
-            "text_ta": f"Demo AI. இந்த step-ல பார்க்கிறது: {check_ta} Expected மாதிரி இல்லைன்னா fault "
+            "text_ta": f"இந்த step-ல பார்க்கிறது: {check_ta} Expected மாதிரி இல்லைன்னா fault "
             "இங்கதான் இருக்கலாம். அதை சரி பண்ணிட்டு அடுத்த step போங்க.",
         }
 

@@ -19,7 +19,11 @@ def procedure(steps):
 
 
 class ScriptedProvider:
-    """Returns queued answers for troubleshoot calls; clarify asks nothing."""
+    """Returns queued answers for troubleshoot calls; clarify asks nothing.
+
+    Stands in for a future model adapter: the interface, retries and safety checks must keep working
+    for any provider, not only the rules engine.
+    """
 
     name = "scripted"
 
@@ -30,9 +34,9 @@ class ScriptedProvider:
     def generate_json(self, *, tier, purpose, system, user, schema, max_tokens, hints):
         self.calls.append((purpose, user))
         if purpose == "clarify":
-            return AIResult({"understood_problem_en": "x", "questions": []}, "claude-opus-5-5", input_tokens=1000, output_tokens=100)
+            return AIResult({"understood_problem_en": "x", "questions": []}, "scripted-model", input_tokens=1000, output_tokens=100)
         data = self.answers.pop(0)
-        return AIResult(data, "claude-opus-5-5", input_tokens=2000, output_tokens=500)
+        return AIResult(data, "scripted-model", input_tokens=2000, output_tokens=500)
 
 
 def start(client, h):
@@ -50,7 +54,7 @@ def test_invalid_output_is_retried_once_then_succeeds(client, monkeypatch):
     assert "previous answer was rejected" in provider.calls[-1][1]
     assert s["steps"][0]["kind"] == "safety" and s["steps"][1]["general"]
     assert s["procedure"]["low_confidence"]
-    assert s["cost_usd"] > 0  # tokens and cost are recorded per session
+    assert s["model"] == "scripted-model"  # recorded per session
 
 
 def test_unsafe_output_twice_ends_in_call_supervisor(client, monkeypatch):
@@ -72,9 +76,14 @@ def test_model_refusal_flag_is_respected(client, monkeypatch):
     assert s["outcome"] == "refused" and s["procedure"]["refuse_reason_en"] == "Unsafe request"
 
 
-def test_cost_calculation_uses_price_table():
-    # Opus 5.5: $4 in / $20 out per million tokens; cache reads at 0.1x, cache writes at 1.25x.
-    assert ai_service.cost_usd("claude-opus-5-5", 1_000_000, 0, 0, 0) == 4.0
-    assert ai_service.cost_usd("claude-opus-5-5", 0, 1_000_000, 0, 0) == 20.0
-    assert ai_service.cost_usd("claude-opus-5-5", 0, 0, 1_000_000, 0) == 0.4
-    assert ai_service.cost_usd("mock", 1000, 1000, 0, 0) == 0.0
+def test_only_the_rules_engine_can_be_configured():
+    import pytest
+    from pydantic import ValidationError
+
+    from app.config import Config
+
+    assert Config(ai_provider="rules").ai_provider == "rules"
+    assert Config(ai_provider="mock").ai_provider == "rules"  # old name in existing .env files
+    with pytest.raises(ValidationError, match="Claude adapter was removed"):
+        Config(ai_provider="anthropic")
+    assert ai_service.get_provider().name == "rules"

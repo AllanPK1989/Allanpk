@@ -204,7 +204,7 @@ def draft_card(db: Session, group: Group, replaces: FaultCard | None = None, use
         },
         out_model=ai_schemas.DraftCardOut,
         max_tokens=8000,
-        hints={"symptom": group.symptom, "logs": [_mock_hint(l) for l in logs]},
+        hints={"symptom": group.symptom, "logs": [_rules_hint(l) for l in logs]},
         validate=_validator(set(refs)),
         info=info,
     )
@@ -242,7 +242,7 @@ def draft_card(db: Session, group: Group, replaces: FaultCard | None = None, use
     return card
 
 
-def _mock_hint(log: BreakdownLog) -> dict:
+def _rules_hint(log: BreakdownLog) -> dict:
     return {
         "ref": retrieval.log_ref(log),
         "symptom": log_symptom(log),

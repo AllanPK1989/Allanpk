@@ -1,6 +1,6 @@
 """Builds the evidence the AI may use, in the brief's priority order.
 
-Tier 0  this breakdown now: photos read by the AI and the machine's PLC/SCADA alarm feed (Phase 3)
+Tier 0  this breakdown now: photo readings from the Copilot agent and the machine's PLC/SCADA alarm feed
 Tier 1  approved fault cards for this machine (cards flagged for review are included and labelled)
 Tier 2  verified logs and approved expert tips for this machine
 Tier 3  fault cards, logs and tips for the same machine type
@@ -13,7 +13,7 @@ provider is configured (embeddings.py). Results are filtered to the machine or i
 candidate sets stay small.
 """
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
 from sqlalchemy import func, or_, select
@@ -30,7 +30,6 @@ from .models import (
     ExpertTip,
     FaultCard,
     Glossary,
-    LogMedia,
     Machine,
     SparePart,
 )
@@ -230,8 +229,8 @@ def scada_item(row: dict, machine_no: str) -> Item:
     )
 
 
-def photo_item(media: LogMedia, machine_no: str) -> Item:
-    o = media.observation or {}
+def photo_item(o: dict, n: int, machine_no: str, when: str) -> Item:
+    """A photo the Copilot agent read in Teams (photos.py). Thunai has the readings, not the photo."""
     readings = []
     for r in o.get("readings", []):
         if r.get("legible") and r.get("value"):
@@ -248,14 +247,14 @@ def photo_item(media: LogMedia, machine_no: str) -> Item:
     if o.get("damage_en"):
         parts_text.append(f"visible damage: {o['damage_en']}")
     return Item(
-        ref=f"PHOTO-{media.id}",
+        ref=f"PHOTO-{n}",
         kind="photo",
         tier=0,
         score=2.0,
         machine_no=machine_no,
-        when=media.created_at.date().isoformat(),
-        text_en="Photo taken now, read by the AI: " + "; ".join(parts_text) + ".",
-        data={"media_id": media.id, **{k: o.get(k) for k in ("shows_en", "shows_ta", "readings", "alarm_codes", "damage_en", "damage_ta", "screen_text")}},
+        when=when,
+        text_en="Photo sent now, read by the Copilot agent: " + "; ".join(parts_text) + ".",
+        data={"photo_no": n, **{k: o.get(k) for k in ("shows_en", "shows_ta", "readings", "alarm_codes", "damage_en", "damage_ta", "screen_text")}},
     )
 
 
@@ -311,7 +310,7 @@ def active_glossary(db: Session) -> list[Glossary]:
 
 
 def build_context(
-    db: Session, machine: Machine, query: str, alarm_code: str = "", photos: list[LogMedia] | tuple = ()
+    db: Session, machine: Machine, query: str, alarm_code: str = "", photos: list[dict] | tuple = (), when: str = ""
 ) -> Context:
     glossary = active_glossary(db)
     variants = glossary_variants(glossary)
@@ -319,10 +318,10 @@ def build_context(
     since = datetime.now(timezone.utc) - timedelta(days=HISTORY_DAYS)
     items: list[Item] = []
 
-    # Tier 0: what is known about this breakdown now (photos read by the AI, the alarm feed).
-    for media in photos:
-        if (media.observation or {}).get("usable"):
-            items.append(photo_item(media, machine.machine_no))
+    # Tier 0: what is known about this breakdown now (photo readings from the agent, the alarm feed).
+    for n, o in enumerate(photos, start=1):
+        if o.get("usable"):
+            items.append(photo_item(o, n, machine.machine_no, when or date.today().isoformat()))
     for row in alarm_feed.counts(alarm_feed.recent(db, machine))[:3]:
         items.append(scada_item(row, machine.machine_no))
 

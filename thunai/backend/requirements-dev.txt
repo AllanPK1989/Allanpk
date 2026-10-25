@@ -1,2 +1,3 @@
 -r requirements.txt
 pytest==9.1.1
+openapi-spec-validator==0.9.0  # checks copilot/thunai-tools.swagger.json

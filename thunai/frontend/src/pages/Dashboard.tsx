@@ -31,7 +31,7 @@ interface Data {
     tips_approved: number;
     tips_pending: number;
   };
-  ask_thunai: { sessions: number; resolved: number; escalated: number; refused: number; failed: number; helpful: number; not_helpful: number; cost_usd: number };
+  ask_thunai: { sessions: number; resolved: number; escalated: number; refused: number; failed: number; helpful: number; not_helpful: number; in_teams: number };
   parts: { used: { part_no: string; description: string; times: number; qty: number; stock: PartInfo | null }[]; low_stock: PartInfo[] };
 }
 
@@ -250,7 +250,7 @@ export default function Dashboard() {
                 <Stat label="Machine running after" value={data.ask_thunai.resolved} />
                 <Stat label="Escalated" value={data.ask_thunai.escalated} />
                 <Stat label="Helpful / not helpful" value={`${data.ask_thunai.helpful} / ${data.ask_thunai.not_helpful}`} />
-                <Stat label="AI cost" value={`$${data.ask_thunai.cost_usd.toFixed(2)}`} />
+                <Stat label="Started in Teams" value={data.ask_thunai.in_teams} />
               </div>
             </section>
           </>

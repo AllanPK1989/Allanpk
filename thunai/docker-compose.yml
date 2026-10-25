@@ -1,6 +1,6 @@
 # Thunai: one command to run everything.   docker compose up -d
 # Settings come from .env (copy .env.example). Without .env it starts in demo mode
-# (mock AI, SAMPLE data) on https://localhost.
+# (rules engine, SAMPLE data) on https://localhost.
 name: thunai
 
 x-backend: &backend

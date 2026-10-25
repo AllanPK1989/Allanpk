@@ -1,4 +1,4 @@
-"""One place that runs AI calls: render prompt → call provider → validate → retry once → log cost."""
+"""One place that runs AI calls: render prompt → call provider → validate → retry once → log the call."""
 import logging
 import time
 from collections.abc import Callable
@@ -7,7 +7,6 @@ from functools import lru_cache
 from pydantic import BaseModel, ValidationError
 from sqlalchemy.orm import Session
 
-from ..config import get_config
 from ..models import AICall, AISession
 from . import prompts
 from .base import AIProvider
@@ -22,20 +21,9 @@ class AIOutputError(ValueError):
 
 @lru_cache
 def get_provider() -> AIProvider:
-    cfg = get_config()
-    if cfg.ai_provider == "anthropic":
-        from .anthropic_provider import AnthropicProvider
+    from .rules_provider import RulesProvider
 
-        return AnthropicProvider(cfg)
-    from .mock_provider import MockProvider
-
-    return MockProvider()
-
-
-def cost_usd(model: str, input_tokens: int, output_tokens: int, cache_read: int, cache_write: int) -> float:
-    price_in, price_out = get_config().price_for(model)
-    billed_in = input_tokens + cache_write * 1.25 + cache_read * 0.1
-    return round((billed_in * price_in + output_tokens * price_out) / 1_000_000, 6)
+    return RulesProvider()
 
 
 def call_json[T: BaseModel](
@@ -52,12 +40,10 @@ def call_json[T: BaseModel](
     log_id: int | None = None,
     validate: Callable[[T], T] | None = None,
     info: dict | None = None,
-    images: list[tuple[str, str]] | None = None,
 ) -> tuple[T | None, str]:
     """Return (validated output, "") or (None, error). Invalid output is retried once.
 
     `info`, when given, receives the model and prompt version that produced the answer.
-    `images` are (media type, base64) pairs sent before the text (photo diagnosis only).
     """
     prompt = prompts.load(prompt_name)
     system, user = prompt.render(variables)
@@ -80,7 +66,6 @@ def call_json[T: BaseModel](
             schema=schema,
             max_tokens=max_tokens,
             hints=hints or {},
-            **({"images": images} if images else {}),
         )
         output: T | None = None
         error = result.error
@@ -95,13 +80,6 @@ def call_json[T: BaseModel](
             except AIOutputError as e:
                 error = str(e)
                 output = None
-        cost = cost_usd(
-            result.model,
-            result.input_tokens,
-            result.output_tokens,
-            result.cache_read_tokens,
-            result.cache_write_tokens,
-        )
         db.add(
             AICall(
                 purpose=purpose,
@@ -112,7 +90,6 @@ def call_json[T: BaseModel](
                 output_tokens=result.output_tokens,
                 cache_read_tokens=result.cache_read_tokens,
                 cache_write_tokens=result.cache_write_tokens,
-                cost_usd=cost,
                 ok=output is not None,
                 error=error[:2000],
                 duration_ms=int((time.monotonic() - started) * 1000),
@@ -125,7 +102,6 @@ def call_json[T: BaseModel](
             session.prompt_version = prompt.tag
             session.input_tokens += result.input_tokens + result.cache_read_tokens + result.cache_write_tokens
             session.output_tokens += result.output_tokens
-            session.cost_usd = round(session.cost_usd + cost, 6)
         if info is not None:
             info.update(model=result.model, prompt_version=prompt.tag)
         if output is not None:

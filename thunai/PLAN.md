@@ -37,6 +37,17 @@ Each step ends with a demo (API call or screen) before the next starts.
 | 19 | Spare parts: Excel/CSV import with template, machine page section, parts picker in the log form, stock shown on steps and fault cards, AI context | a step naming a sample part number shows its stock |
 | 20 | Integration API: keys with scopes, alarm feed, parts sync; alarm pre-fill in Ask Thunai and New log | a posted sample alarm pre-fills the next log's alarm code and start time |
 | 21 | ~~PM plan and outbound webhooks for the PM system and SAP~~ | out of scope (owner decision, 24 Oct 2026); removed |
-| 22 | Photo diagnosis: image input in the AI adapter, `read_photo` prompt, server-side re-encoding, observations on the Ask screen, `PHOTO-` evidence, `AI_PHOTOS` switch | a sample HMI photo fills the alarm code and is cited in "Why this step?" |
+| 22 | ~~Photo diagnosis with the Claude API~~ | replaced in step 27: the Copilot agent reads photos (owner decision, 25 Oct 2026) |
 | 23 | Skill-gap analytics: API, page, rules, Excel export | numbers match the unit tests |
 | 24 | Tests, evaluation, docs and screenshots | all tests pass on SQLite and PostgreSQL; Docker stack starts |
+
+## Microsoft Copilot build plan (owner decision, 25 Oct 2026; SPEC section 13)
+
+| # | Step | Done when |
+|---|---|---|
+| 25 | Remove the Claude adapter, its settings and dependency; the stand-in becomes Thunai's rules engine; PWA photo reading removed | tests pass with `AI_PROVIDER=rules`; `AI_PROVIDER=anthropic` stops the API with a clear message |
+| 26 | Migration `0004`: Microsoft account on users, session channel and photo readings, `copilot_calls`; drop the photo-reading columns | upgrade, downgrade and `alembic check` run on PostgreSQL |
+| 27 | Entra ID token checks and account linking; 15 tools under `/api/copilot` with typed answers and `display` texts; call log | `tests/test_copilot.py` passes, including all 10 safety prompts |
+| 28 | OpenAPI 2.0 generator, connector file, agent instructions, setup guide, test script | `tests/test_copilot_spec.py` passes; the file validates as Swagger 2.0 |
+| 29 | PWA: Microsoft account per user, Copilot card, Teams link, wording without "AI"; docs and screenshots | Docker stack starts; the demo script passes |
+| 30 | In Eaton's tenant: app registrations, connector, agent, publish to the pilot group, TEST-SCRIPT in Teams | **Not done here**: needs Eaton IT (copilot/SETUP.md) |

@@ -1,0 +1,1645 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Thunai",
+    "description": "Breakdown help and logging for EPQPL maintenance technicians. Tools for the Thunai agent in Microsoft Copilot Studio. Steps come from the plant's own fault cards, logs and alarm lists, with safety rules enforced by Thunai.",
+    "version": "1.0.0"
+  },
+  "host": "thunai.example.com",
+  "basePath": "/api/copilot",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/me": {
+      "get": {
+        "operationId": "whoAmI",
+        "summary": "Who is signed in",
+        "description": "The signed-in technician's name, role, zone and preferred language. Call it at the start of a conversation to greet them and to answer in their language.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Me"
+            }
+          },
+          "default": {
+            "description": "Error: show 'detail' to the technician in plain words."
+          }
+        }
+      }
+    },
+    "/machines": {
+      "get": {
+        "operationId": "findMachines",
+        "summary": "Find machines",
+        "description": "Find machines by number, name or line. Use it when the technician names a machine loosely (\"the shrink oven on line 2\") and ask them to pick when more than one matches.",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Part of a machine number, name or line. Empty: machines in the technician's zone.",
+            "type": "string",
+            "maxLength": 60,
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/MachineList"
+            }
+          },
+          "default": {
+            "description": "Error: show 'detail' to the technician in plain words."
+          }
+        }
+      }
+    },
+    "/machines/{machine_no}": {
+      "get": {
+        "operationId": "getMachine",
+        "summary": "Machine status and history",
+        "description": "Status of one machine: active PLC/SCADA alarm with its alarm-list meaning, alarms in the last 24 hours, open breakdowns, the last fixes, approved fault cards and parts low in stock. Use it for questions about a machine. For repair help use startTroubleshooting instead.",
+        "parameters": [
+          {
+            "name": "machine_no",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/MachineDetail"
+            }
+          },
+          "default": {
+            "description": "Error: show 'detail' to the technician in plain words."
+          }
+        }
+      }
+    },
+    "/machines/{machine_no}/alarms/{code}": {
+      "get": {
+        "operationId": "lookupAlarm",
+        "summary": "What an alarm code means",
+        "description": "The meaning, likely cause and remedy of an alarm code from this machine's alarm list, with past fixes for the same code. Say so plainly when found is false; never guess a meaning.",
+        "parameters": [
+          {
+            "name": "machine_no",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/AlarmOut"
+            }
+          },
+          "default": {
+            "description": "Error: show 'detail' to the technician in plain words."
+          }
+        }
+      }
+    },
+    "/sessions": {
+      "post": {
+        "operationId": "startTroubleshooting",
+        "summary": "Start troubleshooting",
+        "description": "Start step-by-step repair help for a breakdown. Thunai refuses unsafe requests, may return a few tap questions, and otherwise returns the first step (always the safety step). Pass what you read from any photos the technician sent. Follow status and agent_note in the answer.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NewSession"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/SessionOut"
+            }
+          },
+          "default": {
+            "description": "Error: show 'detail' to the technician in plain words."
+          }
+        }
+      }
+    },
+    "/sessions/{session_id}/answers": {
+      "post": {
+        "operationId": "answerQuestions",
+        "summary": "Answer the tap questions",
+        "description": "Send the technician's answers to the questions from startTroubleshooting. Returns the first step.",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Answers"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/SessionOut"
+            }
+          },
+          "default": {
+            "description": "Error: show 'detail' to the technician in plain words."
+          }
+        }
+      }
+    },
+    "/sessions/{session_id}": {
+      "get": {
+        "operationId": "getSession",
+        "summary": "Where a session is",
+        "description": "The current state of a troubleshooting session and the step to show now. Use it to pick up after a pause.",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/SessionOut"
+            }
+          },
+          "default": {
+            "description": "Error: show 'detail' to the technician in plain words."
+          }
+        }
+      }
+    },
+    "/sessions/{session_id}/steps": {
+      "post": {
+        "operationId": "reportStep",
+        "summary": "Report a step result",
+        "description": "Record OK, NOT OK or CAN'T DO for the current step. Returns the next step, 'finished', or 'stop' (stop and call the supervisor). Only the current step can be answered.",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/StepResult"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/SessionOut"
+            }
+          },
+          "default": {
+            "description": "Error: show 'detail' to the technician in plain words."
+          }
+        }
+      }
+    },
+    "/sessions/{session_id}/call-supervisor": {
+      "post": {
+        "operationId": "callSupervisor",
+        "summary": "Call the supervisor",
+        "description": "Mark that the supervisor is needed and get a ready summary of the session plus the zone supervisors' names and phone numbers. Use it whenever the technician is stuck or unsafe.",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/SupervisorHelp"
+            }
+          },
+          "default": {
+            "description": "Error: show 'detail' to the technician in plain words."
+          }
+        }
+      }
+    },
+    "/sessions/{session_id}/close": {
+      "post": {
+        "operationId": "closeSession",
+        "summary": "Close the session and save the log",
+        "description": "End the session and save the breakdown log. Before calling with running=true, ask what fixed it and the cause in the technician's own words, read the log back, and set confirmed=true only when they agree. With running=false the log stays open and the supervisor gets the summary.",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CloseSession"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ClosedSession"
+            }
+          },
+          "default": {
+            "description": "Error: show 'detail' to the technician in plain words."
+          }
+        }
+      }
+    },
+    "/logs": {
+      "post": {
+        "operationId": "createLog",
+        "summary": "Log a breakdown fix",
+        "description": "Save a breakdown log the technician tells you about, without a troubleshooting session. Keep their own words in issue, corrective_action and root_cause, and add English versions when they spoke Tamil. Read the log back and set confirmed=true only when they agree.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NewLog"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/SavedLog"
+            }
+          },
+          "default": {
+            "description": "Error: show 'detail' to the technician in plain words."
+          }
+        }
+      }
+    },
+    "/parts": {
+      "get": {
+        "operationId": "searchParts",
+        "summary": "Spare parts and stock",
+        "description": "Spare parts from the stores catalogue with stock on hand and store location. Quote part numbers only from this answer, never from memory.",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Part number or words from the description.",
+            "type": "string",
+            "maxLength": 80,
+            "default": ""
+          },
+          {
+            "name": "machine_no",
+            "in": "query",
+            "required": false,
+            "description": "Optional: list this machine's parts first.",
+            "type": "string",
+            "maxLength": 60,
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/PartList"
+            }
+          },
+          "default": {
+            "description": "Error: show 'detail' to the technician in plain words."
+          }
+        }
+      }
+    },
+    "/safety-check": {
+      "post": {
+        "operationId": "checkSafety",
+        "summary": "Check an instruction is safe",
+        "description": "Check any instruction or advice that did not come from a Thunai step BEFORE you say it. If allowed is false, do not give the instruction: show message instead.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SafetyQuestion"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/SafetyAnswer"
+            }
+          },
+          "default": {
+            "description": "Error: show 'detail' to the technician in plain words."
+          }
+        }
+      }
+    },
+    "/translations": {
+      "get": {
+        "operationId": "listLogsToTranslate",
+        "summary": "Log texts that need translating",
+        "description": "For supervisors and admins: log texts that have no English or no Tamil version yet, newest first. Translate each one, then send them with saveTranslations.",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "How many texts to return.",
+            "type": "integer",
+            "maximum": 20,
+            "minimum": 1,
+            "default": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TranslationList"
+            }
+          },
+          "default": {
+            "description": "Error: show 'detail' to the technician in plain words."
+          }
+        }
+      },
+      "post": {
+        "operationId": "saveTranslations",
+        "summary": "Save translations",
+        "description": "For supervisors and admins: store translations of texts from listLogsToTranslate. Only empty versions are filled; the technician's words and existing versions are never changed.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Translations"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TranslationsSaved"
+            }
+          },
+          "default": {
+            "description": "Error: show 'detail' to the technician in plain words."
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "AlarmOut": {
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "found": {
+          "type": "boolean",
+          "description": "True when the code is in this machine's alarm list."
+        },
+        "message": {
+          "type": "string"
+        },
+        "cause": {
+          "type": "string"
+        },
+        "remedy": {
+          "type": "string"
+        },
+        "past_fixes": {
+          "items": {
+            "$ref": "#/definitions/LogSummary"
+          },
+          "type": "array",
+          "description": "Recent logs on this machine with the same alarm code."
+        }
+      },
+      "type": "object",
+      "required": [
+        "code",
+        "found",
+        "message",
+        "cause",
+        "remedy",
+        "past_fixes"
+      ],
+      "title": "AlarmOut"
+    },
+    "Answer": {
+      "properties": {
+        "question_id": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "description": "One of the question's option values; 'skipped' if the technician does not know."
+        }
+      },
+      "type": "object",
+      "required": [
+        "question_id",
+        "value"
+      ],
+      "title": "Answer"
+    },
+    "Answers": {
+      "properties": {
+        "answers": {
+          "items": {
+            "$ref": "#/definitions/Answer"
+          },
+          "type": "array",
+          "maxItems": 5
+        }
+      },
+      "type": "object",
+      "required": [
+        "answers"
+      ],
+      "title": "Answers"
+    },
+    "Cause": {
+      "properties": {
+        "cause": {
+          "type": "string"
+        },
+        "refs": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object",
+      "required": [
+        "cause",
+        "refs"
+      ],
+      "title": "Cause"
+    },
+    "CloseSession": {
+      "properties": {
+        "running": {
+          "type": "boolean",
+          "description": "True when the machine runs again; false when it is still down."
+        },
+        "what_fixed_it": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "The technician's own words: what fixed it (or what was tried).",
+          "default": ""
+        },
+        "what_fixed_it_en": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "English version, when the words above are not English.",
+          "default": ""
+        },
+        "root_cause": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "The technician's own words: the cause, if known.",
+          "default": ""
+        },
+        "root_cause_en": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "English version, when the words above are not English.",
+          "default": ""
+        },
+        "parts_used": {
+          "items": {
+            "$ref": "#/definitions/PartUsed"
+          },
+          "type": "array",
+          "maxItems": 20
+        },
+        "confirmed": {
+          "type": "boolean",
+          "description": "True only after you read the log back to the technician and they agreed. Otherwise a draft is saved.",
+          "default": false
+        }
+      },
+      "type": "object",
+      "required": [
+        "running"
+      ],
+      "title": "CloseSession"
+    },
+    "ClosedSession": {
+      "properties": {
+        "log_no": {
+          "type": "string"
+        },
+        "log_status": {
+          "type": "string",
+          "description": "closed (saved), draft (technician must confirm in the Thunai app) or open (machine still down)."
+        },
+        "outcome": {
+          "type": "string",
+          "description": "resolved or escalated."
+        },
+        "supervisors": {
+          "items": {
+            "$ref": "#/definitions/Supervisor"
+          },
+          "type": "array"
+        },
+        "summary": {
+          "type": "string",
+          "description": "Text to send to the supervisor when the machine is still down."
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "required": [
+        "log_no",
+        "log_status",
+        "outcome",
+        "supervisors",
+        "summary",
+        "message"
+      ],
+      "title": "ClosedSession"
+    },
+    "Evidence": {
+      "properties": {
+        "ref": {
+          "type": "string",
+          "description": "Source reference, e.g. FC-3, BL-2026-000012, ALARM-A101, PHOTO-1."
+        },
+        "label": {
+          "type": "string",
+          "description": "What kind of source this is."
+        },
+        "text": {
+          "type": "string",
+          "description": "Short English summary of the source."
+        }
+      },
+      "type": "object",
+      "required": [
+        "ref",
+        "label",
+        "text"
+      ],
+      "title": "Evidence"
+    },
+    "FeedRow": {
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Times raised in the last 24 hours."
+        },
+        "last": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "active": {
+          "type": "boolean"
+        }
+      },
+      "type": "object",
+      "required": [
+        "code",
+        "message",
+        "count",
+        "last",
+        "active"
+      ],
+      "title": "FeedRow"
+    },
+    "LogSummary": {
+      "properties": {
+        "log_no": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string",
+          "description": "Plant date, YYYY-MM-DD."
+        },
+        "status": {
+          "type": "string",
+          "description": "draft, open (machine still down), closed, verified or rejected."
+        },
+        "verified": {
+          "type": "boolean"
+        },
+        "technician": {
+          "type": "string"
+        },
+        "alarm_code": {
+          "type": "string"
+        },
+        "issue": {
+          "type": "string",
+          "description": "English when available, else the technician's words."
+        },
+        "root_cause": {
+          "type": "string"
+        },
+        "fix": {
+          "type": "string"
+        },
+        "downtime_min": {
+          "type": "integer"
+        }
+      },
+      "type": "object",
+      "required": [
+        "log_no",
+        "date",
+        "status",
+        "verified",
+        "technician",
+        "alarm_code",
+        "issue",
+        "root_cause",
+        "fix"
+      ],
+      "title": "LogSummary"
+    },
+    "MachineDetail": {
+      "properties": {
+        "machine": {
+          "$ref": "#/definitions/MachineOut"
+        },
+        "active_alarm": {
+          "$ref": "#/definitions/AlarmOut"
+        },
+        "alarms_24h": {
+          "items": {
+            "$ref": "#/definitions/FeedRow"
+          },
+          "type": "array"
+        },
+        "open_logs": {
+          "items": {
+            "$ref": "#/definitions/LogSummary"
+          },
+          "type": "array",
+          "description": "Breakdowns still open or waiting for confirmation."
+        },
+        "recent_fixes": {
+          "items": {
+            "$ref": "#/definitions/LogSummary"
+          },
+          "type": "array",
+          "description": "Last closed or verified breakdowns, newest first."
+        },
+        "fault_cards": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "Approved fault cards for this machine, as 'FC-n: symptom'."
+        },
+        "low_stock_parts": {
+          "items": {
+            "$ref": "#/definitions/PartOut"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object",
+      "required": [
+        "machine",
+        "alarms_24h",
+        "open_logs",
+        "recent_fixes",
+        "fault_cards",
+        "low_stock_parts"
+      ],
+      "title": "MachineDetail"
+    },
+    "MachineList": {
+      "properties": {
+        "machines": {
+          "items": {
+            "$ref": "#/definitions/MachineOut"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object",
+      "required": [
+        "machines"
+      ],
+      "title": "MachineList"
+    },
+    "MachineOut": {
+      "properties": {
+        "machine_no": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "machine_type": {
+          "type": "string"
+        },
+        "zone": {
+          "type": "string"
+        },
+        "line": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "description": "running or down, as last logged."
+        },
+        "active_alarm_code": {
+          "type": "string",
+          "description": "Newest uncleared PLC/SCADA alarm, if any.",
+          "default": ""
+        }
+      },
+      "type": "object",
+      "required": [
+        "machine_no",
+        "name",
+        "machine_type",
+        "zone",
+        "line",
+        "status"
+      ],
+      "title": "MachineOut"
+    },
+    "Me": {
+      "properties": {
+        "employee_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string",
+          "description": "technician, supervisor or admin."
+        },
+        "zone": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string",
+          "enum": [
+            "en",
+            "ta"
+          ],
+          "description": "The person's preferred language in Thunai."
+        }
+      },
+      "type": "object",
+      "required": [
+        "employee_id",
+        "name",
+        "role",
+        "zone",
+        "language"
+      ],
+      "title": "Me"
+    },
+    "NewLog": {
+      "properties": {
+        "machine_no": {
+          "type": "string",
+          "maxLength": 60
+        },
+        "issue": {
+          "type": "string",
+          "maxLength": 2000,
+          "minLength": 3,
+          "description": "The technician's own words: what was wrong."
+        },
+        "issue_en": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "English version, when the words above are not English.",
+          "default": ""
+        },
+        "corrective_action": {
+          "type": "string",
+          "maxLength": 2000,
+          "minLength": 3,
+          "description": "The technician's own words: what they did."
+        },
+        "corrective_action_en": {
+          "type": "string",
+          "maxLength": 2000,
+          "default": ""
+        },
+        "root_cause": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "The technician's own words: the cause, if known.",
+          "default": ""
+        },
+        "root_cause_en": {
+          "type": "string",
+          "maxLength": 2000,
+          "default": ""
+        },
+        "alarm_code": {
+          "type": "string",
+          "maxLength": 60,
+          "default": ""
+        },
+        "start_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the breakdown started (ISO 8601 with time zone)."
+        },
+        "end_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the machine ran again."
+        },
+        "downtime_min": {
+          "type": "integer",
+          "maximum": 100000.0,
+          "minimum": 0.0,
+          "description": "Only when start and end times are not known."
+        },
+        "parts_used": {
+          "items": {
+            "$ref": "#/definitions/PartUsed"
+          },
+          "type": "array",
+          "maxItems": 20
+        },
+        "still_down": {
+          "type": "boolean",
+          "description": "True when the machine is still down after this work.",
+          "default": false
+        },
+        "confirmed": {
+          "type": "boolean",
+          "description": "Must be true: you read the log back to the technician and they agreed."
+        }
+      },
+      "type": "object",
+      "required": [
+        "machine_no",
+        "issue",
+        "corrective_action",
+        "confirmed"
+      ],
+      "title": "NewLog"
+    },
+    "NewSession": {
+      "properties": {
+        "machine_no": {
+          "type": "string",
+          "maxLength": 60,
+          "description": "Machine number, e.g. DEMO-SF-01. Use findMachines if unsure."
+        },
+        "problem": {
+          "type": "string",
+          "maxLength": 2000,
+          "minLength": 3,
+          "description": "The technician's description, in their own words."
+        },
+        "alarm_code": {
+          "type": "string",
+          "maxLength": 60,
+          "description": "Alarm code shown on the HMI, if any.",
+          "default": ""
+        },
+        "language": {
+          "type": "string",
+          "enum": [
+            "en",
+            "ta"
+          ],
+          "description": "Language of the technician: en (English) or ta (Tamil).",
+          "default": "en"
+        },
+        "photos": {
+          "items": {
+            "$ref": "#/definitions/PhotoIn"
+          },
+          "type": "array",
+          "maxItems": 3,
+          "description": "What you read from photos the technician sent. Leave empty if none."
+        }
+      },
+      "type": "object",
+      "required": [
+        "machine_no",
+        "problem"
+      ],
+      "title": "NewSession"
+    },
+    "Option": {
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "required": [
+        "value",
+        "label"
+      ],
+      "title": "Option"
+    },
+    "PartList": {
+      "properties": {
+        "parts": {
+          "items": {
+            "$ref": "#/definitions/PartOut"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object",
+      "required": [
+        "parts"
+      ],
+      "title": "PartList"
+    },
+    "PartOut": {
+      "properties": {
+        "part_no": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "stock_qty": {
+          "type": "number",
+          "description": "Left out when the stock is not known."
+        },
+        "location": {
+          "type": "string",
+          "description": "Store location."
+        },
+        "low": {
+          "type": "boolean",
+          "description": "True when stock is at or below the minimum."
+        },
+        "stock_text": {
+          "type": "string",
+          "description": "Ready text, e.g. '4 pcs in Store A3' or 'Out of stock'."
+        }
+      },
+      "type": "object",
+      "required": [
+        "part_no",
+        "description",
+        "unit",
+        "location",
+        "low",
+        "stock_text"
+      ],
+      "title": "PartOut"
+    },
+    "PartUsed": {
+      "properties": {
+        "part_no": {
+          "type": "string",
+          "maxLength": 80,
+          "default": ""
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 200,
+          "default": ""
+        },
+        "qty": {
+          "type": "number",
+          "maximum": 10000.0,
+          "minimum": 0.0,
+          "default": 1
+        }
+      },
+      "type": "object",
+      "title": "PartUsed"
+    },
+    "PhotoIn": {
+      "properties": {
+        "shows": {
+          "type": "string",
+          "maxLength": 300,
+          "description": "In English: what the photo shows, e.g. 'HMI alarm screen of the press'."
+        },
+        "readings": {
+          "items": {
+            "$ref": "#/definitions/Reading"
+          },
+          "type": "array",
+          "maxItems": 10
+        },
+        "screen_text": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Text on an HMI or display, copied as written.",
+          "default": ""
+        },
+        "alarm_codes": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "maxItems": 5,
+          "description": "Alarm codes visible on a screen."
+        },
+        "damage": {
+          "type": "string",
+          "maxLength": 300,
+          "description": "In English: visible damage, if any.",
+          "default": ""
+        }
+      },
+      "type": "object",
+      "required": [
+        "shows"
+      ],
+      "title": "PhotoIn"
+    },
+    "Question": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "options": {
+          "items": {
+            "$ref": "#/definitions/Option"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "text",
+        "options"
+      ],
+      "title": "Question"
+    },
+    "Reading": {
+      "properties": {
+        "label": {
+          "type": "string",
+          "maxLength": 80,
+          "description": "What was read, e.g. 'FRL pressure gauge'."
+        },
+        "value": {
+          "type": "string",
+          "maxLength": 40,
+          "description": "As shown, e.g. '3.5'. Empty when not clearly legible.",
+          "default": ""
+        },
+        "unit": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "e.g. bar, °C, A.",
+          "default": ""
+        },
+        "legible": {
+          "type": "boolean",
+          "description": "True only when the value is clearly readable. Never guess."
+        }
+      },
+      "type": "object",
+      "required": [
+        "label",
+        "legible"
+      ],
+      "title": "Reading"
+    },
+    "SafetyAnswer": {
+      "properties": {
+        "allowed": {
+          "type": "boolean"
+        },
+        "phrase": {
+          "type": "string",
+          "description": "The unsafe phrase that was found.",
+          "default": ""
+        },
+        "message": {
+          "type": "string",
+          "description": "When not allowed: show this instead of the instruction.",
+          "default": ""
+        }
+      },
+      "type": "object",
+      "required": [
+        "allowed"
+      ],
+      "title": "SafetyAnswer"
+    },
+    "SafetyQuestion": {
+      "properties": {
+        "text": {
+          "type": "string",
+          "maxLength": 4000,
+          "minLength": 1,
+          "description": "The instruction or advice you want to give."
+        },
+        "language": {
+          "type": "string",
+          "enum": [
+            "en",
+            "ta"
+          ],
+          "description": "Language of the technician: en (English) or ta (Tamil).",
+          "default": "en"
+        }
+      },
+      "type": "object",
+      "required": [
+        "text"
+      ],
+      "title": "SafetyQuestion"
+    },
+    "SavedLog": {
+      "properties": {
+        "log_no": {
+          "type": "string"
+        },
+        "log_status": {
+          "type": "string"
+        },
+        "machine_no": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "required": [
+        "log_no",
+        "log_status",
+        "machine_no",
+        "message"
+      ],
+      "title": "SavedLog"
+    },
+    "SessionOut": {
+      "properties": {
+        "session_id": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "questions",
+            "step",
+            "finished",
+            "stop",
+            "refused",
+            "failed",
+            "closed"
+          ],
+          "description": "questions: ask them, then call answerQuestions. step: show current_step and wait for OK, NOT OK or CAN'T DO. finished: all steps done; ask if the machine runs, then closeSession. stop: tell the technician to stop and call callSupervisor. refused: show message only. failed: show message and offer callSupervisor. closed: session is over."
+        },
+        "machine_no": {
+          "type": "string"
+        },
+        "problem": {
+          "type": "string"
+        },
+        "alarm_code": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string",
+          "enum": [
+            "en",
+            "ta"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "description": "Show this to the technician when it is not empty.",
+          "default": ""
+        },
+        "summary": {
+          "type": "string",
+          "default": ""
+        },
+        "likely_causes": {
+          "items": {
+            "$ref": "#/definitions/Cause"
+          },
+          "type": "array"
+        },
+        "low_confidence": {
+          "type": "boolean",
+          "default": false
+        },
+        "questions": {
+          "items": {
+            "$ref": "#/definitions/Question"
+          },
+          "type": "array"
+        },
+        "current_step": {
+          "$ref": "#/definitions/StepOut"
+        },
+        "steps_done": {
+          "type": "integer",
+          "default": 0
+        },
+        "agent_note": {
+          "type": "string",
+          "description": "What to do next. For the agent; do not show it.",
+          "default": ""
+        }
+      },
+      "type": "object",
+      "required": [
+        "session_id",
+        "status",
+        "machine_no",
+        "problem",
+        "alarm_code",
+        "language"
+      ],
+      "title": "SessionOut"
+    },
+    "StepOut": {
+      "properties": {
+        "step_no": {
+          "type": "integer"
+        },
+        "total_steps": {
+          "type": "integer"
+        },
+        "kind": {
+          "type": "string",
+          "description": "safety, check or action."
+        },
+        "language": {
+          "type": "string",
+          "enum": [
+            "en",
+            "ta"
+          ],
+          "description": "Language of the texts below. 'en' when no Tamil version exists yet."
+        },
+        "action": {
+          "type": "string"
+        },
+        "check": {
+          "type": "string"
+        },
+        "expected_result": {
+          "type": "string"
+        },
+        "safety_note": {
+          "type": "string"
+        },
+        "tools": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "authorised_only": {
+          "type": "boolean",
+          "description": "Only an authorised electrician may do this step."
+        },
+        "general": {
+          "type": "boolean",
+          "description": "No plant evidence: a general suggestion, not seen on this machine before."
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/definitions/Evidence"
+          },
+          "type": "array"
+        },
+        "parts": {
+          "items": {
+            "$ref": "#/definitions/PartOut"
+          },
+          "type": "array",
+          "description": "Catalogue parts named in this step, with live stock."
+        },
+        "display": {
+          "type": "string",
+          "description": "The step ready to show. Show it exactly as written."
+        }
+      },
+      "type": "object",
+      "required": [
+        "step_no",
+        "total_steps",
+        "kind",
+        "language",
+        "action",
+        "check",
+        "expected_result",
+        "safety_note",
+        "tools",
+        "authorised_only",
+        "general",
+        "evidence",
+        "parts",
+        "display"
+      ],
+      "title": "StepOut"
+    },
+    "StepResult": {
+      "properties": {
+        "step_no": {
+          "type": "integer",
+          "minimum": 1.0,
+          "description": "The step the technician answered (current_step.step_no)."
+        },
+        "result": {
+          "type": "string",
+          "enum": [
+            "ok",
+            "not_ok",
+            "cant_do"
+          ],
+          "description": "ok: result as expected. not_ok: result not as expected. cant_do: the technician cannot do this step."
+        }
+      },
+      "type": "object",
+      "required": [
+        "step_no",
+        "result"
+      ],
+      "title": "StepResult"
+    },
+    "Supervisor": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "zone": {
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "required": [
+        "name",
+        "phone",
+        "zone"
+      ],
+      "title": "Supervisor"
+    },
+    "SupervisorHelp": {
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "Ready text to send to the supervisor."
+        },
+        "supervisors": {
+          "items": {
+            "$ref": "#/definitions/Supervisor"
+          },
+          "type": "array"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "required": [
+        "summary",
+        "supervisors",
+        "message"
+      ],
+      "title": "SupervisorHelp"
+    },
+    "TextToTranslate": {
+      "properties": {
+        "text_id": {
+          "type": "integer"
+        },
+        "log_no": {
+          "type": "string"
+        },
+        "machine_no": {
+          "type": "string"
+        },
+        "field": {
+          "type": "string",
+          "description": "issue, root_cause or corrective_action."
+        },
+        "original": {
+          "type": "string"
+        },
+        "original_lang": {
+          "type": "string",
+          "description": "en, ta or mixed."
+        },
+        "needs": {
+          "items": {
+            "type": "string",
+            "enum": [
+              "en",
+              "ta"
+            ]
+          },
+          "type": "array",
+          "description": "The versions that are missing."
+        }
+      },
+      "type": "object",
+      "required": [
+        "text_id",
+        "log_no",
+        "machine_no",
+        "field",
+        "original",
+        "original_lang",
+        "needs"
+      ],
+      "title": "TextToTranslate"
+    },
+    "Translation": {
+      "properties": {
+        "text_id": {
+          "type": "integer"
+        },
+        "en": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "English version. Plain words; keep technical terms.",
+          "default": ""
+        },
+        "ta": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Tamil version: simple spoken Tamil, technical terms in English.",
+          "default": ""
+        }
+      },
+      "type": "object",
+      "required": [
+        "text_id"
+      ],
+      "title": "Translation"
+    },
+    "TranslationList": {
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/definitions/TextToTranslate"
+          },
+          "type": "array"
+        },
+        "remaining": {
+          "type": "integer",
+          "description": "More texts waiting after these."
+        }
+      },
+      "type": "object",
+      "required": [
+        "items",
+        "remaining"
+      ],
+      "title": "TranslationList"
+    },
+    "Translations": {
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/definitions/Translation"
+          },
+          "type": "array",
+          "maxItems": 50
+        }
+      },
+      "type": "object",
+      "required": [
+        "items"
+      ],
+      "title": "Translations"
+    },
+    "TranslationsSaved": {
+      "properties": {
+        "saved": {
+          "type": "integer"
+        },
+        "skipped": {
+          "type": "integer"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "required": [
+        "saved",
+        "skipped",
+        "message"
+      ],
+      "title": "TranslationsSaved"
+    }
+  },
+  "securityDefinitions": {
+    "entra_id": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://login.microsoftonline.com/{tenant-id}/oauth2/v2.0/authorize",
+      "tokenUrl": "https://login.microsoftonline.com/{tenant-id}/oauth2/v2.0/token",
+      "scopes": {
+        "api://{thunai-api-client-id}/Thunai.Use": "Use Thunai as the signed-in technician"
+      }
+    }
+  },
+  "security": [
+    {
+      "entra_id": [
+        "api://{thunai-api-client-id}/Thunai.Use"
+      ]
+    }
+  ]
+}

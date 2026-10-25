@@ -6,6 +6,7 @@ live in the `settings` table instead; see app/settings_store.py.
 from functools import lru_cache
 from pathlib import Path
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
@@ -37,21 +38,9 @@ class Config(BaseSettings):
     jobs_mode: str = "thread"
     redis_url: str = ""
 
-    # AI
-    ai_provider: str = "mock"  # mock | anthropic
-    ai_model_diagnosis: str = "claude-opus-5-5"
-    ai_model_extraction: str = "claude-haiku-5-5"
-    ai_effort_diagnosis: str = "medium"
-    ai_effort_extraction: str = "low"
-    ai_refusal_fallback: bool = True  # server-side fallback on safety-classifier refusals
-    ai_timeout_s: float = 90.0
-    # USD per million tokens, "model=input/output" pairs, comma separated.
-    ai_prices: str = (
-        "claude-opus-5-5=4/20,claude-sonnet-5-5=2/10,claude-haiku-5-5=0.10/0.50,"
-        "claude-fable-5-1=10/50"
-    )
-    # Phase 3: send photos to the AI provider (SPEC 12.4). The mock provider never sends anything.
-    ai_photos: bool = False
+    # AI: Thunai's rules engine is the only provider. Conversation, photos and translation run in the
+    # Microsoft Copilot agent (SPEC 13); the Claude adapter was removed on 25 Oct 2026.
+    ai_provider: str = "rules"
     prompts_dir: Path = BACKEND_DIR / "prompts"
     # Active prompt versions, "name=vN" pairs. Missing names use DEFAULT_PROMPT_VERSIONS, then v1.
     prompt_versions: str = ""
@@ -71,26 +60,38 @@ class Config(BaseSettings):
     embeddings_model: str = "multilingual-e5-base"
     embeddings_api_key: str = ""
 
+    # Microsoft Copilot agent (SPEC 13). Tokens are Microsoft Entra ID access tokens for the Thunai API app.
+    copilot_enabled: bool = False
+    entra_tenant_id: str = ""  # directory (tenant) ID, a GUID
+    entra_audience: str = ""  # comma separated: the Thunai API app's Application ID URI and/or client ID
+    entra_scope: str = "Thunai.Use"  # delegated scope the connector requests
+    entra_jwks_url: str = ""  # default: https://login.microsoftonline.com/<tenant>/discovery/v2.0/keys
+    copilot_teams_url: str = ""  # optional link to the agent in Teams, shown on the PWA home screen
+
     # Sample data
     seed_sample_data: bool = True
 
+    @field_validator("ai_provider")
+    @classmethod
+    def _rules_only(cls, value: str) -> str:
+        value = value.strip().lower()
+        if value in ("rules", "mock"):  # "mock" was the old name of the rules engine
+            return "rules"
+        raise ValueError(
+            f"AI_PROVIDER={value} is not available: the Claude adapter was removed (SPEC 13). Use AI_PROVIDER=rules."
+        )
+
     @property
-    def photos_to_ai(self) -> bool:
-        return self.ai_provider == "mock" or self.ai_photos
+    def entra_audiences(self) -> list[str]:
+        return [a.strip() for a in self.entra_audience.split(",") if a.strip()]
+
+    @property
+    def copilot_ready(self) -> bool:
+        return self.copilot_enabled and bool(self.entra_tenant_id and self.entra_audiences)
 
     @property
     def is_sqlite(self) -> bool:
         return self.database_url.startswith("sqlite")
-
-    def price_for(self, model: str) -> tuple[float, float]:
-        for pair in self.ai_prices.split(","):
-            if "=" not in pair:
-                continue
-            name, prices = pair.split("=", 1)
-            if name.strip() == model:
-                inp, out = prices.split("/")
-                return float(inp), float(out)
-        return 0.0, 0.0
 
     def prompt_version(self, name: str) -> str:
         for pair in self.prompt_versions.split(","):

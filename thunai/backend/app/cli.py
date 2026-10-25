@@ -5,6 +5,7 @@
   create-admin         create an admin user: --employee-id E123 --name "Name" --pin 4321
   purge-media          delete audio files older than the retention period (run nightly)
   reindex              fill embeddings for all records (only when an embeddings provider is set)
+  copilot-spec         print the OpenAPI 2.0 file for the Copilot connector: [--host H] [--tenant T] [--scope S]
 """
 import argparse
 import sys
@@ -77,6 +78,14 @@ def cmd_reindex(_args) -> int:
     return 0
 
 
+def cmd_copilot_spec(args) -> int:
+    from . import copilot_spec
+    from .main import app
+
+    sys.stdout.write(copilot_spec.dumps(copilot_spec.build(app, host=args.host, tenant=args.tenant, scope=args.scope)))
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m app.cli")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -88,6 +97,12 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--pin", required=True)
     sub.add_parser("purge-media")
     sub.add_parser("reindex")
+    from .copilot_spec import HOST, SCOPE, TENANT
+
+    p = sub.add_parser("copilot-spec")
+    p.add_argument("--host", default=HOST, help="public host name of Thunai, without https://")
+    p.add_argument("--tenant", default=TENANT, help="Microsoft Entra directory (tenant) ID")
+    p.add_argument("--scope", default=SCOPE, help="api://<Thunai API client ID>/Thunai.Use")
     args = parser.parse_args(argv)
     handler = {
         "init": cmd_init,
@@ -95,6 +110,7 @@ def main(argv: list[str] | None = None) -> int:
         "create-admin": cmd_create_admin,
         "purge-media": cmd_purge_media,
         "reindex": cmd_reindex,
+        "copilot-spec": cmd_copilot_spec,
     }[args.command]
     return handler(args)
 

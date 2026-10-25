@@ -35,16 +35,12 @@ def _answers_text(session: AISession, lang: str = "en") -> str:
     return "\n".join(rows) or "(no questions asked)"
 
 
-def _photos(db: Session, session: AISession) -> list[LogMedia]:
-    rows = db.scalars(
-        select(LogMedia).where(LogMedia.ai_session_id == session.id, LogMedia.kind == "photo").order_by(LogMedia.id)
-    )
-    return [m for m in rows if (m.observation or {}).get("usable")]
-
-
 def _context(db: Session, session: AISession) -> retrieval.Context:
     # Search on the technician's words only; the answers go to the AI but would drown the query.
-    return retrieval.build_context(db, session.machine, session.problem_text, session.alarm_code, _photos(db, session))
+    when = session.created_at.astimezone(ZoneInfo(get_config().plant_tz)).date().isoformat()
+    return retrieval.build_context(
+        db, session.machine, session.problem_text, session.alarm_code, session.observations or [], when=when
+    )
 
 
 def _variables(db: Session, session: AISession, ctx: retrieval.Context) -> dict:
@@ -75,22 +71,29 @@ def _refuse(session: AISession, reason_en: str = "", reason_ta: str = "") -> Non
     }
 
 
-def start(db: Session, user: User, machine: Machine, data: SessionStart) -> AISession:
+def start(
+    db: Session, user: User, machine: Machine, data: SessionStart, *, channel: str = "app", observations: list[dict] = ()
+) -> AISession:
+    """`observations` are photo readings from the Copilot agent (photos.py); the PWA sends none."""
     session = AISession(
         machine=machine,
         technician=user,
         language=data.language,
         problem_text=data.problem_text.strip(),
         alarm_code=data.alarm_code.strip(),
+        channel=channel,
+        observations=[photos.clean(o) for o in list(observations)[: photos.MAX_PHOTOS]],
     )
+    if not session.alarm_code:
+        seen = photos.suggestion(db, machine, session.observations)
+        if seen:
+            session.alarm_code = seen["code"]  # an alarm code on the photographed screen
     db.add(session)
     db.flush()
-    for media_id in data.media_ids:
+    for media_id in data.media_ids:  # PWA photos and audio: attachments only
         media = db.get(LogMedia, media_id)
         if media and media.created_by == user.id:
             media.ai_session_id = session.id
-            if media.kind == "photo" and not media.observed_at:
-                photos.read(db, media, machine)  # normally already read when the photo was added
     db.flush()
 
     if safety.check_request(session.problem_text).refused:
@@ -314,7 +317,23 @@ def _alarm_event_id(db: Session, session: AISession) -> int | None:
     return event.id if event else None
 
 
-def close(db: Session, user: User, session: AISession, running: bool) -> dict:
+def close(
+    db: Session,
+    user: User,
+    session: AISession,
+    running: bool,
+    *,
+    fixed: TextIn | None = None,
+    cause: TextIn | None = None,
+    parts_used: list[dict] | None = None,
+    confirmed: bool = False,
+) -> dict:
+    """Close the session and create its breakdown log.
+
+    The PWA sends only `running`; the log is a draft the technician confirms in the form. The Copilot
+    agent also sends the technician's own words (`fixed`, `cause`, `parts_used`) and `confirmed` when
+    the technician agreed to the read-back in the chat; the log is then submitted straight away.
+    """
     if session.outcome not in ("in_progress", "failed", "refused"):
         raise HTTPException(409, f"Session is already {session.outcome}")
     machine = session.machine
@@ -345,40 +364,44 @@ def close(db: Session, user: User, session: AISession, running: bool) -> dict:
             session=session,
         )
 
-        def text(name: str) -> TextIn:
+        def text(name: str, given: TextIn | None) -> TextIn:
+            if given is not None and (given.original or given.en):
+                return given  # the technician's own words, sent by the agent
             if draft is None:
                 return TextIn()
             v = getattr(draft, name)
             return TextIn(original="", en=v.en, ta=v.ta, ai_filled=True, unsure=v.unsure)
 
+        drafted = [{"description": p.description, "part_no": p.part_no, "qty": p.qty} for p in (draft.parts_replaced if draft else [])]
+        submit = confirmed and fixed is not None and bool(fixed.original or fixed.en)
         body = LogIn(
             machine_no=machine.machine_no,
             issue=TextIn(original=session.problem_text),  # the technician's own words
-            root_cause=text("root_cause"),
-            corrective_action=text("corrective_action"),
+            root_cause=text("root_cause", cause),
+            corrective_action=text("corrective_action", fixed),
             start_at=session.created_at,
             end_at=utcnow(),
             alarm_code=session.alarm_code,
-            parts=[{"description": p.description, "part_no": p.part_no, "qty": p.qty} for p in (draft.parts_replaced if draft else [])],
+            parts=parts_used if parts_used is not None else drafted,
             source="ai_session",
             ai_session_id=session.id,
-            submit=False,
+            submit=submit,
             alarm_event_id=_alarm_event_id(db, session),
         )
         log = logs_service.create_log(db, user, machine, body, source="ai_session")
-        log.needs_confirmation = True
+        log.needs_confirmation = not submit
     else:
         session.outcome = "escalated"
         session.supervisor_called = True
         tried = "; ".join(
             f"{d['action_en']} ({d['response'].replace('_', ' ')})" for d in done if d["kind"] != "safety"
         )
+        auto = TextIn(original="", en=f"Tried with Thunai: {tried}. Machine still down." if tried else "", ai_filled=True)
         body = LogIn(
             machine_no=machine.machine_no,
             issue=TextIn(original=session.problem_text),
-            corrective_action=TextIn(
-                original="", en=f"Tried with Thunai: {tried}. Machine still down." if tried else "", ai_filled=True
-            ),
+            corrective_action=fixed if fixed is not None and (fixed.original or fixed.en) else auto,
+            root_cause=cause or TextIn(),
             start_at=session.created_at,
             alarm_code=session.alarm_code,
             source="ai_session",

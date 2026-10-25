@@ -12,6 +12,7 @@ const PATHS: Record<string, string> = {
   qr: "M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h3v3h-3zM18 18h3v3h-3zM14 20h2M20 14v2",
   search: "M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.3-4.3",
   help: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01",
+  chat: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2zM8 9h8M8 13h5",
   log: "M9 2h6v4H9zM16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M8 12h8M8 16h5",
   list: "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01",
   check: "M20 6 9 17l-5-5",
@@ -49,7 +50,7 @@ export function Icon({ name, size = 24 }: { name: keyof typeof PATHS | string; s
 
 // ---- layout ---------------------------------------------------------------------------------
 export function Header({ title, back = true, right }: { title: string; back?: boolean; right?: ReactNode }) {
-  const { lang, setLang, online, meta, t } = useApp();
+  const { lang, setLang, online, t } = useApp();
   const navigate = useNavigate();
   return (
     <header className="topbar">
@@ -66,7 +67,6 @@ export function Header({ title, back = true, right }: { title: string; back?: bo
           <Icon name="wifiOff" size={16} /> {t("offline")}
         </span>
       )}
-      {meta?.demo_ai && <span className="pill pill-demo" title={t("demo_ai_note")}>Demo</span>}
       {right}
       <button className="lang-btn" onClick={() => setLang(lang === "en" ? "ta" : "en")} aria-label="Change language / மொழி மாற்று">
         {lang === "en" ? "தமிழ்" : "EN"}

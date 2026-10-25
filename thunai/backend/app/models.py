@@ -124,6 +124,10 @@ class User(Timestamps, Base):
     failed_attempts: Mapped[int] = mapped_column(Integer, default=0)
     locked_until: Mapped[datetime | None] = mapped_column(UTCDateTime)
     last_login_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
+    # Microsoft account for the Copilot agent (SPEC 13.3). The admin sets the UPN; the object ID is
+    # bound on first use and is the only thing matched after that.
+    entra_upn: Mapped[str | None] = mapped_column(String(200), unique=True)
+    entra_oid: Mapped[str | None] = mapped_column(String(64), unique=True)
 
 
 class AISession(Base):
@@ -151,6 +155,9 @@ class AISession(Base):
     # Plain integer (no FK) to avoid a circular reference with breakdown_logs.ai_session_id.
     resulting_log_id: Mapped[int | None] = mapped_column(Integer, index=True)
     supervisor_called: Mapped[bool] = mapped_column(Boolean, default=False)
+    channel: Mapped[str] = mapped_column(String(10), default="app")  # app | copilot
+    # Photo readings sent by the Copilot agent (photos.py); evidence PHOTO-1, PHOTO-2, ...
+    observations: Mapped[list] = mapped_column(JSONType, default=list)
     created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow)
     closed_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
 
@@ -246,10 +253,6 @@ class LogMedia(Base):
     created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow)
     expires_at: Mapped[datetime | None] = mapped_column(UTCDateTime, index=True)
     purged_at: Mapped[datetime | None] = mapped_column(UTCDateTime)  # file removed, row kept
-    # Phase 3: what the AI read from a photo (see photos.py); empty until read.
-    observation: Mapped[dict] = mapped_column(JSONType, default=dict)
-    observed_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
-    observation_model: Mapped[str] = mapped_column(String(80), default="")
 
     log: Mapped[BreakdownLog | None] = relationship(back_populates="media", foreign_keys=[log_id])
 
@@ -468,6 +471,20 @@ class MachineAlarm(Base):
     created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow)
 
     machine: Mapped[Machine] = relationship()
+
+
+class CopilotCall(Base):
+    """One tool call from the Copilot agent (SPEC 13.3), for usage and error monitoring."""
+
+    __tablename__ = "copilot_calls"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    operation: Mapped[str] = mapped_column(String(60), index=True)
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), index=True)
+    status_code: Mapped[int] = mapped_column(Integer, default=200)
+    ok: Mapped[bool] = mapped_column(Boolean, default=True)
+    error: Mapped[str] = mapped_column(String(300), default="")
+    duration_ms: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow, index=True)
 
 
 INTEGRATION_SCOPES = ("alarms", "parts")

@@ -147,7 +147,7 @@ def build(db: Session, *, days: int, zone: str = "") -> dict:
             "failed": outcomes.get("failed", 0),
             "helpful": sum(1 for s in sessions if s.feedback == "helpful"),
             "not_helpful": sum(1 for s in sessions if s.feedback == "not_helpful"),
-            "cost_usd": round(sum(s.cost_usd for s in sessions), 4),
+            "in_teams": sum(1 for s in sessions if s.channel == "copilot"),
         },
     }
 
