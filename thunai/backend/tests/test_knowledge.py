@@ -1,4 +1,4 @@
-"""Phase 2: automatic fault cards, review, versions and contradiction flags (mock AI, sync jobs)."""
+"""Phase 2: automatic fault cards, review, versions and contradiction flags (rules engine, sync jobs)."""
 from sqlalchemy import select
 
 from app.db import SessionLocal

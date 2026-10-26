@@ -83,7 +83,6 @@ def test_only_the_rules_engine_can_be_configured():
     from app.config import Config
 
     assert Config(ai_provider="rules").ai_provider == "rules"
-    assert Config(ai_provider="mock").ai_provider == "rules"  # old name in existing .env files
-    with pytest.raises(ValidationError, match="Claude adapter was removed"):
-        Config(ai_provider="anthropic")
+    with pytest.raises(ValidationError, match="Use AI_PROVIDER=rules"):
+        Config(ai_provider="some-model-api")
     assert ai_service.get_provider().name == "rules"

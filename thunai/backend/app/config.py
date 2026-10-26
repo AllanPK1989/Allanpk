@@ -39,7 +39,7 @@ class Config(BaseSettings):
     redis_url: str = ""
 
     # AI: Thunai's rules engine is the only provider. Conversation, photos and translation run in the
-    # Microsoft Copilot agent (SPEC 13); the Claude adapter was removed on 25 Oct 2026.
+    # Microsoft Copilot agent (SPEC 13).
     ai_provider: str = "rules"
     prompts_dir: Path = BACKEND_DIR / "prompts"
     # Active prompt versions, "name=vN" pairs. Missing names use DEFAULT_PROMPT_VERSIONS, then v1.
@@ -75,11 +75,9 @@ class Config(BaseSettings):
     @classmethod
     def _rules_only(cls, value: str) -> str:
         value = value.strip().lower()
-        if value in ("rules", "mock"):  # "mock" was the old name of the rules engine
-            return "rules"
-        raise ValueError(
-            f"AI_PROVIDER={value} is not available: the Claude adapter was removed (SPEC 13). Use AI_PROVIDER=rules."
-        )
+        if value == "rules":
+            return value
+        raise ValueError(f"AI_PROVIDER={value} is not available. Use AI_PROVIDER=rules (SPEC 13).")
 
     @property
     def entra_audiences(self) -> list[str]:

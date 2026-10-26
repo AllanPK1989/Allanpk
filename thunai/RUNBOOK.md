@@ -120,10 +120,8 @@ The API applies database migrations at start (`alembic upgrade head`). Take a ba
 ## 8. Rules engine, Copilot and speech settings
 
 - **No model API.** The Thunai server runs its rules engine only (`AI_PROVIDER=rules`). It builds
-  steps from fault cards, logs, alarm lists, the alarm feed, tips and manuals. The Claude adapter
-  was removed on 25 Oct 2026 (SPEC.md section 13). An old `.env` with `AI_PROVIDER=anthropic` stops
-  the API at start with a message saying so; set `AI_PROVIDER=rules` and delete the `ANTHROPIC_*`,
-  `AI_MODEL_*`, `AI_EFFORT_*`, `AI_PRICES` and `AI_PHOTOS` lines.
+  steps from fault cards, logs, alarm lists, the alarm feed, tips and manuals. Any other value stops
+  the API at start with a message saying so (SPEC.md section 13).
 - **Microsoft Copilot:** set up with [copilot/SETUP.md](copilot/SETUP.md); operations in section 13.
 - **Prompts** (`backend/prompts/`) are kept for a model adapter Eaton may approve later; the rules
   engine does not read them. After changing the rules, run the evaluation

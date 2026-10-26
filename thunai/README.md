@@ -6,13 +6,12 @@ machine's history and knowledge base. Technicians use Thunai in two ways:
 - **Microsoft Teams / Microsoft 365 Copilot:** a Copilot Studio agent that calls Thunai's tools.
 - **The Thunai web app (PWA):** for offline logging, supervisors and admins.
 
-**Microsoft Copilot (25 Oct 2026).** Eaton approves Microsoft Copilot, not the Claude API, so:
-- the Claude adapter is removed;
-- the conversation runs in the Copilot agent;
-- the Thunai server keeps the plant data, the safety rules and a rules engine that builds the steps
-  from fault cards, logs and alarm lists.
+**AI runs in Microsoft Copilot.** The conversation runs in the Copilot agent. The Thunai server keeps
+the plant data, the safety rules and a rules engine that builds the steps from fault cards, logs and
+alarm lists; it calls no outside AI service. See [SPEC.md section 13](SPEC.md) and
+[copilot/SETUP.md](copilot/SETUP.md).
 
-See [SPEC.md section 13](SPEC.md) and [copilot/SETUP.md](copilot/SETUP.md).
+**Going live:** follow [GO-LIVE.md](GO-LIVE.md).
 
 Phase 1 (MVP), Phase 2 (knowledge and reports), Phase 3 (alarm feed, spare parts, skills) and the
 Copilot connection are built:

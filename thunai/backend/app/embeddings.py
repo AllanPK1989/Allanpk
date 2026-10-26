@@ -1,7 +1,7 @@
 """Optional vector similarity (SPEC.md 11.5).
 
-Off by default: Anthropic has no embeddings API, and another vendor would need the data-location
-approval in SPEC question 6. Set EMBEDDINGS_PROVIDER=openai_compat and EMBEDDINGS_BASE_URL to any
+Off by default: an outside embeddings vendor would need the data-location approval in SPEC
+question 6. Set EMBEDDINGS_PROVIDER=openai_compat and EMBEDDINGS_BASE_URL to any
 server with an OpenAI-style `POST /embeddings` endpoint (for example a multilingual model on the
 plant network). Vectors are stored as JSON in the `embeddings` table and compared in Python: every
 search is first narrowed to one machine or machine type, so candidate sets are small.
