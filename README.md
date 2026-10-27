@@ -59,8 +59,9 @@ projects), and `scripts/` (Python code generators).
 
 ## Additional plugins & skills
 
-Outside the 3D bundle, four third-party add-ons are installed. Sources, pinned commits and licenses
-are in `.claude/skills/THIRD-PARTY-NOTICES.md`.
+Outside the 3D bundle, eleven third-party add-ons are installed. Plugins are declared in
+`.claude/settings.json`. Sources, pinned commits and licenses for the vendored skills are in
+`.claude/skills/THIRD-PARTY-NOTICES.md`.
 
 | Add-on | Installed as | What it gives you |
 |---|---|---|
@@ -68,6 +69,13 @@ are in `.claude/skills/THIRD-PARTY-NOTICES.md`.
 | [one-skill-to-rule-them-all](https://github.com/rebelytics/one-skill-to-rule-them-all) | `.claude/skills/task-observer` | Watches work sessions and logs observations that could improve skills. |
 | [omniroute](https://github.com/sumanthbolle/omniroute) | `.claude/skills/omni-*`, `cli-*`, `config-codex-cli` (43 skills) | API and CLI reference for driving an OmniRoute AI gateway. They need a running OmniRoute server; the server itself is not installed. |
 | [claude-mem](https://github.com/thedotmack/claude-mem) | Plugin `claude-mem@thedotmack`, declared in `.claude/settings.json` | Hooks that record tool use into a local SQLite store and inject past context into new sessions, plus a `mem-search` MCP server and ~22 skills. |
+| [claude-code-setup](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-code-setup) | Plugin `claude-code-setup@anthropic-plugin-directory` | Analyzes the codebase and recommends hooks, skills, MCP servers and subagents. |
+| [claude-security](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-security) | Plugin `claude-security@anthropic-plugin-directory` | Vulnerability scanning of your own code; each finding is challenged before it is reported, and verified patches are applied only when you choose. |
+| [headroom](https://github.com/headroomlabs-ai/headroom) | Plugin `headroom@headroom-marketplace` | Startup hooks for the Headroom context-compression runtime. Inactive until the `headroom-ai` CLI is installed and `headroom init` is run. |
+| [find-skills](https://skills.sh/vercel-labs/skills/find-skills) | `.claude/skills/find-skills` | Searches the open skills ecosystem with `npx skills find` and installs skills on request. |
+| [superpowers](https://github.com/obra/superpowers) | Plugin `superpowers@anthropic-plugin-directory` | Core skills library: TDD, debugging, collaboration patterns and proven techniques. |
+| [impeccable](https://impeccable.style) | Plugin `impeccable@impeccable` | Frontend design fluency: one skill with 24 commands (`/impeccable polish`, `audit`, `critique`, …) and anti-pattern detection. |
+| [frontend-design](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/frontend-design) | Plugin `frontend-design@anthropic-plugin-directory` | Anthropic's frontend design skill for UI/UX implementation. |
 
 claude-mem notes:
 
