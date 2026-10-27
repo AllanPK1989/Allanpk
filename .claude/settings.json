@@ -8,9 +8,18 @@
         "source": "github",
         "repo": "thedotmack/claude-mem"
       }
+    },
+    "headroom-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "chopratejas/headroom"
+      }
     }
   },
   "enabledPlugins": {
-    "claude-mem@thedotmack": true
+    "claude-mem@thedotmack": true,
+    "claude-code-setup@anthropic-plugin-directory": true,
+    "claude-security@anthropic-plugin-directory": true,
+    "headroom@headroom-marketplace": true
   }
 }
