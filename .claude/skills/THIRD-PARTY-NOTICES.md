@@ -10,6 +10,7 @@ Skills vendored into this directory from sources other than
 | `task-observer` | [rebelytics/one-skill-to-rule-them-all](https://github.com/rebelytics/one-skill-to-rule-them-all) | `c479475` | CC BY 4.0 (`task-observer/LICENSE.txt`) |
 | `omni-*` (22), `cli-*` (20), `config-codex-cli` | [sumanthbolle/omniroute](https://github.com/sumanthbolle/omniroute) (`skills/`), a fork of diegosouzapw/OmniRoute | `5bc11f4` | MIT (below) |
 | `find-skills` | [vercel-labs/skills](https://github.com/vercel-labs/skills) (`skills/find-skills/`) | `533c7df` | MIT (below) |
+| `VibeSec-Skill` | [BehiSecc/VibeSec-Skill](https://github.com/BehiSecc/VibeSec-Skill) | `0590993` | Apache 2.0 (`VibeSec-Skill/LICENSE`) |
 
 ---
 

@@ -29,6 +29,8 @@
     "headroom@headroom-marketplace": true,
     "superpowers@anthropic-plugin-directory": true,
     "impeccable@impeccable": true,
-    "frontend-design@anthropic-plugin-directory": true
+    "frontend-design@anthropic-plugin-directory": true,
+    "supabase@anthropic-plugin-directory": true,
+    "context7@anthropic-plugin-directory": true
   }
 }
