@@ -59,7 +59,7 @@ projects), and `scripts/` (Python code generators).
 
 ## Additional plugins & skills
 
-Outside the 3D bundle, eleven third-party add-ons are installed. Plugins are declared in
+Outside the 3D bundle, fourteen third-party add-ons are installed. Plugins are declared in
 `.claude/settings.json`. Sources, pinned commits and licenses for the vendored skills are in
 `.claude/skills/THIRD-PARTY-NOTICES.md`.
 
@@ -76,6 +76,9 @@ Outside the 3D bundle, eleven third-party add-ons are installed. Plugins are dec
 | [superpowers](https://github.com/obra/superpowers) | Plugin `superpowers@anthropic-plugin-directory` | Core skills library: TDD, debugging, collaboration patterns and proven techniques. |
 | [impeccable](https://impeccable.style) | Plugin `impeccable@impeccable` | Frontend design fluency: one skill with 24 commands (`/impeccable polish`, `audit`, `critique`, …) and anti-pattern detection. |
 | [frontend-design](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/frontend-design) | Plugin `frontend-design@anthropic-plugin-directory` | Anthropic's frontend design skill for UI/UX implementation. |
+| [VibeSec-Skill](https://github.com/BehiSecc/VibeSec-Skill) | `.claude/skills/VibeSec-Skill` | Secure-coding guide for web applications, applied while writing code or when asked for a security scan or audit. |
+| [supabase](https://github.com/supabase-community/supabase-plugin) | Plugin `supabase@anthropic-plugin-directory` | Supabase skills plus the hosted Supabase MCP server for projects, database, auth and storage. The server (`mcp.supabase.com`) must be allowed by the cloud environment's network settings and needs a Supabase access token. |
+| [context7](https://github.com/anthropics/claude-plugins-official/tree/main/external_plugins/context7) | Plugin `context7@anthropic-plugin-directory` | Up-to-date library documentation lookup through Upstash's hosted Context7 MCP server (`mcp.context7.com`, which must be allowed by the cloud environment's network settings). |
 
 claude-mem notes:
 
