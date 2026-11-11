@@ -1,0 +1,42 @@
+name: "CMMS_Eaton: test, build and package"
+
+# Builds the static CMMS_Eaton bundle and attaches it as a workflow artifact
+# (CMMS_Eaton-dist). Download it, unzip nothing: the zip inside is what you drop
+# into the AweShell console (Static Hosting -> upload .zip).
+
+on:
+  push:
+    paths: ["cmms-eaton/**", ".github/workflows/cmms-eaton.yml"]
+  pull_request:
+    paths: ["cmms-eaton/**", ".github/workflows/cmms-eaton.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cmms-eaton-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cmms-eaton
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: cmms-eaton/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: npm run package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CMMS_Eaton-dist
+          path: cmms-eaton/release/*.zip
+          if-no-files-found: error

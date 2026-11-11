@@ -154,3 +154,12 @@ Both now generate correct output, verified by running them and inspecting the em
 [`thunai/`](thunai/README.md) holds a separate project: an installable web app (FastAPI + React PWA)
 that gives maintenance technicians step-by-step, safety-first troubleshooting in English or Tamil
 and records breakdown logs by voice. Start with [thunai/README.md](thunai/README.md).
+
+## CMMS_Eaton: maintenance management for the plant
+
+[`cmms-eaton/`](cmms-eaton/README.md) is a separate project: a static, installable CMMS web app
+(React + TypeScript PWA) with a dashboard, breakdown and preventive-maintenance work orders, PM
+scheduling, assets with QR codes, spare parts, reports and role-based access for technicians,
+production supervisors, the maintenance supervisor and the owner. It publishes to AweShell static
+hosting as a zip and keeps its data on the device or in the OneDrive-synced SharePoint folder, with a
+direct SharePoint connection prepared for later. Start with [cmms-eaton/README.md](cmms-eaton/README.md).
