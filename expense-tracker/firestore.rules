@@ -78,7 +78,11 @@ service cloud.firestore {
 
     // ----------------------------------------------------------- households
     match /households/{hid} {
-      allow read: if isMember(hid);
+      allow get: if isMember(hid);
+      // Listing works per document, so it checks the document itself rather
+      // than get()-ing it: queries must filter on memberIds array-contains
+      // the caller's uid (UserRepository.watchHouseholdsFor).
+      allow list: if signedIn() && request.auth.uid in resource.data.memberIds;
 
       allow create: if signedIn()
         && request.resource.data.ownerId == request.auth.uid
@@ -139,7 +143,10 @@ service cloud.firestore {
 
       match /activity/{id} {
         allow read: if isMember(hid);
-        allow create: if isMemberW(hid) && request.resource.data.actorId == request.auth.uid;
+        // A member who leaves logs it in the same batch, so they are a member
+        // before the batch (get) but not after it (getAfter).
+        allow create: if request.resource.data.actorId == request.auth.uid
+          && (isMemberW(hid) || (isMember(hid) && request.resource.data.action == 'left'));
         allow update, delete: if false;
       }
     }

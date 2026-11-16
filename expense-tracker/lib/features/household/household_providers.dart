@@ -6,6 +6,7 @@ import '../../models/models.dart';
 import '../../services/currency_service.dart';
 import '../analytics/analytics_engine.dart';
 import '../auth/auth_providers.dart';
+import 'membership_guard.dart';
 
 final userProfileProvider = StreamProvider<UserProfile?>((ref) {
   final uid = ref.watch(currentUidProvider);
@@ -13,16 +14,55 @@ final userProfileProvider = StreamProvider<UserProfile?>((ref) {
   return ref.watch(userRepositoryProvider).watchProfile(uid);
 });
 
+/// The active household id alone, so household-scoped providers rebuild when
+/// it changes rather than on every profile update.
+final activeHouseholdIdProvider = Provider<String?>((ref) {
+  return ref.watch(userProfileProvider.select((p) => p.value?.activeHouseholdId));
+});
+
 final activeHouseholdProvider = StreamProvider<Household?>((ref) {
-  final hid = ref.watch(userProfileProvider).value?.activeHouseholdId;
+  final hid = ref.watch(activeHouseholdIdProvider);
   if (hid == null) return Stream.value(null);
-  return ref.watch(userRepositoryProvider).watchHousehold(hid);
+  final guard = ref.watch(membershipGuardProvider);
+  final household = ref.watch(userRepositoryProvider).watchHousehold(hid).map((h) {
+    guard.observeHousehold(hid, h);
+    return h;
+  });
+  return whileMember(guard, hid, household);
 });
 
 final householdsProvider = StreamProvider<List<Household>>((ref) {
   final uid = ref.watch(currentUidProvider);
   if (uid == null) return Stream.value(const []);
   return ref.watch(userRepositoryProvider).watchHouseholdsFor(uid);
+});
+
+/// Notices when the owner removed the user from their active household and
+/// moves them to another household, or to onboarding.
+final membershipGuardProvider = Provider<MembershipGuard>((ref) {
+  final uid = ref.watch(currentUidProvider);
+  final users = ref.watch(userRepositoryProvider);
+  final guard = MembershipGuard(
+    uid: uid,
+    fetchMembership: users.fetchMembership,
+    setActiveHousehold: users.switchHousehold,
+    activeHouseholdId: () => ref.mounted ? ref.read(activeHouseholdIdProvider) : null,
+    households: () => ref.mounted ? ref.read(householdsProvider.future) : Future.value(const []),
+  );
+  // Keeps the household list warm so a removed user is switched at once.
+  ref.listen(
+    householdsProvider,
+    (_, next) => guard.observeHouseholds(next.value ?? const []),
+    fireImmediately: true,
+  );
+  ref.listen(activeHouseholdIdProvider, (_, _) => guard.activeHouseholdChanged());
+  ref.onDispose(guard.dispose);
+  return guard;
+});
+
+/// One event per removal, for the snackbar.
+final removalNoticeProvider = StreamProvider<RemovalNotice>((ref) {
+  return ref.watch(membershipGuardProvider).notices;
 });
 
 /// The caller's role in the active household.
@@ -38,21 +78,27 @@ final baseCurrencyProvider = Provider<String>((ref) {
 });
 
 final ledgerProvider = Provider<LedgerRepository?>((ref) {
-  final hid = ref.watch(userProfileProvider).value?.activeHouseholdId;
+  final hid = ref.watch(activeHouseholdIdProvider);
   if (hid == null) return null;
   return LedgerRepository(ref.watch(firestoreRefsProvider), hid);
 });
 
+/// Ledger streams lose access the moment the owner removes the user; see
+/// [whileMember] for how that is kept from surfacing as an error.
+Stream<T> _whileMember<T>(Ref ref, LedgerRepository ledger, Stream<T> source) {
+  return whileMember(ref.watch(membershipGuardProvider), ledger.householdId, source);
+}
+
 final accountsProvider = StreamProvider<List<Account>>((ref) {
   final ledger = ref.watch(ledgerProvider);
   if (ledger == null) return Stream.value(const []);
-  return ledger.watchAccounts();
+  return _whileMember(ref, ledger, ledger.watchAccounts());
 });
 
 final categoriesProvider = StreamProvider<List<Category>>((ref) {
   final ledger = ref.watch(ledgerProvider);
   if (ledger == null) return Stream.value(const []);
-  return ledger.watchCategories();
+  return _whileMember(ref, ledger, ledger.watchCategories());
 });
 
 final categoryMapProvider = Provider<Map<String, Category>>((ref) {
@@ -68,25 +114,25 @@ final accountMapProvider = Provider<Map<String, Account>>((ref) {
 final budgetsProvider = StreamProvider<List<Budget>>((ref) {
   final ledger = ref.watch(ledgerProvider);
   if (ledger == null) return Stream.value(const []);
-  return ledger.watchBudgets();
+  return _whileMember(ref, ledger, ledger.watchBudgets());
 });
 
 final goalsProvider = StreamProvider<List<Goal>>((ref) {
   final ledger = ref.watch(ledgerProvider);
   if (ledger == null) return Stream.value(const []);
-  return ledger.watchGoals();
+  return _whileMember(ref, ledger, ledger.watchGoals());
 });
 
 final recurringProvider = StreamProvider<List<RecurringRule>>((ref) {
   final ledger = ref.watch(ledgerProvider);
   if (ledger == null) return Stream.value(const []);
-  return ledger.watchRecurring();
+  return _whileMember(ref, ledger, ledger.watchRecurring());
 });
 
 final activityProvider = StreamProvider<List<ActivityEntry>>((ref) {
   final ledger = ref.watch(ledgerProvider);
   if (ledger == null) return Stream.value(const []);
-  return ledger.watchActivity();
+  return _whileMember(ref, ledger, ledger.watchActivity());
 });
 
 /// Every transaction the current user may see in the active household.
@@ -96,7 +142,7 @@ final allTransactionsProvider = StreamProvider<List<Transaction>>((ref) {
   final ledger = ref.watch(ledgerProvider);
   final uid = ref.watch(currentUidProvider);
   if (ledger == null || uid == null) return Stream.value(const []);
-  return ledger.watchAllTransactions(uid);
+  return _whileMember(ref, ledger, ledger.watchAllTransactions(uid));
 });
 
 /// Period shown on the dashboard and transaction list.

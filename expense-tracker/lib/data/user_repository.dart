@@ -239,8 +239,37 @@ class UserRepository {
     return Household.fromMap(snap.id, snap.data()!);
   }
 
-  Future<void> switchHousehold(String uid, String hid) {
+  /// Makes [hid] the active household; null clears it, which sends the user
+  /// to onboarding.
+  Future<void> switchHousehold(String uid, String? hid) {
     return _refs.user(uid).set({'activeHouseholdId': hid}, SetOptions(merge: true));
+  }
+
+  /// Reads from the server, never the cache: the active household on [uid]'s
+  /// profile (and whether this client still has unsent writes to it), then
+  /// household [hid] itself (null when the rules deny the read, i.e. [uid] is
+  /// not a member, or it no longer exists). The order matters, see
+  /// `membershipVerdict`.
+  Future<({String? activeHouseholdId, bool profileHasPendingWrites, Household? household})>
+      fetchMembership(
+    String uid,
+    String hid,
+  ) async {
+    const server = GetOptions(source: Source.server);
+    final user = await _refs.user(uid).get(server);
+    Household? household;
+    try {
+      final snap = await _refs.household(hid).get(server);
+      final data = snap.data();
+      if (data != null) household = Household.fromMap(snap.id, data);
+    } on FirebaseException catch (e) {
+      if (e.code != 'permission-denied') rethrow;
+    }
+    return (
+      activeHouseholdId: user.data()?['activeHouseholdId'] as String?,
+      profileHasPendingWrites: user.metadata.hasPendingWrites,
+      household: household,
+    );
   }
 
   Future<void> updateHousehold(
@@ -260,11 +289,41 @@ class UserRepository {
     return _refs.household(hid).update({'members.${member.uid}': member.toMap()});
   }
 
+  /// Removes [memberId] from [household]. When an owner removes someone else,
+  /// the rules only allow dropping the household from that member's
+  /// `householdIds`; their own app then notices and moves them on (see
+  /// `MembershipGuard`).
   Future<void> removeMember({
     required Household household,
     required String memberId,
     required UserProfile actor,
-  }) async {
+  }) {
+    return _removalBatch(household: household, memberId: memberId, actor: actor).commit();
+  }
+
+  /// [profile] leaves [household] and, in the same write, makes
+  /// [nextActiveId] their active household (null sends them to onboarding).
+  /// One write means the app never sees an active household that no longer
+  /// lists them, which it would treat as a removal.
+  Future<void> leaveHousehold({
+    required Household household,
+    required UserProfile profile,
+    required String? nextActiveId,
+  }) {
+    return _removalBatch(
+      household: household,
+      memberId: profile.uid,
+      actor: profile,
+      memberProfile: {'activeHouseholdId': nextActiveId},
+    ).commit();
+  }
+
+  WriteBatch _removalBatch({
+    required Household household,
+    required String memberId,
+    required UserProfile actor,
+    Map<String, Object?> memberProfile = const {},
+  }) {
     final batch = _refs.db.batch();
     batch.update(_refs.household(household.id), {
       'memberIds': FieldValue.arrayRemove([memberId]),
@@ -274,6 +333,7 @@ class UserRepository {
       _refs.user(memberId),
       {
         'householdIds': FieldValue.arrayRemove([household.id]),
+        ...memberProfile,
       },
       SetOptions(merge: true),
     );
@@ -294,7 +354,7 @@ class UserRepository {
         at: DateTime.now(),
       ).toMap(),
     );
-    await batch.commit();
+    return batch;
   }
 
   Future<String> regenerateInviteCode(Household household) async {

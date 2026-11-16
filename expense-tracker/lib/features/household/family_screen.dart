@@ -262,14 +262,10 @@ class FamilyScreen extends ConsumerWidget {
       confirmLabel: 'Leave',
     );
     if (!ok) return;
-    final repo = ref.read(userRepositoryProvider);
     final other = households.where((h) => h.id != household.id).firstOrNull;
-    await repo.removeMember(household: household, memberId: profile.uid, actor: profile);
-    if (other != null) {
-      await repo.switchHousehold(profile.uid, other.id);
-    } else {
-      await ref.read(firestoreRefsProvider).user(profile.uid).update({'activeHouseholdId': null});
-    }
+    await ref
+        .read(userRepositoryProvider)
+        .leaveHousehold(household: household, profile: profile, nextActiveId: other?.id);
     if (context.mounted && context.canPop()) context.popOrHome();
   }
 

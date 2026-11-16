@@ -7,6 +7,8 @@ import 'features/auth/auth_providers.dart';
 import 'features/household/household_providers.dart';
 import 'router.dart';
 
+final _messengerKey = GlobalKey<ScaffoldMessengerState>(debugLabel: 'messenger');
+
 class ExpenseBudgetApp extends ConsumerWidget {
   const ExpenseBudgetApp({super.key});
 
@@ -19,8 +21,25 @@ class ExpenseBudgetApp extends ConsumerWidget {
     // Keep the recurring processor alive while signed in.
     ref.watch(recurringProcessorProvider);
 
+    // Removed from the active household by its owner: say so. Listening also
+    // keeps the membership guard running.
+    ref.listen(removalNoticeProvider, (previous, next) {
+      final notice = next.value;
+      if (notice == null || identical(notice, previous?.value)) return;
+      _messengerKey.currentState
+        ?..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(content: Text(notice.message), behavior: SnackBarBehavior.floating),
+        );
+      // Pages of the old household (a budget, a transaction) mean nothing in
+      // the new one, so start on its dashboard. With no household left the
+      // router sends the user to onboarding by itself.
+      if (notice.switchedTo != null) router.go('/home');
+    });
+
     return MaterialApp.router(
       title: 'Expense & Budget Manager',
+      scaffoldMessengerKey: _messengerKey,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(seed),
       darkTheme: AppTheme.dark(seed),
