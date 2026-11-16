@@ -60,9 +60,12 @@ service cloud.firestore {
     // ---------------------------------------------------------------- users
     match /users/{uid} {
       allow read, write: if signedIn() && request.auth.uid == uid;
-      // Owners removing a member may prune that member's householdIds.
+      // An owner removing a member may drop exactly one household id from
+      // that member's list, and change nothing else.
       allow update: if signedIn()
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['householdIds']);
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['householdIds'])
+        && resource.data.householdIds.hasAll(request.resource.data.householdIds)
+        && request.resource.data.householdIds.size() == resource.data.householdIds.size() - 1;
     }
 
     // -------------------------------------------------------------- invites

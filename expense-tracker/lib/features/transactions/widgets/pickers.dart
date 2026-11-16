@@ -330,7 +330,10 @@ class ReceiptPicker extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               children: [
                 for (final url in existing)
-                  _Thumb(image: Image.network(url, fit: BoxFit.cover), onRemove: () => onRemoveExisting(url)),
+                  _Thumb(
+                    image: Image.network(url, fit: BoxFit.cover, webHtmlElementStrategy: WebHtmlElementStrategy.fallback),
+                    onRemove: () => onRemoveExisting(url),
+                  ),
                 for (var i = 0; i < pending.length; i++)
                   _Thumb(image: Image.memory(pending[i], fit: BoxFit.cover), onRemove: () => onRemovePending(i)),
               ],

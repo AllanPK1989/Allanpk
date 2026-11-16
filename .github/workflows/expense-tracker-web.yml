@@ -28,7 +28,9 @@ jobs:
       - run: flutter pub get
       - run: flutter analyze --no-fatal-infos
       - run: flutter test
-      - run: flutter build web --release
+      # Set the repository variable APPLE_SIGN_IN to true once Apple sign-in
+      # is configured in Firebase (see expense-tracker/GO_LIVE.md).
+      - run: flutter build web --release --dart-define=APPLE_SIGN_IN=${{ vars.APPLE_SIGN_IN || 'false' }}
       - uses: actions/upload-artifact@v4
         with:
           name: web-build
@@ -38,6 +40,10 @@ jobs:
     needs: build
     if: github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     runs-on: ubuntu-latest
+    # Secrets can't be used in `if:` directly, so expose them as env first.
+    env:
+      FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/download-artifact@v4
@@ -45,11 +51,14 @@ jobs:
           name: web-build
           path: expense-tracker/build/web
       - name: Deploy to Firebase Hosting
-        if: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' && vars.FIREBASE_PROJECT_ID != '' }}
+        if: env.FIREBASE_SERVICE_ACCOUNT != '' && env.FIREBASE_PROJECT_ID != ''
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          projectId: ${{ vars.FIREBASE_PROJECT_ID }}
+          firebaseServiceAccount: ${{ env.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: ${{ env.FIREBASE_PROJECT_ID }}
           channelId: live
           entryPoint: expense-tracker
+      - name: Explain skipped deploy
+        if: env.FIREBASE_SERVICE_ACCOUNT == '' || env.FIREBASE_PROJECT_ID == ''
+        run: echo "::notice::Deploy skipped. Add the FIREBASE_SERVICE_ACCOUNT secret and FIREBASE_PROJECT_ID variable (see expense-tracker/GO_LIVE.md)."

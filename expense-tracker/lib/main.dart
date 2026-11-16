@@ -7,26 +7,22 @@ import 'package:material_ui/material_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app.dart';
+import 'core/config/firebase_env.dart';
 import 'features/auth/auth_providers.dart';
 import 'features/setup/firebase_setup_screen.dart';
 import 'firebase_options.dart';
-
-/// `flutter run -d chrome --dart-define=USE_EMULATORS=true` points the app at
-/// the local Firebase emulator suite (see SETUP.md) instead of a real project.
-const bool kUseEmulators = bool.fromEnvironment('USE_EMULATORS');
-const String kEmulatorHost = String.fromEnvironment('EMULATOR_HOST', defaultValue: 'localhost');
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
 
-  if (!kUseEmulators && !DefaultFirebaseOptions.isConfigured) {
+  if (!kUseEmulators && !isFirebaseConfigured) {
     runApp(const FirebaseSetupApp());
     return;
   }
 
   await Firebase.initializeApp(
-    options: kUseEmulators ? DefaultFirebaseOptions.emulator : DefaultFirebaseOptions.currentPlatform,
+    options: kUseEmulators ? kEmulatorOptions : DefaultFirebaseOptions.currentPlatform,
   );
   if (kUseEmulators) {
     await FirebaseAuth.instance.useAuthEmulator(kEmulatorHost, 9099);

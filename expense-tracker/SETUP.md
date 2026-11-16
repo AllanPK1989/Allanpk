@@ -1,7 +1,8 @@
 # Setup guide
 
-Everything you need to run **Expense & Budget Manager** locally and publish it
-to the web. Budget about 20 minutes for the Firebase steps the first time.
+Developer notes for running **Expense & Budget Manager** locally. For a
+complete, click-by-click walkthrough of putting the app online, follow
+**[GO_LIVE.md](GO_LIVE.md)**.
 
 ## 1. Prerequisites
 
@@ -28,7 +29,10 @@ Check: `flutter doctor` should show *Chrome - develop for the web* with a tick.
    when you deploy hosting from the same project).
 4. **Firestore Database → Create database**: choose *production mode* and a
    region close to your users (for example `asia-south1` for India).
-5. **Storage → Get started** (receipt images). Default settings are fine.
+5. **Storage → Get started** (receipt images). Firebase requires the Blaze
+   (pay-as-you-go) plan for Storage; on the free Spark plan everything except
+   receipt uploads works. Then apply `cors.json` to the bucket so receipt
+   images can be displayed (GO_LIVE.md, Part 9).
 
 ## 3. Link the app to the project
 
@@ -41,7 +45,8 @@ flutterfire configure --platforms=web
 
 Pick your project when asked. This overwrites `lib/firebase_options.dart` with
 real values (the shipped file only contains placeholders, and the app shows a
-setup screen until it is replaced). Commit the generated file; the web API key
+setup screen until it is replaced). App-specific switches live in
+`lib/core/config/firebase_env.dart`, so overwriting the options file is safe. Commit the generated file; the web API key
 is not a secret, access is controlled by the security rules below.
 
 Then bind the Firebase CLI to the project:

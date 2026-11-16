@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../core/config/firebase_env.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/extensions.dart';
 import '../../services/auth_service.dart';
@@ -208,12 +209,14 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
           icon: const _GoogleMark(),
           label: const Text('Google'),
         ),
-        const SizedBox(height: 12),
-        OutlinedButton.icon(
-          onPressed: _busy ? null : () => _run(auth.signInWithApple),
-          icon: const Icon(Icons.apple_rounded, size: 24),
-          label: const Text('Apple'),
-        ),
+        if (kAppleSignInEnabled) ...[
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            onPressed: _busy ? null : () => _run(auth.signInWithApple),
+            icon: const Icon(Icons.apple_rounded, size: 24),
+            label: const Text('Apple'),
+          ),
+        ],
       ],
     );
   }

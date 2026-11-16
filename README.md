@@ -6,7 +6,8 @@ savings goals, recurring transactions, detailed analytics and PDF / Excel / CSV
 exports, backed by Firebase Authentication, Firestore and Storage.
 
 * Features, architecture and data model: [expense-tracker/README.md](expense-tracker/README.md)
-* Firebase project setup, local emulators and hosting: [expense-tracker/SETUP.md](expense-tracker/SETUP.md)
+* Putting it online, step by step: [expense-tracker/GO_LIVE.md](expense-tracker/GO_LIVE.md)
+* Developer setup and local emulators: [expense-tracker/SETUP.md](expense-tracker/SETUP.md)
 * CI: `.github/workflows/expense-tracker-web.yml` analyses, tests, builds and
   (with a service-account secret) deploys to Firebase Hosting.
 

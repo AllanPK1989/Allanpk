@@ -55,7 +55,7 @@ class MemberAvatar extends StatelessWidget {
     return CircleAvatar(
       radius: size / 2,
       backgroundColor: c.withValues(alpha: 0.2),
-      foregroundImage: hasPhoto ? NetworkImage(photoUrl!) : null,
+      foregroundImage: hasPhoto ? NetworkImage(photoUrl!, webHtmlElementStrategy: WebHtmlElementStrategy.fallback) : null,
       child: Text(
         initials,
         style: TextStyle(

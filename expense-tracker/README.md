@@ -65,8 +65,9 @@ firebase deploy --only firestore,storage   # once
 flutter run -d chrome
 ```
 
-Full instructions, including emulator-only development and Firebase Hosting
-deployment, are in [SETUP.md](SETUP.md).
+Step-by-step instructions for putting the app online are in
+[GO_LIVE.md](GO_LIVE.md). Developer setup and emulator-only development are in
+[SETUP.md](SETUP.md).
 
 ## Project layout
 

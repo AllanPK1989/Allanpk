@@ -148,7 +148,9 @@ class TransactionDetailScreen extends ConsumerWidget {
                       context: context,
                       builder: (_) => Dialog(
                         insetPadding: const EdgeInsets.all(12),
-                        child: InteractiveViewer(child: Image.network(url, fit: BoxFit.contain)),
+                        child: InteractiveViewer(
+                          child: Image.network(url, fit: BoxFit.contain, webHtmlElementStrategy: WebHtmlElementStrategy.fallback),
+                        ),
                       ),
                     ),
                     child: ClipRRect(
@@ -156,6 +158,8 @@ class TransactionDetailScreen extends ConsumerWidget {
                       child: Image.network(
                         url,
                         fit: BoxFit.cover,
+                        // Falls back to an <img> element if the bucket has no CORS policy.
+                        webHtmlElementStrategy: WebHtmlElementStrategy.fallback,
                         errorBuilder: (_, _, _) => Container(
                           color: context.colors.surfaceContainerHighest,
                           child: const Icon(Icons.broken_image_outlined),
