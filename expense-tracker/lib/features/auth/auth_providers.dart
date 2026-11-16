@@ -25,8 +25,9 @@ final firestoreRefsProvider =
 
 final authServiceProvider =
     Provider<AuthService>((ref) => AuthService(ref.watch(firebaseAuthProvider)));
-final userRepositoryProvider =
-    Provider<UserRepository>((ref) => UserRepository(ref.watch(firestoreRefsProvider)));
+final userRepositoryProvider = Provider<UserRepository>(
+  (ref) => UserRepository(ref.watch(firestoreRefsProvider), ref.watch(firebaseAuthProvider)),
+);
 final storageServiceProvider =
     Provider<StorageService>((ref) => StorageService(FirebaseStorage.instance));
 final currencyServiceProvider =

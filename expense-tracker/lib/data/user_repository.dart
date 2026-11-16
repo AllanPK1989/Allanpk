@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart' show User;
+import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth, User;
 
 import '../core/constants/currencies.dart';
 import '../core/constants/default_categories.dart';
@@ -10,9 +10,10 @@ import 'firestore_refs.dart';
 
 /// Users, households and invitations.
 class UserRepository {
-  UserRepository(this._refs);
+  UserRepository(this._refs, this._auth);
 
   final FirestoreRefs _refs;
+  final FirebaseAuth _auth;
 
   Stream<UserProfile?> watchProfile(String uid) {
     return _refs.user(uid).snapshots().map((snap) {
@@ -23,7 +24,16 @@ class UserRepository {
   }
 
   /// Creates the profile document on first sign-in. Returns the profile.
-  Future<UserProfile> ensureProfile(User user) async {
+  Future<UserProfile> ensureProfile(User signedIn) async {
+    // User objects from the auth stream snapshot their fields when created
+    // (notably on the web), so a display name set right after sign-up would
+    // be missed. Reload and re-read the current user to get fresh values.
+    var user = signedIn;
+    try {
+      await user.reload();
+      final fresh = _auth.currentUser;
+      if (fresh != null && fresh.uid == user.uid) user = fresh;
+    } catch (_) {}
     final ref = _refs.user(user.uid);
     final snap = await ref.get();
     final fallbackName = user.email?.split('@').first ?? 'You';
