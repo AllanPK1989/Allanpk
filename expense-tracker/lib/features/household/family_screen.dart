@@ -8,6 +8,7 @@ import '../../core/utils/date_utils.dart';
 import '../../core/utils/extensions.dart';
 import '../../core/widgets/widgets.dart';
 import '../../models/models.dart';
+import '../../router.dart';
 import '../auth/auth_providers.dart';
 import 'household_providers.dart';
 
@@ -269,7 +270,7 @@ class FamilyScreen extends ConsumerWidget {
     } else {
       await ref.read(firestoreRefsProvider).user(profile.uid).update({'activeHouseholdId': null});
     }
-    if (context.mounted && context.canPop()) context.pop();
+    if (context.mounted && context.canPop()) context.popOrHome();
   }
 
   Future<void> _createAnother(BuildContext context, WidgetRef ref, UserProfile profile) async {

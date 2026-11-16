@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../core/utils/date_utils.dart';
@@ -7,6 +6,7 @@ import '../../core/utils/extensions.dart';
 import '../../core/utils/money.dart';
 import '../../core/widgets/widgets.dart';
 import '../../models/models.dart';
+import '../../router.dart';
 import '../household/household_providers.dart';
 
 class GoalEditorScreen extends ConsumerStatefulWidget {
@@ -72,7 +72,7 @@ class _GoalEditorScreenState extends ConsumerState<GoalEditorScreen> {
                 final ok = await confirmDialog(context, title: 'Delete goal?', message: 'Linked transfers are kept.');
                 if (!ok || !mounted) return;
                 await ref.read(ledgerProvider)?.deleteGoal(_editing!);
-                if (context.mounted) context.pop();
+                if (context.mounted) context.popOrHome();
               },
             ),
         ],
@@ -164,6 +164,6 @@ class _GoalEditorScreenState extends ConsumerState<GoalEditorScreen> {
       createdAt: _editing?.createdAt ?? DateTime.now(),
     );
     await ledger.saveGoal(goal, actor: profile, isNew: _editing == null);
-    if (mounted) context.pop();
+    if (mounted) context.popOrHome();
   }
 }

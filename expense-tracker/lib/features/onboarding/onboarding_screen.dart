@@ -7,6 +7,7 @@ import '../../core/constants/app_icons.dart';
 import '../../core/constants/currencies.dart';
 import '../../core/utils/extensions.dart';
 import '../../core/widgets/widgets.dart';
+import '../../router.dart';
 import '../auth/auth_providers.dart';
 import '../household/household_providers.dart';
 
@@ -297,7 +298,7 @@ class _JoinHouseholdScreenState extends ConsumerState<JoinHouseholdScreen> {
       );
       if (!mounted) return;
       context.showSnack('Welcome to ${household.name}!');
-      if (context.canPop()) context.pop();
+      if (context.canPop()) context.popOrHome();
     } on StateError catch (e) {
       if (mounted) context.showSnack(e.message, error: true);
     } catch (e) {

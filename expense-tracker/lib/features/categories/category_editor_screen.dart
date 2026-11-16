@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../core/utils/extensions.dart';
 import '../../core/widgets/widgets.dart';
 import '../../models/models.dart';
+import '../../router.dart';
 import '../household/household_providers.dart';
 
 class CategoryEditorScreen extends ConsumerStatefulWidget {
@@ -150,7 +150,7 @@ class _CategoryEditorScreenState extends ConsumerState<CategoryEditorScreen> {
       isDefault: _editing?.isDefault ?? false,
     );
     await ledger.saveCategory(category);
-    if (mounted) context.pop();
+    if (mounted) context.popOrHome();
   }
 
   Future<void> _delete() async {
@@ -172,6 +172,6 @@ class _CategoryEditorScreenState extends ConsumerState<CategoryEditorScreen> {
       if (!ok || !mounted) return;
       await ref.read(ledgerProvider)?.deleteCategory(c.id);
     }
-    if (mounted) context.pop();
+    if (mounted) context.popOrHome();
   }
 }

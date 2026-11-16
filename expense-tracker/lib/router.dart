@@ -262,4 +262,15 @@ extension NavX on BuildContext {
   void goReplace(String location) => GoRouter.of(this).go(location);
   bool get canPopRoute => GoRouter.of(this).canPop();
   void popRoute() => GoRouter.of(this).pop();
+
+  /// Pops the current route, or goes home when the route was opened directly
+  /// via URL (deep link / refresh) and has nothing beneath it.
+  void popOrHome() {
+    final router = GoRouter.of(this);
+    if (router.canPop()) {
+      router.pop();
+    } else {
+      router.go('/home');
+    }
+  }
 }

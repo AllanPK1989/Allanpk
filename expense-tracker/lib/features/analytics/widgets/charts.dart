@@ -69,13 +69,15 @@ class DailySpendChart extends StatelessWidget {
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                reservedSize: 44,
+                reservedSize: 46,
                 interval: maxY <= 0 ? 5 : maxY / 3,
                 getTitlesWidget: (value, meta) => SideTitleWidget(
                   meta: meta,
                   child: Text(
                     Money.format(value, currency, compact: true),
                     style: text.labelSmall?.copyWith(color: scheme.onSurfaceVariant, fontSize: 10),
+                    maxLines: 1,
+                    softWrap: false,
                   ),
                 ),
               ),
@@ -286,13 +288,15 @@ class IncomeExpenseBars extends StatelessWidget {
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                reservedSize: 44,
+                reservedSize: 46,
                 interval: maxY <= 0 ? 5 : maxY / 3,
                 getTitlesWidget: (value, meta) => SideTitleWidget(
                   meta: meta,
                   child: Text(
                     Money.format(value, currency, compact: true),
                     style: text.labelSmall?.copyWith(color: scheme.onSurfaceVariant, fontSize: 10),
+                    maxLines: 1,
+                    softWrap: false,
                   ),
                 ),
               ),

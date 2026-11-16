@@ -1,12 +1,12 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../core/utils/date_utils.dart';
 import '../../core/utils/extensions.dart';
 import '../../core/widgets/widgets.dart';
 import '../../models/models.dart';
+import '../../router.dart';
 import '../household/household_providers.dart';
 import '../transactions/widgets/pickers.dart';
 import 'csv_service.dart';
@@ -274,7 +274,7 @@ class _ImportCsvScreenState extends ConsumerState<ImportCsvScreen> {
       await ledger.addTransactions(txs);
       if (!mounted) return;
       context.showSnack('Imported ${txs.length} transactions${duplicates > 0 ? ' · $duplicates duplicates skipped' : ''}');
-      context.pop();
+      context.popOrHome();
     } catch (e) {
       if (mounted) context.showSnack('Import failed: $e', error: true);
     } finally {

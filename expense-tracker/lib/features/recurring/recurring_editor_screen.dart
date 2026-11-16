@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../core/utils/date_utils.dart';
@@ -7,6 +6,7 @@ import '../../core/utils/extensions.dart';
 import '../../core/utils/money.dart';
 import '../../core/widgets/widgets.dart';
 import '../../models/models.dart';
+import '../../router.dart';
 import '../household/household_providers.dart';
 import '../transactions/widgets/pickers.dart';
 
@@ -91,7 +91,7 @@ class _RecurringEditorScreenState extends ConsumerState<RecurringEditorScreen> {
                 final ok = await confirmDialog(context, title: 'Delete rule?', message: 'Already created transactions are kept.');
                 if (!ok || !mounted) return;
                 await ref.read(ledgerProvider)?.deleteRecurring(_editing!.id);
-                if (context.mounted) context.pop();
+                if (context.mounted) context.popOrHome();
               },
             ),
         ],
@@ -289,6 +289,6 @@ class _RecurringEditorScreenState extends ConsumerState<RecurringEditorScreen> {
       lastGeneratedAt: _editing?.lastGeneratedAt,
     );
     await ledger.saveRecurring(rule);
-    if (mounted) context.pop();
+    if (mounted) context.popOrHome();
   }
 }

@@ -12,6 +12,7 @@ import '../../core/utils/extensions.dart';
 import '../../core/utils/money.dart';
 import '../../core/widgets/widgets.dart';
 import '../../models/models.dart';
+import '../../router.dart';
 import '../analytics/analytics_engine.dart';
 import '../auth/auth_providers.dart';
 import '../household/household_providers.dart';
@@ -462,7 +463,7 @@ class _TransactionEditorScreenState extends ConsumerState<TransactionEditorScree
       }
       if (!mounted) return;
       context.showSnack(_editing == null ? '${_type.label} saved' : 'Changes saved');
-      context.pop();
+      context.popOrHome();
     } catch (e) {
       if (mounted) context.showSnack('Could not save: $e', error: true);
     } finally {
@@ -525,8 +526,8 @@ class _TransactionEditorScreenState extends ConsumerState<TransactionEditorScree
     if (!mounted) return;
     context.showSnack('Transaction deleted');
     // Pop the editor and the detail page beneath it.
-    context.pop();
-    if (context.canPop()) context.pop();
+    context.popOrHome();
+    if (context.canPop()) context.popOrHome();
   }
 }
 

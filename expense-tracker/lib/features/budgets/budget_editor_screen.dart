@@ -7,6 +7,7 @@ import '../../core/utils/extensions.dart';
 import '../../core/utils/money.dart';
 import '../../core/widgets/widgets.dart';
 import '../../models/models.dart';
+import '../../router.dart';
 import '../household/household_providers.dart';
 
 class BudgetEditorScreen extends ConsumerStatefulWidget {
@@ -275,7 +276,7 @@ class _BudgetEditorScreenState extends ConsumerState<BudgetEditorScreen> {
         color: _color,
       );
       await ledger.saveBudget(budget, actor: profile, isNew: _editing == null);
-      if (mounted) context.pop();
+      if (mounted) context.popOrHome();
     } catch (e) {
       if (mounted) context.showSnack('Could not save: $e', error: true);
     } finally {
@@ -290,7 +291,7 @@ class _BudgetEditorScreenState extends ConsumerState<BudgetEditorScreen> {
     if (!ok || !mounted) return;
     await ref.read(ledgerProvider)?.deleteBudget(b, actor: ref.read(userProfileProvider).value);
     if (!mounted) return;
-    context.pop();
-    if (context.canPop()) context.pop();
+    context.popOrHome();
+    if (context.canPop()) context.popOrHome();
   }
 }

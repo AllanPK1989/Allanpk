@@ -6,6 +6,7 @@ import '../../core/utils/extensions.dart';
 import '../../core/utils/money.dart';
 import '../../core/widgets/widgets.dart';
 import '../../models/models.dart';
+import '../../router.dart';
 import '../household/household_providers.dart';
 
 class AccountEditorScreen extends ConsumerStatefulWidget {
@@ -182,7 +183,7 @@ class _AccountEditorScreenState extends ConsumerState<AccountEditorScreen> {
       sortOrder: _editing?.sortOrder ?? (ref.read(accountsProvider).value?.length ?? 0),
     );
     await ledger.saveAccount(account);
-    if (mounted) context.pop();
+    if (mounted) context.popOrHome();
   }
 
   Future<void> _delete() async {
@@ -205,7 +206,7 @@ class _AccountEditorScreenState extends ConsumerState<AccountEditorScreen> {
       await ref.read(ledgerProvider)?.deleteAccount(a.id);
     }
     if (!mounted) return;
-    context.pop();
-    if (context.canPop()) context.pop();
+    context.popOrHome();
+    if (context.canPop()) context.popOrHome();
   }
 }

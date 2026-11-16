@@ -8,17 +8,9 @@ class Money {
 
   static final Map<String, NumberFormat> _cache = {};
 
-  static NumberFormat _format(String currency, {bool compact = false}) {
+  static NumberFormat _format(String currency) {
     final info = currencyInfo(currency);
-    final key = '$currency-$compact';
-    return _cache.putIfAbsent(key, () {
-      if (compact) {
-        return NumberFormat.compactCurrency(
-          locale: currency == 'INR' ? 'en_IN' : 'en_US',
-          symbol: info.symbol,
-          decimalDigits: 1,
-        );
-      }
+    return _cache.putIfAbsent(currency, () {
       return NumberFormat.currency(
         locale: currency == 'INR' ? 'en_IN' : 'en_US',
         symbol: info.symbol,
@@ -27,10 +19,32 @@ class Money {
     });
   }
 
-  /// "₹1,23,456.00" / "$1,234.50".
+  /// "₹1,23,456.00" / "$1,234.50"; compact: "₹1.2L", "₹15K", "$2.3M".
   static String format(double amount, String currency, {bool compact = false}) {
-    final f = _format(currency, compact: compact);
-    return f.format(amount);
+    if (compact) return _compact(amount, currency);
+    return _format(currency).format(amount);
+  }
+
+  /// Short labels for charts and chips. INR uses lakh/crore, others K/M/B.
+  static String _compact(double amount, String currency) {
+    final symbol = currencyInfo(currency).symbol;
+    final abs = amount.abs();
+    final sign = amount < 0 ? '-' : '';
+    String trim(double v) {
+      final s = v.toStringAsFixed(v >= 100 ? 0 : 1);
+      return s.endsWith('.0') ? s.substring(0, s.length - 2) : s;
+    }
+
+    if (currency == 'INR') {
+      if (abs >= 1e7) return '$sign$symbol${trim(abs / 1e7)}Cr';
+      if (abs >= 1e5) return '$sign$symbol${trim(abs / 1e5)}L';
+    } else {
+      if (abs >= 1e9) return '$sign$symbol${trim(abs / 1e9)}B';
+      if (abs >= 1e6) return '$sign$symbol${trim(abs / 1e6)}M';
+    }
+    if (abs >= 1e3) return '$sign$symbol${trim(abs / 1e3)}K';
+    if (abs == abs.roundToDouble()) return '$sign$symbol${abs.toInt()}';
+    return '$sign$symbol${abs.toStringAsFixed(currencyInfo(currency).decimals)}';
   }
 
   /// Formats with an explicit sign: "+₹500" or "-₹500".

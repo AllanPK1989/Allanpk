@@ -8,6 +8,7 @@ import '../../core/utils/extensions.dart';
 import '../../core/utils/money.dart';
 import '../../core/widgets/widgets.dart';
 import '../../models/models.dart';
+import '../../router.dart';
 import '../auth/auth_providers.dart';
 import '../household/household_providers.dart';
 
@@ -67,7 +68,7 @@ class TransactionDetailScreen extends ConsumerWidget {
                 if (!ok) return;
                 final profile = ref.read(userProfileProvider).value;
                 await ref.read(ledgerProvider)?.deleteTransaction(tx, actor: profile, categoryName: cat?.name);
-                if (context.mounted) context.pop();
+                if (context.mounted) context.popOrHome();
               },
             ),
         ],

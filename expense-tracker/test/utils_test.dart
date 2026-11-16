@@ -38,7 +38,10 @@ void main() {
     test('signed and compact', () {
       expect(Money.signed(-500, 'INR'), '-₹500.00');
       expect(Money.signed(500, 'INR'), '+₹500.00');
-      expect(Money.format(1500000, 'INR', compact: true), contains('15'));
+      expect(Money.format(1500000, 'INR', compact: true), '₹15L');
+      expect(Money.format(5830, 'INR', compact: true), '₹5.8K');
+      expect(Money.format(2500000, 'USD', compact: true), r'$2.5M');
+      expect(Money.format(799, 'INR', compact: true), '₹799');
       expect(Money.percent(0.256), '26%');
     });
 

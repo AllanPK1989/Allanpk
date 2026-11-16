@@ -26,15 +26,21 @@ class UserRepository {
   Future<UserProfile> ensureProfile(User user) async {
     final ref = _refs.user(user.uid);
     final snap = await ref.get();
+    final fallbackName = user.email?.split('@').first ?? 'You';
+    final authName = (user.displayName ?? '').trim();
     if (snap.exists) {
-      final profile = UserProfile.fromMap(snap.id, snap.data()!);
-      // Keep name/photo in sync with the auth provider when missing.
+      var profile = UserProfile.fromMap(snap.id, snap.data()!);
+      // Keep name/photo in sync with the auth provider: on email sign-up the
+      // profile can be created a moment before the display name is set.
       final updates = <String, dynamic>{};
-      if (profile.displayName.isEmpty && (user.displayName ?? '').isNotEmpty) {
-        updates['displayName'] = user.displayName;
+      final usingFallback = profile.displayName.isEmpty || profile.displayName == fallbackName;
+      if (usingFallback && authName.isNotEmpty && authName != profile.displayName) {
+        updates['displayName'] = authName;
+        profile = profile.copyWith(displayName: authName);
       }
       if ((profile.photoUrl ?? '').isEmpty && (user.photoURL ?? '').isNotEmpty) {
         updates['photoUrl'] = user.photoURL;
+        profile = profile.copyWith(photoUrl: user.photoURL);
       }
       if (updates.isNotEmpty) await ref.set(updates, SetOptions(merge: true));
       return profile;
@@ -42,7 +48,7 @@ class UserRepository {
     final profile = UserProfile(
       uid: user.uid,
       email: user.email ?? '',
-      displayName: user.displayName ?? (user.email?.split('@').first ?? 'You'),
+      displayName: authName.isNotEmpty ? authName : fallbackName,
       photoUrl: user.photoURL,
       createdAt: DateTime.now(),
     );
