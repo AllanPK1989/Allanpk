@@ -5,6 +5,10 @@
 // file-signature checks), and family sharing: a second user joins with the
 // invite code on a phone-sized viewport, sees the shared ledger, adds an
 // expense, and the first user sees it live plus in the activity feed.
+// Finally the owner removes the second user twice: with no other household
+// their open session lands on onboarding; after they create their own
+// household and rejoin, it switches them to that household. Both times they
+// get a "You were removed from ..." snackbar and never a raw error.
 //
 // Flutter web renders to a canvas, so the script drives the app through the
 // accessibility (semantics) tree and keyboard input. See README.md here.
@@ -133,6 +137,96 @@ async function waitEditorClosed(page, label) {
 async function expectText(page, text, timeout = 15000) {
   await page.getByText(text, { exact: false }).first().waitFor({ state: 'attached', timeout });
   log('seen:', text);
+}
+
+// Emulator REST access with admin rights ("Bearer owner" bypasses rules).
+const FIRESTORE = 'http://localhost:8080/v1/projects/demo-expense-budget/databases/(default)/documents';
+const ADMIN = { Authorization: 'Bearer owner' };
+
+async function userDocByEmail(email) {
+  const res = await fetch(`${FIRESTORE}:runQuery`, {
+    method: 'POST',
+    headers: { ...ADMIN, 'content-type': 'application/json' },
+    body: JSON.stringify({
+      structuredQuery: {
+        from: [{ collectionId: 'users' }],
+        where: { fieldFilter: { field: { fieldPath: 'email' }, op: 'EQUAL', value: { stringValue: email } } },
+      },
+    }),
+  });
+  const rows = await res.json();
+  return rows.find((r) => r.document)?.document;
+}
+
+// Polls the user's profile until its active household satisfies [check].
+async function waitActiveHousehold(email, check, label) {
+  let active;
+  for (let i = 0; i < 40; i++) {
+    const user = await userDocByEmail(email);
+    active = user?.fields?.activeHouseholdId?.stringValue ?? null;
+    if (await check(active)) return active;
+    await new Promise((r) => setTimeout(r, 250));
+  }
+  throw new Error(`${label}: active household is ${active}`);
+}
+
+async function householdName(hid) {
+  const res = await fetch(`${FIRESTORE}/households/${hid}`, { headers: ADMIN });
+  return (await res.json()).fields?.name?.stringValue;
+}
+
+// Like expectText, but also matches text Flutter only exposes as an
+// aria-label (list tiles, menu items, snackbars).
+async function expectSeen(page, text, timeout = 15000) {
+  await page
+    .getByText(text, { exact: false })
+    .or(page.locator(`flt-semantics[aria-label*="${text}"]`))
+    .first()
+    .waitFor({ state: 'attached', timeout });
+  log('seen:', text);
+}
+
+async function memberCount(hid) {
+  const res = await fetch(`${FIRESTORE}/households/${hid}`, { headers: ADMIN });
+  return (await res.json()).fields?.memberIds?.arrayValue?.values?.length ?? 0;
+}
+
+// Records any raw error text (error screens, Firestore codes) shown while a
+// member is being moved out of a household.
+async function watchRawErrors(page) {
+  await page.evaluate(() => {
+    window.__rawErrors = [];
+    window.__rawErrorWatch = setInterval(() => {
+      const host = document.querySelector('flt-semantics-host') || document.body;
+      const labels = [...host.querySelectorAll('[aria-label]')].map((n) => n.getAttribute('aria-label'));
+      const text = [host.innerText, ...labels].join('\n');
+      const m = text.match(/permission-denied|PERMISSION_DENIED|Something went wrong/);
+      if (m) window.__rawErrors.push(m[0]);
+    }, 50);
+  });
+}
+
+async function stopRawErrorWatch(page) {
+  return page.evaluate(() => {
+    clearInterval(window.__rawErrorWatch);
+    return window.__rawErrors;
+  });
+}
+
+// The owner removes [memberName] from household [hid] on the Family screen.
+async function removeMember(owner, hid, memberName) {
+  await openRoute(owner, '#/family');
+  const row = owner.locator(`flt-semantics[aria-label*="${memberName}"]`);
+  await row.first().waitFor({ state: 'attached', timeout: 15000 });
+  // Only other members' rows have a menu; the household has one other member.
+  await clickText(owner, 'Show menu');
+  await clickText(owner, 'Remove from household');
+  await owner.locator('flt-semantics[role="alertdialog"]').waitFor({ state: 'attached', timeout: 10000 });
+  await clickText(owner, 'Remove', { exact: true });
+  for (let i = 0; i < 40 && (await row.count()) > 0; i++) await owner.waitForTimeout(250);
+  if ((await row.count()) > 0) throw new Error(`${memberName} still listed after removal`);
+  if ((await memberCount(hid)) !== 1) throw new Error(`household ${hid} should have one member left`);
+  log('owner removed', memberName);
 }
 
 (async () => {
@@ -291,8 +385,9 @@ async function expectText(page, text, timeout = 15000) {
   await enableSemantics(pageB);
   await clickText(pageB, 'Sign up');
   await pageB.waitForTimeout(800);
+  const emailB = `rahul${Date.now()}@example.com`;
   await fillField(pageB, 'Your name', 'Rahul Sharma');
-  await fillField(pageB, 'Email', `rahul${Date.now()}@example.com`);
+  await fillField(pageB, 'Email', emailB);
   await fillField(pageB, 'Password', 'secret123');
   await clickText(pageB, 'Create account');
   await expectText(pageB, 'Every rupee', 30000);
@@ -342,6 +437,53 @@ async function expectText(page, text, timeout = 15000) {
   await clickText(page, 'Members');
   await page.waitForTimeout(1200);
   await shot(page, '19-insights-members');
+
+  // ---- owner removes member B: B has no other household -> onboarding ---
+  const sharmaId = await waitActiveHousehold(emailB, (a) => a != null, 'member B before removal');
+  await openRoute(pageB, '#/transactions');
+  await expectText(pageB, 'Big Bazaar', 30000);
+  await watchRawErrors(pageB);
+  await removeMember(page, sharmaId, 'Rahul Sharma');
+  global.__page = pageB;
+  await expectSeen(pageB, 'You were removed from Sharma Family', 20000);
+  await expectText(pageB, 'Every rupee', 20000);
+  await shot(pageB, '20-member-b-removed-onboarding');
+  let raw = await stopRawErrorWatch(pageB);
+  if (raw.length) throw new Error('member B saw raw errors while being removed: ' + raw.join(', '));
+  await waitActiveHousehold(emailB, (a) => a === null, 'member B after removal');
+  log('member B landed on onboarding with no active household');
+
+  // ---- B gets a household of their own, rejoins, and is removed again ---
+  await clickText(pageB, 'Next');
+  await pageB.waitForTimeout(500);
+  await clickText(pageB, 'Next');
+  await pageB.waitForTimeout(500);
+  await clickText(pageB, 'Set up my household');
+  await pageB.waitForTimeout(700);
+  await fillField(pageB, 'Household name', 'Rahul Home');
+  await clickText(pageB, 'Create household');
+  await expectText(pageB, 'Total balance', 40000);
+  const rahulHomeId = await waitActiveHousehold(emailB, (a) => a != null && a !== sharmaId, 'member B own household');
+  await openRoute(pageB, '#/family/join');
+  await expectText(pageB, 'Join a family');
+  await typeAmount(pageB, code);
+  await clickText(pageB, 'Join household');
+  await waitActiveHousehold(emailB, (a) => a === sharmaId, 'member B rejoined');
+  await openRoute(pageB, '#/transactions');
+  await expectText(pageB, 'Big Bazaar', 30000);
+  log('member B rejoined Sharma Family and also has Rahul Home');
+
+  global.__page = page;
+  await watchRawErrors(pageB);
+  await removeMember(page, sharmaId, 'Rahul Sharma');
+  global.__page = pageB;
+  await expectSeen(pageB, 'You were removed from Sharma Family. Switched to Rahul Home.', 20000);
+  await expectText(pageB, 'Total balance', 20000);
+  await shot(pageB, '21-member-b-removed-switched');
+  raw = await stopRawErrorWatch(pageB);
+  if (raw.length) throw new Error('member B saw raw errors while being switched: ' + raw.join(', '));
+  const landed = await waitActiveHousehold(emailB, (a) => a === rahulHomeId, 'member B after second removal');
+  log('member B landed on', await householdName(landed));
   await ctxB.close();
 
   // Filter out noisy, known-benign console messages.

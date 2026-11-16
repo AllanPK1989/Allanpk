@@ -2,7 +2,9 @@
 
 Drives the real web build in Chromium against the Firebase emulator suite:
 sign-up, onboarding, transactions, budgets, insights, PDF/Excel/CSV exports
-and two-person family sharing (invite code, live sync, activity feed).
+and two-person family sharing (invite code, live sync, activity feed), then
+the owner removing the second member, whose open session moves to onboarding
+or to their other household.
 
 ```bash
 # 1. Emulators (from expense-tracker/)
