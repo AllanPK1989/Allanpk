@@ -188,6 +188,7 @@ class UserRepository {
       joinedAt: now,
       photoUrl: profile.photoUrl,
       color: memberColor,
+      inviteCode: normalized,
     );
     final batch = _refs.db.batch();
     batch.update(_refs.household(hid), {

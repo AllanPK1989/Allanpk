@@ -41,6 +41,22 @@ service cloud.firestore {
       return isMember(hid) && household(hid).ownerId == request.auth.uid;
     }
 
+    // Write-time variants. getAfter() sees the household as it will be once
+    // the current batch/transaction commits, which is what makes "create a
+    // household and its default categories in one batch" and "join, then log
+    // an activity entry" possible.
+    function householdAfter(hid) {
+      return getAfter(/databases/$(database)/documents/households/$(hid)).data;
+    }
+
+    function isMemberW(hid) {
+      return signedIn() && request.auth.uid in householdAfter(hid).memberIds;
+    }
+
+    function isAdultOrOwnerW(hid) {
+      return isMemberW(hid) && householdAfter(hid).members[request.auth.uid].role in ['owner', 'adult'];
+    }
+
     // ---------------------------------------------------------------- users
     match /users/{uid} {
       allow read, write: if signedIn() && request.auth.uid == uid;
@@ -65,15 +81,17 @@ service cloud.firestore {
         && request.resource.data.ownerId == request.auth.uid
         && request.resource.data.memberIds == [request.auth.uid];
 
-      // Members with adult/owner role may edit settings; anyone signed in may
-      // add themselves (join via invite code) without touching other fields.
+      // Members with adult/owner role may edit settings. A signed-in
+      // non-member may add themselves if they present the current invite
+      // code in their own member entry and touch nothing else.
       allow update: if isAdultOrOwner(hid)
         || (signedIn()
             && !(request.auth.uid in resource.data.memberIds)
             && request.resource.data.memberIds.hasAll(resource.data.memberIds)
             && request.resource.data.memberIds.size() == resource.data.memberIds.size() + 1
             && request.auth.uid in request.resource.data.memberIds
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['memberIds', 'members']))
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['memberIds', 'members'])
+            && request.resource.data.members[request.auth.uid].inviteCode == resource.data.inviteCode)
         // A member may leave (remove only themselves).
         || (isMember(hid)
             && !(request.auth.uid in request.resource.data.memberIds)
@@ -83,42 +101,42 @@ service cloud.firestore {
 
       match /accounts/{id} {
         allow read: if isMember(hid);
-        allow write: if isAdultOrOwner(hid);
+        allow write: if isAdultOrOwnerW(hid);
       }
 
       match /categories/{id} {
         allow read: if isMember(hid);
-        allow write: if isAdultOrOwner(hid);
+        allow write: if isAdultOrOwnerW(hid);
       }
 
       match /transactions/{id} {
         allow read: if isMember(hid);
-        allow create: if isMember(hid) && request.resource.data.createdBy == request.auth.uid;
-        allow update, delete: if isAdultOrOwner(hid)
-          || (isMember(hid) && resource.data.createdBy == request.auth.uid);
+        allow create: if isMemberW(hid) && request.resource.data.createdBy == request.auth.uid;
+        allow update, delete: if isAdultOrOwnerW(hid)
+          || (isMemberW(hid) && resource.data.createdBy == request.auth.uid);
       }
 
       match /budgets/{id} {
         allow read: if isMember(hid);
-        allow write: if isAdultOrOwner(hid);
+        allow write: if isAdultOrOwnerW(hid);
       }
 
       match /goals/{id} {
         allow read: if isMember(hid);
-        allow create, update: if isMember(hid);
-        allow delete: if isAdultOrOwner(hid);
+        allow create, update: if isMemberW(hid);
+        allow delete: if isAdultOrOwnerW(hid);
       }
 
       match /recurring/{id} {
         allow read: if isMember(hid);
-        allow create: if isMember(hid) && request.resource.data.createdBy == request.auth.uid;
-        allow update, delete: if isAdultOrOwner(hid)
-          || (isMember(hid) && resource.data.createdBy == request.auth.uid);
+        allow create: if isMemberW(hid) && request.resource.data.createdBy == request.auth.uid;
+        allow update, delete: if isAdultOrOwnerW(hid)
+          || (isMemberW(hid) && resource.data.createdBy == request.auth.uid);
       }
 
       match /activity/{id} {
         allow read: if isMember(hid);
-        allow create: if isMember(hid) && request.resource.data.actorId == request.auth.uid;
+        allow create: if isMemberW(hid) && request.resource.data.actorId == request.auth.uid;
         allow update, delete: if false;
       }
     }

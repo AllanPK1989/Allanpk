@@ -9,6 +9,7 @@ class HouseholdMember {
     required this.joinedAt,
     this.photoUrl,
     this.color = 0xFF6750A4,
+    this.inviteCode,
   });
 
   final String uid;
@@ -16,6 +17,9 @@ class HouseholdMember {
   final MemberRole role;
   final DateTime joinedAt;
   final String? photoUrl;
+
+  /// The invite code presented when joining; checked by the security rules.
+  final String? inviteCode;
 
   /// ARGB colour used for avatars and per-member charts.
   final int color;
@@ -40,6 +44,7 @@ class HouseholdMember {
       joinedAt: joinedAt,
       photoUrl: photoUrl ?? this.photoUrl,
       color: color ?? this.color,
+      inviteCode: inviteCode,
     );
   }
 
@@ -49,6 +54,7 @@ class HouseholdMember {
         'joinedAt': joinedAt,
         'photoUrl': photoUrl,
         'color': color,
+        if (inviteCode != null) 'inviteCode': inviteCode,
       };
 
   factory HouseholdMember.fromMap(String uid, Map<String, dynamic> map) {
@@ -59,6 +65,7 @@ class HouseholdMember {
       joinedAt: parseDate(map['joinedAt']),
       photoUrl: map['photoUrl'] as String?,
       color: parseInt(map['color'], 0xFF6750A4),
+      inviteCode: map['inviteCode'] as String?,
     );
   }
 }
