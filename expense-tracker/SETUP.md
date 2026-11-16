@@ -90,6 +90,16 @@ Emulator data is in-memory; add `--export-on-exit=emulator-data --import=emulato
 to the emulator command to keep it between runs. The Emulator UI is at
 http://localhost:4000.
 
+### Automated checks
+
+```bash
+flutter analyze && flutter test        # unit and widget tests
+```
+
+`e2e/` holds a browser test that runs the real web build against the
+emulators: sign-up, transactions, budgets, insights, PDF/Excel/CSV downloads
+and a second family member joining by invite code. See `e2e/README.md`.
+
 ## 6. Publish to the web (Firebase Hosting)
 
 ```bash

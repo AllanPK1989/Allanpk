@@ -83,6 +83,26 @@ const Map<String, IconData> kIconCatalog = {
 
 IconData iconFor(String? key) => kIconCatalog[key] ?? Icons.category_rounded;
 
+/// Vivid, high-contrast colours for member avatars and per-member charts
+/// (no greys, browns or pale yellows, which read as "disabled").
+const List<int> kMemberPalette = [
+  0xFF0284C7, // sky
+  0xFFE11D48, // rose
+  0xFF059669, // emerald
+  0xFFEA580C, // orange
+  0xFF7C3AED, // violet
+  0xFFDB2777, // pink
+  0xFF0D9488, // teal
+  0xFFCA8A04, // amber
+];
+
+/// Stable colour choice for a member who joins a household. Uses a simple
+/// character sum so the result is the same on every platform.
+int memberColorFor(String uid) {
+  final sum = uid.codeUnits.fold<int>(0, (a, b) => a + b);
+  return kMemberPalette[sum % kMemberPalette.length];
+}
+
 /// Curated palette for categories, accounts, goals and member avatars.
 const List<int> kPalette = [
   0xFFE53935, // red

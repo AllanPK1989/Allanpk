@@ -472,7 +472,7 @@ class _MembersTab extends ConsumerWidget {
                             children: [
                               Text(m.name, style: context.text.titleSmall),
                               Text(
-                                '${m.count} transactions · ${totalExpense == 0 ? '0%' : Money.percent(m.expense / totalExpense)} of spending',
+                                '${m.count} ${m.count == 1 ? 'transaction' : 'transactions'} · ${totalExpense == 0 ? '0%' : Money.percent(m.expense / totalExpense)} of spending',
                                 style: context.text.bodySmall?.copyWith(color: context.colors.onSurfaceVariant),
                               ),
                             ],

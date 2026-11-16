@@ -432,20 +432,33 @@ class PdfReportBuilder {
       InsightTone.warning => const PdfColor.fromInt(0xFFF59E0B),
       InsightTone.neutral => _primary,
     };
+    // A coloured accent strip beside a rounded panel. (The pdf package only
+    // allows a border radius on uniform borders, so the strip is its own box.)
     return pw.Container(
       margin: const pw.EdgeInsets.only(bottom: 5),
-      padding: const pw.EdgeInsets.fromLTRB(10, 7, 10, 7),
-      decoration: pw.BoxDecoration(
-        color: _soft,
-        borderRadius: pw.BorderRadius.circular(6),
-        border: pw.Border(left: pw.BorderSide(color: color, width: 3)),
-      ),
-      child: pw.Column(
+      decoration: pw.BoxDecoration(color: _soft, borderRadius: pw.BorderRadius.circular(6)),
+      child: pw.Row(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          pw.Text(i.title, style: const pw.TextStyle(fontSize: 9.5)),
-          pw.SizedBox(height: 1.5),
-          pw.Text(i.body, style: const pw.TextStyle(fontSize: 8.5, color: _muted)),
+          pw.Container(
+            width: 3,
+            height: 30,
+            margin: const pw.EdgeInsets.only(left: 6, top: 7),
+            decoration: pw.BoxDecoration(color: color, borderRadius: pw.BorderRadius.circular(1.5)),
+          ),
+          pw.Expanded(
+            child: pw.Padding(
+              padding: const pw.EdgeInsets.fromLTRB(8, 7, 10, 7),
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Text(i.title, style: const pw.TextStyle(fontSize: 9.5)),
+                  pw.SizedBox(height: 1.5),
+                  pw.Text(i.body, style: const pw.TextStyle(fontSize: 8.5, color: _muted)),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

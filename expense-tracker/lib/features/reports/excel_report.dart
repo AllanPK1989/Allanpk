@@ -111,7 +111,7 @@ class ExcelReportBuilder {
       'Note',
       'Account',
       'To account',
-      'Amount ($data.currency)',
+      'Amount (${data.currency})',
       'Original amount',
       'Currency',
       'Tags',

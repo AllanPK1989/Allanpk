@@ -148,7 +148,8 @@ class _BudgetEditorScreenState extends ConsumerState<BudgetEditorScreen> {
             children: [
               for (final c in categories)
                 FilterChip(
-                  avatar: Icon(Icons.circle, size: 10, color: Color(c.color)),
+                  // The checkmark replaces the colour dot once selected.
+                  avatar: _categoryIds.contains(c.id) ? null : Icon(Icons.circle, size: 10, color: Color(c.color)),
                   label: Text(c.name),
                   selected: _categoryIds.contains(c.id),
                   onSelected: (v) => setState(() => v ? _categoryIds.add(c.id) : _categoryIds.remove(c.id)),

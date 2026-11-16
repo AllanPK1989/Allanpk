@@ -1,3 +1,4 @@
+import 'package:expense_budget_manager/core/constants/app_icons.dart';
 import 'package:expense_budget_manager/core/utils/date_utils.dart';
 import 'package:expense_budget_manager/core/utils/expression.dart';
 import 'package:expense_budget_manager/core/utils/money.dart';
@@ -139,6 +140,13 @@ void main() {
       expect(due, [DateTime(2026, 1, 1), DateTime(2026, 1, 15)]);
       expect(weekly.frequencyLabel, 'Every 2 weeks');
     });
+  });
+
+  test('member colours are vivid and stable', () {
+    expect(memberColorFor('abc'), memberColorFor('abc'));
+    for (final id in ['a', 'uid-123', 'XyZ987', '']) {
+      expect(kMemberPalette, contains(memberColorFor(id)));
+    }
   });
 
   group('models round-trip', () {

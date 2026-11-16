@@ -20,7 +20,7 @@ Future<void> saveFile({
   web.document.body?.append(anchor);
   anchor.click();
   anchor.remove();
-  // Give the browser a moment to start the download before revoking.
-  await Future<void>.delayed(const Duration(seconds: 2));
-  web.URL.revokeObjectURL(url);
+  // Revoke later so the browser has time to start the download, without
+  // keeping the caller (and its busy indicator) waiting.
+  Future<void>.delayed(const Duration(seconds: 30), () => web.URL.revokeObjectURL(url));
 }

@@ -294,7 +294,7 @@ class _JoinHouseholdScreenState extends ConsumerState<JoinHouseholdScreen> {
       final household = await repo.joinHousehold(
         profile: profile,
         code: _code.text,
-        memberColor: kPalette[(profile.uid.hashCode.abs()) % kPalette.length],
+        memberColor: memberColorFor(profile.uid),
       );
       if (!mounted) return;
       context.showSnack('Welcome to ${household.name}!');
