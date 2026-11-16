@@ -1,0 +1,18 @@
+rules_version = '2';
+
+// Receipt images live under households/{hid}/receipts/{transactionId}/{file}.
+// Only household members may read or upload; uploads are capped at 5 MB and
+// must be images.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /households/{hid}/receipts/{transactionId}/{file} {
+      allow read: if request.auth != null
+        && request.auth.uid in firestore.get(/databases/(default)/documents/households/$(hid)).data.memberIds;
+      allow write: if request.auth != null
+        && request.auth.uid in firestore.get(/databases/(default)/documents/households/$(hid)).data.memberIds
+        && (request.resource == null
+            || (request.resource.size < 5 * 1024 * 1024
+                && request.resource.contentType.matches('image/.*')));
+    }
+  }
+}

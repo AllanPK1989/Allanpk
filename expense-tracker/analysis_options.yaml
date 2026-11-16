@@ -1,0 +1,25 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  errors:
+    # Hard-fail on things that break builds, keep the rest as warnings.
+    missing_required_param: error
+    missing_return: error
+  exclude:
+    - "**/*.g.dart"
+    - "**/firebase_options.dart"
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+
+linter:
+  rules:
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+    prefer_final_locals: true
+    unnecessary_lambdas: true
+    avoid_print: true
+    require_trailing_commas: true
+    directives_ordering: true
+    sort_pub_dependencies: false
