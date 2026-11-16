@@ -17,11 +17,11 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'REPLACE_ME',
-    appId: 'REPLACE_ME',
-    messagingSenderId: 'REPLACE_ME',
-    projectId: 'REPLACE_ME',
-    authDomain: 'REPLACE_ME.firebaseapp.com',
-    storageBucket: 'REPLACE_ME.firebasestorage.app',
+    apiKey: 'AIzaSyDfKgbGt-Z7vq8duwROnj-XnpFX5BQ-21M',
+    appId: '1:828080278377:web:b498bb30e2ecf05932cbf8',
+    messagingSenderId:'828080278377',
+    projectId: 'expensebudget-tracker',
+    authDomain: 'expensebudget-tracker.firebaseapp.com',
+    storageBucket: 'expensebudget-tracker.firebasestorage.app',
   );
 }
