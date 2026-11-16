@@ -50,6 +50,128 @@ class DashboardScreen extends ConsumerWidget {
       money: (v) => Money.format(v, currency, compact: true),
     );
     final recent = periodTx.take(5).toList();
+    final hide = settings.hideAmounts;
+
+    // ---- sections -------------------------------------------------------
+    final hero = _HeroCard(
+      netWorth: netWorth,
+      summary: summary,
+      comparison: comparison,
+      currency: currency,
+      hide: hide,
+      loading: txAsync.isLoading && !txAsync.hasValue,
+    ).animate().fadeIn(duration: 350.ms).slideY(begin: 0.04, end: 0);
+
+    final budgetSection = budgets.isEmpty
+        ? null
+        : _Section(
+            header: SectionHeader(
+              title: 'Budgets',
+              subtitle: '${budgets.where((b) => b.status != BudgetStatus.over).length} of ${budgets.length} on track',
+              actionLabel: 'See all',
+              onAction: () => context.go('/budgets'),
+            ),
+            child: _BudgetStrip(budgets: budgets.take(3).toList(), currency: currency, hide: hide),
+          );
+
+    final trendSection = _Section(
+      header: SectionHeader(
+        title: 'Spending trend',
+        subtitle: range.label(),
+        actionLabel: 'Insights',
+        onAction: () => context.go('/insights'),
+      ),
+      child: AppCard(
+        padding: const EdgeInsets.fromLTRB(8, 16, 16, 8),
+        child: daily.every((p) => p.expense == 0)
+            ? const EmptyState(
+                icon: Icons.show_chart_rounded,
+                title: 'No spending recorded',
+                message: 'Your daily trend appears once you add expenses.',
+                compact: true,
+              )
+            : DailySpendChart(points: daily, currency: currency),
+      ),
+    );
+
+    final categorySection = categorySpend.isEmpty
+        ? null
+        : _Section(
+            header: const SectionHeader(title: 'Top categories'),
+            child: _CategoryStrip(slices: categorySpend.take(6).toList(), currency: currency, hide: hide),
+          );
+
+    final insightSection = _Section(
+      header: const SectionHeader(title: 'Insights'),
+      child: _InsightCarousel(insights: insights),
+    );
+
+    final goalSection = goals.isEmpty
+        ? null
+        : _Section(
+            header: SectionHeader(title: 'Savings goals', actionLabel: 'See all', onAction: () => context.push('/goals')),
+            child: _GoalStrip(goals: goals, currency: currency, hide: hide),
+          );
+
+    final recentSection = _Section(
+      header: SectionHeader(title: 'Recent transactions', actionLabel: 'See all', onAction: () => context.go('/transactions')),
+      child: recent.isEmpty
+          ? AppCard(
+              child: EmptyState(
+                icon: Icons.receipt_long_rounded,
+                title: 'Nothing here yet',
+                message: 'Tap Add to record your first expense for ${range.label()}.',
+                compact: true,
+                actionLabel: 'Add transaction',
+                onAction: () => context.push('/transactions/new'),
+              ),
+            )
+          : AppCard(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Column(children: [for (final t in recent) TransactionTile(transaction: t, showDate: true)]),
+            ),
+    );
+
+    final activitySection = household == null || !household.isShared || activity.isEmpty
+        ? null
+        : _Section(
+            header: SectionHeader(title: 'Family activity', actionLabel: 'See all', onAction: () => context.push('/family/activity')),
+            child: AppCard(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Column(
+                children: [
+                  for (final a in activity.take(3))
+                    ListTile(
+                      leading: MemberAvatar(
+                        initials: a.actorName.isEmpty ? '?' : a.actorName[0],
+                        color: household.members[a.actorId]?.color ?? kPalette[15],
+                        photoUrl: household.members[a.actorId]?.photoUrl,
+                      ),
+                      title: Text(a.summary, style: context.text.bodyMedium, maxLines: 2),
+                      subtitle: Text(AppDates.timeAgo(a.at), style: context.text.labelSmall),
+                    ),
+                ],
+              ),
+            ),
+          );
+
+    final narrowOrder = <Widget?>[
+      hero,
+      budgetSection,
+      trendSection,
+      categorySection,
+      insightSection,
+      goalSection,
+      recentSection,
+      activitySection,
+    ];
+    final leftColumn = <Widget?>[hero, budgetSection, recentSection, activitySection];
+    final rightColumn = <Widget?>[trendSection, categorySection, insightSection, goalSection];
+
+    List<Widget> stack(List<Widget?> items) => [
+          for (final w in items)
+            if (w != null) ...[w, const SizedBox(height: 16)],
+        ];
 
     return Scaffold(
       body: RefreshIndicator(
@@ -98,12 +220,12 @@ class DashboardScreen extends ConsumerWidget {
               ),
               actions: [
                 IconButton(
-                  tooltip: settings.hideAmounts ? 'Show amounts' : 'Hide amounts',
-                  icon: Icon(settings.hideAmounts ? Icons.visibility_off_outlined : Icons.visibility_outlined),
-                  onPressed: () => ref.read(appSettingsProvider.notifier).setHideAmounts(!settings.hideAmounts),
+                  tooltip: hide ? 'Show amounts' : 'Hide amounts',
+                  icon: Icon(hide ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                  onPressed: () => ref.read(appSettingsProvider.notifier).setHideAmounts(!hide),
                 ),
                 IconButton(
-                  tooltip: 'Search',
+                  tooltip: 'Search (/)',
                   icon: const Icon(Icons.search_rounded),
                   onPressed: () => context.push('/search'),
                 ),
@@ -112,116 +234,34 @@ class DashboardScreen extends ConsumerWidget {
             ),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const PeriodSelector(),
-                    const SizedBox(height: 12),
-                    _HeroCard(
-                      netWorth: netWorth,
-                      summary: summary,
-                      comparison: comparison,
-                      currency: currency,
-                      hide: settings.hideAmounts,
-                      loading: txAsync.isLoading && !txAsync.hasValue,
-                    ).animate().fadeIn(duration: 350.ms).slideY(begin: 0.04, end: 0),
-                    const SizedBox(height: 16),
-                    if (budgets.isNotEmpty) ...[
-                      SectionHeader(
-                        title: 'Budgets',
-                        subtitle: '${budgets.where((b) => b.status != BudgetStatus.over).length} of ${budgets.length} on track',
-                        actionLabel: 'See all',
-                        onAction: () => context.go('/budgets'),
-                      ),
-                      _BudgetStrip(budgets: budgets.take(3).toList(), currency: currency, hide: settings.hideAmounts),
-                      const SizedBox(height: 16),
-                    ],
-                    SectionHeader(
-                      title: 'Spending trend',
-                      subtitle: range.label(),
-                      actionLabel: 'Insights',
-                      onAction: () => context.go('/insights'),
-                    ),
-                    AppCard(
-                      padding: const EdgeInsets.fromLTRB(8, 16, 16, 8),
-                      child: daily.every((p) => p.expense == 0)
-                          ? const EmptyState(
-                              icon: Icons.show_chart_rounded,
-                              title: 'No spending recorded',
-                              message: 'Your daily trend appears once you add expenses.',
-                              compact: true,
-                            )
-                          : DailySpendChart(points: daily, currency: currency),
-                    ),
-                    const SizedBox(height: 16),
-                    if (categorySpend.isNotEmpty) ...[
-                      const SectionHeader(title: 'Top categories'),
-                      _CategoryStrip(slices: categorySpend.take(6).toList(), currency: currency, hide: settings.hideAmounts),
-                      const SizedBox(height: 16),
-                    ],
-                    const SectionHeader(title: 'Insights'),
-                    _InsightCarousel(insights: insights),
-                    const SizedBox(height: 16),
-                    if (goals.isNotEmpty) ...[
-                      SectionHeader(
-                        title: 'Savings goals',
-                        actionLabel: 'See all',
-                        onAction: () => context.push('/goals'),
-                      ),
-                      _GoalStrip(goals: goals, currency: currency, hide: settings.hideAmounts),
-                      const SizedBox(height: 16),
-                    ],
-                    SectionHeader(
-                      title: 'Recent transactions',
-                      actionLabel: 'See all',
-                      onAction: () => context.go('/transactions'),
-                    ),
-                    if (recent.isEmpty)
-                      AppCard(
-                        child: EmptyState(
-                          icon: Icons.receipt_long_rounded,
-                          title: 'Nothing here yet',
-                          message: 'Tap Add to record your first expense for ${range.label()}.',
-                          compact: true,
-                          actionLabel: 'Add transaction',
-                          onAction: () => context.push('/transactions/new'),
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 100),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final wide = constraints.maxWidth >= 920;
+                    if (!wide) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [const PeriodSelector(), const SizedBox(height: 12), ...stack(narrowOrder)],
+                      );
+                    }
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Center(
+                          child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 480), child: const PeriodSelector()),
                         ),
-                      )
-                    else
-                      AppCard(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Column(
-                          children: [for (final t in recent) TransactionTile(transaction: t, showDate: true)],
-                        ),
-                      ),
-                    if (household != null && household.isShared && activity.isNotEmpty) ...[
-                      const SizedBox(height: 16),
-                      SectionHeader(
-                        title: 'Family activity',
-                        actionLabel: 'See all',
-                        onAction: () => context.push('/family/activity'),
-                      ),
-                      AppCard(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Column(
+                        const SizedBox(height: 12),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            for (final a in activity.take(3))
-                              ListTile(
-                                leading: MemberAvatar(
-                                  initials: a.actorName.isEmpty ? '?' : a.actorName[0],
-                                  color: household.members[a.actorId]?.color ?? kPalette[15],
-                                  photoUrl: household.members[a.actorId]?.photoUrl,
-                                ),
-                                title: Text(a.summary, style: context.text.bodyMedium, maxLines: 2),
-                                subtitle: Text(AppDates.timeAgo(a.at), style: context.text.labelSmall),
-                              ),
+                            Expanded(flex: 11, child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: stack(leftColumn))),
+                            const SizedBox(width: 16),
+                            Expanded(flex: 9, child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: stack(rightColumn))),
                           ],
                         ),
-                      ),
-                    ],
-                    const SizedBox(height: 100),
-                  ],
+                      ],
+                    );
+                  },
                 ),
               ),
             ),
@@ -236,6 +276,18 @@ class DashboardScreen extends ConsumerWidget {
     if (h < 12) return 'Good morning';
     if (h < 17) return 'Good afternoon';
     return 'Good evening';
+  }
+}
+
+/// A titled dashboard block.
+class _Section extends StatelessWidget {
+  const _Section({required this.header, required this.child});
+  final Widget header;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [header, child]);
   }
 }
 

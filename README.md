@@ -1,3 +1,17 @@
+# Expense & Budget Manager (web app)
+
+`expense-tracker/` holds a Flutter web application for personal and family
+expense tracking: shared household ledger, budgets with rollover and alerts,
+savings goals, recurring transactions, detailed analytics and PDF / Excel / CSV
+exports, backed by Firebase Authentication, Firestore and Storage.
+
+* Features, architecture and data model: [expense-tracker/README.md](expense-tracker/README.md)
+* Firebase project setup, local emulators and hosting: [expense-tracker/SETUP.md](expense-tracker/SETUP.md)
+* CI: `.github/workflows/expense-tracker-web.yml` analyses, tests, builds and
+  (with a service-account secret) deploys to Firebase Hosting.
+
+---
+
 # 3D Animation Design Skills
 
 Vendored Claude Code skill bundle for 3D graphics, motion, and animation design on the web.
