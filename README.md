@@ -154,3 +154,11 @@ Both now generate correct output, verified by running them and inspecting the em
 [`thunai/`](thunai/README.md) holds a separate project: an installable web app (FastAPI + React PWA)
 that gives maintenance technicians step-by-step, safety-first troubleshooting in English or Tamil
 and records breakdown logs by voice. Start with [thunai/README.md](thunai/README.md).
+
+## Visa Job Finder: jobs abroad with visa sponsorship
+
+[`visa-jobs/`](visa-jobs/README.md) is a personal job-search web app that runs on your own computer.
+It searches jobs outside India (Adzuna, Arbeitnow, optional remote feeds), reads each ad for
+sponsorship wording, and checks employers against official sponsor registers (UK Home Office,
+Netherlands IND, Canada LMIA, plus any list you import). Start with
+[visa-jobs/README.md](visa-jobs/README.md).

@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Visa Job Finder</title>
+  <meta name="description" content="Find jobs outside India that offer visa sponsorship, checked against official sponsor registers.">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <img src="icon.svg" alt="" width="28" height="28">
+        <div>
+          <h1>Visa Job Finder</h1>
+          <p class="tagline">Jobs outside India, checked for visa sponsorship</p>
+        </div>
+      </div>
+      <nav class="tabs" aria-label="Sections">
+        <button type="button" class="tab" data-view="search" aria-current="page">Search</button>
+        <button type="button" class="tab" data-view="tracker">Tracker <span class="count" id="tracker-count">0</span></button>
+        <button type="button" class="tab" data-view="registers">Sponsor lists</button>
+        <button type="button" class="tab" data-view="visa">Visa info</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- SEARCH -->
+    <section id="view-search" class="view" aria-labelledby="search-heading">
+      <h2 id="search-heading" class="visually-hidden">Search jobs</h2>
+      <div id="setup-banner" class="banner" hidden></div>
+
+      <form id="search-form" class="panel search-panel" autocomplete="off">
+        <div class="query-row">
+          <label for="q" class="visually-hidden">Job title or keywords</label>
+          <input id="q" name="q" type="search" maxlength="120" placeholder="Job title or keywords, e.g. reliability engineer (use -word to exclude)">
+          <button type="submit" class="primary" id="search-btn">Search</button>
+        </div>
+        <div class="presets" id="presets" aria-label="Quick searches"></div>
+
+        <fieldset class="countries">
+          <legend>Countries <span class="hint">India is always excluded</span></legend>
+          <div class="country-tools">
+            <button type="button" class="link" data-countries="default">Default</button>
+            <button type="button" class="link" data-countries="all">All</button>
+            <button type="button" class="link" data-countries="registers">With sponsor list</button>
+            <button type="button" class="link" data-countries="none">None</button>
+          </div>
+          <div class="chips" id="country-chips"></div>
+          <p class="hint"><span class="dot" aria-hidden="true"></span> = employers are checked against that country's official sponsor list.
+            Countries marked <em>no Adzuna</em> only get jobs from Arbeitnow and remote feeds.</p>
+        </fieldset>
+
+        <div class="filter-row">
+          <label>Sponsorship
+            <select id="level" name="level">
+              <option value="likely">Likely sponsors</option>
+              <option value="signals">Any visa or relocation signal</option>
+              <option value="all">Everything except "no sponsorship"</option>
+            </select>
+          </label>
+          <label>Posted within
+            <select id="days" name="days">
+              <option value="7">7 days</option>
+              <option value="14">14 days</option>
+              <option value="30">30 days</option>
+              <option value="60">60 days</option>
+              <option value="90">90 days</option>
+            </select>
+          </label>
+          <label>Sort by
+            <select id="sort" name="sort">
+              <option value="best">Strongest sponsorship evidence</option>
+              <option value="newest">Newest first</option>
+            </select>
+          </label>
+        </div>
+        <div class="filter-row checks">
+          <label class="check"><input type="checkbox" id="remote"> Include remote jobs <span class="hint">(no relocation needed, if open to your location)</span></label>
+          <label class="check"><input type="checkbox" id="unclear"> Include jobs whose country is unclear</label>
+        </div>
+        <details class="advanced">
+          <summary>Sources and Adzuna options</summary>
+          <div class="advanced-body">
+            <div class="chips" id="source-chips"></div>
+            <label>Adzuna "visa/sponsor/relocation" text filter
+              <select id="sponsorWords">
+                <option value="auto">Automatic: only in countries without a sponsor list</option>
+                <option value="always">Always</option>
+                <option value="never">Never</option>
+              </select>
+            </label>
+            <p class="hint">In countries with an official sponsor list (UK, Netherlands, Canada and any you import) every job is checked against the list, so Adzuna returns all jobs.
+              Elsewhere Adzuna only returns ads whose full text mentions visa, sponsorship or relocation.</p>
+          </div>
+        </details>
+        <p class="hint" id="quota-note"></p>
+      </form>
+
+      <div id="search-status" class="search-status" role="status" aria-live="polite"></div>
+      <div id="level-summary" class="level-summary"></div>
+      <ol id="results" class="results"></ol>
+      <div class="more-wrap"><button type="button" id="more" class="secondary" hidden>Show more</button></div>
+    </section>
+
+    <!-- TRACKER -->
+    <section id="view-tracker" class="view" hidden aria-labelledby="tracker-heading">
+      <div class="view-head">
+        <h2 id="tracker-heading">Tracker</h2>
+        <div class="view-actions">
+          <a class="button secondary" href="/api/saved/export.csv" download>Export CSV</a>
+        </div>
+      </div>
+      <div class="chips" id="status-filter"></div>
+      <ol id="tracker-list" class="results"></ol>
+      <p id="tracker-empty" class="empty" hidden>Nothing saved yet. Use <strong>Save</strong> on a search result to track it here.</p>
+    </section>
+
+    <!-- REGISTERS -->
+    <section id="view-registers" class="view" hidden aria-labelledby="registers-heading">
+      <div class="view-head">
+        <h2 id="registers-heading">Official sponsor lists</h2>
+        <div class="view-actions"><button type="button" id="update-registers" class="secondary">Update now</button></div>
+      </div>
+      <p class="lead">A match means the <strong>employer</strong> holds a sponsor licence or has recently been approved to hire foreign workers.
+        It does not guarantee that a particular job is open to sponsorship. Always confirm with the employer.</p>
+      <div id="register-list" class="register-grid"></div>
+      <div class="panel import-help">
+        <h3>Add another country's list (for example US H-1B employers)</h3>
+        <ol>
+          <li>Download a CSV or XLSX of employers, for example from the
+            <a href="https://www.uscis.gov/tools/reports-and-studies/h-1b-employer-data-hub" target="_blank" rel="noopener noreferrer">USCIS H-1B Employer Data Hub</a>
+            (choose a fiscal year, then export).</li>
+          <li>Rename it so it starts with the country code, for example <code>us-h1b-2025.csv</code>.</li>
+          <li>Put it in <code id="import-dir">data/registers/import/</code> and press <strong>Update now</strong>.</li>
+        </ol>
+        <p class="hint">The file needs a column named like Employer, Petitioner, Organisation or Company.</p>
+      </div>
+    </section>
+
+    <!-- VISA INFO -->
+    <section id="view-visa" class="view" hidden aria-labelledby="visa-heading">
+      <div class="view-head"><h2 id="visa-heading">Official work-visa information</h2></div>
+      <p class="lead">Links go to each government's own pages. Salary thresholds and occupation lists change often, so check them there before you apply. This is not legal advice.</p>
+      <div id="visa-list" class="visa-grid"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Jobs from <a href="https://www.adzuna.com/" target="_blank" rel="noopener noreferrer">Adzuna</a>,
+      <a href="https://www.arbeitnow.com/" target="_blank" rel="noopener noreferrer">Arbeitnow</a>,
+      <a href="https://remotive.com/" target="_blank" rel="noopener noreferrer">Remotive</a> and
+      <a href="https://jobicy.com/" target="_blank" rel="noopener noreferrer">Jobicy</a>.
+      Sponsor data: UK Home Office (Open Government Licence), Netherlands IND, Employment and Social Development Canada (Open Government Licence – Canada).</p>
+  </footer>
+
+  <template id="job-template">
+    <li class="job">
+      <div class="job-head">
+        <div class="job-main">
+          <a class="job-title" target="_blank" rel="noopener noreferrer"></a>
+          <p class="job-meta"></p>
+        </div>
+        <div class="job-actions">
+          <button type="button" class="secondary small save"></button>
+          <button type="button" class="ghost small hide" title="Hide this job from future searches">Hide</button>
+        </div>
+      </div>
+      <div class="badges"></div>
+      <blockquote class="evidence" hidden></blockquote>
+      <p class="register-detail" hidden></p>
+      <p class="caution" hidden></p>
+      <p class="snippet"></p>
+      <button type="button" class="link toggle-full" hidden>Show full text</button>
+      <div class="full-text" hidden></div>
+    </li>
+  </template>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "visa-job-finder",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Personal job search for roles outside India that offer visa sponsorship, checked against official sponsor registers.",
+  "type": "module",
+  "engines": {
+    "node": ">=20.12"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "test": "node --test \"test/*.test.js\"",
+    "update-registers": "node scripts/update-registers.js"
+  },
+  "license": "MIT"
+}

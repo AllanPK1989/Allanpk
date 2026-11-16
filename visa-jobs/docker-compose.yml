@@ -1,0 +1,22 @@
+# Optional: run with Docker instead of Node.   docker compose up -d --build
+# Then open http://localhost:8080. Settings come from .env (copy .env.example).
+name: visa-jobs
+
+services:
+  app:
+    build: .
+    image: visa-jobs:local
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      # Inside the container the app must listen on all interfaces; the port is
+      # still only published to this computer (127.0.0.1) below.
+      HOST: 0.0.0.0
+      PORT: 8080
+      DATA_DIR: /data
+    ports:
+      - "127.0.0.1:${PORT:-8080}:8080"
+    volumes:
+      - ./data:/data
+    restart: unless-stopped
