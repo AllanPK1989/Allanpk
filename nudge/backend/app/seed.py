@@ -15,12 +15,12 @@ from .timeutil import local_now, utcnow
 
 DEFAULT_BASKETS = [
     ("Work", "blue", "briefcase"),
-    ("Projects", "violet", "layers"),
+    ("Projects", "orange", "layers"),
     ("Meetings & action points", "teal", "users"),
-    ("Personal", "pink", "user"),
-    ("Home & family", "orange", "home"),
+    ("Personal", "amber", "user"),
+    ("Home & family", "pink", "home"),
     ("Finance & bills", "green", "wallet"),
-    ("Learning", "amber", "book"),
+    ("Learning", "violet", "book"),
 ]
 
 

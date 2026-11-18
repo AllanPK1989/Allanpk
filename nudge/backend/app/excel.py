@@ -18,6 +18,13 @@ HEADER_FILL = PatternFill("solid", fgColor="1D5FBF")
 HEADER_FONT = Font(color="FFFFFF", bold=True)
 
 
+def _safe(value):
+    """Text that starts like a formula is stored as text, so a task title can't run in Excel."""
+    if isinstance(value, str) and value[:1] in ("=", "+", "-", "@", "\t", "\r"):
+        return "'" + value
+    return value
+
+
 def _sheet(wb: Workbook, title: str, headers: list[str], rows: list[list], first: bool = False):
     ws = wb.active if first else wb.create_sheet()
     ws.title = title
@@ -26,7 +33,7 @@ def _sheet(wb: Workbook, title: str, headers: list[str], rows: list[list], first
         cell.fill, cell.font = HEADER_FILL, HEADER_FONT
         cell.alignment = Alignment(vertical="center")
     for r in rows:
-        ws.append(r)
+        ws.append([_safe(v) for v in r])
     ws.freeze_panes = "A2"
     ws.auto_filter.ref = ws.dimensions
     for i, h in enumerate(headers, start=1):

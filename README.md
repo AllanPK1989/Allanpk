@@ -154,3 +154,11 @@ Both now generate correct output, verified by running them and inspecting the em
 [`thunai/`](thunai/README.md) holds a separate project: an installable web app (FastAPI + React PWA)
 that gives maintenance technicians step-by-step, safety-first troubleshooting in English or Tamil
 and records breakdown logs by voice. Start with [thunai/README.md](thunai/README.md).
+
+## Nudge: voice-first task and follow-up assistant
+
+[`nudge/`](nudge/README.md) is a personal assistant for everyday work: say what's on your mind, and it
+becomes tasks in colour-coded baskets on a dashboard. It reminds you when things are due, closes
+them in one tap (with a follow-up prompt), and keeps nudging you about people who owe you a reply.
+FastAPI + React PWA, Claude for understanding notes, self-hosted Whisper for speech, web push and
+e-mail digests. Start with [nudge/README.md](nudge/README.md); go live with [nudge/RUNBOOK.md](nudge/RUNBOOK.md).

@@ -12,7 +12,7 @@ from ..deps import get_task, prefs
 from ..lanes import LANES, lane, sort_key
 from ..models import Basket, ChecklistItem, Task, TaskEvent
 from ..schemas import (BasketIn, BasketPatch, BulkIn, ChecklistItemIn, ChecklistItemPatch, CloseIn, FocusIn,
-                       ReorderIn, SnoozeIn, TaskIn, TaskPatch)
+                       FollowUpIn, NoteIn, ReorderIn, SnoozeIn, TaskIn, TaskPatch)
 from ..security import require_auth
 from ..serialize import basket_dict, task_dict
 from ..settings_store import Prefs
@@ -20,7 +20,7 @@ from ..timeutil import iso_utc, utcnow
 
 router = APIRouter(prefix="/api", tags=["tasks"], dependencies=[Depends(require_auth)])
 
-BASKET_COLORS = {"blue", "violet", "teal", "pink", "orange", "green", "amber", "red", "slate", "indigo", "cyan", "lime"}
+BASKET_COLORS = {"blue", "orange", "teal", "amber", "pink", "green", "violet", "red", "slate"}
 
 
 def _error(e: ts.TaskError):
@@ -135,6 +135,28 @@ def close(task_id: int, body: CloseIn, db: Session = Depends(get_db), p: Prefs =
     db.commit()
     c = ts.clock(p)
     return {"task": _out(db, p, t), "spawned": [task_dict(s, c) for s in spawned]}
+
+
+@router.post("/tasks/{task_id}/follow-up")
+def follow_up(task_id: int, body: FollowUpIn, db: Session = Depends(get_db), p: Prefs = Depends(prefs)):
+    t = get_task(db, task_id)
+    try:
+        fu = ts.add_follow_up(db, p, t, body.model_dump())
+    except ts.TaskError as e:
+        raise _error(e)
+    db.commit()
+    return _out(db, p, fu)
+
+
+@router.post("/tasks/{task_id}/closing-note")
+def closing_note(task_id: int, body: NoteIn, db: Session = Depends(get_db), p: Prefs = Depends(prefs)):
+    t = get_task(db, task_id)
+    try:
+        ts.set_closing_note(db, t, body.note)
+    except ts.TaskError as e:
+        raise _error(e)
+    db.commit()
+    return _out(db, p, t)
 
 
 @router.post("/tasks/{task_id}/undo-close")

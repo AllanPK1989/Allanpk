@@ -124,3 +124,30 @@ def test_bulk_move_to_tomorrow(client, db):
     assert client.post("/api/tasks-bulk", json={"ids": ids, "action": "tomorrow"}, headers=H).json()["changed"] == 3
     db.expire_all()
     assert len({t.due_date for t in db.query(Task).all()}) == 1
+
+
+def test_one_tap_close_then_follow_up_note_and_undo(client):
+    t = client.post("/api/tasks", json={"title": "Send drawings", "person": "Anita"}, headers=H).json()
+    client.post(f"/api/tasks/{t['id']}/close", json={}, headers=H)
+    fu = client.post(f"/api/tasks/{t['id']}/follow-up", json={"in_days": 7}, headers=H).json()
+    assert fu["status"] == "waiting" and fu["follows_task_id"] == t["id"]
+    note = client.post(f"/api/tasks/{t['id']}/closing-note", json={"note": "Sent by mail"}, headers=H).json()
+    assert note["closing_note"] == "Sent by mail"
+    client.post(f"/api/tasks/{t['id']}/undo-close", headers=H)
+    assert client.get(f"/api/tasks/{fu['id']}").status_code == 404  # undo removes the follow-up too
+
+
+def test_transcribe_only(client):
+    r = client.post("/api/assistant/transcribe", files={"audio": ("n.webm", b"0" * 4000, "audio/webm")}, headers=H)
+    assert r.status_code == 200 and r.json()["text"]
+
+
+def test_export_neutralises_formulas(client):
+    import io
+
+    from openpyxl import load_workbook
+
+    client.post("/api/tasks", json={"title": "=HYPERLINK(\"http://x\",\"y\")"}, headers=H)
+    wb = load_workbook(io.BytesIO(client.get("/api/export.xlsx").content))
+    cell = wb["Open tasks"]["A2"]
+    assert cell.data_type == "s" and cell.value.startswith("'=")

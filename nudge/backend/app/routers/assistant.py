@@ -36,13 +36,7 @@ def _vocabulary(db: Session) -> str:
     return "Task note. People: " + ", ".join(names) + ". Baskets: " + ", ".join(baskets) + "." if names else ""
 
 
-@router.post("/voice")
-async def voice(
-    audio: UploadFile = File(...),
-    auto: bool = Query(False, description="Save straight to the inbox (offline recordings nobody is reviewing)"),
-    db: Session = Depends(get_db),
-    p: Prefs = Depends(prefs),
-):
+async def _transcribe(db: Session, audio: UploadFile) -> str:
     if not (audio.content_type or "").startswith(ALLOWED_AUDIO):
         raise HTTPException(415, "That doesn't look like a recording")
     data = await audio.read()
@@ -53,10 +47,26 @@ async def voice(
                                           prompt=_vocabulary(db))
     except stt.STTUnavailable as e:
         raise HTTPException(503, f"Voice isn't available right now ({e}). Please type instead.")
-    del data  # recordings are never stored
-    text = result.text.strip()
+    text = result.text.strip()  # the recording itself is never stored
     if not text:
         raise HTTPException(422, "I couldn't hear anything. Try again a little closer to the mic?")
+    return text
+
+
+@router.post("/transcribe")
+async def transcribe(audio: UploadFile = File(...), db: Session = Depends(get_db)):
+    """Speech to text only, for closing notes and other free text."""
+    return {"text": await _transcribe(db, audio)}
+
+
+@router.post("/voice")
+async def voice(
+    audio: UploadFile = File(...),
+    auto: bool = Query(False, description="Save straight to the inbox (offline recordings nobody is reviewing)"),
+    db: Session = Depends(get_db),
+    p: Prefs = Depends(prefs),
+):
+    text = await _transcribe(db, audio)
     out = ai.interpret(db, p, text)
     if auto:
         out["saved"] = _save_offline(db, p, out)

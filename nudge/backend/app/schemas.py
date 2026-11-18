@@ -55,6 +55,10 @@ class FollowUpIn(BaseModel):
     person: str | None = None
 
 
+class NoteIn(BaseModel):
+    note: str = Field(default="", max_length=2000)
+
+
 class CloseIn(BaseModel):
     note: str = ""
     follow_up: FollowUpIn | None = None

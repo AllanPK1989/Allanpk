@@ -218,44 +218,74 @@ def close_task(
             spawned.append(copy)
 
     if follow_up:
-        due = follow_up.get("date")
-        if not due and follow_up.get("in_days") is not None:
-            due = c.today + timedelta(days=int(follow_up["in_days"]))
-        person = (follow_up.get("person") if follow_up.get("person") is not None else task.person) or ""
-        title = (follow_up.get("title") or "").strip()
-        if not title:
-            if FOLLOW_UP_TITLE.match(task.title):
-                title = task.title  # already phrased as a follow-up
-            else:
-                title = f"Follow up with {person}: {task.title}" if person else f"Follow up: {task.title}"
-        fu = create_task(
-            db, prefs,
-            {
-                "title": title, "basket_id": task.basket_id, "priority": task.priority,
-                "due_date": due, "person": person,
-                "status": "waiting" if person else "open",
-                "follows_task_id": task.id,
-                "notes": f"Closing note: {task.closing_note}" if task.closing_note else "",
-            },
-            source="followup", now=now,
-        )
-        spawned.append(fu)
+        spawned.append(_make_follow_up(db, prefs, task, follow_up, now))
 
     log(db, task, "closed", prev=prev, spawned=[t.id for t in spawned], note=bool(task.closing_note))
     db.flush()
     return task, spawned
 
 
-def undo_close(db: Session, prefs: Prefs, task: Task) -> Task:
-    """Reverse the last close: restore status and remove what the close created."""
+def _make_follow_up(db: Session, prefs: Prefs, task: Task, follow_up: dict, now: datetime) -> Task:
+    c = clock(prefs, now)
+    due = follow_up.get("date")
+    if not due and follow_up.get("in_days") is not None:
+        due = c.today + timedelta(days=int(follow_up["in_days"]))
+    person = (follow_up.get("person") if follow_up.get("person") is not None else task.person) or ""
+    title = (follow_up.get("title") or "").strip()
+    if not title:
+        if FOLLOW_UP_TITLE.match(task.title):
+            title = task.title  # already phrased as a follow-up
+        else:
+            title = f"Follow up with {person}: {task.title}" if person else f"Follow up: {task.title}"
+    return create_task(
+        db, prefs,
+        {
+            "title": title, "basket_id": task.basket_id, "priority": task.priority,
+            "due_date": due, "person": person,
+            "status": "waiting" if person else "open",
+            "follows_task_id": task.id,
+            "notes": f"Closing note: {task.closing_note}" if task.closing_note else "",
+        },
+        source="followup", now=now,
+    )
+
+
+def add_follow_up(db: Session, prefs: Prefs, task: Task, follow_up: dict, now: datetime | None = None) -> Task:
+    """The "Need a follow-up?" chip after a one-tap close. Undo removes it along with the close."""
+    now = now or utcnow()
     if task.status != "done":
-        raise TaskError("Only a closed task can be undone")
-    ev = (
+        raise TaskError("Close the task first")
+    fu = _make_follow_up(db, prefs, task, follow_up, now)
+    ev = _last_close_event(db, task)
+    if ev is not None:
+        ev.detail = {**(ev.detail or {}), "spawned": [*(ev.detail or {}).get("spawned", []), fu.id]}
+    db.flush()
+    return fu
+
+
+def set_closing_note(db: Session, task: Task, note: str) -> Task:
+    if task.status not in ("done", "dropped"):
+        raise TaskError("Close the task first")
+    task.closing_note = (note or "").strip()[:2000]
+    touch(task)
+    db.flush()
+    return task
+
+
+def _last_close_event(db: Session, task: Task) -> TaskEvent | None:
+    return (
         db.query(TaskEvent)
         .filter(TaskEvent.task_id == task.id, TaskEvent.kind == "closed")
         .order_by(TaskEvent.id.desc())
         .first()
     )
+
+
+def undo_close(db: Session, prefs: Prefs, task: Task) -> Task:
+    """Reverse the last close: restore status and remove what the close created."""
+    if task.status != "done":
+        raise TaskError("Only a closed task can be undone")
+    ev = _last_close_event(db, task)
     prev = (ev.detail or {}).get("prev", {}) if ev else {}
     for spawned_id in (ev.detail or {}).get("spawned", []) if ev else []:
         child = db.get(Task, spawned_id)
