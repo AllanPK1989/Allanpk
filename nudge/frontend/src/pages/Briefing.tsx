@@ -11,10 +11,17 @@ import { Card, Spinner } from "../ui";
 
 function ReadAloud({ text }: { text: string }) {
   const [on, setOn] = useState(false);
+  const { toast } = useApp();
   useEffect(() => () => stopSpeaking(), []);
   if (!canSpeak()) return null;
+  const start = async () => {
+    setOn(true);
+    if (!(await speak(text, () => setOn(false)))) {
+      toast({ text: "This device has no built-in voice for reading aloud. (Online voices are skipped to keep your tasks private.)" });
+    }
+  };
   return (
-    <button className="btn" onClick={() => { if (on) { stopSpeaking(); setOn(false); } else { setOn(true); speak(text, () => setOn(false)); } }}>
+    <button className="btn" onClick={() => { if (on) { stopSpeaking(); setOn(false); } else start(); }}>
       <Icon name={on ? "stop" : "volume"} />{on ? "Stop" : "Read aloud"}
     </button>
   );

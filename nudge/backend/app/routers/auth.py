@@ -29,7 +29,7 @@ def status(request: Request, db: Session = Depends(get_db)):
         "has_pin": security.has_pin(db),
         "logged_in": security.session_valid(db, request.cookies.get(security.COOKIE)),
         "demo": cfg.demo_mode,
-        "demo_pin": "1234" if cfg.seed_sample_data and cfg.demo_mode else None,
+        "demo_pin": "1234" if cfg.demo_mode else None,
         "locked_for_s": security.lock_remaining_s(db),
     }
 

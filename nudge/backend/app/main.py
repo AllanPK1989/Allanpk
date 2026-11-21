@@ -5,7 +5,7 @@ import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -49,8 +49,9 @@ async def lifespan(_: FastAPI):
             await job
 
 
-app = FastAPI(title="Nudge", version=system.VERSION, lifespan=lifespan, docs_url="/api/docs",
-              openapi_url="/api/openapi.json", redoc_url=None)
+_docs = get_config().api_docs
+app = FastAPI(title="Nudge", version=system.VERSION, lifespan=lifespan, redoc_url=None,
+              docs_url="/api/docs" if _docs else None, openapi_url="/api/openapi.json" if _docs else None)
 for r in (auth.router, tasks.router, assistant.router, views.router, system.router):
     app.include_router(r)
 
@@ -60,6 +61,8 @@ if _static and Path(_static).is_dir():
 
     @app.get("/{path:path}", include_in_schema=False)
     def spa(path: str):
+        if path == "api" or path.startswith("api/"):
+            raise HTTPException(404, "Not found")
         target = Path(_static) / path
         if path and target.is_file() and Path(_static).resolve() in target.resolve().parents:
             return FileResponse(target)

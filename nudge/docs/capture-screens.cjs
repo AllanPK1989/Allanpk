@@ -34,7 +34,7 @@ const OUT = process.argv[3] || `${__dirname}/screens`;
   await p.waitForTimeout(800);
 
   await go("/tasks?lane=today");
-  await p.getByRole("button", { name: /^Mark done: Call amma/ }).click();
+  await p.getByRole("button", { name: /^Mark done: Share minutes/ }).click(); // due today, no time
   await p.waitForTimeout(600);
   await shot("05-done-follow-up");
 
@@ -57,6 +57,10 @@ const OUT = process.argv[3] || `${__dirname}/screens`;
     await go(path);
     await shot(name);
   }
+  await p.locator("text=Voice and privacy").evaluate((el) => el.scrollIntoView({ block: "start" }));
+  await p.evaluate(() => window.scrollBy(0, -76)); // clear the sticky top bar
+  await p.waitForTimeout(300);
+  await shot("11b-privacy");
 
   for (const scheme of ["light", "dark"]) {
     const desk = await browser.newContext({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 2, colorScheme: scheme, timezoneId: "Asia/Kolkata", locale: "en-IN" });

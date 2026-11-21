@@ -6,7 +6,7 @@ from sqlalchemy import func, or_
 from sqlalchemy.orm import Session
 
 from .. import tasks_service as ts
-from ..ai import service as ai
+from .. import understand
 from ..db import get_db
 from ..deps import get_task, prefs
 from ..lanes import LANES, lane, sort_key
@@ -230,9 +230,7 @@ def keep(task_id: int, db: Session = Depends(get_db), p: Prefs = Depends(prefs))
 @router.get("/tasks/{task_id}/nudge-draft")
 def nudge_draft(task_id: int, db: Session = Depends(get_db), p: Prefs = Depends(prefs)):
     t = get_task(db, task_id)
-    out = ai.draft_nudge(db, p, t)
-    db.commit()
-    return out
+    return understand.draft_nudge(db, p, t)
 
 
 @router.post("/tasks-bulk")

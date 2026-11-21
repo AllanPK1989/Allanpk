@@ -49,7 +49,7 @@ tomorrow.
 ## 6. Chase people without the awkwardness
 
 For anything you're waiting on, Nudge writes a polite follow-up you can send by WhatsApp or e-mail,
-share, or copy. "I've sent it" resets the reminder clock. If there's still no reply, it nudges you
+share, or copy. It gets a little firmer the longer you've waited. "I've sent it" resets the reminder clock. If there's still no reply, it nudges you
 again in a few days.
 
 <img src="docs/screens/06-nudge-message.png" width="300" alt="Follow-up message">
@@ -63,7 +63,7 @@ also say "mark the vendor call done" or "move the PM report to Monday".
 
 ## 8. Morning briefing
 
-Pushed to your phone and e-mailed at 07:30. Open it to see the full list, or tap **Read aloud**.
+Pushed to your phone at 07:30 (and e-mailed, if you set that up). Open it to see the full list, or tap **Read aloud**.
 
 <img src="docs/screens/08-briefing.png" width="300" alt="Morning briefing">
 
@@ -83,6 +83,10 @@ Everyone you have open business with, longest wait first.
 ## 11. Settings
 
 Notifications for this device, times and quiet hours, follow-up rhythm, e-mail digest, baskets,
-voice and AI status (with this month's cost), Excel export, backups, and PIN.
+voice status and a plain-English privacy summary, Excel export, backups, and PIN.
 
 <img src="docs/screens/11-settings.png" width="300" alt="Settings">
+
+Further down, **Voice and privacy** says in plain words what (if anything) leaves your computer.
+
+<img src="docs/screens/11b-privacy.png" width="300" alt="Voice and privacy settings">

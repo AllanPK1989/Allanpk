@@ -30,7 +30,7 @@ def test_changes_need_the_nudge_header(client):
 def test_voice_capture_review_and_apply(client):
     out = client.post("/api/assistant/voice", files={"audio": ("v.webm", b"0" * 4000, "audio/webm")},
                       headers=H).json()
-    assert out["intent"] == "create" and out["understood_by"] == "rules"
+    assert out["intent"] == "create"
     assert len(out["drafts"]) == 3
     saved = client.post("/api/assistant/apply", json={"intent": "create", "transcript": out["transcript"],
                                                        "drafts": out["drafts"]}, headers=H).json()
@@ -106,7 +106,7 @@ def test_settings_validation(client):
     assert client.patch("/api/settings", json={"briefing_time": "7.30"}, headers=H).status_code == 422
     assert client.patch("/api/settings", json={"timezone": "Mars/Base"}, headers=H).status_code == 422
     assert client.patch("/api/settings", json={"pin_hash": "x"}, headers=H).status_code == 422
-    s = client.patch("/api/settings", json={"briefing_time": "08:00", "display_name": "Pravin"}, headers=H).json()
+    s = client.patch("/api/settings", json={"briefing_time": "08:00", "display_name": "Sam"}, headers=H).json()
     assert s["briefing_time"] == "08:00"
     assert "pin_hash" not in client.get("/api/settings").json()["settings"]
 
@@ -151,3 +151,9 @@ def test_export_neutralises_formulas(client):
     wb = load_workbook(io.BytesIO(client.get("/api/export.xlsx").content))
     cell = wb["Open tasks"]["A2"]
     assert cell.data_type == "s" and cell.value.startswith("'=")
+
+
+def test_api_docs_are_off_by_default(client):
+    # The interactive page would load scripts from a public CDN, so it stays off unless API_DOCS=true.
+    assert client.get("/api/docs").status_code == 404
+    assert client.get("/api/openapi.json").status_code == 404

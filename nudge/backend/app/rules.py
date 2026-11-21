@@ -10,7 +10,7 @@ Claude does all of this better; these rules keep the app useful without it.
 import calendar
 import re
 from dataclasses import dataclass, field
-from datetime import date, time, timedelta
+from datetime import date, datetime, time, timedelta
 
 WEEKDAYS = {
     "monday": 0, "mon": 0, "tuesday": 1, "tue": 1, "tues": 1, "wednesday": 2, "wed": 2,
@@ -41,6 +41,7 @@ print test inspect chase organise organize register apply attend pick drop clean
 draft reply respond return bring take make create set give tell speak sort look find contact
 cancel start upload download install repair replace calibrate service lubricate audit train teach
 revise practice practise watch learn note record log invite thank wish greet visit go do pass
+inform notify escalate verify coordinate follow-up publish present renew withdraw recharge
 """.split())
 FILLERS = [
     r"okay so", r"ok so", r"so", r"hey nudge", r"nudge", r"um+", r"uh+", r"please", r"also", r"and",
@@ -85,9 +86,9 @@ CATEGORIES = {
                r"fees|fee|reimbursement|expense|expenses|claim|itr|pan card",
     "learning": r"study|cmrp|course|exam|learn|chapter|revise|revision|practice test|mock test|lesson|class|"
                 r"certification|training|tutorial|webinar|lecture|syllabus",
-    "meetings": r"meeting|minutes|mom|action point|action points|agenda|standup|stand-up|review meeting|"
+    "meetings": r"meeting|minutes|minutes of meeting|action point|action points|agenda|standup|stand-up|review meeting|"
                 r"presentation|townhall|town hall",
-    "home": r"home|house|family|kids|son|daughter|wife|husband|mom|mother|dad|father|amma|appa|parents|"
+    "home": r"home|house|family|kids|son|daughter|wife|husband|mom|mum|mummy|mother|dad|father|amma|appa|parents|"
             r"grocery|groceries|school|vegetables|gas cylinder|birthday|anniversary|maid|milk|"
             r"plumber|carpenter|painting|car service|bike service",
     "personal": r"gym|haircut|dentist|passport|licence|license|personal|health|walk|yoga|shopping|"
@@ -167,7 +168,36 @@ def _safe_date(y: int, mth: int, d: int) -> date | None:
         return None
 
 
+PM_HINT = re.compile(r"\b(tonight|evening|night)\b", re.I)
+AM_HINT = re.compile(r"\b(morning)\b", re.I)
+PART_OF_DAY = re.compile(r"\b(?:in the |this )?(?:morning|afternoon|evening)\b", re.I)
+
+
+def extract_relative(text: str, today: date, now_time: time) -> tuple[date | None, time | None, str]:
+    """'in 2 hours', 'in 30 minutes', 'in an hour', 'in half an hour'."""
+    m = re.search(r"\b(?:in|after)\s+(half an|an|a|one|two|three|four|five|six|\d{1,3})\s+"
+                  r"(hours?|hrs?|minutes?|mins?)\b", text, re.I)
+    if not m:
+        return None, None, text
+    word = m[1].lower()
+    minutes = 30 if word == "half an" else (_num(word) or 1) * (60 if m[2].lower().startswith("h") else 1)
+    at = datetime.combine(today, now_time) + timedelta(minutes=minutes)
+    return at.date(), at.time().replace(second=0, microsecond=0), _cut(text, m)
+
+
 def extract_time(text: str) -> tuple[time | None, str]:
+    t, rest = _extract_time(text)
+    if t is None:
+        return None, text
+    if t.hour < 12 and PM_HINT.search(text) and not re.search(r"\ba\.?m\.?\b", text, re.I):
+        t = time(t.hour + 12, t.minute)
+    elif t.hour >= 12 and AM_HINT.search(text) and not re.search(r"\bp\.?m\.?\b", text, re.I) and t.hour != 12:
+        t = time(t.hour - 12, t.minute)
+    rest = PART_OF_DAY.sub(" ", rest)  # "tomorrow morning at 8": the time already says it
+    return t, re.sub(r"\s+", " ", rest).strip()
+
+
+def _extract_time(text: str) -> tuple[time | None, str]:
     patterns = [
         (re.compile(r"\b(?:at|by|around|before|@)\s*(\d{1,2})[:.](\d{2})\s*(a\.?m\.?|p\.?m\.?)?", re.I),
          lambda m: _hour(int(m[1]), int(m[2]), m[3])),
@@ -178,6 +208,8 @@ def extract_time(text: str) -> tuple[time | None, str]:
          lambda m: _hour(int(m[1]), 0, None)),
         (re.compile(r"\b(\d{1,2})\s*o'?\s?clock\b", re.I), lambda m: _hour(int(m[1]), 0, None)),
         (re.compile(r"\b(?:at\s+|by\s+)?(noon|midday|lunch ?time)\b", re.I), lambda m: time(12, 0)),
+        (re.compile(r"\b(?:after|post)\s+lunch\b", re.I), lambda m: time(14, 0)),
+        (re.compile(r"\bbefore\s+lunch\b", re.I), lambda m: time(12, 0)),
         (re.compile(r"\b(?:in the |this )?morning\b", re.I), lambda m: time(9, 0)),
         (re.compile(r"\b(?:in the |this )?afternoon\b", re.I), lambda m: time(15, 0)),
         (re.compile(r"\b(?:in the |this )?evening\b", re.I), lambda m: time(18, 0)),
@@ -209,6 +241,8 @@ def extract_date(text: str, today: date) -> tuple[date | None, str, bool]:
          lambda m: (date(today.year, today.month, calendar.monthrange(today.year, today.month)[1]), False)),
         (r"\bnext month\b", lambda m: (_add_months(today.replace(day=1), 1), True)),
         (r"\b(?:this |the )?weekend\b", lambda m: (_next_weekday(today, 5, include_today=True), True)),
+        (r"\bnext\s+week\s+(?:on\s+)?" + WD + r"\b|\b" + WD + r"\s+(?:of\s+)?next\s+week\b",
+         lambda m: (_next_week_day(today, WEEKDAYS[(m[1] or m[2]).lower()]), False)),
         (r"\bnext week\b", lambda m: (_next_weekday(today, 0), True)),
         (r"\bnext\s+" + WD + r"\b", lambda m: (_next_week_day(today, WEEKDAYS[m[1].lower()]), False)),
         (r"\bthis\s+(?:coming\s+)?" + WD + r"\b",
@@ -280,7 +314,7 @@ def _day_of_month(today: date, d: int) -> date | None:
 def extract_repeat(text: str, today: date) -> tuple[str, str]:
     t = text
     rules = [
-        (r"\b(?:every|each)\s+(?:day|morning|evening)\b|\bdaily\b|\beveryday\b", lambda m: "FREQ=DAILY"),
+        (r"\b(?:every|each)\s+(?:day|morning|evening)\b|\bdaily\b(?=\s*(?:$|[,.;!]|on\b|at\b|from\b|starting\b|basis\b|and\b|till\b|until\b))|\\beveryday\\b", lambda m: "FREQ=DAILY"),
         (r"\b(?:every\s+weekday|on\s+weekdays|every\s+working\s+day|weekdays)\b",
          lambda m: "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR"),
         (r"\b(?:every|each)\s+(?:other|second|alternate)\s+" + WD + r"\b",
@@ -290,20 +324,23 @@ def extract_repeat(text: str, today: date) -> tuple[str, str]:
          lambda m: f"FREQ=MONTHLY;BYDAY={ORDINAL_WORDS[m[1].lower()]}{DAY_CODES[WEEKDAYS[m[2].lower()]]}"),
         (r"\b(?:every|each)\s+(first|1st|second|2nd|third|3rd|fourth|4th|last)\s+" + WD + r"\b",
          lambda m: f"FREQ=MONTHLY;BYDAY={ORDINAL_WORDS[m[1].lower()]}{DAY_CODES[WEEKDAYS[m[2].lower()]]}"),
+        (r"\b(?:every|each|on)\s+(" + WD + r"s?(?:\s*(?:,|and|&)\s*" + WD + r"s?)+)\b",
+         lambda m: "FREQ=WEEKLY;BYDAY=" + ",".join(dict.fromkeys(
+             DAY_CODES[WEEKDAYS[d.lower()]] for d in re.findall(WD, m[1], re.I)))),
         (r"\b(?:every|each)\s+" + WD + r"s?\b|\bweekly\s+on\s+" + WD + r"s?\b|\bon\s+" + WD + r"s\b",
          lambda m: f"FREQ=WEEKLY;BYDAY={DAY_CODES[WEEKDAYS[(m[1] or m[2] or m[3]).lower()]]}"),
         (r"\b(?:every|each)\s+(\d+|two|three|four)\s+weeks\b",
          lambda m: f"FREQ=WEEKLY;INTERVAL={_num(m[1]) or 2}"),
         (r"\b(?:every|each)\s+(?:other|alternate)\s+week\b|\bfortnightly\b", lambda m: "FREQ=WEEKLY;INTERVAL=2"),
-        (r"\b(?:every|each)\s+week\b|\bweekly\b", lambda m: "FREQ=WEEKLY"),
-        (r"\b(?:on\s+)?(?:the\s+)?(\d{1,2})(?:st|nd|rd|th)?\s+of\s+(?:every|each|the)\s+month\b|"
+        (r"\b(?:every|each)\s+week\b|\bweekly\b(?=\s*(?:$|[,.;!]|on\b|at\b|from\b|starting\b|basis\b|and\b|till\b|until\b))", lambda m: "FREQ=WEEKLY"),
+        (r"\b(?:on\s+)?(?:the\s+)?(\d{1,2})(?:st|nd|rd|th)?\s+(?:of\s+)?(?:every|each|the)\s+month\b|"
          r"\b(?:every|each)\s+month\s+on\s+(?:the\s+)?(\d{1,2})(?:st|nd|rd|th)?\b|"
          r"\bmonthly\s+on\s+(?:the\s+)?(\d{1,2})(?:st|nd|rd|th)?\b",
          lambda m: f"FREQ=MONTHLY;BYMONTHDAY={int(m[1] or m[2] or m[3])}"),
         (r"\b(?:every|each)\s+(\d+|two|three|six)\s+months\b", lambda m: f"FREQ=MONTHLY;INTERVAL={_num(m[1]) or 2}"),
-        (r"\bquarterly\b|\b(?:every|each)\s+quarter\b", lambda m: "FREQ=MONTHLY;INTERVAL=3"),
-        (r"\b(?:every|each)\s+month\b|\bmonthly\b", lambda m: "FREQ=MONTHLY"),
-        (r"\b(?:every|each)\s+year\b|\byearly\b|\bannually\b", lambda m: "FREQ=YEARLY"),
+        (r"\bquarterly\b(?=\s*(?:$|[,.;!]|on\b|at\b|from\b|starting\b|basis\b|and\b|till\b|until\b))|\b(?:every|each)\s+quarter\b", lambda m: "FREQ=MONTHLY;INTERVAL=3"),
+        (r"\b(?:every|each)\s+month\b|\bmonthly\b(?=\s*(?:$|[,.;!]|on\b|at\b|from\b|starting\b|basis\b|and\b|till\b|until\b))", lambda m: "FREQ=MONTHLY"),
+        (r"\b(?:every|each)\s+year\b|\b(?:yearly|annually)\b(?=\s*(?:$|[,.;!]|on\b|at\b|from\b|starting\b|basis\b|and\b|till\b|until\b))", lambda m: "FREQ=YEARLY"),
     ]
     for pattern, fn in rules:
         m = re.search(pattern, t, re.I)
@@ -327,7 +364,7 @@ def extract_person(text: str, people: list[str]) -> tuple[str, bool]:
                          text, re.I):
         name = m[1]
         first = name.split()[0]
-        if first.lower() in NOT_NAMES:
+        if first.lower() in NOT_NAMES or (len(first) > 1 and first.isupper()):
             continue
         if first.lower() in ROLE_WORDS:
             return first.title(), False
@@ -360,6 +397,10 @@ def basket_for(text: str, baskets: list[tuple[int, str]]) -> tuple[int | None, b
                       first + r")\s+(?:basket|list|bucket)\b", text, re.I)
         if m:
             return bid, True, _cut(text, m)
+    if re.search(r"\bMoM\b", text):  # minutes of meeting, written the Indian-office way
+        bid = _category_basket("meetings", baskets)
+        if bid:
+            return bid, False, text
     for key, rx in CATEGORY_RES.items():
         if rx.search(text):
             bid = _category_basket(key, baskets)
@@ -410,8 +451,7 @@ def split_tasks(text: str) -> list[str]:
 
 
 def tidy_title(text: str) -> str:
-    t = FILLER_RE.sub("", text.strip())
-    t = re.sub(r"\s+", " ", t)
+    t = FILLER_RE.sub("", re.sub(r"\s+", " ", text.strip()))
     t = re.sub(r"\s+([,.!?])", r"\1", t)
     t = re.sub(r"^(?:to|on|by|for|at|and)\s+", "", t, flags=re.I)
     t = re.sub(r"(?:\s+(?:on|by|at|for|and|to|the|before|till|until|due|of|in|around))+\s*$", "", t, flags=re.I)
@@ -419,7 +459,8 @@ def tidy_title(text: str) -> str:
     return t[:1].upper() + t[1:] if t else t
 
 
-def parse_task(piece: str, today: date, baskets: list[tuple[int, str]], people: list[str]) -> Draft | None:
+def parse_task(piece: str, today: date, baskets: list[tuple[int, str]], people: list[str],
+               now_time: time = time(9, 0)) -> Draft | None:
     text = piece
     notes = ""
     m = re.search(r"\bnotes?\s*[:\-]\s*(.+)$", text, re.I)
@@ -433,8 +474,11 @@ def parse_task(piece: str, today: date, baskets: list[tuple[int, str]], people: 
 
     guessed: list[str] = []
     rule, text = extract_repeat(text, today)
-    due_time, text = extract_time(text)
-    due_date, text, vague = extract_date(text, today)
+    due_date, due_time, text = extract_relative(text, today, now_time)
+    vague = False
+    if due_time is None:
+        due_time, text = extract_time(text)
+        due_date, text, vague = extract_date(text, today)
     if rule and not due_date:
         from .recurrence import first_date
         due_date = first_date(rule, today)
@@ -541,7 +585,7 @@ def interpret(text: str, *, today: date, now_time: time, baskets: list[tuple[int
                        + (f" at {when_time.strftime('%H:%M')}" if when_time else "") + "?",
             )
 
-    drafts = [d for d in (parse_task(p, today, baskets, people) for p in split_tasks(raw)) if d]
+    drafts = [d for d in (parse_task(p, today, baskets, people, now_time) for p in split_tasks(raw)) if d]
     if not drafts:
         return Interpretation(intent="unclear", answer="I couldn't turn that into a task. Try again?")
     return Interpretation(intent="create", drafts=drafts[:15])

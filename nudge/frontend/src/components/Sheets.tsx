@@ -118,13 +118,12 @@ export function NudgeSheet() {
   const { nudgeFor: t, setNudgeFor, toast } = useApp();
   const actions = useTaskActions();
   const [msg, setMsg] = useState("");
-  const [by, setBy] = useState("");
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (!t) return;
     setLoading(true);
-    api.get<{ message: string; written_by: string }>(`/api/tasks/${t.id}/nudge-draft`)
-      .then((r) => { setMsg(r.message); setBy(r.written_by); })
+    api.get<{ message: string }>(`/api/tasks/${t.id}/nudge-draft`)
+      .then((r) => setMsg(r.message))
       .catch((e) => toast({ text: errorText(e), kind: "error" }))
       .finally(() => setLoading(false));
   }, [t, toast]);
@@ -153,7 +152,7 @@ export function NudgeSheet() {
       {loading ? <Spinner label="Writing" /> : (
         <div className="stack">
           <textarea className="input" style={{ minHeight: 150 }} value={msg} onChange={(e) => setMsg(e.target.value)} aria-label="Message" />
-          <div className="tiny muted">{by === "claude" ? "Written by Claude. Edit anything before sending." : "A ready-made message. Edit anything before sending."}</div>
+          <div className="tiny muted">A ready-made message. Edit anything before sending.</div>
           <div className="row wrap">
             {canShare && <button className="btn primary" onClick={share}><Icon name="share" />Share…</button>}
             <a className="btn" href={`https://wa.me/?text=${encodeURIComponent(msg)}`} target="_blank" rel="noreferrer" onClick={sent}><Icon name="send" />WhatsApp</a>

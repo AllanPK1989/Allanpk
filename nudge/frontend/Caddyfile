@@ -1,9 +1,23 @@
-# SITE_ADDRESS: the address you open Nudge at, e.g. nudge.example.com (default: localhost).
-# CADDY_TLS: "internal" (Caddy's own certificate; fine for localhost and testing), your e-mail
-# address for a free public certificate (needs a real domain pointing at this server), or
-# "/certs/cert.pem /certs/key.pem" for your own certificate (mount ./certs).
+# TLS_MODE picks how HTTPS works. None of them needs your e-mail address or any account:
+#   internal  Caddy's own certificate (default). Free and fully private; install its root
+#             certificate on your phone once (RUNBOOK.md, step 3).
+#   public    A free Let's Encrypt certificate for a real domain pointing at this server
+#             (ports 80 and 443 open). No e-mail is given to Let's Encrypt.
+#   files     Your own certificate in ./certs/cert.pem and ./certs/key.pem.
+(tls-internal) {
+	tls internal
+}
+(tls-public) {
+	tls {
+		issuer acme
+	}
+}
+(tls-files) {
+	tls /certs/cert.pem /certs/key.pem
+}
+
 {$SITE_ADDRESS:localhost} {
-	tls {$CADDY_TLS:internal}
+	import tls-{$TLS_MODE:internal}
 	encode zstd gzip
 
 	request_body {
@@ -13,9 +27,9 @@
 	header {
 		Strict-Transport-Security "max-age=31536000"
 		X-Content-Type-Options nosniff
-		Referrer-Policy same-origin
+		Referrer-Policy no-referrer
 		X-Frame-Options DENY
-		Permissions-Policy "microphone=(self), camera=(), geolocation=()"
+		Permissions-Policy "microphone=(self), camera=(), geolocation=(), interest-cohort=()"
 		Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
 		-Server
 	}

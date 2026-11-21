@@ -7,7 +7,6 @@ from sqlalchemy.orm import Session
 
 from .. import backup, digest, mailer, push, scheduler, settings_store, stt
 from .. import tasks_service as ts
-from ..ai import service as ai
 from ..config import get_config
 from ..db import get_db
 from ..deps import prefs
@@ -42,7 +41,6 @@ def get_settings(db: Session = Depends(get_db)):
         "status": {
             "version": VERSION,
             "demo": cfg.demo_mode,
-            "ai": ai.usage_summary(db),
             "voice": stt.status(),
             "email_configured": mailer.configured(),
             "outbox": mailer.latest_outbox(),

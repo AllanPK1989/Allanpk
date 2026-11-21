@@ -240,19 +240,20 @@ export function Settings() {
         <div className="setting"><button className="btn" onClick={() => setEditing("new")}><Icon name="plus" />New basket</button></div>
       </Card>
 
-      <div className="section-title">Voice and AI</div>
+      <div className="section-title">Voice and privacy</div>
       <Card>
-        <Row title="Understanding notes" hint={st.ai.provider === "anthropic" ? `Claude (${st.ai.model})` : "Built-in rules (add an Anthropic API key to use Claude)"}>
-          <span className={`badge ${st.ai.provider === "anthropic" ? "good" : "neutral"}`}>{st.ai.provider === "anthropic" ? "Claude" : "Rules"}</span>
+        <Row title="Understanding notes" hint="Built in. Runs on your server, costs nothing, nothing is sent anywhere">
+          <span className="badge good">Free</span>
         </Row>
-        {st.ai.provider === "anthropic" && (
-          <Row title="This month" hint={`${st.ai.calls_this_month} requests${st.ai.failed_this_month ? `, ${st.ai.failed_this_month} failed` : ""} · about ${st.ai.avg_latency_ms ? (st.ai.avg_latency_ms / 1000).toFixed(1) : "–"}s each`}>
-            <b>${st.ai.cost_usd_this_month.toFixed(2)}</b>
-          </Row>
-        )}
         <Row title="Speech to text" hint={st.voice.provider === "whisper" ? `Whisper ${st.voice.model ?? ""} on your server` : st.voice.provider === "mock" ? "Demo voice (returns a sample sentence)" : "Not set up"}>
           <span className={`badge ${st.voice.ready ? "good" : "warning"}`}>{st.voice.ready ? "Ready" : st.voice.provider === "whisper" ? "Loading" : "Off"}</span>
         </Row>
+        <div className="setting small muted" style={{ display: "block" }}>
+          <b style={{ color: "var(--ink)" }}>What leaves your server:</b> nothing about your tasks, except
+          {" "}push notifications (encrypted end to end, so Google and Apple, who deliver them, can't read them)
+          {st.email_configured ? " and the e-mail digest, which goes through your own mail provider" : ""}.
+          Recordings are turned into text on your server and deleted straight away. Read-aloud uses only voices built into your device.
+        </div>
       </Card>
 
       <div className="section-title">Your data</div>

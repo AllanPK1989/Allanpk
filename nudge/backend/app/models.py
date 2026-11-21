@@ -1,7 +1,7 @@
 """Tables. All DateTime columns hold naive UTC; due_date/due_time are the user's local wall clock."""
 from datetime import date, datetime, time
 
-from sqlalchemy import JSON, Boolean, Date, DateTime, Float, ForeignKey, Integer, String, Text, Time
+from sqlalchemy import JSON, Boolean, Date, DateTime, ForeignKey, Integer, String, Text, Time
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .db import Base
@@ -134,18 +134,3 @@ class NotificationLog(Base):
     delivered: Mapped[int] = mapped_column(Integer, default=0)  # devices / recipients reached
     error: Mapped[str] = mapped_column(Text, default="")
 
-
-class AICall(Base):
-    __tablename__ = "ai_calls"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, index=True)
-    purpose: Mapped[str] = mapped_column(String(30))
-    provider: Mapped[str] = mapped_column(String(20))
-    model: Mapped[str] = mapped_column(String(60), default="")
-    input_tokens: Mapped[int] = mapped_column(Integer, default=0)
-    output_tokens: Mapped[int] = mapped_column(Integer, default=0)
-    cost_usd: Mapped[float] = mapped_column(Float, default=0.0)
-    ok: Mapped[bool] = mapped_column(Boolean, default=True)
-    error: Mapped[str] = mapped_column(Text, default="")
-    latency_ms: Mapped[int] = mapped_column(Integer, default=0)

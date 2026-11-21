@@ -1,6 +1,7 @@
 # Nudge: one command to run everything.   docker compose up -d
 # Settings come from .env (copy .env.example). Without .env it starts in demo mode:
-# sample tasks, PIN 1234, built-in rules instead of Claude, on https://localhost.
+# sample tasks and PIN 1234, on https://localhost.
+# Free to run, no accounts or API keys, and nothing about your tasks leaves this machine.
 name: nudge
 
 services:
@@ -22,12 +23,16 @@ services:
     restart: unless-stopped
 
   # Speech to text on your own server (recordings never leave it). The model downloads once on
-  # first start (about 500 MB for small.en) and is kept in the "models" volume.
+  # first start (about 500 MB for small.en) and is kept in the "models" volume. After that,
+  # set WHISPER_OFFLINE=1 and it never goes online again.
   whisper:
     build: ./stt
     image: nudge-whisper:local
     environment:
       WHISPER_MODEL: ${WHISPER_MODEL:-small.en}
+      HF_HUB_OFFLINE: ${WHISPER_OFFLINE:-0}
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      DO_NOT_TRACK: "1"
     volumes:
       - models:/models
     restart: unless-stopped
@@ -40,7 +45,7 @@ services:
       - "${HTTPS_PORT:-443}:443"
     environment:
       SITE_ADDRESS: ${SITE_ADDRESS:-localhost}
-      CADDY_TLS: ${CADDY_TLS:-internal}
+      TLS_MODE: ${TLS_MODE:-internal}
     volumes:
       - caddy_data:/data
       - caddy_config:/config

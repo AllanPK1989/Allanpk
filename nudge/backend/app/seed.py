@@ -49,13 +49,16 @@ def seed_sample(db: Session) -> int:
     prefs = Prefs(db)
     b = {x.name.split()[0].lower(): x.id for x in db.query(Basket).all()}
     now = utcnow()
-    today = local_now(prefs.zone, now).date()
+    now_local = local_now(prefs.zone, now).replace(tzinfo=None)
+    today = now_local.date()
     days_to_fri = (4 - today.weekday()) % 7
     next_mon = today + timedelta(days=7 - today.weekday())
 
     def add(title, basket, *, due=None, at=None, person="", status="open", priority="normal", age=1,
             rule="", notes="", focus=False, quiet_days=None, checklist=None, nudge_days=None, inbox=False):
         created = now - timedelta(days=age, hours=2)
+        if due == today and at is not None and at <= now_local.time():
+            at = None  # keep today's examples "due today" whatever time the demo is opened
         if rule and due is None:
             due = recurrence.first_date(rule, today)
         t = create_task(db, prefs, {

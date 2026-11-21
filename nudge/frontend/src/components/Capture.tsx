@@ -319,7 +319,6 @@ export function Capture() {
 
       {phase === "review" && result && (
         <div className="stack">
-          {result.warning && <div className="warnbox">{result.warning}</div>}
           <div className="row" style={{ alignItems: "flex-start" }}>
             <div className="transcript grow">“{result.transcript}”</div>
             <button className="btn small ghost" onClick={() => { setText(result.transcript); setTyping(true); setPhase("ready"); }}><Icon name="edit" size={16} />Edit</button>
@@ -342,9 +341,6 @@ export function Capture() {
               <button className="btn primary block" onClick={saveDrafts} disabled={saving || !drafts.some((d) => d.title.trim())}>
                 <Icon name="check" />{saving ? "Saving…" : drafts.length === 1 ? "Save task" : `Save ${drafts.length} tasks`}
               </button>
-              <div className="tiny muted" style={{ textAlign: "center" }}>
-                {result.understood_by === "claude" ? "Understood by Claude" : "Understood by built-in rules"}
-              </div>
             </>
           )}
 

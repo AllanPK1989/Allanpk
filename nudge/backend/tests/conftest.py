@@ -1,4 +1,4 @@
-"""Test set-up: a throw-away data folder, built-in rules instead of Claude, mock speech, no scheduler."""
+"""Test set-up: a throw-away data folder, mock speech, no scheduler."""
 import os
 import tempfile
 from pathlib import Path
@@ -6,7 +6,6 @@ from pathlib import Path
 _tmp = Path(tempfile.mkdtemp(prefix="nudge-test-"))
 os.environ.update(
     DATA_DIR=str(_tmp),
-    AI_PROVIDER="mock",
     STT_PROVIDER="mock",
     SEED_SAMPLE_DATA="false",
     SCHEDULER_ENABLED="false",
@@ -19,7 +18,6 @@ import pytest  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
 
 from app import push, security, seed  # noqa: E402
-from app.ai import service as ai_service  # noqa: E402
 from app.db import Base, SessionLocal, engine  # noqa: E402
 from app.main import app  # noqa: E402
 from app.settings_store import Prefs  # noqa: E402
@@ -36,7 +34,6 @@ def db():
         s.commit()
     with SessionLocal() as s:
         yield s
-    ai_service.set_client(None)
     push._vapid_cache = None
 
 

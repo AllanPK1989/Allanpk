@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from .. import stt
 from .. import tasks_service as ts
-from ..ai import service as ai
+from .. import understand
 from ..config import get_config
 from ..dashboard import known_people
 from ..db import get_db
@@ -24,9 +24,7 @@ ALLOWED_AUDIO = ("audio/", "video/webm", "video/mp4", "application/octet-stream"
 
 @router.post("/interpret")
 def interpret(body: InterpretIn, db: Session = Depends(get_db), p: Prefs = Depends(prefs)):
-    out = ai.interpret(db, p, body.text)
-    db.commit()
-    return out
+    return understand.interpret(db, p, body.text)
 
 
 def _vocabulary(db: Session) -> str:
@@ -67,7 +65,7 @@ async def voice(
     p: Prefs = Depends(prefs),
 ):
     text = await _transcribe(db, audio)
-    out = ai.interpret(db, p, text)
+    out = understand.interpret(db, p, text)
     if auto:
         out["saved"] = _save_offline(db, p, out)
     db.commit()
@@ -137,4 +135,4 @@ def apply(body: ApplyIn, db: Session = Depends(get_db), p: Prefs = Depends(prefs
 
 @router.get("/status")
 def status():
-    return {"ai": "claude" if ai.ai_enabled() else "rules", "voice": stt.status()}
+    return {"voice": stt.status()}

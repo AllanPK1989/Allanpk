@@ -12,6 +12,7 @@ export type QueuedOp =
   | { kind: "create"; body: Record<string, unknown> }
   | { kind: "close"; taskId: number }
   | { kind: "snooze"; taskId: number; preset: string }
+  | { kind: "nudged"; taskId: number }
   | { kind: "voice"; audio: Blob };
 
 interface Queued {
@@ -53,6 +54,7 @@ export async function syncQueue(): Promise<number> {
         if (op.kind === "create") await api.post("/api/tasks", op.body);
         else if (op.kind === "close") await api.post(`/api/tasks/${op.taskId}/close`, {});
         else if (op.kind === "snooze") await api.post(`/api/tasks/${op.taskId}/snooze`, { preset: op.preset });
+        else if (op.kind === "nudged") await api.post(`/api/tasks/${op.taskId}/nudged`);
         else if (op.kind === "voice") {
           const form = new FormData();
           form.append("audio", op.audio, `voice.${op.audio.type.includes("mp4") ? "m4a" : "webm"}`);

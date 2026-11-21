@@ -160,5 +160,6 @@ and records breakdown logs by voice. Start with [thunai/README.md](thunai/README
 [`nudge/`](nudge/README.md) is a personal assistant for everyday work: say what's on your mind, and it
 becomes tasks in colour-coded baskets on a dashboard. It reminds you when things are due, closes
 them in one tap (with a follow-up prompt), and keeps nudging you about people who owe you a reply.
-FastAPI + React PWA, Claude for understanding notes, self-hosted Whisper for speech, web push and
-e-mail digests. Start with [nudge/README.md](nudge/README.md); go live with [nudge/RUNBOOK.md](nudge/RUNBOOK.md).
+Free and private: it runs on your own computer with no accounts or API keys, understands notes and
+transcribes voice locally, and sends only end-to-end encrypted push reminders. FastAPI + React PWA.
+Start with [nudge/README.md](nudge/README.md); set it up with [nudge/RUNBOOK.md](nudge/RUNBOOK.md).

@@ -165,8 +165,6 @@ export interface Interpretation {
   targets: { task_id: number; title: string; due_date: string | null; due_time: string | null }[];
   answer: string;
   matches: ShortTask[];
-  understood_by: "claude" | "rules";
-  warning: string;
   saved?: Task[];
 }
 
@@ -194,7 +192,6 @@ export interface Settings {
 export interface SystemStatus {
   version: string;
   demo: boolean;
-  ai: { provider: string; model: string; calls_this_month: number; failed_this_month: number; cost_usd_this_month: number; avg_latency_ms: number };
   voice: { provider: string; ready: boolean; model?: string };
   email_configured: boolean;
   outbox: { name: string; size: number }[];

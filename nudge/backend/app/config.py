@@ -22,6 +22,8 @@ class Config(BaseSettings):
     public_base_url: str = "https://localhost"  # links inside e-mails
     default_timezone: str = "Asia/Kolkata"
     static_dir: str = ""  # optional: serve the built frontend from the API process
+    # The interactive API page loads its scripts from a public CDN, so it is off unless you ask.
+    api_docs: bool = False
     session_days: int = 90
     max_upload_mb: int = 15
 
@@ -34,15 +36,6 @@ class Config(BaseSettings):
     scheduler_interval_s: int = 30
     backup_keep: int = 14
 
-    # AI: "mock" uses the built-in rules (no key needed), "anthropic" uses Claude.
-    ai_provider: str = "mock"
-    ai_model: str = "claude-opus-5-5"
-    ai_effort: str = "low"  # reading a short voice note is a light task
-    ai_refusal_fallback: bool = True
-    ai_timeout_s: float = 60.0
-    # USD per million tokens for the cost estimate in Settings, "model=input/output" pairs.
-    ai_prices: str = "claude-opus-5-5=4/20,claude-sonnet-5-5=2/10,claude-haiku-5-5=0.10/0.50"
-
     # Speech to text: "openai_compat" talks to the bundled Whisper container (or any server with
     # an OpenAI-style /audio/transcriptions endpoint). "mock" is for tests.
     stt_provider: str = "mock"
@@ -53,6 +46,7 @@ class Config(BaseSettings):
 
     # Web push. Keys are generated on first start when left empty.
     vapid_private_key: str = ""  # PEM
+    # Sent to push services as a contact. A placeholder works; you don't need to give your address.
     vapid_subject: str = "mailto:nudge-reminders@example.com"
 
     # E-mail digest. With no SMTP_HOST, e-mails are written to data_dir/outbox for preview.
@@ -74,20 +68,7 @@ class Config(BaseSettings):
 
     @property
     def demo_mode(self) -> bool:
-        return self.ai_provider == "mock"
-
-    def price(self, model: str) -> tuple[float, float]:
-        for pair in self.ai_prices.split(","):
-            if "=" not in pair:
-                continue
-            name, value = pair.split("=", 1)
-            if name.strip() == model:
-                try:
-                    i, o = value.split("/")
-                    return float(i), float(o)
-                except ValueError:
-                    return 0.0, 0.0
-        return 0.0, 0.0
+        return self.seed_sample_data
 
 
 @lru_cache
