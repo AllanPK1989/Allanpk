@@ -196,3 +196,22 @@ def test_news_triage_with_structured_output(db, monkeypatch):
 def test_fallback_kwargs_only_for_supported_models():
     assert llm.fallback_kwargs("claude-sonnet-5-5")["fallbacks"] == "default"
     assert llm.fallback_kwargs("claude-haiku-5-5") == {}
+
+
+def test_one_gmail_address_is_sender_recipient_and_push_contact(db, monkeypatch):
+    from app.config import Settings
+    from app.models import PushSubscription
+    from app.notify import push
+
+    s = Settings(gmail_user="owner@gmail.example", gmail_app_password="x", digest_to="",
+                 vapid_public_key="pub", vapid_private_key="priv", vapid_subject="")
+    assert s.email_to == "owner@gmail.example"
+    monkeypatch.setattr(push, "get_settings", lambda: s)
+    seen = {}
+    import pywebpush
+
+    monkeypatch.setattr(pywebpush, "webpush", lambda info, **kw: seen.update(kw["vapid_claims"]))
+    db.add(PushSubscription(endpoint="https://push.example/abc", p256dh="k" * 20, auth="a" * 8))
+    db.flush()
+    assert push.send_all(db, title="t", body="b") == 1
+    assert seen["sub"] == "mailto:owner@gmail.example"

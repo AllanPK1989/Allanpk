@@ -1,5 +1,6 @@
 # Render Blueprint. In Render: New -> Blueprint -> pick this repo -> Blueprint path: investment-agent/render.yaml
 # Values marked sync:false are asked for when you create it (see README "Deploy").
+# GMAIL_USER is also the digest recipient and the push contact unless you add DIGEST_TO / VAPID_SUBJECT.
 services:
   - type: web
     name: investment-analyst
@@ -29,11 +30,7 @@ services:
         sync: false
       - key: GMAIL_APP_PASSWORD
         sync: false
-      - key: DIGEST_TO
-        sync: false
       - key: VAPID_PUBLIC_KEY
         sync: false
       - key: VAPID_PRIVATE_KEY
-        sync: false
-      - key: VAPID_SUBJECT
         sync: false
