@@ -1,0 +1,39 @@
+# Render Blueprint. In Render: New -> Blueprint -> pick this repo -> Blueprint path: investment-agent/render.yaml
+# Values marked sync:false are asked for when you create it (see README "Deploy").
+services:
+  - type: web
+    name: investment-analyst
+    runtime: docker
+    plan: free
+    rootDir: investment-agent
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: DATA_MODE
+        value: live
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: OWNER_PASSWORD_HASH
+        sync: false
+      - key: BASE_URL
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: GMAIL_USER
+        sync: false
+      - key: GMAIL_APP_PASSWORD
+        sync: false
+      - key: DIGEST_TO
+        sync: false
+      - key: VAPID_PUBLIC_KEY
+        sync: false
+      - key: VAPID_PRIVATE_KEY
+        sync: false
+      - key: VAPID_SUBJECT
+        sync: false

@@ -1,0 +1,98 @@
+name: "Investment agent: digests and alerts"
+
+# Runs the investment app's scheduled work against the same Neon database the web app uses.
+# The free Render web service sleeps when idle, so the schedule lives here instead.
+#
+#   morning digest  ~07:50 IST Mon-Sat   (overnight US/global, crypto, news before NSE opens)
+#   evening digest  ~16:40 IST Mon-Fri   (after the NSE close)
+#   weekly review   ~09:55 IST Sunday
+#   alerts          every 15 min in NSE hours, hourly in US hours, every 4 h at weekends (crypto)
+#
+# GitHub may start scheduled runs 5-30 minutes late at busy times, so alerts are near-real-time, not instant.
+# Nothing runs until the INVEST_DATABASE_URL secret exists (see investment-agent/README.md, "Deploy").
+
+on:
+  schedule:
+    - cron: "17 2 * * 1-6"            # morning digest  (02:17 UTC = 07:47 IST)
+    - cron: "7 11 * * 1-5"            # evening digest  (11:07 UTC = 16:37 IST)
+    - cron: "23 4 * * 0"              # weekly review   (04:23 UTC = 09:53 IST, Sunday)
+    - cron: "7,22,37,52 3-9 * * 1-5"  # alerts, NSE hours (08:37-15:22 IST)
+    - cron: "7 10 * * 1-5"            # alerts, NSE close (15:37 IST)
+    - cron: "12 14-21 * * 1-5"        # alerts, US hours (19:42-02:42 IST)
+    - cron: "27 */4 * * 0,6"          # alerts, weekends (crypto)
+  workflow_dispatch:
+    inputs:
+      task:
+        description: "What to run"
+        type: choice
+        options: [morning, evening, weekly, alerts, news, test-email, test-push]
+        default: morning
+
+permissions:
+  contents: read
+
+concurrency:
+  group: invest-jobs
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: investment-agent/backend
+    env:
+      DATABASE_URL: ${{ secrets.INVEST_DATABASE_URL }}
+      BASE_URL: ${{ secrets.INVEST_BASE_URL }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      GMAIL_USER: ${{ secrets.GMAIL_USER }}
+      GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+      DIGEST_TO: ${{ secrets.DIGEST_TO }}
+      VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
+      VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+      VAPID_SUBJECT: ${{ secrets.VAPID_SUBJECT }}
+      DATA_MODE: live
+      PRIVATE_LOGS: "1"   # this repo is public, and so are Actions logs: print counts only
+      SCHEDULE: ${{ github.event.schedule }}
+      MANUAL_TASK: ${{ inputs.task }}
+    steps:
+      - name: Work out the task
+        id: task
+        working-directory: .
+        run: |
+          case "$SCHEDULE" in
+            "17 2 * * 1-6") task=morning ;;
+            "7 11 * * 1-5") task=evening ;;
+            "23 4 * * 0")   task=weekly ;;
+            "")             task="$MANUAL_TASK" ;;
+            *)              task=alerts ;;
+          esac
+          echo "task=$task" >> "$GITHUB_OUTPUT"
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::notice::INVEST_DATABASE_URL secret is not set yet; skipping $task."
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v5
+        if: steps.task.outputs.configured == 'true'
+      - uses: actions/setup-python@v6
+        if: steps.task.outputs.configured == 'true'
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: investment-agent/backend/requirements.txt
+      - name: Install
+        if: steps.task.outputs.configured == 'true'
+        run: pip install -q -r requirements.txt
+      - name: Run ${{ steps.task.outputs.task }}
+        if: steps.task.outputs.configured == 'true'
+        env:
+          TASK: ${{ steps.task.outputs.task }}
+        run: |
+          case "$TASK" in
+            morning|evening|weekly) python -m app.jobs digest --kind "$TASK" ;;
+            alerts|news|test-email|test-push) python -m app.jobs "$TASK" ;;
+            *) echo "unknown task '$TASK'"; exit 2 ;;
+          esac
