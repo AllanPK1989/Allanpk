@@ -6,6 +6,7 @@ services:
     name: investment-analyst
     runtime: docker
     plan: free
+    region: singapore   # closest Render region to India; create the Neon database in AWS Singapore too
     rootDir: investment-agent
     dockerfilePath: ./Dockerfile
     dockerContext: .

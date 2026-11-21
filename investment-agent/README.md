@@ -62,7 +62,7 @@ reports), `notify` (email, push), `jobs` (CLI for the scheduler), `api` (HTTP ro
 You need: a GitHub account (this repo), [Render](https://render.com), [Neon](https://neon.tech), an
 [Anthropic API key](https://console.anthropic.com), and a Gmail account with 2-Step Verification.
 
-**1. Database.** Create a Neon project (choose a region near Mumbai/Singapore). Copy the connection
+**1. Database.** Create a Neon project in **AWS Asia Pacific (Singapore)**, the same region as the Render service. Copy the connection
 string (`postgresql://...?sslmode=require`).
 
 **2. Generate secrets on your computer:**
