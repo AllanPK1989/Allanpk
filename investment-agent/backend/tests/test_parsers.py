@@ -139,3 +139,14 @@ def test_markdown_sanitiser_strips_scripts_and_bad_links():
     html = to_html('Hi <script>alert(1)</script> [x](javascript:alert(1)) [ok](https://e.example)')
     assert "<script" not in html and "javascript:" not in html
     assert 'href="https://e.example"' in html and 'rel="noopener noreferrer nofollow"' in html
+
+
+def test_default_gmail_sender_and_empty_env_values_fall_back(monkeypatch):
+    from app.config import Settings
+
+    monkeypatch.setenv("GMAIL_USER", "")  # GitHub Actions passes unset secrets as empty strings
+    monkeypatch.setenv("GMAIL_APP_PASSWORD", "app-pass")
+    monkeypatch.setenv("DIGEST_TO", "")
+    s = Settings(_env_file=None)
+    assert s.gmail_user == "financeforpk@gmail.com" and s.email_to == "financeforpk@gmail.com"
+    assert s.email_enabled

@@ -9,7 +9,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    # env_ignore_empty: GitHub Actions passes unset secrets as empty strings; treat those as "use the default".
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore", env_ignore_empty=True)
 
     app_name: str = "Investment Analyst"
     environment: Literal["development", "production", "test"] = "development"
@@ -37,10 +38,11 @@ class Settings(BaseSettings):
     analysis_effort: Literal["low", "medium", "high", "xhigh", "max"] = "medium"
     chat_effort: Literal["low", "medium", "high", "xhigh", "max"] = "medium"
 
-    # Email (Gmail SMTP with an app password).
+    # Email (Gmail SMTP with an app password). This account sends the digests and alerts, receives them
+    # (unless DIGEST_TO is set) and is the push contact (unless VAPID_SUBJECT is set).
     smtp_host: str = "smtp.gmail.com"
     smtp_port: int = 587
-    gmail_user: str = ""
+    gmail_user: str = "financeforpk@gmail.com"
     gmail_app_password: str = ""
     digest_to: str = ""  # defaults to gmail_user
 
